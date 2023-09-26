@@ -1,0 +1,53 @@
+.dashboard-load-items-bg {
+    background: #DFDEFF;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 10px;
+    max-height: 128px;
+    max-width: 128px;
+}
+
+.dashboard-load-items-bg img {
+    background: #DFDEFF;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 10px;
+    max-height: 110px;
+    max-width: 110px;
+}
+
+.dashboard-load-items-a-tag {
+    color: #2a2a2a;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.dashboard-load-items-a-tag:hover {
+    color: #480048;
+    text-decoration: none;
+}
+
+.dashboard-app-item a{
+    color: #2a2a2a;
+    display: inline-block;
+    text-decoration: none;
+}
+.dashboard-app-item a:hover {
+    color: #480048;
+    text-decoration: none;
+}
+
+.dashboard-app-items-bg {
+    background: #5C4DB1;
+    color: white;
+    padding: 15px;
+    margin: 5px;
+    border-radius: 100px;
+    height: 64px;
+    width: 64px;
+    font-size: 35px;
+}
+
+.modal-backdrop{
+    position: unset;
+}

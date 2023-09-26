@@ -1,0 +1,25 @@
+/*
+  Theme Name: Regna
+  Theme URL: https://bootstrapmade.com/regna-bootstrap-onepage-template/
+  Author: BootstrapMade.com
+  License: https://bootstrapmade.com/license/
+*/
+/*--------------------------------------------------------------
+# General
+--------------------------------------------------------------*/
+
+@font-face {
+    font-family: 'Vazir';
+    src: url('fonts/Vazir.eot?#') format('eot'), /* IE6–۸ */ url('fonts/Vazir.woff') format('woff'), /* FF3.6+, IE9, Chrome6+, Saf5.1+*/ url('fonts/Vazir.ttf') format('truetype');  /* Saf3—۵, Chrome4+, FF3.5, Opera 10+ */
+}
+
+html, body {
+    font-family: Vazir;
+    background-color: #fff;
+}
+#cargoForm, #moreInfoForm, #vehicleTypeForm ,#suggestedPriceForm{
+    display: none;
+}
+
+
+
