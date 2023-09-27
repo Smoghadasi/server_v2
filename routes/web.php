@@ -54,7 +54,6 @@ Route::get('/conf', function () {
     Artisan::call('cache:clear');
     Artisan::call('view:clear');
     Artisan::call('config:cache');
-    return redirect('/');
 });
 
 
