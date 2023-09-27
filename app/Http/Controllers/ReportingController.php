@@ -222,7 +222,6 @@ class ReportingController extends Controller
     {
 
         $totalDrivers = Driver::count();
-
         // روند افزایش راننده ها از 12 ماه قبل
         $this->persianDateList = $this->getTheListOfPersianDatesOfAYear();
         for ($index = 11; $index >= 0; $index--)
@@ -230,7 +229,6 @@ class ReportingController extends Controller
                 'label' => str_replace('-', '/', convertEnNumberToFa($this->persianDateList[$index])),
                 'value' => $this->getIncreaseOfDriversSince12MonthsAgo($index)
             ];
-
         // تفکیک ناوگان ثبت نامی از ابتدا
         $separationOfTheFleetsFromTheFirst = $this->getSeparationOfTheFleetsFromTheFirst();
 
@@ -312,7 +310,7 @@ class ReportingController extends Controller
         $fleets = Driver::join('fleets', 'fleets.id', 'drivers.fleet_id')
             ->select('fleets.id', 'fleets.title', DB::raw('count(*) as total'))
             ->groupBy('fleets.id', 'fleets.title')
-            ->orderBy('total', 'acs')
+            ->orderBy('total', 'asc')
             ->pluck('total', 'fleets.title');
 
 
@@ -357,7 +355,7 @@ class ReportingController extends Controller
                 ->select('fleets.title', 'fleets.id', DB::raw('count(*) as total'))
                 ->where('persianDate', $day->persianDate)
                 ->groupBy('fleets.title', 'fleets.id')
-                ->orderBy('total', 'acs')
+                ->orderBy('total', 'asc')
                 ->get();
             foreach ($fleets as $fleet) {
                 $data[$fleet->id]['title'] = $fleet->title;
@@ -472,7 +470,7 @@ class ReportingController extends Controller
             ])
             ->select('fleets.id', 'fleets.title', DB::raw('count(*) as total'))
             ->groupBy('fleets.id', 'fleets.title')
-            ->orderBy('total', 'acs')
+            ->orderBy('total', 'asc')
             ->pluck('total', 'fleets.title');
 
         return $loadsByFleets;
@@ -553,7 +551,7 @@ class ReportingController extends Controller
             ->where('userType', ROLE_CARGo_OWNER)
             ->select('fleets.id', 'fleets.title', DB::raw('count(*) as total'))
             ->groupBy('fleets.id', 'fleets.title')
-            ->orderBy('total', 'acs')
+            ->orderBy('total', 'asc')
             ->pluck('total', 'fleets.title');
 
         return $loadsByFleets;
@@ -681,7 +679,7 @@ class ReportingController extends Controller
             ->where('users.role', 'operator')
             ->select('users.name', 'users.lastName', 'users.id', DB::raw('count(*) as total'))
             ->groupBy('users.id', 'users.name', 'users.lastName')
-            ->orderBy('total', 'acs')
+            ->orderBy('total', 'asc')
             ->get();
 
 
@@ -707,7 +705,7 @@ class ReportingController extends Controller
                 ])
                 ->select('users.name', 'users.lastName', 'users.id', DB::raw('count(*) as total'))
                 ->groupBy('users.id', 'users.name', 'users.lastName')
-                ->orderBy('total', 'acs')
+                ->orderBy('total', 'asc')
                 ->get();
 
             return $loadsByOperators;
@@ -728,7 +726,7 @@ class ReportingController extends Controller
             ->where('load_backups.operator_id', '>', 0)
             ->select('fleets.id', 'fleets.title', DB::raw('count(*) as total'))
             ->groupBy('fleets.id', 'fleets.title')
-            ->orderBy('total', 'acs')
+            ->orderBy('total', 'asc')
             ->pluck('total', 'fleets.title');
 
         return $loadsByFleets;
@@ -797,7 +795,7 @@ class ReportingController extends Controller
             ->join('load_backups', 'load_backups.id', 'fleet_loads.load_id')
             ->select('fleet_loads.fleet_id', 'fleets.id', 'fleets.title', DB::raw('count(*) as total'))
             ->groupBy('fleet_loads.fleet_id')
-            ->orderBy('fleet_id', 'acs')
+            ->orderBy('fleet_id', 'asc')
             ->pluck('total', 'fleets.title');
 
         $loadsByFleets['customer'] = FleetLoad::join('fleets', 'fleets.id', 'fleet_loads.fleet_id')
@@ -808,7 +806,7 @@ class ReportingController extends Controller
             ])
             ->select('fleet_loads.fleet_id', 'fleets.id', 'fleets.title', DB::raw('count(*) as total'))
             ->groupBy('fleet_loads.fleet_id')
-            ->orderBy('fleet_id', 'acs')
+            ->orderBy('fleet_id', 'asc')
             ->pluck('total', 'fleets.title');
 
         $loadsByFleets['transportation_company'] = FleetLoad::join('fleets', 'fleets.id', 'fleet_loads.fleet_id')
@@ -819,7 +817,7 @@ class ReportingController extends Controller
             ])
             ->select('fleet_loads.fleet_id', 'fleets.id', 'fleets.title', DB::raw('count(*) as total'))
             ->groupBy('fleet_loads.fleet_id')
-            ->orderBy('fleet_id', 'acs')
+            ->orderBy('fleet_id', 'asc')
             ->pluck('total', 'fleets.title');
 
         $loadsByFleets['operators'] = FleetLoad::join('fleets', 'fleets.id', 'fleet_loads.fleet_id')
@@ -827,7 +825,7 @@ class ReportingController extends Controller
             ->where('load_backups.operator_id', '>', 0)
             ->select('fleet_loads.fleet_id', 'fleets.id', 'fleets.title', DB::raw('count(*) as total'))
             ->groupBy('fleet_loads.fleet_id')
-            ->orderBy('fleet_id', 'acs')
+            ->orderBy('fleet_id', 'asc')
             ->pluck('total', 'fleets.title');
 
         return $loadsByFleets;

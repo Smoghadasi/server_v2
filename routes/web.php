@@ -54,6 +54,7 @@ Route::get('/conf', function () {
     Artisan::call('cache:clear');
     Artisan::call('view:clear');
     Artisan::call('config:cache');
+    return redirect('/');
 });
 
 
@@ -143,7 +144,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         /*************************************************************************************/
 
         // صفحه ناوگان
-        Route::resource('fleet', FleetController::class)->middleware("operator");
+        Route::resource('fleet', AdminFleetController::class)->middleware("operator");
 
         /***********************************************************************************************/
         // باربری ها

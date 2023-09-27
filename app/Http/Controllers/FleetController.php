@@ -305,15 +305,14 @@ class FleetController extends Controller
             ];
         }
         FleetOperator::create($data);*/
-
-        foreach ($request->fleets as $fleet) {
-            $myFleets = new FleetOperator();
-            $myFleets->operator_id = auth()->id();
-            $myFleets->fleet_id = $fleet;
-            $myFleets->save();
+        if (isset($request->fleets)){
+            foreach ($request->fleets as $fleet) {
+                $myFleets = new FleetOperator();
+                $myFleets->operator_id = auth()->id();
+                $myFleets->fleet_id = $fleet;
+                $myFleets->save();
+            }
         }
-
-
         return back()->with('success', 'ناوگان مورد نظر ذخیره شد');
     }
 }
