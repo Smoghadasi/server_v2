@@ -39,6 +39,29 @@ return [
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
+
+        ],
+
+        'api' => [
+            'driver' => 'token',
+            'provider' => 'users',
+        ],
+
+        'bearing' => [
+            'driver' => 'session',
+            'provider' => 'bearings'
+        ],
+        'customer' => [
+            'driver' => 'session',
+            'provider' => 'customers'
+        ],
+        'driver' => [
+            'driver' => 'session',
+            'provider' => 'drivers'
+        ],
+        'marketer' => [
+            'driver' => 'session',
+            'provider' => 'marketers'
         ],
     ],
 
@@ -62,13 +85,25 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => \App\Models\User::class,
+        ],
+        'bearings' => [
+            'driver' => 'eloquent',
+            'model' => \App\Models\Bearing::class,
+        ],
+        'customers' => [
+            'driver' => 'eloquent',
+            'model' => \App\Models\Customer::class,
+        ],
+        'drivers' => [
+            'driver' => 'eloquent',
+            'model' => \App\Models\Driver::class,
+        ],
+        'marketers' => [
+            'driver' => 'eloquent',
+            'model' => \App\Models\Marketer::class,
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
     ],
 
     /*
@@ -90,8 +125,28 @@ return [
         'users' => [
             'provider' => 'users',
             'table' => 'password_resets',
-            'expire' => 60,
-            'throttle' => 60,
+            'expire' => 1800,
+        ],
+        'bearings' => [
+            'provider' => 'bearings',
+            'table' => 'password_resets',
+            'expire' => 1800,
+        ],
+
+        'customers' => [
+            'provider' => 'customers',
+            'table' => 'password_resets',
+            'expire' => 1800,
+        ],
+        'drivers' => [
+            'provider' => 'drivers',
+            'table' => 'password_resets',
+            'expire' => 1800,
+        ],
+        'marketers' => [
+            'provider' => 'marketers',
+            'table' => 'password_resets',
+            'expire' => 1800,
         ],
     ],
 
