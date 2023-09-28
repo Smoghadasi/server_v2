@@ -38,13 +38,13 @@ const ANOTHER = 3;
 
 const SELECT_DRIVER = 3;
 const DELIVERY = 3;
-
+// بار رد شده
 const BEFORE_APPROVAL = -1; // قبل از تایید بار توسط اپراتور
 const UNPAID = 0; // پرداخت نشده
-const WITHOUT_DRIVER = 1;
-const WITH_DRIVER = 2;
-const PAY_FOR_DRIVER = 3;
-const ON_SELECT_DRIVER = 4;
+const WITHOUT_DRIVER = 1; // مناقصه تمام شده
+const WITH_DRIVER = 2; // تایید باربری و منتظر انتخاب راننده
+const PAY_FOR_DRIVER = 3; // پرداخت برای انتخاب راننده
+const ON_SELECT_DRIVER = 4; // راننده انتخاب شده است
 
 const NO_OPERATOR = 0;
 

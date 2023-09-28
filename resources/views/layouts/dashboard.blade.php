@@ -165,12 +165,14 @@
 
             <ul class="menu-inner py-1">
                 <!-- Dashboard -->
-                <li class="menu-item">
-                    <a href="{{ url('/dashboard') }}" class="menu-link">
-                        <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                        <div data-i18n="Analytics">داشبورد</div>
-                    </a>
-                </li>
+                @if(in_array('dashboard',auth()->user()->userAccess))
+                    <li class="menu-item">
+                        <a href="{{ url('/dashboard') }}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                            <div data-i18n="Analytics">داشبورد</div>
+                        </a>
+                    </li>
+                @endif
 
 
                 <li class="menu-item">

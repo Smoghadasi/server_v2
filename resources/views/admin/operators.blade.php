@@ -113,6 +113,13 @@
                                             <div class="modal-body text-right">
                                                 <div class="form-group">
                                                     <label>
+                                                        <input type="checkbox" name="dashboard"
+                                                               @if (in_array('dashboard', $user->userAccess)) checked @endif>
+                                                        داشبورد
+                                                    </label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>
                                                         <input type="checkbox" name="loads"
                                                             @if (in_array('loads', $user->userAccess)) checked @endif>
                                                         بارها
@@ -258,7 +265,7 @@
                                                     </label>
                                                 </div>
 
-                                                
+
                                                 <div class="form-group">
                                                     <label>
                                                         <input type="checkbox" name="services"
@@ -266,7 +273,7 @@
                                                         خدمات ها
                                                     </label>
                                                 </div>
-                                                
+
 
 
                                             </div>
