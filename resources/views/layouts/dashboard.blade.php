@@ -216,6 +216,11 @@
                                 </a>
                             </li>
 
+                            <li class="menu-item">
+                                <a class="menu-link" href="{{ route('accept.cargo.index') }}">
+                                    <div data-i18n="Without menu">تایید بار ها</div>
+                                </a>
+                            </li>
 
                             <li class="menu-item">
                                 <a class="menu-link" href="{{ url('admin/dictionary') }}">
