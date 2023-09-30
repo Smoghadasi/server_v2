@@ -5,6 +5,7 @@ use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BearingController;
 use App\Http\Controllers\ComplaintController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\FreeSubscriptionController;
 use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\DataConvertController;
