@@ -13,7 +13,7 @@
                     <th>#</th>
                     <th>عنوان بار</th>
                     <th>شماره موبایل</th>
-                    <th>باربری یا صاحب بار</th>
+{{--                    <th>باربری یا صاحب بار</th>--}}
                     <th>ناوگان</th>
                     <th>تاریخ</th>
                     <th>نمایش</th>
@@ -25,7 +25,7 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $load->title }}</td>
                         <td>{{ $load->senderMobileNumber }}</td>
-                        <td>{{ $load->userType == ROLE_CUSTOMER ? 'صاحب بار' : 'باربری' }}</td>
+{{--                        <td>{{ $load->userType == ROLE_CUSTOMER ? 'صاحب بار' : 'باربری' }}</td>--}}
                         <td>
                             @php
                                 $fleets = json_decode($load->fleets, true);

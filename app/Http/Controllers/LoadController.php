@@ -1572,7 +1572,9 @@ class LoadController extends Controller
 
     public function loadBackup()
     {
-        $loads = LoadBackup::orderByDesc('created_at')->paginate(20);
+        $loads = LoadBackup::orderByDesc('created_at')
+            ->where('userType', ROLE_CUSTOMER)
+            ->paginate(20);
         return view('admin.loadBackup', compact('loads'));
     }
 
