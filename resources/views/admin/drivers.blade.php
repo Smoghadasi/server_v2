@@ -138,33 +138,69 @@
                                 <td>{{ $driver->version ?? '-' }}</td>
                                 <td>{{ $driver->mobileNumber }}</td>
                                 <td style="line-height: 2rem;">
-                                    <a class="btn btn-sm btn-primary"
-                                        href="{{ url('admin/driverInfo') }}/{{ $driver->id }}">جزئیات</a>
-                                    <a class="btn btn-sm btn-success"
-                                        href="{{ url('admin/editDriver') }}/{{ $driver->id }}">ویرایش</a>
+                                    <div class="dropdown">
+                                        <div class="btn-group dropstart">
+                                            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                عملیات
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="{{ url('admin/driverInfo') }}/{{ $driver->id }}">جزئیات</a></li>
+                                                <li><a class="dropdown-item" href="{{ url('admin/editDriver') }}/{{ $driver->id }}">ویرایش</a></li>
+                                                <li>
+                                                    @if ($driver->status == 0)
 
-                                    @if ($driver->status == 0)
-                                        <a class="btn btn-success btn-sm"
-                                            href="{{ url('admin/changeDriverStatus') }}/{{ $driver->id }}">
-                                            فعال شود
-                                        </a>
-                                    @else
-                                        <a class="btn btn-warning btn-sm"
-                                            href="{{ url('admin/changeDriverStatus') }}/{{ $driver->id }}">
-                                            غیر فعال شود
-                                        </a>
-                                    @endif
+                                                        <a class="dropdown-item" href="{{ url('admin/changeDriverStatus') }}/{{ $driver->id }}">فعال شود</a>
+                                                    @else
+                                                        <a class="dropdown-item" href="{{ url('admin/changeDriverStatus') }}/{{ $driver->id }}">غیر فعال شود</a>
+                                                    @endif
+                                                </li>
+                                                <li>
+                                                    <button type="button" class="dropdown-item" data-bs-toggle="modal"
+                                                            data-bs-target="#creditDriverExtending_{{ $driver->id }}">تمدید اعتبار
+                                                    </button>
+                                                </li>
+                                                @if (auth()->user()->role == 'admin')
+                                                    <li>
+                                                        <button type="button" class="dropdown-item" data-bs-toggle="modal"
+                                                                data-bs-target="#removeDriver_{{ $driver->id }}">حذف
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <form action="{{ route('drivers-payment-report') }}" method="post" style="display: inline;">
+                                                            @csrf
+                                                            <input type="hidden" class="form-control" name="mobileNumber"
+                                                                   placeholder="شماره تلفن"
+                                                                   @if (isset($driver->mobileNumber)) value="{{ $driver->mobileNumber }}" @endif>
+                                                            <button class="dropdown-item" type="submit">لیست پرداختی
+                                                                ها</button>
+                                                        </form>
+                                                    </li>
+                                                @endif
+                                                @if (auth()->user()->role == 'admin' && (strlen($driver->ip) > 0 || $driver->ip != null))
+                                                    @if ($driver->blockedIp == false)
+                                                        <button type="button" class="dropdown-item"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#blockUserIp_{{ $driver->id }}">مسدود کردن IP
+                                                        </button>
+                                                    @else
+                                                        <button type="button" class="dropdown-item"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#unBlockUserIp_{{ $driver->id }}">
+                                                            حذف از لیست Ipهای مسدود
+                                                        </button>
+                                                    @endif
+                                                @endif
+                                            </ul>
+                                        </div>
+                                    </div>
 
-                                    <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal"
-                                        data-bs-target="#creditDriverExtending_{{ $driver->id }}">تمدید اعتبار
-                                    </button>
 
                                     <div id="creditDriverExtending_{{ $driver->id }}" class="modal fade" role="dialog">
                                         <div class="modal-dialog">
 
                                             <!-- Modal content-->
                                             <form action="{{ url('admin/creditDriverExtending') }}/{{ $driver->id }}"
-                                                method="post" class="modal-content">
+                                                  method="post" class="modal-content">
                                                 @csrf
                                                 <div class="modal-header">
                                                     <h4 class="modal-title">تمدید اعتبار راننده</h4>
@@ -178,19 +214,19 @@
                                                     <div class="form-group">
                                                         <lable> مدت اعتبار به ماه :</lable>
                                                         <input type="number" class="form-control" name="month"
-                                                            value="0" placeholder="مدت اعتبار">
+                                                               value="0" placeholder="مدت اعتبار">
                                                     </div>
 
                                                     <div class="form-group">
                                                         <lable> تعداد تماس رایگان :</lable>
                                                         <input type="number" class="form-control" name="freeCalls"
-                                                            value="0" placeholder="تعداد تماس رایگان">
+                                                               value="0" placeholder="تعداد تماس رایگان">
                                                     </div>
 
                                                     <div class="form-group">
                                                         <lable> تعداد بار رایگان :</lable>
                                                         <input type="number" class="form-control" name="freeAcceptLoads"
-                                                            value="0" placeholder="تعداد بار رایگان">
+                                                               value="0" placeholder="تعداد بار رایگان">
                                                     </div>
 
 
@@ -208,12 +244,7 @@
                                         </div>
                                     </div>
 
-
                                     @if (auth()->user()->role == 'admin')
-                                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                                            data-bs-target="#removeDriver_{{ $driver->id }}">حذف
-                                        </button>
-
                                         <div id="removeDriver_{{ $driver->id }}" class="modal fade" role="dialog">
                                             <div class="modal-dialog">
 
@@ -242,24 +273,11 @@
 
                                             </div>
                                         </div>
-
-                                        <form action="{{ route('drivers-payment-report') }}" method="post" style="display: inline;">
-                                            @csrf
-                                            <input type="hidden" class="form-control" name="mobileNumber"
-                                                placeholder="شماره تلفن"
-                                                @if (isset($driver->mobileNumber)) value="{{ $driver->mobileNumber }}" @endif>
-                                            <button class="btn btn-success btn-sm" type="submit">لیست پرداختی
-                                                ها</button>
-                                        </form>
                                     @endif
 
 
                                     @if (auth()->user()->role == 'admin' && (strlen($driver->ip) > 0 || $driver->ip != null))
                                         @if ($driver->blockedIp == false)
-                                            <button type="button" class="btn btn-danger btn-sm"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#blockUserIp_{{ $driver->id }}">مسدود کردن IP
-                                            </button>
 
                                             <div id="blockUserIp_{{ $driver->id }}" class="modal fade" role="dialog">
                                                 <div class="modal-dialog">
@@ -290,12 +308,6 @@
                                                 </div>
                                             </div>
                                         @else
-                                            <button type="button" class="btn btn-success btn-sm"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#unBlockUserIp_{{ $driver->id }}">
-                                                حذف از لیست Ipهای مسدود
-                                            </button>
-
                                             <div id="unBlockUserIp_{{ $driver->id }}" class="modal fade"
                                                 role="dialog">
                                                 <div class="modal-dialog">
