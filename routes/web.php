@@ -5,6 +5,7 @@ use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BearingController;
 use App\Http\Controllers\ComplaintController;
+use App\Http\Controllers\FreeSubscriptionController;
 use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\DataConvertController;
 use App\Http\Controllers\DriverController;
@@ -556,6 +557,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         // تماس با رانندگان
         Route::get('contactingWithDrivers', [OperatorContactingController::class, 'contactingWithDrivers'])->middleware('operator');
+
+        Route::resource('freeSubscription', FreeSubscriptionController::class)->middleware('operator');
 
         // نتیجه تماس ها
         Route::get('contactingWithDriverResult/{driver}', [OperatorContactingController::class, 'contactingWithDriverResult'])->middleware('operator');
