@@ -282,6 +282,13 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label>
+                                                        <input type="checkbox" name="loadOwner"
+                                                               @if (in_array('loadOwner', $user->userAccess)) checked @endif>
+                                                        بار های ثبت شده توسط صاحبین بار
+                                                    </label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>
                                                         <input type="checkbox" name="driversPaymentReport"
                                                                @if (in_array('driversPaymentReport', $user->userAccess)) checked @endif>
                                                         لیست پرداختی

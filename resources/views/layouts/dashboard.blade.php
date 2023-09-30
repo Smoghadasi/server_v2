@@ -215,6 +215,13 @@
                                     <div data-i18n="Without menu">ثبت بار</div>
                                 </a>
                             </li>
+                            @if(in_array('loadOwner',auth()->user()->userAccess))
+                                <li class="menu-item">
+                                    <a class="menu-link" href="{{ route('admin.loadBackup') }}">
+                                        <div data-i18n="Without menu">بار های ثبت شده توسط صاحبین بار</div>
+                                    </a>
+                                </li>
+                            @endif
 
                             <li class="menu-item">
                                 <a class="menu-link" href="{{ route('accept.cargo.index') }}">

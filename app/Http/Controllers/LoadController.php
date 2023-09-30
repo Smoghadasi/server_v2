@@ -1570,6 +1570,12 @@ class LoadController extends Controller
         return view('admin/customerLoads', compact('loads', 'customer_id'));
     }
 
+    public function loadBackup()
+    {
+        $loads = LoadBackup::orderByDesc('created_at')->paginate(20);
+        return view('admin.loadBackup', compact('loads'));
+    }
+
     /*************************************************************************************************/
 
     // درخواست لیست باریهای جدید برای راننده
