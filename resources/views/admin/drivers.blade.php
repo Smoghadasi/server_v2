@@ -165,6 +165,8 @@
                                                                 data-bs-target="#removeDriver_{{ $driver->id }}">حذف
                                                         </button>
                                                     </li>
+                                                @endif
+                                                @if(in_array('driversPaymentReport',auth()->user()->userAccess))
                                                     <li>
                                                         <form action="{{ route('drivers-payment-report') }}" method="post" style="display: inline;">
                                                             @csrf

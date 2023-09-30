@@ -280,7 +280,13 @@
                                                         اشتراک و تماس رایگان
                                                     </label>
                                                 </div>
-
+                                                <div class="form-group">
+                                                    <label>
+                                                        <input type="checkbox" name="driversPaymentReport"
+                                                               @if (in_array('driversPaymentReport', $user->userAccess)) checked @endif>
+                                                        لیست پرداختی
+                                                    </label>
+                                                </div>
 
 
                                             </div>
