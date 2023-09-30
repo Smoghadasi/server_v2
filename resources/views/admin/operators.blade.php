@@ -273,6 +273,13 @@
                                                         خدمات ها
                                                     </label>
                                                 </div>
+                                                <div class="form-group">
+                                                    <label>
+                                                        <input type="checkbox" name="freeSubscription"
+                                                               @if (in_array('services', $user->userAccess)) checked @endif>
+                                                        اشتراک و تماس رایگان
+                                                    </label>
+                                                </div>
 
 
 

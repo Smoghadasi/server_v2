@@ -245,11 +245,13 @@
                                 <span>گزارش بار ها به تفکیک ناوگان</span>
                             </a>
                         </li>
-                        <li class="menu-item">
-                            <a class="menu-link" href="{{ route('freeSubscription.index') }}">
-                                <span>اشتراک و تماس رایگان</span>
-                            </a>
-                        </li>
+                        @if(in_array('freeSubscription',auth()->user()->userAccess))
+                            <li class="menu-item">
+                                <a class="menu-link" href="{{ route('freeSubscription.index') }}">
+                                    <span>اشتراک و تماس رایگان</span>
+                                </a>
+                            </li>
+                        @endif
                         @if(auth()->user()->role == ROLE_ADMIN || auth()->id() == 29)
                             <li class="menu-item">
                                 <a class="menu-link" href="{{ url('admin/driverActivityReport') }}">
