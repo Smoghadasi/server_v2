@@ -8,6 +8,7 @@ use App\Models\City;
 use App\Models\Driver;
 use App\Models\DriverActivity;
 use App\Models\DriverCall;
+use App\Models\DriverCallCount;
 use App\Models\DriverCallReport;
 use App\Models\DriverDefaultPath;
 use App\Models\Fleet;
@@ -772,6 +773,20 @@ class DriverController extends Controller
                         $driverCallReport->calls = 1;
                         $driverCallReport->fleet_id = $driver->fleet_id;
                         $driverCallReport->save();
+                    }
+
+                    $driverCallCount = DriverCallCount::where('driver_id', $driver->id)
+                        ->where('persian_date', $persian_date)
+                        ->first();
+                    if (isset($driverCallCount->id)) {
+                        $driverCallCount->calls += 1;
+                        $driverCallCount->save();
+                    } else {
+                        $driverCallCount = new DriverCallCount();
+                        $driverCallCount->persian_date = $persian_date;
+                        $driverCallCount->calls = 1;
+                        $driverCallCount->driver_id = $driver->id;
+                        $driverCallCount->save();
                     }
                 }
 

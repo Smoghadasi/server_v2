@@ -9,6 +9,7 @@ use App\Models\ContactReportWithCargoOwnerResult;
 use App\Models\Customer;
 use App\Models\Driver;
 use App\Models\DriverActivity;
+use App\Models\DriverCallCount;
 use App\Models\DriverCallReport;
 use App\Models\Fleet;
 use App\Models\FleetLoad;
@@ -303,6 +304,15 @@ class ReportingController extends Controller
 
         return view('admin.reporting.driversContactCall', compact(['basedCalls', 'basedFleets', 'groupBy']));
     }
+    public function driversCountCall()
+    {
+        $basedCalls = DriverCallCount::with('driver')->groupBy('driver_id')
+            ->select('driver_id','persian_date', DB::raw('sum(calls) as countOfCalls'))
+            ->orderByDesc('countOfCalls')
+            ->paginate(20);
+        return view('admin.reporting.driversCountCall', compact('basedCalls'));
+    }
+
 
     // تفکیک ناوگان ثبت نامی از ابتدا
     private function getSeparationOfTheFleetsFromTheFirst()

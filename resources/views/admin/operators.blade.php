@@ -294,6 +294,13 @@
                                                         لیست پرداختی
                                                     </label>
                                                 </div>
+                                                <div class="form-group">
+                                                    <label>
+                                                        <input type="checkbox" name="driversContactCall"
+                                                               @if (in_array('driversContactCall', $user->userAccess)) checked @endif>
+                                                        گزارش بر اساس تماس
+                                                    </label>
+                                                </div>
 
 
                                             </div>

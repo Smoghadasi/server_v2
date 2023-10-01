@@ -472,8 +472,12 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // گزارش فعالیت رانندگان
         Route::get('driverActivityReport', [ReportingController::class, 'driverActivityReport'])->middleware('operator');
 
-        // نمودار فعالیت رانندگان بر اساس تماس
+        // نمودار فعالیت ناوگان بر اساس تماس
         Route::get('driversContactCall', [ReportingController::class, 'driversContactCall'])->name('report.driversContactCall');
+
+        // نمودار فعالیت رانندگان بر اساس تماس
+        Route::get('driversCountCall', [ReportingController::class, 'driversCountCall'])->name('report.driversCountCall');
+
 
         // گزارش فعالیت باربری ها
         Route::get('transportationCompaniesActivityReport', [ReportingController::class, 'transportationCompaniesActivityReport'])->middleware('admin');

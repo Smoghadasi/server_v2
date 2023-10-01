@@ -275,20 +275,24 @@
                                 </a>
                             </li>
                         @endif
-
+                        @if(in_array('driversContactCall',auth()->user()->userAccess))
+                            <li class="menu-item">
+                                <a href="{{ route('report.driversContactCall') }}" class="menu-link">
+                                    <div data-i18n="Without menu">گزارش ناوگان بر اساس تماس</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="{{ route('report.driversCountCall') }}" class="menu-link">
+                                    <div data-i18n="Without menu">گزارش ناوگان بر اساس تماس</div>
+                                </a>
+                            </li>
+                        @endif
                         @if(auth()->user()->role == ROLE_ADMIN)
                             <li class="menu-item">
                                 <a href="{{ url('admin/summaryOfDaysReport') }}" class="menu-link">
                                     <div data-i18n="Without menu">خلاصه گزارش روز</div>
                                 </a>
                             </li>
-
-                            <li class="menu-item">
-                                <a href="{{ route('report.driversContactCall') }}" class="menu-link">
-                                    <div data-i18n="Without menu">گزارش رانندگان بر اساس تماس</div>
-                                </a>
-                            </li>
-
 
                             <li class="menu-item">
                                 <a class="menu-link"
