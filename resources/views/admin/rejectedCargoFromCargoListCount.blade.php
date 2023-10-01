@@ -8,14 +8,14 @@
             <table class="table">
                 <tr>
                     <th>#</th>
-                    <th>تعداد</th>
                     <th>اپراتور</th>
+                    <th>تعداد</th>
                 </tr>
                 @foreach ($groupBys as $groupBy => $key)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>
-                            {{ $groupBy }}
+                            سرکار خانم / آقا {{ $groupBy }}
                         </td>
                         <td>{{ $key->count() }}</td>
 
