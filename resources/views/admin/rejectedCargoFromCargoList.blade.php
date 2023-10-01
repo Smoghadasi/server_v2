@@ -3,7 +3,13 @@
 @section('content')
 
     <div class="card">
-        <h5 class="card-header">بارهای رد شده</h5>
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <h5 class="mb-0">بار های رد شده</h5>
+            @if(auth()->user()->role == ROLE_ADMIN || auth()->id() == 29)
+                <small class="text-muted float-end"><a class="btn btn-primary" href="{{ route('rejectCargoCount') }}">بار
+                        رد شده توسط اپراتور ها</a></small>
+            @endif
+        </div>
         <div class="table-responsive">
             <table class="table">
                 <tr>
@@ -22,7 +28,7 @@
                 @endforeach
             </table>
             <div class="mt-2">
-            {{ $cargoList }}
+                {{ $cargoList }}
             </div>
         </div>
     </div>

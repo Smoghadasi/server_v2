@@ -11,12 +11,15 @@ use App\Models\City;
 use App\Models\Customer;
 use App\Models\DateOfCargoDeclaration;
 use App\Models\Dictionary;
+use App\Models\DriverCallCount;
+use App\Models\DriverCallReport;
 use App\Models\Fleet;
 use App\Models\FleetLoad;
 use App\Models\Load;
 use App\Models\LoadBackup;
 use App\Models\CargoReportByFleet;
 use App\Models\OperatorCargoListAccess;
+use App\Models\RejectCargoOperator;
 use App\Models\Tender;
 use App\Models\Transaction;
 use App\Models\User;
@@ -56,9 +59,23 @@ class DataConvertController extends Controller
 
     public function removeCargoFromCargoList(CargoConvertList $cargo)
     {
-        $cargo->status= 1;
+        $cargo->status = 1;
         $cargo->rejected = 1;
         $cargo->save();
+        $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+        $rejectCargo = RejectCargoOperator::where('user_id', auth()->id())
+            ->where('persian_date', $persian_date)
+            ->first();
+        if (isset($rejectCargo->id)) {
+            $rejectCargo->count += 1;
+            $rejectCargo->save();
+        } else {
+            $rejectCargo = new RejectCargoOperator();
+            $rejectCargo->persian_date = $persian_date;
+            $rejectCargo->count = 1;
+            $rejectCargo->user_id = auth()->id();
+            $rejectCargo->save();
+        }
         return back();
     }
 
@@ -471,9 +488,9 @@ class DataConvertController extends Controller
         try {
 
             if (UserActivityReport::where([
-                ['created_at', '>', date('Y-m-d H:i:s', strtotime('-5 minute', time()))],
-                ['user_id', \auth()->id()]
-            ])->count() == 0)
+                    ['created_at', '>', date('Y-m-d H:i:s', strtotime('-5 minute', time()))],
+                    ['user_id', \auth()->id()]
+                ])->count() == 0)
 
                 UserActivityReport::create(['user_id' => \auth()->id()]);
         } catch (Exception $e) {
@@ -511,7 +528,7 @@ class DataConvertController extends Controller
     // ذخیره بار
     public function storeCargo($origin, $destination, $mobileNumber, $fleet, $freight, $priceType, $title, &$counter)
     {
-        if (!strlen(trim($origin)) || $origin == null || $origin == 'null' || !strlen(trim($destination)) || $destination == null  || $destination == 'null' || !strlen($fleet) || !strlen($mobileNumber))
+        if (!strlen(trim($origin)) || $origin == null || $origin == 'null' || !strlen(trim($destination)) || $destination == null || $destination == 'null' || !strlen($fleet) || !strlen($mobileNumber))
             return;
 
         $freight = convertFaNumberToEn(str_replace(',', '', $freight));
@@ -644,7 +661,7 @@ class DataConvertController extends Controller
                     $fleetLoad->save();
 
                     try {
-                        $persian_date = gregorianDateToPersian(date('Y/m/d', time()),'/');
+                        $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
                         // Log::emergency("Error cargo report by 1371: ");
 
                         $cargoReport = CargoReportByFleet::where('fleet_id', $fleetLoad->fleet_id)
@@ -808,10 +825,10 @@ class DataConvertController extends Controller
         try {
             $original_word_id = $request->type == 'city' ? $request->city_id : $request->fleet_id;
             if (Dictionary::where([
-                ['equivalentWord', $request->equivalentWord],
-                ['type', $request->type],
-                ['original_word_id', $original_word_id],
-            ])->count() > 0)
+                    ['equivalentWord', $request->equivalentWord],
+                    ['type', $request->type],
+                    ['original_word_id', $original_word_id],
+                ])->count() > 0)
                 return back()->with('danger', 'کلمه اصلی، کلمه معادل و دسته تکراری است');
 
             if (strlen($request->equivalentWord)) {
@@ -832,7 +849,7 @@ class DataConvertController extends Controller
     public function removeDictionaryWord(Dictionary $dictionary)
     {
         $dictionary->delete();
-        return back()->with('success', ' کلمه '  . $dictionary->equivalentWord . ' حذف شد ' );
+        return back()->with('success', ' کلمه ' . $dictionary->equivalentWord . ' حذف شد ');
     }
 
     /**************************************************************************************************/
@@ -1570,6 +1587,23 @@ class DataConvertController extends Controller
     {
         $cargoList = CargoConvertList::where('rejected', 1)->orderBy('id', 'desc')->paginate(20);
         return view('admin.rejectedCargoFromCargoList', compact('cargoList'));
+    }
+
+    public function allRejectedCargoCount()
+    {
+        $cargoList = CargoConvertList::with('operator')
+            ->where('rejected', 1)
+//            ->select('operator_id','persian_date', DB::raw('sum(calls) as countOfCalls'))
+            ->get();
+        $groupBys = $cargoList->groupBy('operator.lastName');
+
+        return view('admin.rejectedCargoFromCargoListCount', compact('groupBys'));
+    }
+    public function rejectCargoCount()
+    {
+        $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+        $rejects = RejectCargoOperator::where('persian_date', $persian_date)->get();
+        return view('admin.rejectCargo', compact('rejects', 'persian_date'));
     }
 
     /********************************************************************************************************/

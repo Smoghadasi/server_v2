@@ -542,6 +542,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // لیست بارهای رد شده
         Route::get('rejectedCargoFromCargoList', [DataConvertController::class, 'rejectedCargoFromCargoList']);
 
+        Route::get('allRejectedCargoCount', [DataConvertController::class, 'allRejectedCargoCount'])->name('allRejectedCargoCount');
+        Route::get('rejectCargoCount', [DataConvertController::class, 'rejectCargoCount'])->name('rejectCargoCount');
+
         // تعیین دسترسی اپراتور ها به بارها براساس ناوگان، شهر و...
         Route::post('operatorCargoListAccess/{user}', [DataConvertController::class, 'operatorCargoListAccess']);
 
