@@ -15,7 +15,7 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>
-                            سرکار خانم / آقا {{ $groupBy }}
+                            {{ $groupBy }}
                         </td>
                         <td>{{ $key->count() }}</td>
 
