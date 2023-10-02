@@ -15,7 +15,8 @@
                         <th>راننده</th>
                         <th>تلفن</th>
                         <th>تعداد</th>
-                        <th>تاریخ</th>
+                        <th>تاریخ تماس</th>
+                        <th>تاریخ ثبت نام</th>
                     </tr>
                     </thead>
 
@@ -27,6 +28,14 @@
                             <td>{{ $basedCall->driver->mobileNumber ?? '-' }}</td>
                             <td>{{ $basedCall->countOfCalls }}</td>
                             <td>{{ $basedCall->persian_date }}</td>
+                            <td>
+                                {{ gregorianDateToPersian($basedCall->created_date, '-', true) }}
+                                @if (isset(explode(' ', $basedCall->created_date)[1]))
+                                    ({{ explode(' ', $basedCall->created_date)[1] }})
+                                @else
+                                    -
+                                @endif
+                            </td>
                         </tr>
                     @endforeach
                     </tbody>

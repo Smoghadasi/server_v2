@@ -780,12 +780,14 @@ class DriverController extends Controller
                         ->first();
                     if (isset($driverCallCount->id)) {
                         $driverCallCount->calls += 1;
+                        $driverCallCount->created_date = $driver->created_at;
                         $driverCallCount->save();
                     } else {
                         $driverCallCount = new DriverCallCount();
                         $driverCallCount->persian_date = $persian_date;
                         $driverCallCount->calls = 1;
                         $driverCallCount->driver_id = $driver->id;
+                        $driverCallCount->created_date = $driver->created_at;
                         $driverCallCount->save();
                     }
                 }
