@@ -308,6 +308,7 @@ class ReportingController extends Controller
     {
         $basedCalls = DriverCallCount::with('driver')->groupBy('driver_id')
             ->select('driver_id','persian_date', DB::raw('sum(calls) as countOfCalls'))
+            ->orderByDesc('persian_date')
             ->orderByDesc('countOfCalls')
             ->paginate(20);
         return view('admin.reporting.driversCountCall', compact('basedCalls'));
