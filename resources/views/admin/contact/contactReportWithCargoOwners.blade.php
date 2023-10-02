@@ -71,12 +71,16 @@
                             </td>
                             <td>{{ $contactReportWithCargoOwner->mobileNumber }}</td>
                             <td>
-                                {{ $contactReportWithCargoOwner->nameAndLastName }}
+                                {{ $contactReportWithCargoOwner->nameAndLastName !== "" ? $contactReportWithCargoOwner->nameAndLastName : '-'}}
                                 <span
                                     class="text-primary small mr-1">{{ $contactReportWithCargoOwner->registerStatus }}</span>
                             </td>
-                            <td>{{ $contactReportWithCargoOwner->firstCal }}</td>
-                            <td>{{ $contactReportWithCargoOwner->lastCal }}</td>
+                            <td>
+                                {{ $contactReportWithCargoOwner->firstCal !== "" ? $contactReportWithCargoOwner->firstCal : '-'}}
+                            </td>
+                            <td>
+                                {{ $contactReportWithCargoOwner->lastCal !== "" ? $contactReportWithCargoOwner->lastCal : '-'}}
+                            </td>
                             <td>
                                 @if(isset($contactReportWithCargoOwner->results[0]))
                                     <div class="alert alert-info">
