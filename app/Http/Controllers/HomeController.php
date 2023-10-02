@@ -40,9 +40,6 @@ class HomeController extends Controller
     public function dashboard()
     {
         try {
-            if (auth()->user()->role !== ROLE_ADMIN) {
-                return redirect()->route('user.edit');
-            }
             $cargoAcceptsCount = Load::where('status', BEFORE_APPROVAL)->count();
             $countOfLoads = LoadBackup::count();
             $countOfBearings = Bearing::count();

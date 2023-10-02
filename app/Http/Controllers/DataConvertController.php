@@ -147,7 +147,6 @@ class DataConvertController extends Controller
                     ->select('equivalentWord')
                     ->pluck('equivalentWord')
                     ->toArray();
-
                 $conditions = [];
 
                 foreach ($dictionary as $item) {
@@ -237,6 +236,7 @@ class DataConvertController extends Controller
 
         $phoneNumbers = [];
         $phoneNumber = '';
+//        return $cleanedText;
 
         foreach ($cleanedText as $key => $item)
             if (preg_match("/^[0]{1}\d{10}$/", $item))
