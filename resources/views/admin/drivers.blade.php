@@ -144,21 +144,20 @@
                                                 عملیات
                                             </button>
                                             <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" href="{{ url('admin/driverInfo') }}/{{ $driver->id }}">جزئیات</a></li>
-                                                <li><a class="dropdown-item" href="{{ url('admin/editDriver') }}/{{ $driver->id }}">ویرایش</a></li>
+                                                @if(in_array('detailDriver',auth()->user()->userAccess))
+                                                    <li><a class="dropdown-item" href="{{ url('admin/driverInfo') }}/{{ $driver->id }}">جزئیات</a></li>
+                                                    <li><a class="dropdown-item" href="{{ url('admin/editDriver') }}/{{ $driver->id }}">ویرایش</a></li>
+                                                @endif
                                                 <li>
-                                                    @if ($driver->status == 0)
-
-                                                        <a class="dropdown-item" href="{{ url('admin/changeDriverStatus') }}/{{ $driver->id }}">فعال شود</a>
-                                                    @else
-                                                        <a class="dropdown-item" href="{{ url('admin/changeDriverStatus') }}/{{ $driver->id }}">غیر فعال شود</a>
+                                                    @if (auth()->user()->role == 'admin')
+                                                        @if ($driver->status == 0)
+                                                            <a class="dropdown-item" href="{{ url('admin/changeDriverStatus') }}/{{ $driver->id }}">فعال شود</a>
+                                                        @else
+                                                            <a class="dropdown-item" href="{{ url('admin/changeDriverStatus') }}/{{ $driver->id }}">غیر فعال شود</a>
+                                                        @endif
                                                     @endif
                                                 </li>
-                                                <li>
-                                                    <button type="button" class="dropdown-item" data-bs-toggle="modal"
-                                                            data-bs-target="#creditDriverExtending_{{ $driver->id }}">تمدید اعتبار
-                                                    </button>
-                                                </li>
+
                                                 @if (auth()->user()->role == 'admin')
                                                     <li>
                                                         <button type="button" class="dropdown-item" data-bs-toggle="modal"
@@ -167,6 +166,11 @@
                                                     </li>
                                                 @endif
                                                 @if(in_array('driversPaymentReport',auth()->user()->userAccess))
+                                                    <li>
+                                                        <button type="button" class="dropdown-item" data-bs-toggle="modal"
+                                                                data-bs-target="#creditDriverExtending_{{ $driver->id }}">تمدید اعتبار
+                                                        </button>
+                                                    </li>
                                                     <li>
                                                         <form action="{{ route('drivers-payment-report') }}" method="post" style="display: inline;">
                                                             @csrf

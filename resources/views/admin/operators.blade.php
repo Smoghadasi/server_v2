@@ -1,7 +1,47 @@
 @extends('layouts.dashboard')
 
 @section('content')
+    <style>
+        /* Remove default bullets */
+        ul, #myUL {
+            list-style-type: none;
+        }
 
+        /* Remove margins and padding from the parent ul */
+        #myUL {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Style the caret/arrow */
+        .caret {
+            cursor: pointer;
+            user-select: none; /* Prevent text selection */
+        }
+
+        /* Create the caret/arrow with a unicode, and style it */
+        .caret::before {
+            content: "\25C0";
+            color: black;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        /* Rotate the caret/arrow icon when clicked on (using JavaScript) */
+        .caret-down::before {
+            transform: rotate(90deg);
+        }
+
+        /* Hide the nested list */
+        .nested {
+            display: none;
+        }
+
+        /* Show the nested list when the user clicks on the caret/arrow (with JavaScript) */
+        .active {
+            display: block;
+        }
+    </style>
     <div class="card">
         <h5 class="card-header">
             اپراتورها
@@ -287,13 +327,7 @@
                                                         بار های ثبت شده توسط صاحبین بار
                                                     </label>
                                                 </div>
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="driversPaymentReport"
-                                                               @if (in_array('driversPaymentReport', $user->userAccess)) checked @endif>
-                                                        لیست پرداختی
-                                                    </label>
-                                                </div>
+
                                                 <div class="form-group">
                                                     <label>
                                                         <input type="checkbox" name="driversContactCall"
@@ -301,6 +335,30 @@
                                                         گزارش بر اساس تماس
                                                     </label>
                                                 </div>
+                                                <ul id="myUL">
+                                                    <li><span class="caret">دسترسی به رانندگان</span>
+                                                        <ul class="nested">
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="detailDriver"
+                                                                               @if (in_array('detailDriver', $user->userAccess)) checked @endif>
+                                                                        جزئیات و ویرایش
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="driversPaymentReport"
+                                                                               @if (in_array('driversPaymentReport', $user->userAccess)) checked @endif>
+                                                                        لیست پرداختی و تمدید اعتبار
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
 
 
                                             </div>
@@ -366,5 +424,15 @@
         </div>
     </div>
 
+    <script>
+        var toggler = document.getElementsByClassName("caret");
+        var i;
 
+        for (i = 0; i < toggler.length; i++) {
+            toggler[i].addEventListener("click", function() {
+                this.parentElement.querySelector(".nested").classList.toggle("active");
+                this.classList.toggle("caret-down");
+            });
+        }
+    </script>
 @stop
