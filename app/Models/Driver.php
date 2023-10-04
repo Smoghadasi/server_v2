@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use SoapClient;
 
 class Driver extends Authenticatable
 {
@@ -86,5 +87,17 @@ class Driver extends Authenticatable
             return true;
 
         return false;
+    }
+
+    public function freeSubscription($sms, $persian_date, $free_date)
+    {
+        $client = new SoapClient("http://ippanel.com/class/sms/wsdlservice/server.php?wsdl");
+        $user = "09184696188";
+        $pass = "faraz3300131545";
+        $fromNum = "+983000505";
+        $toNum = array($sms);
+        $pattern_code = "xcj5cot5me6x7w5";
+        $date = array('date' => $persian_date, 'expireDate' => $free_date);
+        return $client->sendPatternSms($fromNum, $toNum, $user, $pass, $pattern_code, $date);
     }
 }

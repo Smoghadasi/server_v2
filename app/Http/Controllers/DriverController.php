@@ -25,7 +25,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
+use SoapClient;
 
 class DriverController extends Controller
 {
@@ -205,7 +205,7 @@ class DriverController extends Controller
             $driver->updateDateTime = null;
             if (
                 $driver->name !== null &&
-                $driver->lastName !== null  &&
+                $driver->lastName !== null &&
                 $driver->nationalCode !== null &&
                 $driver->mobileNumber !== null &&
                 $driver->vehicleLicensePlatePartA !== null &&
@@ -220,7 +220,7 @@ class DriverController extends Controller
             }
             if (
                 $driver->name !== null &&
-                $driver->lastName !== null  &&
+                $driver->lastName !== null &&
                 $driver->nationalCode !== null &&
                 $driver->mobileNumber !== null &&
                 $driver->vehicleLicensePlatePartA !== null &&
@@ -255,7 +255,7 @@ class DriverController extends Controller
             return back()->with('success', 'اطلاعات راننده با موفقیت بروز رسانی شد');
         } catch (Exception $e) {
             Log::emergency($e->getMessage());
-            return  $e->getMessage();
+            return $e->getMessage();
         }
         return back()->with('danger', 'خطادر ذخیره اطلاعات راننده!');
     }
@@ -760,10 +760,11 @@ class DriverController extends Controller
                 // فعالیت رانندگان بر اساس تماس
                 if (DriverCall::where('created_at', '>', date("Y-m-d", time()) . " 00:00:00")->where('driver_id', $driver->id)->count() == 0) {
                     $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+
+                    // گزارش رانندگان بر اساس ناوگان
                     $driverCallReport = DriverCallReport::where('fleet_id', $driver->fleet_id)
                         ->where('persian_date', $persian_date)
                         ->first();
-
                     if (isset($driverCallReport->id)) {
                         $driverCallReport->calls += 1;
                         $driverCallReport->save();
@@ -774,7 +775,7 @@ class DriverController extends Controller
                         $driverCallReport->fleet_id = $driver->fleet_id;
                         $driverCallReport->save();
                     }
-
+                    // گزارش رانندگان بر اساس تماس
                     $driverCallCount = DriverCallCount::where('driver_id', $driver->id)
                         ->where('persian_date', $persian_date)
                         ->first();
@@ -875,13 +876,25 @@ class DriverController extends Controller
     public function creditDriverExtending(Request $request, Driver $driver)
     {
         if ($this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, $request->month, $request->freeCalls, $driver->freeAcceptLoads)) {
-
+            $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+            $oneMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+30 day', time())), '/');
+            $threeMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+90 day', time())), '/');
+            $sixMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+180 day', time())), '/');
             if ($request->month > 0 || $request->month !== null) {
+
                 $free_subscription = new FreeSubscription();
                 $free_subscription->type = AUTH_VALIDITY;
                 $free_subscription->value = $request->month;
                 $free_subscription->driver_id = $driver->id;
                 $free_subscription->save();
+                $sms = new Driver();
+
+                if ($request->month == 1)
+                    $sms->freeSubscription($driver->mobileNumber, $persian_date, $oneMonth);
+                if ($request->month == 3)
+                    $sms->freeSubscription($driver->mobileNumber, $persian_date, $threeMonth);
+                if ($request->month == 6)
+                    $sms->freeSubscription($driver->mobileNumber, $persian_date, $sixMonth);
             }
             if ($request->freeCalls > 0 || $request->freeCalls !== null) {
                 $free_subscription = new FreeSubscription();
@@ -1106,7 +1119,7 @@ class DriverController extends Controller
 
             if (
                 $driver->name !== null &&
-                $driver->lastName !== null  &&
+                $driver->lastName !== null &&
                 $driver->nationalCode !== null &&
                 $driver->mobileNumber !== null &&
                 $driver->vehicleLicensePlatePartA !== null &&
@@ -1121,7 +1134,7 @@ class DriverController extends Controller
             }
             if (
                 $driver->name !== null &&
-                $driver->lastName !== null  &&
+                $driver->lastName !== null &&
                 $driver->nationalCode !== null &&
                 $driver->mobileNumber !== null &&
                 $driver->vehicleLicensePlatePartA !== null &&
@@ -1192,7 +1205,7 @@ class DriverController extends Controller
             'authLevel' => $driver->authLevel,
             'unAuthLevelMessage' => 'تعداد تماس بدون احراز هویت : ' . CALL_LIMIT_FOR_UNAUTH_DRIVERS . '  تماس تا تکمیل مدارک و احراز هویت. ',
             'acceptAuthLevelAlertMessage' =>
-            'احزار هویت شما به منظور جلب اعتماد اعلام کنندگان بار و معرفی شما به عنوان راننده تایید شده صورت می گیرد.' .
+                'احزار هویت شما به منظور جلب اعتماد اعلام کنندگان بار و معرفی شما به عنوان راننده تایید شده صورت می گیرد.' .
                 ' ' .
                 'احراز هویت سطح نقره ای :   روزانه  ' . NUMBER_FOR_CALLS_PAY_DAY_FOR_SILVER_LEVEL_DRIVER . ' تماس ' .
                 ' ' . 'احراز هویت سطح طلایی :   روزانه ' . NUMBER_FOR_CALLS_PAY_DAY_FOR_GOLD_LEVEL_DRIVER . ' تماس',
