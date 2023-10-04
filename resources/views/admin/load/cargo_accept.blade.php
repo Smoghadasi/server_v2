@@ -5,7 +5,7 @@
         <h5 class="card-header">
             تایید بار ها
         </h5>
-        @if(in_array('loads',auth()->user()->userAccess))
+        @if (auth()->user()->role == 'admin')
             <div class="alert alert-info text-right">
                 @if(isNewLoadAutoAccept())
                 تایید بار ها بصورت خودکار
