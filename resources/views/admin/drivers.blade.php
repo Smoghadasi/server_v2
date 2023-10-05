@@ -149,7 +149,7 @@
                                                     <li><a class="dropdown-item" href="{{ url('admin/editDriver') }}/{{ $driver->id }}">ویرایش</a></li>
                                                 @endif
                                                 <li>
-                                                    @if (auth()->user()->role == 'admin')
+                                                    @if (auth()->user()->role == ROLE_ADMIN)
                                                         @if ($driver->status == 0)
                                                             <a class="dropdown-item" href="{{ url('admin/changeDriverStatus') }}/{{ $driver->id }}">فعال شود</a>
                                                         @else
@@ -158,7 +158,7 @@
                                                     @endif
                                                 </li>
 
-                                                @if (auth()->user()->role == 'admin')
+                                                @if (auth()->user()->role == ROLE_ADMIN)
                                                     <li>
                                                         <button type="button" class="dropdown-item" data-bs-toggle="modal"
                                                                 data-bs-target="#removeDriver_{{ $driver->id }}">حذف
@@ -182,7 +182,7 @@
                                                         </form>
                                                     </li>
                                                 @endif
-                                                @if (auth()->user()->role == 'admin' && (strlen($driver->ip) > 0 || $driver->ip != null))
+                                                @if (auth()->user()->role == ROLE_ADMIN && (strlen($driver->ip) > 0 || $driver->ip != null))
                                                     @if ($driver->blockedIp == false)
                                                         <button type="button" class="dropdown-item"
                                                                 data-bs-toggle="modal"
@@ -250,7 +250,7 @@
                                         </div>
                                     </div>
 
-                                    @if (auth()->user()->role == 'admin')
+                                    @if (auth()->user()->role == ROLE_ADMIN)
                                         <div id="removeDriver_{{ $driver->id }}" class="modal fade" role="dialog">
                                             <div class="modal-dialog">
 
@@ -282,7 +282,7 @@
                                     @endif
 
 
-                                    @if (auth()->user()->role == 'admin' && (strlen($driver->ip) > 0 || $driver->ip != null))
+                                    @if (auth()->user()->role == ROLE_ADMIN && (strlen($driver->ip) > 0 || $driver->ip != null))
                                         @if ($driver->blockedIp == false)
 
                                             <div id="blockUserIp_{{ $driver->id }}" class="modal fade" role="dialog">

@@ -71,11 +71,6 @@
                         <div class="alert alert-info text-right">{{ $message }}</div>
                     @endif
                 </form>
-
-
-                <form class="table-responsive" action="{{ url('admin/removeLoad') }}" method="post">
-                    @csrf
-
                     <table class="table small">
                         <thead>
                             <tr>
@@ -122,19 +117,70 @@
                                     </td>
                                     <td>{{ $load->loadingDate }}</td>
                                     <td>
-                                        <a class="btn btn-sm btn-info"
-                                            href="{{ url('admin/loadInfo') }}/{{ $load->id }}">
-                                            جزئیات</a>
-                                        <a class="btn btn-sm btn-success"
-                                            href="{{ url('admin/acceptLoadFromLoadList') }}/{{ $load->id }}">تایید
-                                            بار</a>
+                                        <div class="dropdown">
+                                            <div class="btn-group dropstart">
+                                                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    عملیات
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li>
+                                                        <a class="dropdown-item"
+                                                            href="{{ url('admin/loadInfo') }}/{{ $load->id }}">
+                                                            جزئیات
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item"
+                                                           href="{{ url('admin/acceptLoadFromLoadList') }}/{{ $load->id }}">تایید
+                                                            بار
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <button type="button" class="dropdown-item" data-bs-toggle="modal"
+                                                                data-bs-target="#removeLoad_{{ $load->id }}">حذف
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                                <div id="removeLoad_{{ $load->id }}" class="modal fade" role="dialog">
+                                                    <div class="modal-dialog">
+
+                                                        <!-- Modal content-->
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h4 class="modal-title">حذف بار</h4>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>آیا مایل به حذف بار
+                                                                    <span class="text-primary">
+                                                                {{ $load->title }}</span>
+                                                                    هستید؟
+                                                                </p>
+                                                            </div>
+                                                            <div class="modal-footer text-left">
+                                                                <form action="{{ route('remove.load', $load) }}" method="POST">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button class="btn btn-primary" type="submit">حذف</button>
+                                                                </form>
+                                                                <button type="button" class="btn btn-danger"
+                                                                        data-bs-dismiss="modal">
+                                                                    انصراف
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
                                     </td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
-                    <button type="submit" class="btn btn-danger mb-2">حذف دسته ای بارهای انتخاب شده</button>
-                </form>
+{{--                    <button type="submit" class="btn btn-danger mb-2">حذف دسته ای بارهای انتخاب شده</button>--}}
             </div>
 
         </div>

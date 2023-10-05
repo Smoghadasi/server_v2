@@ -199,6 +199,13 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>
+                                                    <input type="checkbox" name="fleetRatioToDriverActivityReport"
+                                                           @if (in_array('fleetRatioToDriverActivityReport', $user->userAccess)) checked @endif>
+                                                    نسبت راننده به بار
+                                                </label>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>
                                                     <input type="checkbox" name="customers"
                                                            @if (in_array('customers', $user->userAccess)) checked @endif>
                                                     صاحب بارها

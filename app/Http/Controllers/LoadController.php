@@ -244,9 +244,9 @@ class LoadController extends Controller
 
             if (\auth()->check()) {
                 if (UserActivityReport::where([
-                    ['created_at', '>', date('Y-m-d H:i:s', strtotime('-5 minute', time()))],
-                    ['user_id', \auth()->id()]
-                ])->count() == 0)
+                        ['created_at', '>', date('Y-m-d H:i:s', strtotime('-5 minute', time()))],
+                        ['user_id', \auth()->id()]
+                    ])->count() == 0)
 
                     UserActivityReport::create(['user_id' => \auth()->id()]);
             }
@@ -298,7 +298,6 @@ class LoadController extends Controller
             }
         } catch (\Exception $exception) {
         }
-
 
 
         try {
@@ -1178,9 +1177,9 @@ class LoadController extends Controller
 
         try {
             if (DriverVisitLoad::where([
-                ['load_id', $load_id],
-                ['driver_id', $driver_id]
-            ])->count() == 0) {
+                    ['load_id', $load_id],
+                    ['driver_id', $driver_id]
+                ])->count() == 0) {
 
                 $driverVisitCount = new DriverVisitLoad();
                 $driverVisitCount->load_id = $load_id;
@@ -1751,7 +1750,6 @@ class LoadController extends Controller
                 'message' => 'حساب کاربری شما غیر فعال می باشد! لطفا جهت فعال سازی با شماره تلفن ' . TELL . ' تماس برقرار کنید.'
             ];
         }
-
 
 
         if ($driver->status == DE_ACTIVE)
@@ -2941,23 +2939,23 @@ class LoadController extends Controller
         $loadStatus = LoadStatus::where('status', $status)
             ->select('title')
             ->first();
-        $pageTitle = $loadStatus->title;
+        if (!empty($loadStatus))
+            $pageTitle = $loadStatus->title;
         $cities = City::orderby('centerOfProvince', 'desc')->get();
         $fleets = Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
-        return view('admin.loads', compact('loads', 'pageTitle', 'status', 'cities', 'fleets'));
+        return view('admin.loads', compact('loads', 'status', 'cities', 'fleets'));
     }
 
     // حذف اطلاعات بار توسط ادمین
     public function removeLoadInfo($load_id)
     {
         $load = Load::where('id', $load_id)->first();
-
         if ($load) {
 
             Load::where('id', $load_id)->delete();
 
-            if ($load->loadPic)
-                unlink($load->loadPic);
+//            if ($load->loadPic)
+//                unlink($load->loadPic);
 
             Tender::where('load_id', $load_id)->delete();
 
@@ -2991,11 +2989,17 @@ class LoadController extends Controller
     // حذف بار
     public function removeLoad(Request $request)
     {
-
         foreach ($request->load_id as $load_id)
             $this->removeLoadInfo($load_id);
 
         return $this->loadsWithStatusType($request->status);
+    }
+
+    public function removeLoadItem(Load $load)
+    {
+        $load->delete();
+        return back()->with('success', 'بار مورد نظر حذف شد');
+
     }
 
     // جستجوی بار
@@ -3271,10 +3275,10 @@ class LoadController extends Controller
         try {
             return [
                 'result' =>
-                Inquiry::where([
-                    ['load_id', $load_id],
-                    ['driver_id', $driver_id]
-                ])->count()
+                    Inquiry::where([
+                        ['load_id', $load_id],
+                        ['driver_id', $driver_id]
+                    ])->count()
             ];
         } catch (\Exception $exception) {
         }

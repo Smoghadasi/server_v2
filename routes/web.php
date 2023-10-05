@@ -266,6 +266,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // حذف اطلاعات دسته ای بار
         Route::post('removeLoad', [LoadController::class, 'removeLoad'])->middleware('operator');
 
+        Route::delete('remove/load/{load}', [LoadController::class, 'removeLoadItem'])->middleware('operator')->name('remove.load');
+
         // اجزای مجدد مناقصه
         Route::get('repeatTender/{load_id}', [TenderController::class, 'repeatTender'])->middleware('operator');
 

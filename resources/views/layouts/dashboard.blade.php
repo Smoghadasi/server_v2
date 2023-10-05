@@ -321,10 +321,11 @@
                                     <div data-i18n="Without menu"> نصب رانندگان در 30 روز</div>
                                 </a>
                             </li>
-
+                        @endif
+                        @if(in_array('fleetRatioToDriverActivityReport',auth()->user()->userAccess))
                             <li class="menu-item">
                                 <a class="menu-link"
-                                href="{{ url('admin/fleetRatioToDriverActivityReport') }}">
+                                   href="{{ url('admin/fleetRatioToDriverActivityReport') }}">
                                     <div data-i18n="Without menu">نسبت راننده به بار</div>
                                 </a>
                             </li>
