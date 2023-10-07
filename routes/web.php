@@ -574,7 +574,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::resource('freeSubscription', FreeSubscriptionController::class)->middleware('operator');
 
         // نتیجه تماس ها
-        Route::get('contactingWithDriverResult/{driver}', [OperatorContactingController::class, 'contactingWithDriverResult'])->middleware('operator');
+        Route::get('contactingWithDriverResult/{driver}', [OperatorContactingController::class, 'contactingWithDriverResult'])->middleware('operator')->name('contactingWithDriverResult');
 
         // ذخیره نتیجه تماس با راننده
         Route::post('storeContactReportWithDriver', [OperatorContactingController::class, 'storeContactReportWithDriver'])->middleware('operator');

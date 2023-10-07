@@ -196,6 +196,9 @@
                                                         </button>
                                                     @endif
                                                 @endif
+                                                @if(in_array('contactReportWithCargoOwners',auth()->user()->userAccess))
+                                                    <li><a class="dropdown-item" href="{{ route('contactingWithDriverResult', $driver->id) }}">پیام ها</a></li>
+                                                @endif
                                             </ul>
                                         </div>
                                     </div>

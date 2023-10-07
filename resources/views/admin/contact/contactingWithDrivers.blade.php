@@ -79,7 +79,7 @@
                 </td>
                 <td>
                     <a class="btn btn-primary btn-sm"
-                       href="{{ url('admin/contactingWithDriverResult') }}/{{ $driver->id }}">پیام ها</a>
+                       href="{{ route('contactingWithDriverResult', $driver->id) }}">پیام ها</a>
                 </td>
                 </tr>
                 @endforeach
