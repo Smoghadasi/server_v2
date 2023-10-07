@@ -16,6 +16,7 @@
                         <th>موبایل</th>
                         <th>نوع</th>
                         <th>تعداد</th>
+                        <th>تاریخ</th>
 
                     </tr>
                     </thead>
@@ -41,6 +42,10 @@
                                 @endswitch
                             </td>
                             <td>{{ $freeSubscription->value }}</td>
+                            @php
+                                $pieces = explode(" ", $freeSubscription->created_at);
+                            @endphp
+                            <td>{{ gregorianDateToPersian($freeSubscription->created_at, '-', true) . ' ( ' . $pieces[1] . ' ) ' }}</td>
 
                         </tr>
                     @endforeach
