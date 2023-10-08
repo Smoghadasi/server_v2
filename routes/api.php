@@ -7,6 +7,7 @@ use App\Http\Controllers\BearingController;
 use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DriverController;
+use App\Http\Controllers\Api\ServiceController as ApiServiceController;
 use App\Http\Controllers\FleetController;
 use App\Http\Controllers\LoadController;
 use App\Http\Controllers\NotificationController;
@@ -65,6 +66,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
     // درخواست ثبت نام باربری
     Route::post('registerBearing', [RegisterController::class, 'registerBearing']);
+
+    Route::get('services', [ApiServiceController::class, 'index'])->name('api.service.index');
 
     /******************************************************************************************/
     //  مسیرهای مروبوط به بار
