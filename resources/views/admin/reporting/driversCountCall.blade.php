@@ -3,7 +3,7 @@
 @section('content')
     <div class="card">
         <h5 class="card-header">
-            گزارش رانندگان بر اساس تماس
+            گزارش رانندگان بر اساس بیشترین تماس
         </h5>
         <div class="card-body">
 
@@ -15,7 +15,7 @@
                         <th>راننده</th>
                         <th>تلفن</th>
                         <th>تعداد</th>
-                        <th>تاریخ تماس</th>
+{{--                        <th>تاریخ تماس</th>--}}
 {{--                        <th>تاریخ ثبت نام</th>--}}
                     </tr>
                     </thead>
@@ -27,7 +27,7 @@
                             <td>{{ $basedCall->driver->name . " " . $basedCall->driver->lastName ?? '-' }}</td>
                             <td>{{ $basedCall->driver->mobileNumber ?? '-' }}</td>
                             <td>{{ $basedCall->countOfCalls }}</td>
-                            <td>{{ $basedCall->persian_date }}</td>
+{{--                            <td>{{ $basedCall->persian_date }}</td>--}}
 {{--                            <td>--}}
 {{--                                {{ gregorianDateToPersian($basedCall->created_date, '-', true) }}--}}
 {{--                                @if (isset(explode(' ', $basedCall->created_date)[1]))--}}

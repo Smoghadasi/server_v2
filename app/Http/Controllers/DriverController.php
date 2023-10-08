@@ -902,6 +902,9 @@ class DriverController extends Controller
                 $free_subscription->value = $request->freeCalls;
                 $free_subscription->driver_id = $driver->id;
                 $free_subscription->save();
+                $driver_free_total = Driver::where('id', $driver->id)->first();
+                $driver_free_total->freeCallTotal += $request->freeCalls;
+                $driver_free_total->save();
             }
             if ($request->freeAcceptLoads > 0 || $request->freeAcceptLoads !== null) {
                 $free_subscription = new FreeSubscription();

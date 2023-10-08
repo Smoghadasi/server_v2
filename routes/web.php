@@ -457,6 +457,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // گزارش فعالیت اپراتورها
         Route::get('operatorsActivityReport', [ReportingController::class, 'operatorsActivityReport'])->middleware('admin');
 
+        // گزارش فعالیت رانندگان نیسان در 24 ساعت گشته
+//        Route::get('daysActivityNissan', [ReportingController::class, 'daysActivityNissan'])->middleware('operator');
+
         // گزارش میزان ساعت کار اپراتور ها
         Route::match(['get', 'post'], 'operatorsWorkingHoursActivityReport', [ReportingController::class, 'operatorsWorkingHoursActivityReport'])->middleware('operator');
 

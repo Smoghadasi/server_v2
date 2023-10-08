@@ -283,7 +283,7 @@
                             </li>
                             <li class="menu-item">
                                 <a href="{{ route('report.driversCountCall') }}" class="menu-link">
-                                    <div data-i18n="Without menu">گزارش رانندگان بر اساس تماس</div>
+                                    <div data-i18n="Without menu">گزارش رانندگان بر اساس بیشترین تماس</div>
                                 </a>
                             </li>
                         @endif
