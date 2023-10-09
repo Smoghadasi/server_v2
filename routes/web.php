@@ -468,7 +468,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
 
         // گزارش جدول نسبت ناوگان (کل و فعال) به بار
-        Route::match(['get', 'post'], 'fleetRatioToDriverActivityReport', [ReportingController::class, 'fleetRatioToDriverActivityReport'])->middleware('admin');
+        Route::match(['get', 'post'], 'fleetRatioToDriverActivityReport', [ReportingController::class, 'fleetRatioToDriverActivityReport'])->middleware('operator');
 
 
         // خلاصه گزارش روز
