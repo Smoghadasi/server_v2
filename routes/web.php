@@ -111,6 +111,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         /***************************************************************************************************/
         /***************************************************************************************************/
 
+        Route::get('driversActivitiesCallDate', [DriverController::class, 'driversActivitiesCallDate'])->middleware('operator')->name('report.driversActivitiesCallDate');
+
+
         Route::match(['post', 'get'], 'driversActivities/{date?}', [DriverController::class, 'driversActivities'])->middleware('operator');
 
         // تغییر وضعیت آپشن های سایت

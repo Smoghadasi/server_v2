@@ -286,6 +286,11 @@
                                     <div data-i18n="Without menu">گزارش رانندگان بر اساس بیشترین تماس</div>
                                 </a>
                             </li>
+                            <li class="menu-item">
+                                <a href="{{ route('report.driversActivitiesCallDate') }}" class="menu-link">
+                                    <div data-i18n="Without menu">فعالیت رانندگان بر اساس زمان (امروز)</div>
+                                </a>
+                            </li>
                         @endif
                         @if(auth()->user()->role == ROLE_ADMIN)
                             <li class="menu-item">

@@ -251,7 +251,7 @@ class FleetController extends Controller
     public function requestAllFleetsList()
     {
         return [
-            'fleets' => Fleet::where('status', 1)
+            'fleets' => Fleet::where('status', 1)->where('parent_id' , '!=', 0)
                 ->select('id', 'title', 'parent_id', 'pic', 'length', 'width', 'height', 'capacity')
                 ->get()
         ];

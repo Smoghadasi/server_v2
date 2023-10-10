@@ -825,6 +825,15 @@ class DriverController extends Controller
         return getDriverPackagesInfo();
     }
 
+    public function driversActivitiesCallDate()
+    {
+        $driversActivitiesCallDates = DriverCall::with('driver')
+        ->where('callingDate', now()->format('Y-m-d'))
+        ->orderByDesc('created_at')
+        ->paginate(20);
+        return view('admin.driversActivitiesCallDate', compact('driversActivitiesCallDates'));
+    }
+
     public function driversActivities(Request $request, $date = null)
     {
         switch ($request->method()) {
