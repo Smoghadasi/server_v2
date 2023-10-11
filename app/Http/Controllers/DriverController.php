@@ -122,8 +122,12 @@ class DriverController extends Controller
 
         if (isDriverAutoActive())
             $driver->status = ACTIVE;
-
-        $driver->freeCalls = DRIVER_FREE_CALLS;
+        // خاور و نیسان
+        if ($fleet_id == 45 || $fleet_id == 82 || $fleet_id == 86) {
+            $driver->freeCalls = 5;
+        } else {
+            $driver->freeCalls = DRIVER_FREE_CALLS;
+        }
         $driver->freeAcceptLoads = DRIVER_FREE_ACCEPT_LOAD;
 
         $driver->activationDate = (time() - (23 * 24 * 3600));
@@ -483,7 +487,13 @@ class DriverController extends Controller
         //
         //        $driver->activeDate = $activeDate;
         $driver->freeAcceptLoads = DRIVER_FREE_ACCEPT_LOAD;
-        $driver->freeCalls = DRIVER_FREE_CALLS;
+        // خاور و نیسان
+
+        if ($fleet_id == 45 || $fleet_id == 82 || $fleet_id == 86) {
+            $driver->freeCalls = 5;
+        } else {
+            $driver->freeCalls = DRIVER_FREE_CALLS;
+        }
 
         $driver->save();
 
@@ -828,18 +838,18 @@ class DriverController extends Controller
     public function driversActivitiesCallDate()
     {
         $driversActivitiesCallDates = DriverCall::with('driver')
-        ->where('callingDate', now()->format('Y-m-d'))
-        ->orderByDesc('created_at')
-        ->paginate(20);
+            ->where('callingDate', now()->format('Y-m-d'))
+            ->orderByDesc('created_at')
+            ->paginate(20);
         return view('admin.driversActivitiesCallDate', compact('driversActivitiesCallDates'));
     }
     public function driversActivitiesCall(Driver $driver)
     {
         $driversActivitiesCallDates = DriverCall::with('driver')
-        ->where('callingDate', now()->format('Y-m-d'))
-        ->where('driver_id', $driver->id)
-        ->orderByDesc('created_at')
-        ->paginate(20);
+            ->where('callingDate', now()->format('Y-m-d'))
+            ->where('driver_id', $driver->id)
+            ->orderByDesc('created_at')
+            ->paginate(20);
         return view('admin.driversActivitiesCallDate', compact('driversActivitiesCallDates'));
     }
 
@@ -1226,7 +1236,7 @@ class DriverController extends Controller
             'authLevel' => $driver->authLevel,
             'unAuthLevelMessage' => 'تعداد تماس بدون احراز هویت : ' . CALL_LIMIT_FOR_UNAUTH_DRIVERS . '  تماس تا تکمیل مدارک و احراز هویت. ',
             'acceptAuthLevelAlertMessage' =>
-                'احزار هویت شما به منظور جلب اعتماد اعلام کنندگان بار و معرفی شما به عنوان راننده تایید شده صورت می گیرد.' .
+            'احزار هویت شما به منظور جلب اعتماد اعلام کنندگان بار و معرفی شما به عنوان راننده تایید شده صورت می گیرد.' .
                 ' ' .
                 'احراز هویت سطح نقره ای :   روزانه  ' . NUMBER_FOR_CALLS_PAY_DAY_FOR_SILVER_LEVEL_DRIVER . ' تماس ' .
                 ' ' . 'احراز هویت سطح طلایی :   روزانه ' . NUMBER_FOR_CALLS_PAY_DAY_FOR_GOLD_LEVEL_DRIVER . ' تماس',
