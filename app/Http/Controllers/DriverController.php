@@ -833,6 +833,15 @@ class DriverController extends Controller
         ->paginate(20);
         return view('admin.driversActivitiesCallDate', compact('driversActivitiesCallDates'));
     }
+    public function driversActivitiesCall(Driver $driver)
+    {
+        $driversActivitiesCallDates = DriverCall::with('driver')
+        ->where('callingDate', now()->format('Y-m-d'))
+        ->where('driver_id', $driver->id)
+        ->orderByDesc('created_at')
+        ->paginate(20);
+        return view('admin.driversActivitiesCallDate', compact('driversActivitiesCallDates'));
+    }
 
     public function driversActivities(Request $request, $date = null)
     {

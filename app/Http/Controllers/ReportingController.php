@@ -1085,8 +1085,9 @@ class ReportingController extends Controller
     {
         $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
         $cargoReports = CargoReportByFleet::with('fleet')
-            ->where('date', $persian_date)
-            ->paginate(10);
+            // ->where('date', $persian_date)
+            ->orderByDesc('date')
+            ->paginate(25);
         return view('admin.reporting.cargoFleetsReport', compact('cargoReports'));
     }
 
