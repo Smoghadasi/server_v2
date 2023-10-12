@@ -688,11 +688,7 @@ class PayController extends Controller
                         }
                         $driver->activeDate = $activeDate;
                          // خاور و نیسان
-                        if ($driver->fleet_id == 45 || $driver->fleet_id == 82 || $driver->fleet_id == 86) {
-                            $driver->freeCalls = ($driver->freeCalls > 0 ? $driver->freeCalls : 0) + 5;
-                        } else {
-                            $driver->freeCalls = ($driver->freeCalls > 0 ? $driver->freeCalls : 0) + DRIVER_FREE_CALLS;
-                        }
+                         $driver->freeCalls = ($driver->freeCalls > 0 ? $driver->freeCalls : 0) + DRIVER_FREE_CALLS;
 
                         $driver->freeAcceptLoads = ($driver->freeAcceptLoads > 0 ? $driver->freeAcceptLoads : 0) + DRIVER_FREE_ACCEPT_LOAD;
                         $driver->save();
