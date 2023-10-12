@@ -151,6 +151,9 @@
                 <a class="btn btn-primary" href="{{ route('contactingWithDriverResult', $driver->id) }}">پیام
                     ها</a>
             @endif
+            @if (in_array('detailDriver', auth()->user()->userAccess))
+                <a class="btn btn-primary" href="{{ url('admin/editDriver') }}/{{ $driver->id }}">ویرایش</a>
+            @endif
             <div id="creditDriverExtending_{{ $driver->id }}" class="modal fade" role="dialog">
                 <div class="modal-dialog">
 
