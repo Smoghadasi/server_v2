@@ -92,10 +92,10 @@
                                 </td>
                                 <td>
                                     <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                                        data-bs-target="#deleteWordToDictionary">حذف
+                                        data-bs-target="#deleteWordToDictionary_{{ $item->id }}">حذف
                                     </button>
 
-                                    <div id="deleteWordToDictionary" class="modal fade" role="dialog">
+                                    <div id="deleteWordToDictionary_{{ $item->id }}" class="modal fade" role="dialog">
                                         <div class="modal-dialog">
 
                                             <!-- Modal content-->
