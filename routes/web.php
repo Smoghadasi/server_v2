@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\AccountingController;
 use App\Http\Controllers\AddressController;
-use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BearingController;
 use App\Http\Controllers\ComplaintController;
@@ -17,6 +16,7 @@ use App\Http\Controllers\LoadController;
 use App\Http\Controllers\OperatorContactingController;
 use App\Http\Controllers\ParameterController;
 use App\Http\Controllers\PayController;
+use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ReportingController;
 use App\Http\Controllers\ServiceController;
 // use App\Http\Controllers\ServiceController;

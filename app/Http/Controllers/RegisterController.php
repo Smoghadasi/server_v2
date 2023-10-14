@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\ActivationCode;
-use App\Bearing;
-use App\Customer;
-use App\LegalPersonality;
-use App\Role;
-use App\RoleUser;
-use App\User;
+use App\Models\ActivationCode;
+use App\Models\Bearing;
+use App\Models\Customer;
+use App\Models\LegalPersonality;
+use App\Models\Role;
+use App\Models\RoleUser;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
