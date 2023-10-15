@@ -185,9 +185,31 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>
+                                                    <input type="checkbox" name="finalApprovalAndStoreCargo"
+                                                           @if (in_array('finalApprovalAndStoreCargo', $user->userAccess)) checked @endif>
+                                                         تایید و ثبت دسته ای بار
+                                                </label>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>
+                                                    <input type="checkbox" name="driversAuthentication"
+                                                           @if (in_array('driversAuthentication', $user->userAccess)) checked @endif>
+                                                    احراز هویت رانندگان
+                                                </label>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label>
                                                     <input type="checkbox" name="loads"
                                                            @if (in_array('loads', $user->userAccess)) checked @endif>
                                                     بارها
+                                                </label>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>
+                                                    <input type="checkbox" name="rejectedCargoFromCargoList"
+                                                           @if (in_array('rejectedCargoFromCargoList', $user->userAccess)) checked @endif>
+                                                    بار های رد شده
                                                 </label>
                                             </div>
                                             <div class="form-group">
@@ -237,9 +259,17 @@
 
                                             <div class="form-group">
                                                 <label>
+                                                    <input type="checkbox" name="operatorsWorkingHoursActivityReport"
+                                                           @if (in_array('operatorsWorkingHoursActivityReport', $user->userAccess)) checked @endif>
+                                                           میزان فعالیت اپراتورها
+                                                </label>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>
                                                     <input type="checkbox" name="contactReportWithCargoOwners"
                                                            @if (in_array('contactReportWithCargoOwners', $user->userAccess)) checked @endif>
-                                                    تماس با صاحبان بار و باربری ها
+                                                    تماس با صاحبان بار و باربری ها - تماس با رانندگان
                                                 </label>
                                             </div>
 
@@ -283,6 +313,22 @@
 
                                             <div class="form-group">
                                                 <label>
+                                                    <input type="checkbox" name="reportcargofleets"
+                                                           @if (in_array('reportcargofleets', $user->userAccess)) checked @endif>
+                                                        گزارش بار ها به تفکیک ناوگان
+                                                </label>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>
+                                                    <input type="checkbox" name="driverActivityReport"
+                                                           @if (in_array('driverActivityReport', $user->userAccess)) checked @endif>
+                                                           گزارش فعالیت رانندگان
+                                                </label>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>
                                                     <input type="checkbox" name="fleet"
                                                            @if (in_array('fleet', $user->userAccess)) checked @endif>
                                                     ناوگان
@@ -293,7 +339,7 @@
                                                 <label>
                                                     <input type="checkbox" name="complaints"
                                                            @if (in_array('complaints', $user->userAccess)) checked @endif>
-                                                    شکایات و انتقادها
+                                                    دسته شکایات و انتقادها
                                                 </label>
                                             </div>
 
@@ -317,14 +363,6 @@
                                                     <input type="checkbox" name="onlineUsers"
                                                            @if (in_array('onlineUsers', $user->userAccess)) checked @endif>
                                                     کاربران آنلاین
-                                                </label>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label>
-                                                    <input type="checkbox" name="driversAuthentication"
-                                                           @if (in_array('driversAuthentication', $user->userAccess)) checked @endif>
-                                                    احراز هویت رانندگان
                                                 </label>
                                             </div>
 
@@ -357,6 +395,14 @@
                                                     <input type="checkbox" name="loadOwner"
                                                            @if (in_array('loadOwner', $user->userAccess)) checked @endif>
                                                     بار های ثبت شده توسط صاحبین بار
+                                                </label>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>
+                                                    <input type="checkbox" name="summaryOfDaysReport"
+                                                           @if (in_array('summaryOfDaysReport', $user->userAccess)) checked @endif>
+                                                           خلاصه گزارش روز - گزارش فعالیت باربری ها - فعالیت صاحب بارها - فعالیت اپراتورها - گزارش های ترکیبی - نصب رانندگان در 30 روز
                                                 </label>
                                             </div>
 

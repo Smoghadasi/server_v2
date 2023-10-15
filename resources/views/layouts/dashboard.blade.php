@@ -174,13 +174,14 @@
                     </li>
                 @endif
 
-
-                <li class="menu-item">
-                    <a class="menu-link" href="{{ url('admin/finalApprovalAndStoreCargo') }}">
-                        <i class="menu-icon tf-icons bx bx-box"></i>
-                        <div data-i18n="Without menu">تایید و ثبت دسته ای بار</div>
-                    </a>
-                </li>
+                @if(in_array('finalApprovalAndStoreCargo',auth()->user()->userAccess))
+                    <li class="menu-item">
+                        <a class="menu-link" href="{{ url('admin/finalApprovalAndStoreCargo') }}">
+                            <i class="menu-icon tf-icons bx bx-box"></i>
+                            <div data-i18n="Without menu">تایید و ثبت دسته ای بار</div>
+                        </a>
+                    </li>
+                @endif
                 @if(in_array('driversAuthentication',auth()->user()->userAccess))
                     <li class="menu-item ">
                         <a href="{{ url('admin/driversAuthenticationByOperator') }}" class="menu-link">
@@ -197,11 +198,13 @@
                     </a>
 
                     <ul class="menu-sub">
-                        <li class="menu-item">
-                            <a class="menu-link" href="{{ url('admin/rejectedCargoFromCargoList') }}">
-                                <div data-i18n="Without menu"> بارهای رد شده</div>
-                            </a>
-                        </li>
+                        @if(in_array('rejectedCargoFromCargoList',auth()->user()->userAccess))
+                            <li class="menu-item">
+                                <a class="menu-link" href="{{ url('admin/rejectedCargoFromCargoList') }}">
+                                    <div data-i18n="Without menu"> بارهای رد شده</div>
+                                </a>
+                            </li>
+                        @endif
                         @if(in_array('loadOwner',auth()->user()->userAccess))
                             <li class="menu-item">
                                 <a class="menu-link" href="{{ route('admin.loadBackup') }}">
@@ -251,11 +254,13 @@
                     </a>
 
                     <ul class="menu-sub">
-                        <li class="menu-item">
-                            <a class="menu-link" href="{{ route('report.cargo.fleets') }}">
-                                <span>گزارش بار ها به تفکیک ناوگان</span>
-                            </a>
-                        </li>
+                        @if(in_array('reportcargofleets',auth()->user()->userAccess))
+                            <li class="menu-item">
+                                <a class="menu-link" href="{{ route('report.cargo.fleets') }}">
+                                    <span>گزارش بار ها به تفکیک ناوگان</span>
+                                </a>
+                            </li>
+                        @endif
                         @if(in_array('freeSubscription',auth()->user()->userAccess))
                             <li class="menu-item">
                                 <a class="menu-link" href="{{ route('freeSubscription.index') }}">
@@ -263,7 +268,7 @@
                                 </a>
                             </li>
                         @endif
-                        @if(auth()->user()->role == ROLE_ADMIN || auth()->id() == 29)
+                        @if(in_array('driverActivityReport',auth()->user()->userAccess))
                             <li class="menu-item">
                                 <a class="menu-link" href="{{ url('admin/driverActivityReport') }}">
                                     <div data-i18n="Without menu">گزارش فعالیت رانندگان</div>
@@ -292,7 +297,7 @@
                                 </a>
                             </li>
                         @endif
-                        @if(auth()->user()->role == ROLE_ADMIN)
+                        @if(in_array('summaryOfDaysReport',auth()->user()->userAccess))
                             <li class="menu-item">
                                 <a href="{{ url('admin/summaryOfDaysReport') }}" class="menu-link">
                                     <div data-i18n="Without menu">خلاصه گزارش روز</div>
@@ -327,6 +332,7 @@
                                 </a>
                             </li>
                         @endif
+
                         @if(in_array('fleetRatioToDriverActivityReport',auth()->user()->userAccess))
                             <li class="menu-item">
                                 <a class="menu-link"
@@ -444,7 +450,7 @@
                     </a>
 
                     <ul class="menu-sub">
-                        @if(auth()->user()->role == ROLE_ADMIN || auth()->id() == 29)
+                        @if(in_array('operatorsWorkingHoursActivityReport',auth()->user()->userAccess))
                             <li class="menu-item">
                                 <a class="menu-link" href="{{ url('admin/operatorsWorkingHoursActivityReport') }}">
                                     <div data-i18n="Without menu">میزان فعالیت اپراتورها</div>
