@@ -123,7 +123,14 @@ class DriverController extends Controller
         if (isDriverAutoActive())
             $driver->status = ACTIVE;
         // خاور و نیسان
-        $driver->freeCalls = DRIVER_FREE_CALLS;
+        if ($fleet_id == 81 || $fleet_id == 82 || $fleet_id == 83 || $fleet_id == 84 || $fleet_id == 85) {
+            $driver->freeCalls = 5;
+        } elseif ($fleet_id == 45) {
+            $driver->freeCalls = 7;
+        } else {
+            $driver->freeCalls = 10;
+        }
+
         $driver->freeAcceptLoads = DRIVER_FREE_ACCEPT_LOAD;
 
         $driver->activationDate = (time() - (23 * 24 * 3600));
