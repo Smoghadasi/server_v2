@@ -52,8 +52,8 @@ const IRAN_TARABAR_BASE_URL = "https://application.iran-tarabar.ir";
 
 
 
-const TELL = "02128420609";
-// const TELL = "09184696188";
+// const TELL = "02128420609";
+const TELL = "09184696188";
 //const BANK_NAME = 'بانک ملی';
 //const CARD_NUMBER = '6037-9973-5641-6231';
 //const BANK_CARD_OWNER = 'محمد محمدی فر';
