@@ -460,7 +460,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         /*******************************************************************************************************/
 
         // گزارش فعالیت اپراتورها
-        Route::get('operatorsActivityReport', [ReportingController::class, 'operatorsActivityReport'])->middleware('admin');
+        Route::get('operatorsActivityReport', [ReportingController::class, 'operatorsActivityReport'])->middleware('operator');
 
         // گزارش فعالیت رانندگان نیسان در 24 ساعت گشته
 //        Route::get('daysActivityNissan', [ReportingController::class, 'daysActivityNissan'])->middleware('operator');
@@ -477,7 +477,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
 
         // خلاصه گزارش روز
-        Route::get('summaryOfDaysReport', [ReportingController::class, 'summaryOfDaysReport'])->middleware('admin');
+        Route::get('summaryOfDaysReport', [ReportingController::class, 'summaryOfDaysReport'])->middleware('operator');
 
         // گزارش فعالیت رانندگان
         Route::get('driverActivityReport', [ReportingController::class, 'driverActivityReport'])->middleware('operator');
@@ -490,19 +490,19 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
 
         // گزارش فعالیت باربری ها
-        Route::get('transportationCompaniesActivityReport', [ReportingController::class, 'transportationCompaniesActivityReport'])->middleware('admin');
+        Route::get('transportationCompaniesActivityReport', [ReportingController::class, 'transportationCompaniesActivityReport'])->middleware('operator');
 
         // گزارش فعالیت باربری ها
-        Route::get('cargoOwnersActivityReport', [ReportingController::class, 'cargoOwnersActivityReport'])->middleware('admin');
+        Route::get('cargoOwnersActivityReport', [ReportingController::class, 'cargoOwnersActivityReport'])->middleware('operator');
 
         // گزارشهای ترکیبی
-        Route::get('combinedReports', [ReportingController::class, 'combinedReports'])->middleware('admin');
+        Route::get('combinedReports', [ReportingController::class, 'combinedReports'])->middleware('operator');
 
         // لیست صاحب بارها به ترتیب بیشترین بار
         Route::get('getCargoOwnersList', [ReportingController::class, 'getCargoOwnersList'])->middleware('admin');
 
         // گزارش نصب رانندگان از 30 روز گذشته
-        Route::get('driverInstallationInLast30Days', [ReportingController::class, 'driverInstallationInLast30Days'])->middleware('admin');
+        Route::get('driverInstallationInLast30Days', [ReportingController::class, 'driverInstallationInLast30Days'])->middleware('operator');
 
         // گزارش پرداخت ها
         Route::get('paymentReport/{userType}/{status}', [ReportingController::class, 'paymentReport'])->middleware('operator');
