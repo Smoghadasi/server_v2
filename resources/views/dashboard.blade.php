@@ -25,7 +25,7 @@
                         @endif
                     </span>
                 @endforeach
-                @if(auth()->user()->role == ROLE_ADMIN)
+                @if(auth()->user()->id == 21 || auth()->user()->id == 40)
                     <div class="mt-3">
                         <a class="btn btn-danger" href="{{ route('driver.zeroData') }}">
                             <i class="fas fa-angle-right"></i>
