@@ -25,13 +25,14 @@
                         @endif
                     </span>
                 @endforeach
-                <div class="mt-3">
-                    <a class="btn btn-danger" href="{{ route('driver.zeroData') }}">
-                        <i class="fas fa-angle-right"></i>
-                        صفر کردن بار ها
-                    </a>
-                </div>
-
+                @if(auth()->user()->role == ROLE_ADMIN)
+                    <div class="mt-3">
+                        <a class="btn btn-danger" href="{{ route('driver.zeroData') }}">
+                            <i class="fas fa-angle-right"></i>
+                            صفر کردن بار ها
+                        </a>
+                    </div>
+                @endif
             </div>
         </div>
     @endif
