@@ -1111,7 +1111,8 @@ class DriverController extends Controller
                 // file_put_contents($nationalCardImage, base64_decode($request->nationalCardImage));
                 if ($request->nationalCardImage)
                     $request->nationalCardImage->move(public_path('images/drivers/'), $nationalCardImage);
-                    dd($request->nationalCardImage->move(public_path('images/drivers/'), $nationalCardImage))
+                    dd($request->nationalCardImage->move(public_path('images/drivers/'), $nationalCardImage));
+
             }
             if ($request->carSmartCardImage != "noImage") {
                 if (file_exists($driver->carSmartCardImage))
