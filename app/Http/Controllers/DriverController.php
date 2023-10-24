@@ -1111,6 +1111,7 @@ class DriverController extends Controller
                 // file_put_contents($nationalCardImage, base64_decode($request->nationalCardImage));
                 if ($request->nationalCardImage)
                     $request->nationalCardImage->move(public_path('images/drivers/'), $nationalCardImage);
+                    dd($request->nationalCardImage->move(public_path('images/drivers/'), $nationalCardImage))
             }
             if ($request->carSmartCardImage != "noImage") {
                 if (file_exists($driver->carSmartCardImage))
@@ -1147,7 +1148,6 @@ class DriverController extends Controller
                     $imageRegisterSana = "images/drivers/imageRegisterSana_" . time() . $driver->id . ".jpg";
                     // file_put_contents($imageRegisterSana, base64_decode($request->imageRegisterSana));
                     if ($request->imageRegisterSana)
-
                         $request->imageRegisterSana->move(public_path('images/drivers/'), $imageRegisterSana);
                 }
 
