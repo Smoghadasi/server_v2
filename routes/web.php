@@ -463,7 +463,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('operatorsActivityReport', [ReportingController::class, 'operatorsActivityReport'])->middleware('operator');
 
         // گزارش فعالیت رانندگان نیسان در 24 ساعت گشته
-//        Route::get('daysActivityNissan', [ReportingController::class, 'daysActivityNissan'])->middleware('operator');
+        //        Route::get('daysActivityNissan', [ReportingController::class, 'daysActivityNissan'])->middleware('operator');
 
         // گزارش میزان ساعت کار اپراتور ها
         Route::match(['get', 'post'], 'operatorsWorkingHoursActivityReport', [ReportingController::class, 'operatorsWorkingHoursActivityReport'])->middleware('operator');
@@ -841,7 +841,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     // پرداخت هزینه کنترل ناوگان
     Route::get('fleetControlPay/{numOfFleetControl}/{userType}/{user_id}', [PayController::class, 'fleetControlPay']);
     Route::get('verifyFleetControlPay', [PayController::class, 'verifyFleetControlPay']);
-        Route::get('dashboard', [HomeController::class, 'dashboard']);
+    Route::get('dashboard', [HomeController::class, 'dashboard']);
 
     /******************************************************************************************************************/
 });
