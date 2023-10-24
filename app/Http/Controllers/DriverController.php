@@ -1092,7 +1092,7 @@ class DriverController extends Controller
                         unlink($driver->authImage);
                     $authImage = "images/drivers/authImage_" . time() . $driver->id . ".jpg";
                     if ($request->driverImage) {
-                        $request->authImage->move(public_path('drivers/'), $authImage);
+                        $request->driverImage->move(public_path('drivers/'), $driverImage);
                 }
 
             if ($request->driverImage != "noImage") {
