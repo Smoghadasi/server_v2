@@ -1099,6 +1099,7 @@ class DriverController extends Controller
                     unlink($driver->driverImage);
                 $driverImage = "images/drivers/driverImage_" . time() . $driver->id . ".jpg";
                 // file_put_contents($driverImage, base64_decode($request->driverImage));
+                dd($request->driverImage);
                 $request->driverImage->move(public_path('images/drivers/'), $driverImage);
             }
             if ($request->nationalCardImage != "noImage") {
