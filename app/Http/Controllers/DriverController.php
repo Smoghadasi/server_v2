@@ -1092,7 +1092,6 @@ class DriverController extends Controller
                         unlink($driver->authImage);
                     $authImage = "images/drivers/authImage_" . time() . $driver->id . ".jpg";
                     if ($request->authImage)
-
                         $request->authImage->move(public_path('drivers/'), $authImage);
                 }
 
@@ -1100,8 +1099,6 @@ class DriverController extends Controller
                 if (file_exists($driver->driverImage))
                     unlink($driver->driverImage);
                 $driverImage = "images/drivers/driverImage_" . time() . $driver->id . ".jpg";
-                // file_put_contents($driverImage, base64_decode($request->driverImage));
-                // dd($request->driverImage);
                 if ($request->driverImage)
                     $request->driverImage->move(public_path('drivers/'), $driverImage);
             }

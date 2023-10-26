@@ -54,20 +54,27 @@ const IRAN_TARABAR_BASE_URL = "https://application.iran-tarabar.ir";
 
 const TELL = "02128420609";
 // const TELL = "09184696188";
+
 //const BANK_NAME = 'بانک ملی';
 //const CARD_NUMBER = '6037-9973-5641-6231';
 //const BANK_CARD_OWNER = 'محمد محمدی فر';
+
+// const BANK_NAME = 'بانک ملت';
+// const CARD_NUMBER = '6104-3388-0033-6295';
+// const BANK_CARD_OWNER = 'شرکت آروین مروارید اردیبهشت';
+
 const BANK_NAME = 'بانک ملت';
-const CARD_NUMBER = '6104-3388-0033-6295';
-const BANK_CARD_OWNER = 'شرکت آروین مروارید اردیبهشت';
+const CARD_NUMBER = '6104-3388-0045-5178';
+const BANK_CARD_OWNER = 'زرین ترابر فناور گستر';
 
 // محدودیت تماس راننده ها در سطوح مختلف
 const CALL_LIMIT_FOR_UNAUTH_DRIVERS = 10;
 const NUMBER_FOR_CALLS_PAY_DAY_FOR_SILVER_LEVEL_DRIVER = 20;
 const NUMBER_FOR_CALLS_PAY_DAY_FOR_GOLD_LEVEL_DRIVER = 50;
 
-//const MERCHANT_ID = "ab21993c-5456-4727-9724-8747b8f5da3c";
-const MERCHANT_ID = "16912e8a-a720-4883-8040-9cfd75f7e00f";
+//const MERCHANT_ID = "ab21993c-5456-4727-9724-8747b8f5da3c"; // بانک ملی (محمد محمدی فر)
+const MERCHANT_ID = "16912e8a-a720-4883-8040-9cfd75f7e00f"; // بانک ملت (شرکت آروین مروارید اردیبهشت)
+// const MERCHANT_ID = "3d859c75-6bdf-433a-a50e-82d614b7a01a"; // بانک ملت (زرین ترابر فناور گستر)
 
 const WALLET_INVENTORY_IS_NOT_ENOUGH = 2;
 
