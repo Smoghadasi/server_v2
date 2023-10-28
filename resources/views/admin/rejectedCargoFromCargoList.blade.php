@@ -15,6 +15,7 @@
                 <tr>
                     <th>بار</th>
                     <th>اپراتور</th>
+                    <th>تاریخ</th>
                 </tr>
                 @foreach ($cargoList as $cargo)
                     <tr>
@@ -24,6 +25,10 @@
                                 {{ $cargo->operator->name }} {{ $cargo->operator->lastName }}
                             </span>
                         </td>
+                        @php
+                            $pieces = explode(' ', $cargo->created_at);
+                        @endphp
+                        <td>{{ gregorianDateToPersian($cargo->created_at, '-', true) . ' ' . $pieces[1] }}</td>
                     </tr>
                 @endforeach
             </table>
