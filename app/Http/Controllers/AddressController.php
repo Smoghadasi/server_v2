@@ -21,10 +21,9 @@ class AddressController extends Controller
 
     public function requestCitiesList(Request $request)
     {
-        $state_id = $request->state_id;
-
         return [
-            'cities' => City::where('state_id', $state_id)->get()
+            'selectedLoadingCitiesIds' => City::where('state_id', $request->selectedLoadingCitiesIds)->get(),
+            'selectedDischargeCitiesIds' => City::where('state_id', $request->selectedDischargeCitiesIds)->get(),
         ];
     }
 
