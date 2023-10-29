@@ -27,7 +27,7 @@
                 @endforeach
                 @if (auth()->user()->id == 21 || auth()->user()->id == 40)
                     <div class="mt-3">
-                        <a class="btn btn-danger" href="{{ route('driver.zeroData') }}">
+                        <a class="btn btn-danger btn-sm" href="{{ route('driver.zeroData') }}">
                             <i class="fas fa-angle-right"></i>
                             صفر کردن بار ها
                         </a>
@@ -36,9 +36,9 @@
 
                 @if (auth()->user()->role == ROLE_ADMIN)
                     <div class="mt-3">
-                        <a class="btn btn-warning" href="{{ route('delete.duplicate') }}">
+                        <a class="btn btn-warning btn-sm" href="{{ route('delete.duplicate') }}">
                             <i class="fas fa-angle-right"></i>
-                            حذف
+                            حذف بار های تکراری
                         </a>
                     </div>
                 @endif
