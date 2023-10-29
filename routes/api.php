@@ -569,6 +569,10 @@ Route::post('botData', function (Request $request) {
             ['created_at', '>', date('Y-m-d h:i:s', strtotime('-180 minute', time()))]
         ])->count();
         if ($cargoConvertListCount == 0 && isset($matches[0])) {
+            $cargoDuplication = CargoConvertList::where('cargo', $data)->first();
+            if (isset($cargoDuplication)) {
+                $cargoDuplication->delete();
+            }
             $cargoConvertList = new CargoConvertList();
             $cargoConvertList->cargo = $data;
             $cargoConvertList->save();
