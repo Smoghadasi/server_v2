@@ -86,6 +86,17 @@ class DataConvertController extends Controller
         return back()->with('success', 'ویرایش شد');
     }
 
+    public function cargoConvertLists()
+    {
+        $duplicates = DB::table('cargo_convert_lists')
+            ->select('cargo', DB::raw('COUNT(*) as `count`'))
+            ->groupBy('cargo')
+            ->havingRaw('COUNT(*) > 1')
+            ->get();
+        // $cargo = CargoConvertList::where('cargo', "_✅️حسبی الله✅️\n🎺🎺🎺🎺🎺🎺🎺🎺\n🌐سنگ آهن سنگان  خواف،خراسان🌐\n🏨شرکت حمل ونقل پارس ترابرتیراژه🏨\n➖️سنگ آهن ➖️ گندله ➖️کنسانتره  ➖️\n\n⬅️گندله به مقصدفولاد میانه\nکمپرس تنی929,000هزار\nبارگیری نامحدود\n\n⬅️گندله بندرامام \nتنی1,043,000هزار\nلبه، کمپرس\nانعام2میلیون\n\n\n⬅️گندله وسنگ آهن \nبه مقصد بندرعباس(همه نوع کامیون)\nگندله اپال تنی1میلیون\nمعدن درکاوتنی 1میلیون\nمعدن نگین 2تنی 1,100\n( انبارپارسیان کاردریا،فلات بندر،کشتی بحر)\n✳️انعام (پشت بارنامه)2میلیون تومان✳️\n\n⬅️کنسانتره اهواز لبدار ،کمپرس،\nتنی1,092,000هزار\nانعام راننده محترم 2,000,000\n\n✅️⬅️گندله به مقصد اردستان\nتنی900,000هزار✅️\nانعام ویژه یک میلیون ودویست هزارتومان\n✅️⬅️گندله بافق تنی710,000هزار\nفقط کمپرس\nانعام 500هزار\n\n⬅️سنگ آهن به مقصد سیرجان\nفقط کمپرس تنی850,000هزار\nانعام 500هزارپرداخت کرایه نقدی\n(بمحض تخلیه باربرای بندرتنی400)\n\n👈سنگ آهن تربت حیدریه \nکمپرس تنی200هزار\nتوجه  ....👈بمحض تخلیه به فولادنیشابور تنی190هزاربارگیری می شود\n📲📲📲📲📲📲\n📲09159313354سپاهی\n📲09159053709رسول\n📲09152518244شهرام\n📲09152232007شرکت\n☎️05154164507شرکت\n♻️بارگیری وتخلیه شبانه روزی\nصدورحواله شبانه روزی♻️___")
+        // ->get();
+        return $duplicates;
+    }
     public function finalApprovalAndStoreCargo()
     {
 
@@ -236,7 +247,7 @@ class DataConvertController extends Controller
 
         $phoneNumbers = [];
         $phoneNumber = '';
-//        return $cleanedText;
+        //        return $cleanedText;
 
         foreach ($cleanedText as $key => $item)
             if (preg_match("/^[0]{1}\d{10}$/", $item))
@@ -488,9 +499,9 @@ class DataConvertController extends Controller
         try {
 
             if (UserActivityReport::where([
-                    ['created_at', '>', date('Y-m-d H:i:s', strtotime('-5 minute', time()))],
-                    ['user_id', \auth()->id()]
-                ])->count() == 0)
+                ['created_at', '>', date('Y-m-d H:i:s', strtotime('-5 minute', time()))],
+                ['user_id', \auth()->id()]
+            ])->count() == 0)
 
                 UserActivityReport::create(['user_id' => \auth()->id()]);
         } catch (Exception $e) {
@@ -684,7 +695,6 @@ class DataConvertController extends Controller
                     } catch (Exception $e) {
                         Log::emergency("Error cargo report by fleets: " . $e->getMessage());
                     }
-
                 }
 
                 try {
@@ -825,10 +835,10 @@ class DataConvertController extends Controller
         try {
             $original_word_id = $request->type == 'city' ? $request->city_id : $request->fleet_id;
             if (Dictionary::where([
-                    ['equivalentWord', $request->equivalentWord],
-                    ['type', $request->type],
-                    ['original_word_id', $original_word_id],
-                ])->count() > 0)
+                ['equivalentWord', $request->equivalentWord],
+                ['type', $request->type],
+                ['original_word_id', $original_word_id],
+            ])->count() > 0)
                 return back()->with('danger', 'کلمه اصلی، کلمه معادل و دسته تکراری است');
 
             if (strlen($request->equivalentWord)) {
@@ -1593,7 +1603,7 @@ class DataConvertController extends Controller
     {
         $cargoList = CargoConvertList::with('operator')
             ->where('rejected', 1)
-//            ->select('operator_id','persian_date', DB::raw('sum(calls) as countOfCalls'))
+            //            ->select('operator_id','persian_date', DB::raw('sum(calls) as countOfCalls'))
             ->get();
         $groupBys = $cargoList->groupBy('operator.lastName');
 
