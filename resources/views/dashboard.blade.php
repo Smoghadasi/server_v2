@@ -25,11 +25,20 @@
                         @endif
                     </span>
                 @endforeach
-                @if(auth()->user()->id == 21 || auth()->user()->id == 40)
+                @if (auth()->user()->id == 21 || auth()->user()->id == 40)
                     <div class="mt-3">
                         <a class="btn btn-danger" href="{{ route('driver.zeroData') }}">
                             <i class="fas fa-angle-right"></i>
                             صفر کردن بار ها
+                        </a>
+                    </div>
+                @endif
+
+                @if (auth()->user()->role == ROLE_ADMIN)
+                    <div class="mt-3">
+                        <a class="btn btn-warning" href="{{ route('delete.duplicate') }}">
+                            <i class="fas fa-angle-right"></i>
+                            حذف
                         </a>
                     </div>
                 @endif
@@ -137,7 +146,8 @@
                     <h1 class="text-center text-white"></h1>
                     <h2 class="text-center text-white">گزارش فعالیت رانندگان</h2>
                 </div>
-                <a class="card-footer text-white clearfix small z-1 btn btn-light" href="{{ url('admin/driversActivities') }}">
+                <a class="card-footer text-white clearfix small z-1 btn btn-light"
+                    href="{{ url('admin/driversActivities') }}">
                     <span class="float-left">گزارش فعالیت رانندگان</span>
                     <span class="float-right">
                         <i class="fas fa-angle-right"></i>

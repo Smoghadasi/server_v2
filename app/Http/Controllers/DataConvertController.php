@@ -98,10 +98,10 @@ class DataConvertController extends Controller
             ->groupBy('cargo')
             ->having('occurences', '>', 1)
             ->get();
-        // foreach ($duplicated as $duplicate) {
-        //     CargoConvertList::where('cargo', $duplicate->cargo)->delete();
-        // }
-        return $duplicates;
+        foreach ($duplicated as $duplicate) {
+            CargoConvertList::where('cargo', $duplicate->cargo)->delete();
+        }
+        return back()->with('success', 'بار تکراری حذف شد');
     }
     public function finalApprovalAndStoreCargo()
     {
