@@ -4,6 +4,7 @@ use App\Http\Controllers\AddressController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\BearingController;
+use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DriverController;
