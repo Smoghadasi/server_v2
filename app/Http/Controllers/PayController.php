@@ -53,7 +53,7 @@ class PayController extends Controller
     // پرداخت
     public function pay($amount, $user_id, $userType)
     {
-        $CallbackURL = 'http://application.iran-tarabar.com/verify'; // Required
+        $CallbackURL = 'http://dashboard.iran-tarabar.com/verify'; // Required
 
         $client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']);
         $result = $client->PaymentRequest(
@@ -196,7 +196,7 @@ class PayController extends Controller
         if ($userType == ROLE_TRANSPORTATION_COMPANY)
             $amount = TRANSPORTATION_COMPANY_MONTHLY_SERVICE_AMOUNT;
 
-        $CallbackURL = 'http://application.iran-tarabar.com/verifyMonthlyCharge'; // Required
+        $CallbackURL = 'http://dashboard.iran-tarabar.com/verifyMonthlyCharge'; // Required
 
         $client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']);
         $result = $client->PaymentRequest(
@@ -599,7 +599,7 @@ class PayController extends Controller
 
         $amount = $driverPackagesInfo['data'][$packageName]['price'];
 
-        $CallbackURL = 'http://application.iran-tarabar.ir/verifyDriverPay';
+        $CallbackURL = 'http://dashboard.iran-tarabar.ir/verifyDriverPay';
 
         $client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']);
         $result = $client->PaymentRequest(
@@ -742,7 +742,7 @@ class PayController extends Controller
 
         $amount = $customerPackagesInfo[$packageName]['price'];
 
-        $CallbackURL = 'http://application.iran-tarabar.com/verifyCustomerPay';
+        $CallbackURL = 'http://dashboard.iran-tarabar.com/verifyCustomerPay';
 
         $client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']);
         $result = $client->PaymentRequest(
@@ -864,7 +864,7 @@ class PayController extends Controller
         if (!isset($user->id))
             return abort(404);
 
-        $CallbackURL = 'https://application.iran-tarabar.ir/verifyFleetControlPay';
+        $CallbackURL = 'https://dashboard.iran-tarabar.ir/verifyFleetControlPay';
 
         $amount = FLEET_CONTROL_PRICE * $numOfFleetControl;
 
