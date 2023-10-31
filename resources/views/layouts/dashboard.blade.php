@@ -182,6 +182,14 @@
                         </a>
                     </li>
                 @endif
+                @if (in_array('unSuccessPayment', auth()->user()->userAccess))
+                    <li class="menu-item">
+                        <a class="menu-link" href="{{ route('unSuccessPeyment.driver') }}">
+                            <i class="menu-icon tf-icons bx bx-credit-card"></i>
+                            <div data-i18n="Without menu">پرداخت ناموفق</div>
+                        </a>
+                    </li>
+                @endif
                 @if(in_array('driversAuthentication',auth()->user()->userAccess))
                     <li class="menu-item ">
                         <a href="{{ url('admin/driversAuthenticationByOperator') }}" class="menu-link">

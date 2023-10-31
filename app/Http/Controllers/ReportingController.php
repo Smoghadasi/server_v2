@@ -307,8 +307,8 @@ class ReportingController extends Controller
     public function driversCountCall()
     {
         $basedCalls = DriverCallCount::with('driver')->groupBy('driver_id')
-            ->select('driver_id','persian_date', 'created_date', DB::raw('sum(calls) as countOfCalls'))
-//            ->orderByDesc('persian_date')
+            ->select('driver_id', 'persian_date', 'created_date', DB::raw('sum(calls) as countOfCalls'))
+            //            ->orderByDesc('persian_date')
             ->orderByDesc('countOfCalls')
             ->paginate(20);
         return view('admin.reporting.driversCountCall', compact('basedCalls'));
@@ -570,10 +570,10 @@ class ReportingController extends Controller
 
     /****************************************************************************************************/
 
-//    public function daysActivityNissan()
-//    {
-//        return DriverActivity::all();
-//    }
+    //    public function daysActivityNissan()
+    //    {
+    //        return DriverActivity::all();
+    //    }
 
     // گزارش فعالیت اپرتورها
     public function operatorsActivityReport()
@@ -1020,6 +1020,27 @@ class ReportingController extends Controller
 
 
         return view('admin.reporting.paymentReport', compact('transactions', 'counter'));
+    }
+
+    public function unSuccessPeyment()
+    {
+        $today = date('Y-m-d', time()) . ' 00:00:00';
+        $successTransactions = Transaction::where([
+            ['status', '>', 0],
+            ['userType', 'driver'],
+            ['created_at', '>=', $today]
+        ])->pluck('user_id');
+        $transactions = Transaction::where([
+            ['status', 0],
+            ['userType', 'driver'],
+            ['created_at', '>=', $today]
+        ])
+            ->whereNotIn('user_id', $successTransactions)
+            ->select('*', DB::raw('count(*) as total'))
+            ->orderBy('id', 'desc')
+            ->groupby('user_id')
+            ->paginate(100);
+        return view('admin.reporting.unSuccessPeyment', compact('transactions'));
     }
 
     // گزارش بیشترین پرداخت رانندگان

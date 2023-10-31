@@ -507,6 +507,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // گزارش پرداخت ها
         Route::get('paymentReport/{userType}/{status}', [ReportingController::class, 'paymentReport'])->middleware('operator');
 
+        Route::get('unSuccessPeyment', [ReportingController::class, 'unSuccessPeyment'])->middleware('operator')->name('unSuccessPeyment.driver');
+
         // گزارش بیشترین پرداخت رانندگان
         Route::get('mostPaidDriversReport', [ReportingController::class, 'mostPaidDriversReport'])->middleware('operator');
 

@@ -197,7 +197,7 @@
                                                     احراز هویت رانندگان
                                                 </label>
                                             </div>
-                                            
+
                                             <div class="form-group">
                                                 <label>
                                                     <input type="checkbox" name="loads"
@@ -372,6 +372,14 @@
                                                     <input type="checkbox" name="paymentReport"
                                                            @if (in_array('paymentReport', $user->userAccess)) checked @endif>
                                                     پرداخت ها
+                                                </label>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>
+                                                    <input type="checkbox" name="unSuccessPayment"
+                                                           @if (in_array('unSuccessPayment', $user->userAccess)) checked @endif>
+                                                     پرداخت ناموفق رانندگان
                                                 </label>
                                             </div>
 
