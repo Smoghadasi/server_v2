@@ -764,6 +764,11 @@ class DriverController extends Controller
         try {
             if ($driver->activeDate > date("Y-m-d H:i:s", time()) || $driver->freeCalls > 0) {
                 if (DriverCall::where('load_id', $load_id)->where('driver_id', $driver->id)->count() > 0) {
+                    $load = Load::find($load_id);
+                    $load->driverCallCounter--;
+                    $load->save();
+                    $fleets = json_decode($load->fleets, true);
+
                     return ['result' => true];
                 }
 
@@ -816,11 +821,6 @@ class DriverController extends Controller
                 $driverCall->save();
 
 
-                $load = Load::find($load_id);
-
-                $load->driverCallCounter--;
-                $load->save();
-                $fleets = json_decode($load->fleets, true);
                 return $fleets;
 
 
