@@ -820,8 +820,17 @@ class DriverController extends Controller
 
                 if (isset($load->id) && $load->operator_id > 0) {
 
-                    $load->driverCallCounter--;
-                    $load->save();
+                    if ($load->driverCallCounter == 0) {
+                        $fleets = json_decode($load->fleets, true);
+                        foreach ($fleets as $fleet) {
+                            if ($fleet['fleet_id'] == 82) {
+                                $load->delete();
+                            }
+                        }
+                    } else {
+                        $load->driverCallCounter--;
+                        $load->save();
+                    }
                 }
 
                 return ['result' => true];
