@@ -71,6 +71,7 @@
                         <div class="alert alert-info text-right">{{ $message }}</div>
                     @endif
                 </form>
+                <div class="table-responsive">
                     <table class="table small">
                         <thead>
                             <tr>
@@ -180,6 +181,8 @@
                             @endforeach
                         </tbody>
                     </table>
+                </div>
+
 {{--                    <button type="submit" class="btn btn-danger mb-2">حذف دسته ای بارهای انتخاب شده</button>--}}
             </div>
 
