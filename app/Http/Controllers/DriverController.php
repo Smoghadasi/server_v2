@@ -768,6 +768,7 @@ class DriverController extends Controller
                     $load->driverCallCounter--;
                     $load->save();
                     $fleets = json_decode($load->fleets, true);
+                    return $fleets;
 
                     return ['result' => true];
                 }
@@ -819,9 +820,6 @@ class DriverController extends Controller
                 $driverCall->phoneNumber = $phoneNumber;
                 $driverCall->callingDate = date("Y-m-d");
                 $driverCall->save();
-
-
-                return $fleets;
 
 
                 return ['result' => true];
