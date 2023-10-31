@@ -568,16 +568,29 @@ Route::post('botData', function (Request $request) {
             ['cargo', $data],
             ['created_at', '>', date('Y-m-d h:i:s', strtotime('-180 minute', time()))]
         ])->count();
-        if ($cargoConvertListCount == 0 && isset($matches[0])) {
 
+        if ($cargoConvertListCount == 0 && isset($matches[0])) {
             $cargoDuplication = CargoConvertList::where('cargo', $data)->first();
-            if ($cargoDuplication) {
-                $cargoDuplication->delete();
+            $cargoDuplicationMessage = CargoConvertList::where('message_id', $request->message_id)->first();
+
+            if (isset($cargoDuplication)) {
+            } else {
+                if (isset($cargoDuplicationMessage)) {
+                    \Illuminate\Support\Facades\Log::emergency('OK');
+                } else {
+                    $cargoConvertList = new CargoConvertList();
+                    $cargoConvertList->cargo = $data;
+                    if ($request->message_id !== null || $request->message_id !== '') {
+                        $cargoConvertList->message_id = $request->message_id;
+                    }
+                    $cargoConvertList->save();
+                }
             }
-            $cargoConvertList = new CargoConvertList();
-            $cargoConvertList->cargo = $data;
-            $cargoConvertList->save();
+            // \Illuminate\Support\Facades\Log::emergency($cargoConvertList);
+
         }
+
+
         return 'OK';
     } catch (Exception $exception) {
         \Illuminate\Support\Facades\Log::emergency("------------------- botData ERROR ---------------------");
