@@ -124,7 +124,7 @@ class DriverController extends Controller
             $driver->status = ACTIVE;
         // خاور و نیسان
         if ($fleet_id == 81 || $fleet_id == 82 || $fleet_id == 83 || $fleet_id == 84 || $fleet_id == 85) {
-            $driver->freeCalls = 5;
+            $driver->freeCalls = 7;
         } elseif ($fleet_id == 45) {
             $driver->freeCalls = 7;
         } else {
