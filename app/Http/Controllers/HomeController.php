@@ -39,8 +39,8 @@ class HomeController extends Controller
 
     public function dashboard()
     {
-
-        if (auth()->user()->role !== ROLE_ADMIN) {
+        if(in_array('dashboard',auth()->user()->userAccess))
+        {
             return redirect('/dashboardOpererator');
         }
         try {
