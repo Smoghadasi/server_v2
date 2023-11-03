@@ -46,6 +46,10 @@ Route::get('/', function () {
     return redirect('/dashboard');
 });
 
+Route::get('/dashboardOpererator', function () {
+    return view('dashboardOpererator');
+})->name('dashboardOpererator');
+
 
 Route::post('/check-mobile', [AuthController::class, 'checkMobile'])->name('check.mobile');
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('user.resetPassword');

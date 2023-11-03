@@ -39,6 +39,10 @@ class HomeController extends Controller
 
     public function dashboard()
     {
+
+        if (auth()->user()->role !== ROLE_ADMIN) {
+            return redirect('/dashboardOpererator');
+        }
         try {
             $cargoAcceptsCount = Load::where('status', BEFORE_APPROVAL)->count();
             $countOfLoads = LoadBackup::count();
@@ -49,8 +53,7 @@ class HomeController extends Controller
 
             $users = UserController::getOnlineAndOfflineUsers();
 
-            return view('dashboard', compact('countOfLoads', 'countOfBearings', 'countOfCustomers', 'countOfContactUses', 'countOfDrivers','users', 'cargoAcceptsCount'));
-
+            return view('dashboard', compact('countOfLoads', 'countOfBearings', 'countOfCustomers', 'countOfContactUses', 'countOfDrivers', 'users', 'cargoAcceptsCount'));
         } catch (\Exception $exception) {
             return $exception->getMessage();
         }
@@ -108,7 +111,6 @@ class HomeController extends Controller
             $appVersion->cargoOwnerVersion = $request->cargoOwnerVersion;
             $appVersion->save();
         } catch (\Exception $exception) {
-
         }
         return back()->with('success', 'ذخیره شد');
     }
