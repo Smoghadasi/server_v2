@@ -440,7 +440,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         /***************************************************************************************************/
         Route::get('profile', [UserController::class, 'adminProfile'])->middleware('operator')->name('user.edit');
 
-        Route::post('restPassword/{user}', [UserController::class, 'restPassword'])->middleware('operator');
+        Route::post('restPassword/{user}', [UserController::class, 'restPassword'])->middleware('operator')->name('user.resetPass');
 
         /**************************************************************************************************************/
         //  شماره تلفن های لیست ممنوعه
