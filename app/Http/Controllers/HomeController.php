@@ -39,23 +39,23 @@ class HomeController extends Controller
 
     public function dashboard()
     {
-        if(in_array('dashboard',auth()->user()->userAccess))
-        {
+        if (in_array('dashboard', auth()->user()->userAccess)) {
+            try {
+                $cargoAcceptsCount = Load::where('status', BEFORE_APPROVAL)->count();
+                $countOfLoads = LoadBackup::count();
+                $countOfBearings = Bearing::count();
+                $countOfCustomers = Customer::count();
+                $countOfContactUses = ContactUs::count();
+                $countOfDrivers = Driver::count();
+
+                $users = UserController::getOnlineAndOfflineUsers();
+
+                return view('dashboard', compact('countOfLoads', 'countOfBearings', 'countOfCustomers', 'countOfContactUses', 'countOfDrivers', 'users', 'cargoAcceptsCount'));
+            } catch (\Exception $exception) {
+                return $exception->getMessage();
+            }
+        } else {
             return redirect('/dashboardOpererator');
-        }
-        try {
-            $cargoAcceptsCount = Load::where('status', BEFORE_APPROVAL)->count();
-            $countOfLoads = LoadBackup::count();
-            $countOfBearings = Bearing::count();
-            $countOfCustomers = Customer::count();
-            $countOfContactUses = ContactUs::count();
-            $countOfDrivers = Driver::count();
-
-            $users = UserController::getOnlineAndOfflineUsers();
-
-            return view('dashboard', compact('countOfLoads', 'countOfBearings', 'countOfCustomers', 'countOfContactUses', 'countOfDrivers', 'users', 'cargoAcceptsCount'));
-        } catch (\Exception $exception) {
-            return $exception->getMessage();
         }
     }
 
