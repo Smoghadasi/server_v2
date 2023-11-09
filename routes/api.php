@@ -17,6 +17,7 @@ use App\Http\Controllers\SOSController;
 use App\Http\Controllers\TenderController;
 use App\Models\AppVersion;
 use App\Models\Bearing;
+use App\Models\ClearText;
 use App\Models\Customer;
 use App\Models\Dictionary;
 use App\Models\Driver;
@@ -563,34 +564,23 @@ Route::post('botData', function (Request $request) {
     try {
         $data = convertFaNumberToEn($request->data);
         preg_match('/09\d{2}/', $data, $matches);
-
+        $clear = new CargoConvertList();
+        $clear_sticker = $clear->remove_emoji($data);
+        $trim_string = trim($clear_sticker);
         $cargoConvertListCount = CargoConvertList::where([
-            ['cargo', $data],
+            ['cargo', $trim_string],
             ['created_at', '>', date('Y-m-d h:i:s', strtotime('-180 minute', time()))]
         ])->count();
 
         if ($cargoConvertListCount == 0 && isset($matches[0])) {
-            $cargoDuplication = CargoConvertList::where('cargo', $data)->first();
-            $cargoDuplicationMessage = CargoConvertList::where('message_id', $request->message_id)->first();
 
-            if (isset($cargoDuplication)) {
-            } else {
-                if (isset($cargoDuplicationMessage)) {
-                    \Illuminate\Support\Facades\Log::emergency('OK');
-                } else {
-                    $cargoConvertList = new CargoConvertList();
-                    $cargoConvertList->cargo = $data;
-                    if ($request->message_id !== null || $request->message_id !== '') {
-                        $cargoConvertList->message_id = $request->message_id;
-                    }
-                    $cargoConvertList->save();
-                }
+            $cargoConvertList = new CargoConvertList();
+            $cargoConvertList->cargo = $trim_string;
+            if ($request->message_id !== null || $request->message_id !== '') {
+                $cargoConvertList->message_id = $request->message_id;
             }
-            // \Illuminate\Support\Facades\Log::emergency($cargoConvertList);
-
+            $cargoConvertList->save();
         }
-
-
         return 'OK';
     } catch (Exception $exception) {
         \Illuminate\Support\Facades\Log::emergency("------------------- botData ERROR ---------------------");
