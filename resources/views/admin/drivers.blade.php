@@ -146,10 +146,7 @@
                     </tbody>
                 </table>
             </div>
-            @if (!isset($showSearchResult) || !$showSearchResult)
-                {{ $drivers }}
-            @endif
-
+            {{ $drivers }}
         </div>
     </div>
 
