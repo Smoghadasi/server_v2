@@ -699,7 +699,7 @@ class DriverController extends Controller
 
 
         if (count($condition)) {
-            $drivers = Driver::where($condition)->orderBy('id', 'desc')->get();
+            $drivers = Driver::where($condition)->orderBy('id', 'desc')->paginate(500);
             if (count($drivers))
                 return $this->drivers($drivers, true);
         }
