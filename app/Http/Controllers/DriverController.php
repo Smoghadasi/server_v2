@@ -125,8 +125,7 @@ class DriverController extends Controller
         // خاور و نیسان
         if ($fleet_id == 81 || $fleet_id == 82 || $fleet_id == 83 || $fleet_id == 84 || $fleet_id == 85 || $fleet_id == 45) {
             $driver->freeCalls = 7;
-        }
-        else {
+        } else {
             $driver->freeCalls = DRIVER_FREE_CALLS;
         }
 
@@ -745,8 +744,16 @@ class DriverController extends Controller
     public function removeDriver(Driver $driver)
     {
         $driver->delete();
+        return redirect()->route('drivers')->with('success', 'راننده مورد نظر حذف شد');
+    }
 
-        return back()->with('success', 'راننده مورد نظر حذف شد');
+    // حذف راننده
+    public function removeActiveDate(Driver $driver)
+    {
+        $driver->activeDate = null;
+        $driver->save();
+
+        return back()->with('success', 'اشتراک با موفقیت پاک شد');
     }
 
     public function zeroData()

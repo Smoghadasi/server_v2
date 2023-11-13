@@ -333,6 +333,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         //حذف راننده
         Route::get('removeDriver/{driver}', [DriverController::class, 'removeDriver'])->middleware('admin');
 
+         //حذف راننده
+         Route::put('removeActiveDate/{driver}', [DriverController::class, 'removeActiveDate'])->middleware('admin')->name('removeActiveDate');
+
         // تمدید اعتبار رانندگان
         Route::post('creditDriverExtending/{driver}', [DriverController::class, 'creditDriverExtending']);
 

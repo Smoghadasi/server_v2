@@ -117,6 +117,9 @@
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                     data-bs-target="#removeDriver_{{ $driver->id }}">حذف
                 </button>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                    data-bs-target="#removeActiveDate_{{ $driver->id }}">حذف اشتراک
+                </button>
             @endif
             @if (in_array('driversPaymentReport', auth()->user()->userAccess))
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal"
@@ -226,8 +229,38 @@
                                 </p>
                             </div>
                             <div class="modal-footer text-left">
-                                <a class="btn btn-primary" href="{{ url('admin/removeDriver') }}/{{ $driver->id }}">حذف
+                                <a class="btn btn-primary"
+                                    href="{{ url('admin/removeDriver') }}/{{ $driver->id }}">حذف
                                     راننده</a>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                                    انصراف
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div id="removeActiveDate_{{ $driver->id }}" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">حذف اشتراک راننده</h4>
+                            </div>
+                            <div class="modal-body">
+                                <p>آیا مایل به حذف اشتراک راننده
+                                    <span class="text-primary">
+                                        {{ $driver->name }} {{ $driver->lastName }}</span>
+                                    هستید؟
+                                </p>
+                            </div>
+                            <div class="modal-footer text-left">
+                                <form action="{{ route('removeActiveDate', $driver) }}" method="post">
+                                    @method('put')
+                                    @csrf
+                                    <button class="btn btn-primary">حذف</button>
+                                </form>
                                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
                                     انصراف
                                 </button>
