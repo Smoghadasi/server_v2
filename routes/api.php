@@ -566,7 +566,11 @@ Route::post('botData', function (Request $request) {
         preg_match('/09\d{2}/', $data, $matches);
         $clear = new CargoConvertList();
         $clear_sticker = $clear->remove_emoji($data);
+
         $trim_string = trim($clear_sticker);
+        str_replace('تخلیه', ' ', $trim_string);
+        str_replace('بارگیری', ' ', $trim_string);
+
         $cargoConvertListCount = CargoConvertList::where([
             ['cargo', $trim_string],
             ['created_at', '>', date('Y-m-d h:i:s', strtotime('-180 minute', time()))]
