@@ -163,13 +163,9 @@ class UserController extends Controller
     //
     public function restPassword(Request $request, User $user)
     {
-        if ($user->id == \auth()->id()) {
-            $user->password = bcrypt($request->password);
-            $user->save();
-            return back()->with('success', 'رمز جدید ثبت شد');
-        }
-
-        return back()->with('danger', 'خطا در تغییر رمز عبور!');
+        $user->password = bcrypt($request->password);
+        $user->save();
+        return back()->with('success', 'رمز جدید ثبت شد');
     }
 
     public function operatorAccess(Request $request, User $user)
