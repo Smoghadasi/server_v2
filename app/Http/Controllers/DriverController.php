@@ -1129,7 +1129,7 @@ class DriverController extends Controller
                     unlink($driver->carSmartCardImage);
                 $carSmartCardImage = "images/drivers/carSmartCardImage_" . time() . $driver->id . ".jpg";
                 // file_put_contents($carSmartCardImage, base64_decode($request->carSmartCardImage));
-                if ($request->carSmartCardImage)
+                if ($request->carSmartCardImage !== $driver->carSmartCardImage)
 
                     $request->carSmartCardImage->move(public_path('drivers/'), $carSmartCardImage);
             }
@@ -1138,7 +1138,7 @@ class DriverController extends Controller
                     unlink($driver->driverSmartCardImage);
                 $driverSmartCardImage = "images/drivers/driverSmartCardImage_" . time() . $driver->id . ".jpg";
                 // file_put_contents($driverSmartCardImage, base64_decode($request->driverSmartCardImage));
-                if ($request->driverSmartCardImage)
+                if ($request->driverSmartCardImage !== $driver->driverSmartCardImage)
 
                     $request->driverSmartCardImage->move(public_path('drivers/'), $driverSmartCardImage);
             }
@@ -1148,7 +1148,7 @@ class DriverController extends Controller
                         unlink($driver->imageAddressDoc);
                     $imageAddressDoc = "images/drivers/imageAddressDoc_" . time() . $driver->id . ".jpg";
                     // file_put_contents($imageAddressDoc, base64_decode($request->imageAddressDoc));
-                    if ($request->imageAddressDoc)
+                    if ($request->imageAddressDoc !== $driver->imageAddressDoc)
 
                         $request->imageAddressDoc->move(public_path('drivers/'), $imageAddressDoc);
                 }
@@ -1158,7 +1158,7 @@ class DriverController extends Controller
                         unlink($driver->imageRegisterSana);
                     $imageRegisterSana = "images/drivers/imageRegisterSana_" . time() . $driver->id . ".jpg";
                     // file_put_contents($imageRegisterSana, base64_decode($request->imageRegisterSana));
-                    if ($request->imageRegisterSana)
+                    if ($request->imageRegisterSana !== $driver->imageRegisterSana)
                         $request->imageRegisterSana->move(public_path('drivers/'), $imageRegisterSana);
                 }
 
