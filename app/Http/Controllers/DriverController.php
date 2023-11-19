@@ -1116,7 +1116,7 @@ class DriverController extends Controller
                     $request->driverImage->move(public_path('drivers/'), $driverImage);
             }
             if ($request->nationalCardImage != "noImage") {
-                if (file_exists($driver->nationalCardImage || $request->nationalCardImage !== $driver->nationalCardImage))
+                if (file_exists($driver->nationalCardImage) && $request->nationalCardImage !== $driver->nationalCardImage)
 
                     unlink($driver->nationalCardImage);
                 $nationalCardImage = "images/drivers/nationalCardImage_" . time() . $driver->id . ".jpg";
