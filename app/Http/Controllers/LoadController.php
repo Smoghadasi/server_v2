@@ -1808,7 +1808,7 @@ class LoadController extends Controller
                     'storeFor'
                 )
                 ->skip(0)
-                // ->take($page)
+                ->take($page)
                 ->orderBy('urgent', 'desc')
                 ->orderBy('id', 'desc')
                 ->get();
