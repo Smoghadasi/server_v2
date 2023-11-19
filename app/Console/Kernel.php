@@ -43,12 +43,12 @@ class Kernel extends ConsoleKernel
                 Log::emergency("------------------------------------------------------------------------------");
             }
 
-            // حذف نیسان ها بعد از 24 ساعت
+            // حذف نیسان ها بعد از 8 ساعت
             try {
                 $ids = FleetLoad::whereIn('fleet_id', [82, 83, 84])->pluck('load_id');
 
                Load::where([
-                    ['created_at', '<', date('Y-m-d h:i:s', strtotime('-24 hours', time()))],
+                    ['created_at', '<', date('Y-m-d h:i:s', strtotime('-8 hours', time()))],
                     ['operator_id', '>', 0]
                 ])
                     ->whereIn('id', $ids)
