@@ -1104,7 +1104,7 @@ class DriverController extends Controller
                     if (file_exists($driver->authImage))
                         unlink($driver->authImage);
                     $authImage = "images/drivers/authImage_" . time() . $driver->id . ".jpg";
-                    if ($request->authImage)
+                    if ($request->authImage !== $driver->authImage)
                         $request->authImage->move(public_path('drivers/'), $authImage);
                 }
 
@@ -1112,7 +1112,7 @@ class DriverController extends Controller
                 if (file_exists($driver->driverImage))
                     unlink($driver->driverImage);
                 $driverImage = "images/drivers/driverImage_" . time() . $driver->id . ".jpg";
-                if ($request->driverImage)
+                if ($request->driverImage !== $driver->driverImage)
                     $request->driverImage->move(public_path('drivers/'), $driverImage);
             }
             if ($request->nationalCardImage != "noImage") {
@@ -1120,10 +1120,9 @@ class DriverController extends Controller
                     unlink($driver->nationalCardImage);
                 $nationalCardImage = "images/drivers/nationalCardImage_" . time() . $driver->id . ".jpg";
                 // file_put_contents($nationalCardImage, base64_decode($request->nationalCardImage));
-                if ($request->nationalCardImage)
+                if ($request->nationalCardImage !== $driver->nationalCardImage)
                     $request->nationalCardImage->move(public_path('drivers/'), $nationalCardImage);
                 // dd($request->nationalCardImage->move(public_path('images/drivers/'), $nationalCardImage));
-
             }
             if ($request->carSmartCardImage != "noImage") {
                 if (file_exists($driver->carSmartCardImage))
