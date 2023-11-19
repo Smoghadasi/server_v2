@@ -1116,13 +1116,14 @@ class DriverController extends Controller
                     $request->driverImage->move(public_path('drivers/'), $driverImage);
             }
             if ($request->nationalCardImage != "noImage") {
-                if (file_exists($driver->nationalCardImage) && $request->nationalCardImage !== $driver->nationalCardImage)
-
+                if ($request->nationalCardImage !== $driver->nationalCardImage) {
+                    if (file_exists($driver->nationalCardImage))
                     unlink($driver->nationalCardImage);
                 $nationalCardImage = "images/drivers/nationalCardImage_" . time() . $driver->id . ".jpg";
                 // file_put_contents($nationalCardImage, base64_decode($request->nationalCardImage));
                     $request->nationalCardImage->move(public_path('drivers/'), $nationalCardImage);
                 // dd($request->nationalCardImage->move(public_path('images/drivers/'), $nationalCardImage));
+                }
             }
             if ($request->carSmartCardImage != "noImage") {
                 if (file_exists($driver->carSmartCardImage))
