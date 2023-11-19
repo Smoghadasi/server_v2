@@ -1772,7 +1772,7 @@ class LoadController extends Controller
 
         try {
 
-            $page = 200;
+            $page = 500;
 
             $conditions = [];
             if ($lastLoadId > 0) {
