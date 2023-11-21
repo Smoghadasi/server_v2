@@ -1818,7 +1818,7 @@ class LoadController extends Controller
                     'counts' => count($loads),
                     'result' => SUCCESS,
                     'loads' => $loads,
-                    'currentTime' => time(),
+                    'currentTime' => time() . '000',
                     'fleet_id' => $driver->fleet_id,
                     'data' => ['driverStatus' => true],
                 ];
