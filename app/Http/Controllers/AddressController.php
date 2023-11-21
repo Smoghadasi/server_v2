@@ -165,7 +165,7 @@ class AddressController extends Controller
     // شهرها و استان ها
     public function provincesAndCities()
     {
-        $provinces = State::all();
+        $provinces = State::orderBy('asc', 'priority')->get();
         return view('admin.provincesAndCities', compact('provinces'));
     }
 
