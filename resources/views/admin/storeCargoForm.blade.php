@@ -9,98 +9,109 @@
             -
             تعداد بار در صف : {{ $countOfCargos }}
         </h5>
+        @if (auth()->user()->id == 25)
+            <div class="m-3">
+                <a class="btn btn-warning btn-sm" href="{{ route('delete.duplicate') }}">
+                    <i class="fas fa-angle-right"></i>
+                    حذف بار های تکراری
+                </a>
+            </div>
+        @endif
         <div class="card-body row">
 
-            @if(in_array('onlineUsers',auth()->user()->userAccess))
+            @if (in_array('onlineUsers', auth()->user()->userAccess))
                 <div class="col-lg-12 m-2 p-2 text-right bg-light">
                     <div class="col-lg-12 mb-1">کاربران :</div>
-                    @foreach($users as $user)
+                    @foreach ($users as $user)
                         <span class="table-bordered border-info rounded bg-white p-1 m-1">
-                        {{ $user->name }} {{ $user->lastName }}
-                            @if(Cache::has('user-is-online-' . $user->id))
+                            {{ $user->name }} {{ $user->lastName }}
+                            @if (Cache::has('user-is-online-' . $user->id))
                                 <span class="text-success">آنلاین</span>
                             @else
                                 <span class="text-secondary">آفلاین</span>
                             @endif
-                    </span>
+                        </span>
                     @endforeach
                 </div>
             @endif
 
             <form method="post" action="{{ url('admin/updateCargoInfo') }}/{{ $cargo->id }}" class="col-lg-6"
-                  style="height: 100vh;overflow-y: auto;">
+                style="height: 100vh;overflow-y: auto;">
                 @csrf
 
                 <div class="col-lg-12">
                     <button class="btn btn-primary mb-2 float-right" type="submit">ثبت اطلاعات ویرایش شده</button>
                     <a href="{{ url('admin/removeCargoFromCargoList') }}/{{ $cargo->id }}"
-                       class="btn btn-danger mb-2 float-right">
+                        class="btn btn-danger mb-2 float-right">
                         نمایش بار بعدی
                     </a>
                 </div>
                 <span class="col-lg-12 text-right">
-                <span class="alert alert-info p-1">
-                    زمان ثبت : {{ str_replace('-','/',gregorianDateToPersian($cargo->created_at, '-', true)) }}
-                    @php
-                        $date = explode(' ',$cargo->created_at);
-                        if (isset($date[1]))
-                            echo 'زمان : '.$date[1];
-                    @endphp
+                    <span class="alert alert-info p-1">
+                        زمان ثبت : {{ str_replace('-', '/', gregorianDateToPersian($cargo->created_at, '-', true)) }}
+                        @php
+                            $date = explode(' ', $cargo->created_at);
+                            if (isset($date[1])) {
+                                echo 'زمان : ' . $date[1];
+                            }
+                        @endphp
+                    </span>
                 </span>
-            </span>
-                <textarea class="form-control" placeholder="ورود لیست بارها" name="cargo"
-                          rows="20">{{ $originalText }}</textarea>
+                <textarea class="form-control" placeholder="ورود لیست بارها" name="cargo" rows="20">{{ $originalText }}</textarea>
             </form>
 
             <div class="col-lg-6" style="height: 100vh;overflow-y: auto;">
                 <form method="POST" action="{{ url('admin/storeMultiCargo') }}/{{ $cargo->id }}"
-                      enctype="multipart/form-data">
+                    enctype="multipart/form-data">
                     @csrf
-                    @foreach($cargoList as $key => $item)
-                        @if(count($item['fleets'])==0)
+                    @foreach ($cargoList as $key => $item)
+                        @if (count($item['fleets']) == 0)
                             @continue
                         @endif
-                        <div class="form-group row text-right alert alert-light border border-dark"
-                             style="color: #000000">
+                        <div class="form-group row text-right alert alert-light border border-dark" style="color: #000000">
                             <input type="hidden" name="key[]" value="{{ $key }}">
 
                             <label class="col-lg-12">عنوان :
-                                <input type="text" class="form-control" name="title_{{$key}}" placeholder="بدون عنوان">
+                                <input type="text" class="form-control" name="title_{{ $key }}"
+                                    placeholder="بدون عنوان">
                             </label>
 
                             <label class="col-lg-6">مبدا :
-                                <input type="text" class="form-control" name="origin_{{$key}}"
-                                       value="{{ $item['origin'] }}">
+                                <input type="text" class="form-control" name="origin_{{ $key }}"
+                                    value="{{ $item['origin'] }}">
                             </label>
                             <label class="col-lg-6">مقصد :
-                                <input type="text" class="form-control" name="destination_{{$key}}"
-                                       value="{{ $item['destination'] }}">
+                                <input type="text" class="form-control" name="destination_{{ $key }}"
+                                    value="{{ $item['destination'] }}">
                             </label>
                             <label class="col-lg-12">شماره تلفن :
-                                <input type="text" class="form-control" name="mobileNumber_{{$key}}"
-                                       value="{{ $item['mobileNumber'] }}">
+                                <input type="text" class="form-control" name="mobileNumber_{{ $key }}"
+                                    value="{{ $item['mobileNumber'] }}">
                             </label>
 
                             <div class="col-lg-12 row">
 
                                 <label class="col-lg-6">قیمت :
                                     <input type="text" class="form-control"
-                                           onkeyup="separate('freight_{{$key}}'); priceType('priceType_{{ $key }}',this.value)"
-                                           id="freight_{{$key}}" name="freight_{{$key}}"
-                                           value="{{ $item['freight'] }}">
+                                        onkeyup="separate('freight_{{ $key }}'); priceType('priceType_{{ $key }}',this.value)"
+                                        id="freight_{{ $key }}" name="freight_{{ $key }}"
+                                        value="{{ $item['freight'] }}">
                                 </label>
                                 <label class="col-lg-6">نوع قیمت :
                                     <div class="col-lg-12">
                                         <label class="ml-3">
-                                            <input checked type="radio" value="توافقی" name="priceType_{{$key}}"/>توافقی
+                                            <input checked type="radio" value="توافقی"
+                                                name="priceType_{{ $key }}" />توافقی
                                         </label>
 
                                         <label class="ml-3">
-                                            <input type="radio" value="به ازای هر تن" name="priceType_{{$key}}"/>به ازای
+                                            <input type="radio" value="به ازای هر تن"
+                                                name="priceType_{{ $key }}" />به ازای
                                             هر تن
                                         </label>
                                         <label class="ml-3">
-                                            <input type="radio" value="به صورت صافی" name="priceType_{{$key}}"/>به صورت
+                                            <input type="radio" value="به صورت صافی"
+                                                name="priceType_{{ $key }}" />به صورت
                                             صافی
                                         </label>
                                     </div>
@@ -110,13 +121,12 @@
 
                             <label class="col-lg-12 row">
                                 <lable class="col-lg-12">ناوگان :</lable>
-                                @foreach($item['fleets'] as $fleet)
-                                    <input type="text" class="form-control col-lg-4" name="fleets_{{$key}}[]"
-                                           value="{{ $fleet }}">
+                                @foreach ($item['fleets'] as $fleet)
+                                    <input type="text" class="form-control col-lg-4" name="fleets_{{ $key }}[]"
+                                        value="{{ $fleet }}">
                                 @endforeach
                             </label>
                         </div>
-
                     @endforeach
 
                     <div class="row form-group row mb-0">
