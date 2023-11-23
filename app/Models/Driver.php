@@ -98,6 +98,6 @@ class Driver extends Authenticatable
         $toNum = array($sms);
         $pattern_code = "xcj5cot5me6x7w5";
         $date = array('date' => $persian_date, 'expireDate' => $free_date);
-        return $client->sendPatternSms($fromNum, $toNum, $user, $pass, $pattern_code, $date);
+        // return $client->sendPatternSms($fromNum, $toNum, $user, $pass, $pattern_code, $date);
     }
 }
