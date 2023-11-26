@@ -1772,7 +1772,7 @@ class LoadController extends Controller
 
         try {
 
-            $page = 500;
+            $page = 400;
 
             $conditions = [];
             if ($lastLoadId > 0) {
@@ -1805,7 +1805,7 @@ class LoadController extends Controller
                     'toCity',
                     // 'loadingDate',
                     // 'fleets',
-                    'storeFor'
+                    // 'storeFor'
                 )
                 ->skip(0)
                 ->take($page)
