@@ -1788,23 +1788,23 @@ class LoadController extends Controller
             $loads = Load::where($conditions)
                 ->select(
                     'id',
-                    'weight',
-                    'numOfTrucks',
-                    'loadingHour',
-                    'loadingMinute',
-                    'proposedPriceForDriver',
+                    // 'weight',
+                    // 'numOfTrucks',
+                    // 'loadingHour',
+                    // 'loadingMinute',
+                    // 'proposedPriceForDriver',
                     'suggestedPrice',
                     'title',
                     'priceBased',
-                    'userType',
+                    // 'userType',
                     'urgent',
                     'status',
-                    'created_at',
+                    // 'created_at',
                     'time',
                     'fromCity',
                     'toCity',
-                    'loadingDate',
-                    'fleets',
+                    // 'loadingDate',
+                    // 'fleets',
                     'storeFor'
                 )
                 ->skip(0)
@@ -1819,7 +1819,7 @@ class LoadController extends Controller
                     'result' => SUCCESS,
                     'loads' => $loads,
                     'currentTime' => time(),
-                    'fleet_id' => $driver->fleet_id,
+                    // 'fleet_id' => $driver->fleet_id,
                     'data' => ['driverStatus' => true],
                 ];
         } catch (\Exception $exception) {
