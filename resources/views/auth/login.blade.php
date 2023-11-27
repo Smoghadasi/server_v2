@@ -1,13 +1,14 @@
 @extends('layouts.auth')
 
 @section('content')
-    <form id="formid" class="form-horizontal m-t-20" method="POST" action="{{ route('login') }}" aria-label="{{ __('ورود') }}">
+    <form id="formid" class="form-horizontal m-t-20" method="POST" action="{{ route('login') }}"
+        aria-label="{{ __('ورود') }}">
         @csrf
         <div class="input">
             <div class="form-group ">
                 <div class="col-xs-12">
                     <input class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" type="text" name="email"
-                           value="{{ old('email') }}" required="" placeholder="نام کاربری">
+                        value="{{ old('email') }}" required="" placeholder="نام کاربری">
                     @if ($errors->has('email'))
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $errors->first('email') }}</strong>
@@ -19,7 +20,7 @@
             <div class="form-group">
                 <div class="col-xs-12">
                     <input class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" type="password"
-                           name="password" required="" placeholder="پسورد">
+                        name="password" required="" placeholder="پسورد">
                     @if ($errors->has('password'))
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $errors->first('password') }}</strong>
@@ -55,12 +56,12 @@
 
         <div class="form-group text-center m-t-30">
             <div class="col-xs-12">
-                <button id="login_submit" class="btn btn-custom btn-bordred btn-block waves-effect waves-light"
-                        type="button">ادامه</button>
+                <button id="submit" class="btn btn-custom btn-bordred btn-block waves-effect waves-light"
+                    type="button">ادامه</button>
                 <button id="submit_2" class="btn btn-custom btn-bordred btn-block waves-effect waves-light"
-                        type="button">ثبت</button>
-                <button id="" type="submit"
-                        class="btn btn-custom btn-bordred btn-block waves-effect waves-light">ورود به
+                    type="button">ثبت</button>
+                <button id="login_submit" type="submit"
+                    class="btn btn-custom btn-bordred btn-block waves-effect waves-light">ورود به
                     سیستم</button>
             </div>
         </div>
