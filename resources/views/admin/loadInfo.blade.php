@@ -80,7 +80,7 @@
                             @php
                                 $pieces = explode(' ', $load->created_at);
                             @endphp
-                            $pieces[1] دقیقه
+                            {{ $pieces[1] }} دقیقه
                         </td>
                     </tr>
                     <tr>
