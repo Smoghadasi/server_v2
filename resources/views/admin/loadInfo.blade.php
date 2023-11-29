@@ -77,17 +77,10 @@
                         <td class="font-weight-bold">ساعت بارگیری</td>
                         <td>
                             ساعت
-                            @if($load->loadingHour==0)
-                                00
-                            @else
-                                {{ $load->loadingHour }}
-                            @endif
-                            دقیقه
-                            @if($load->loadingMinute==0)
-                                00
-                            @else
-                                {{ $load->loadingMinute }}
-                            @endif
+                            @php
+                                $pieces = explode(' ', $load->created_at);
+                            @endphp
+                            $pieces[1] دقیقه
                         </td>
                     </tr>
                     <tr>
