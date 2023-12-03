@@ -1796,6 +1796,7 @@ class LoadController extends Controller
                     'suggestedPrice',
                     'title',
                     'priceBased',
+                    'mobileNumberForCoordination',
                     // 'userType',
                     'urgent',
                     'status',
@@ -1806,6 +1807,7 @@ class LoadController extends Controller
                     'loadingDate',
                     'fleets',
                     // 'storeFor'
+                    'time'
                 )
                 ->skip(0)
                 ->take($page)
