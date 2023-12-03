@@ -1803,8 +1803,8 @@ class LoadController extends Controller
                     'time',
                     'fromCity',
                     'toCity',
-                    // 'loadingDate',
-                    // 'fleets',
+                    'loadingDate',
+                    'fleets',
                     // 'storeFor'
                 )
                 ->skip(0)
