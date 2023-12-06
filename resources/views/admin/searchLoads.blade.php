@@ -116,7 +116,10 @@
                                             @endif
                                         @endforeach
                                     </td>
-                                    <td>{{ $load->loadingDate }}</td>
+                                    @php
+                                        $pieces = explode(' ', $load->created_at);
+                                    @endphp
+                                    <td>{{ $load->loadingDate . " " .  $pieces[1] }}</td>
                                     <td>
                                         <div class="dropdown">
                                             <div class="btn-group dropstart">

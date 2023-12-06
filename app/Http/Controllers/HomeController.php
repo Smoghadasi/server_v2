@@ -39,23 +39,6 @@ class HomeController extends Controller
 
     public function dashboard()
     {
-        $khavars = Driver::where('fleet_id', 75)->get();
-        $baghals = Driver::where('fleet_id', 44)->get();
-        $rolbars = Driver::where('fleet_id', 62)->get();
-
-        foreach ($khavars as $khavar) {
-            $khavar->fleet_id = 47;
-            $khavar->save();
-        }
-        foreach ($baghals as $baghal) {
-            $baghal->fleet_id = 45;
-            $baghal->save();
-        }
-        foreach ($rolbars as $rolbar) {
-            $rolbar->fleet_id = 59;
-            $rolbar->save();
-        }
-
         if (in_array('dashboard', auth()->user()->userAccess)) {
             try {
                 $cargoAcceptsCount = Load::where('status', BEFORE_APPROVAL)->count();
