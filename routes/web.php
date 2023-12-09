@@ -454,7 +454,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         /**************************************************************************************************************/
         // آی پی های مسدود
-        Route::get('blockedIps', [UserController::class, 'blockedIps'])->middleware('admin');
+        Route::get('blockedIps', [UserController::class, 'blockedIps'])->middleware('operator');
 
         // مسدود کردن آی پی
         Route::get('blockUserIp/{user_id}/{userType}/{ip}', [UserController::class, 'blockUserIp'])->middleware('admin');
