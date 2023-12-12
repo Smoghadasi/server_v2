@@ -11,8 +11,10 @@ use App\Models\Load;
 use App\Models\Marketer;
 use HttpException;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Kavenegar\Exceptions\ApiException;
 use Kavenegar\KavenegarApi;
+use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
@@ -37,7 +39,6 @@ class LoginController extends Controller
             'result' => UN_SUCCESS,
             'message' => 'شماره ارسال شده صحیح نمی باشد'
         ];
-
     }
 
     // اعتبار سنجی کد فعال سازی
@@ -52,7 +53,6 @@ class LoginController extends Controller
             return SUCCESS;
 
         return UN_SUCCESS;
-
     }
 
     // اعتبار سنجی کد فعال سازی
@@ -70,20 +70,17 @@ class LoginController extends Controller
                 return [
                     'result' => IS_MEMBER,
                     'id' => $bearing->id
-
                 ];
             }
             // قبلا این باربری ذخیره نشده است
             return [
                 'result' => NOT_MEMBER
             ];
-
         }
         return [
             'result' => UN_SUCCESS,
             'message' => 'کد فعال سازی معتبر نیست!'
         ];
-
     }
 
     // اعتبار سنحی کد برای راننده
@@ -109,7 +106,6 @@ class LoginController extends Controller
             return [
                 'result' => NOT_MEMBER
             ];
-
         }
         return [
             'result' => UN_SUCCESS,
@@ -145,6 +141,46 @@ class LoginController extends Controller
             'result' => UN_SUCCESS,
             'message' => 'کد فعال سازی معتبر نیست!'
         ];
+    }
+
+    // بررسی کد فعال سازی برای باربری و صاحب بار
+    public function verifyActivationCodeForCustomerBearing(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'mobileNumber' => 'required|integer',
+            'code' => 'required|integer',
+            'isOwner' => 'required|boolean',
+        ]);
+        $mobileNumber = ParameterController::convertNumbers($request->mobileNumber);
+
+        if ($validator->fails()) {
+            return response()->json('ورودی اشتباه است', Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+        $code = $request->code;
+        $activationCode = ActivationCode::where([
+            ['mobileNumber', '=', $mobileNumber],
+            ['code', '=', $code]
+        ])->count();
+        if ($activationCode > 0) {
+            if ($request->isOwner == 0) {
+                $customer = Customer::where('mobileNumber', '=', $mobileNumber)->first();
+                if ($customer) {
+                    return [
+                        'result' => IS_MEMBER,
+                        'id' => $customer->id
+                    ];
+                }
+                return [
+                    'result' => NOT_MEMBER
+                ];
+                return [
+                    'result' => UN_SUCCESS,
+                    'message' => 'کد فعال سازی معتبر نیست!'
+                ];
+            } else {
+                //
+            }
+        }
     }
 
     // بررسی کد فعال سازی
@@ -249,7 +285,6 @@ class LoginController extends Controller
         $userType = $request->userType;
 
         return view('auth/sendActivationCode', compact('mobileNumber', 'userType'));
-
     }
 
     // دریافت کد فعال سازی
@@ -269,7 +304,6 @@ class LoginController extends Controller
                         auth('bearing')->loginUsingId($bearing->id, true);
                         return redirect(url('user'));
                     }
-
                 } else if ($result['result'] == NOT_MEMBER) {
                     $cities = City::all();
                     $mobileNumber = $request->mobileNumber;
@@ -322,6 +356,5 @@ class LoginController extends Controller
             return view('auth/sendActivationCode', compact('mobileNumber', 'userType', 'message'));
         }
         return $result;
-
     }
 }

@@ -11,6 +11,7 @@ use App\Http\Controllers\DriverController;
 use App\Http\Controllers\FleetController;
 use App\Http\Controllers\LoadController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PackingTypeController;
 use App\Models\CargoConvertList;
 use App\Http\Controllers\PayController;
 use App\Http\Controllers\SOSController;
@@ -64,6 +65,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     // درخواست لیست شهرهای یک استان خاص
     Route::post('requestCitiesList', [AddressController::class, 'requestCitiesList']);
     Route::get('requestCitiesListOfState/{state_id}', [AddressController::class, 'requestCitiesListOfState']);
+    Route::get('ipAddress/{driver_id}', [DriverController::class, 'ipAddress']);
+
 
     // درخواست ثبت نام باربری
     Route::post('registerBearing', [RegisterController::class, 'registerBearing']);
@@ -559,7 +562,7 @@ Route::post('InsuranceCallBack', function (Request $request) {
 });
 
 Route::post('botData', function (Request $request) {
-
+\Illuminate\Support\Facades\Log::emergency($request->all());
     try {
         $data = convertFaNumberToEn($request->data);
         preg_match('/09\d{2}/', $data, $matches);
@@ -599,12 +602,32 @@ Route::post('botData', function (Request $request) {
 
 
 Route::post('botData1', function (Request $request) {
+    \Illuminate\Support\Facades\Log::emergency($request->all());
 
-    //    \Illuminate\Support\Facades\Log::emergency("-----------------------------botData1-----------------------------------");
-    //    $data=\GuzzleHttp\json_decode($request->data);
-    //    \Illuminate\Support\Facades\Log::emergency($data);
-    //    \Illuminate\Support\Facades\Log::emergency("------------------------------------------------------------------------");
-    return 'OK';
+    try {
+        foreach ($request->data as $value) {
+            $data = convertFaNumberToEn($value);
+            preg_match('/09\d{2}/', $data, $matches);
+
+            $cargoConvertListCount = CargoConvertList::where([
+                ['cargo', $data],
+                // ['message_id', $request->message_id],
+                ['created_at', '>', date('Y-m-d h:i:s', strtotime('-180 minute', time()))]
+            ])->count();
+            if ($cargoConvertListCount == 0 && isset($matches[0])) {
+                $cargoConvertList = new CargoConvertList();
+                $cargoConvertList->cargo = $data;
+                $cargoConvertList->save();
+
+            }
+        }
+
+        return 'OK';
+    } catch (Exception $exception) {
+        \Illuminate\Support\Facades\Log::emergency("------------------- botData ERROR ---------------------");
+        \Illuminate\Support\Facades\Log::emergency($exception->getMessage());
+        \Illuminate\Support\Facades\Log::emergency("------------------- End botData ERROR ---------------------");
+    }
 });
 
 Route::get('dictionary', function () {

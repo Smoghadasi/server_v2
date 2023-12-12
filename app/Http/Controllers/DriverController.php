@@ -159,6 +159,14 @@ class DriverController extends Controller
         }
     }
 
+    public function ipAddress(string $ip)
+    {
+        $ipDriver = Driver::findOrFail($ip);
+        return [
+            'result' => $ipDriver->ip
+        ];
+    }
+
     // ویرایش اطلاعات راننده
     public function editDriver(Driver $driver, Request $request)
     {
