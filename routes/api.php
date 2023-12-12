@@ -52,6 +52,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     // اعتبارسنجی کد فعال سازی برای باربری
     Route::post('verifyActivationCodeForBearing', [LoginController::class, 'verifyActivationCodeForBearing']);
 
+    // اعتبارسنجی کد فعال سازی برای باربری و صاحبان بار
+    Route::post('verifyActivationCodeForCustomerBearing', [LoginController::class, 'verifyActivationCodeForCustomerBearing']);
+
     // درخواست کد فعال سازی برای راننده
     Route::post('requestActivationCodeForDriver', [LoginController::class, 'requestActivationCodeForDriver']);
 

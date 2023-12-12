@@ -147,12 +147,12 @@ class LoginController extends Controller
     public function verifyActivationCodeForCustomerBearing(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'mobileNumber' => 'required|integer',
-            'code' => 'required|integer',
-            'isOwner' => 'required|boolean',
+            'mobileNumber' => 'required',
+            'code' => 'required',
+            'isOwner' => 'required',
         ]);
         $mobileNumber = ParameterController::convertNumbers($request->mobileNumber);
-
+        // return $mobileNumber;
         if ($validator->fails()) {
             return response()->json('ورودی اشتباه است', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
@@ -161,6 +161,7 @@ class LoginController extends Controller
             ['mobileNumber', '=', $mobileNumber],
             ['code', '=', $code]
         ])->count();
+        // return $activationCode;
         if ($activationCode > 0) {
             if ($request->isOwner == 0) {
                 $customer = Customer::where('mobileNumber', '=', $mobileNumber)->first();
@@ -173,13 +174,25 @@ class LoginController extends Controller
                 return [
                     'result' => NOT_MEMBER
                 ];
-                return [
-                    'result' => UN_SUCCESS,
-                    'message' => 'کد فعال سازی معتبر نیست!'
-                ];
             } else {
-                //
+                $bearing = Bearing::where('mobileNumber', '=', $mobileNumber)->first();
+                if ($bearing) {
+                    // قبلا این باربری ذخیره شده است
+                    return [
+                        'result' => IS_MEMBER,
+                        'id' => $bearing->id
+                    ];
+                }
+                // قبلا این باربری ذخیره نشده است
+                return [
+                    'result' => NOT_MEMBER
+                ];
             }
+        } else {
+            return [
+                'result' => UN_SUCCESS,
+                'message' => 'کد فعال سازی معتبر نیست!'
+            ];
         }
     }
 
