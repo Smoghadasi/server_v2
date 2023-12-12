@@ -75,7 +75,7 @@ class ComplaintController extends Controller
     // لیست انقادات و شکایات رانندگان
     public function complaintsDriversList()
     {
-        $complaintsDrivers = ComplaintDriver::paginate(20);
+        $complaintsDrivers = ComplaintDriver::orderByDesc('created_at')->paginate(20);
         return view('admin.complaintsDriversList', compact('complaintsDrivers'));
     }
 
