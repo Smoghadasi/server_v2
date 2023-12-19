@@ -18,7 +18,7 @@ use App\Http\Controllers\SOSController;
 use App\Http\Controllers\TenderController;
 use App\Models\AppVersion;
 use App\Models\Bearing;
-use App\Models\ClearText;
+// use App\Models\ClearText;
 use App\Models\Customer;
 use App\Models\Dictionary;
 use App\Models\Driver;
@@ -408,7 +408,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::post('storeComplaintCustomer/{customer}', [ComplaintController::class, 'storeComplaintCustomer']);
 
         // پیگیری انتقاد یا شکایت صاحب بار
-        Route::post('getComplaintCustomerResult/{customer}', [ComplaintController::class, 'getComplaintCustomerResult']);
+        Route::post('getComplaintCustomerResult/{id}', [ComplaintController::class, 'getComplaintCustomerResult']);
 
         // حذف بار
         Route::delete('removeCustomerLoad/{load}/{customer}', [LoadController::class, 'removeCustomerLoad']);
