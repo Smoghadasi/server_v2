@@ -199,8 +199,9 @@ class ComplaintController extends Controller
     }
 
     // پیگیری انتقاد یا شکایت صاحب بار
-    public function getComplaintCustomerResult(Request $request, Customer $customer)
+    public function getComplaintCustomerResult(Request $request, string $id)
     {
+        $customer = Customer::findOrFail($id);
         try {
 
             $complaintCustomer = ComplaintCustomer::where([
