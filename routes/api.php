@@ -172,6 +172,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     // درخواست لیست ناوگان ها
     Route::get('customer/requestAllFleetsList', [FleetController::class, 'requestAllFleetsList']);
 
+    Route::get('customer/requestAllFleetsLists', [FleetController::class, 'requestAllFleetsLists']);
+
     // درخواست لیست باربری های که قیمت کمتر را ثبت کرده اند
     Route::get('customer/requestTopBearingListInTender/{load_id}', [TenderController::class, 'requestTopBearingListInTender']);
 

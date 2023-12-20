@@ -257,6 +257,16 @@ class FleetController extends Controller
         ];
     }
 
+    // درخواست لیست ناوگان ها
+    public function requestAllFleetsLists()
+    {
+        return [
+            'fleets' => Fleet::where('status', 1)
+                ->select('id', 'title', 'parent_id', 'pic', 'length', 'width', 'height', 'capacity')
+                ->get()
+        ];
+    }
+
     // درخواست تغییر ناوگان
     public function changeFleet(Request $request)
     {
