@@ -567,7 +567,7 @@ Route::post('InsuranceCallBack', function (Request $request) {
 });
 
 Route::post('botData', function (Request $request) {
-\Illuminate\Support\Facades\Log::emergency($request->all());
+    // \Illuminate\Support\Facades\Log::emergency($request->all());
     try {
         $data = convertFaNumberToEn($request->data);
         preg_match('/09\d{2}/', $data, $matches);
@@ -585,10 +585,10 @@ Route::post('botData', function (Request $request) {
         ])->count();
 
 
-
         if ($cargoConvertListCount == 0 && isset($matches[0])) {
-            $cargoMessage = CargoConvertList::where('message_id', $request->message_id)->first();
-            if ($cargoMessage == null) {
+
+            $cargoMessage = CargoConvertList::where('message_id', $request->message_id)->count();
+            if ($cargoMessage == 0) {
                 $cargoConvertList = new CargoConvertList();
                 $cargoConvertList->cargo = $clear_sticker;
                 $cargoConvertList->message_id = $request->message_id;
@@ -623,7 +623,6 @@ Route::post('botData1', function (Request $request) {
                 $cargoConvertList = new CargoConvertList();
                 $cargoConvertList->cargo = $data;
                 $cargoConvertList->save();
-
             }
         }
 
