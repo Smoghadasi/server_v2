@@ -2627,7 +2627,7 @@ class LoadController extends Controller
     public function approveOrRejectLoad(Request $request, $acceptLoadFromLoadList = false)
     {
 
-        if (Auth::check() && ($request->status == 0 || $request->status == -2)) {
+        if (Auth::check() && ($request->status == 0 || $request->status == -2 || $request->status == -1)) {
 
             $load = Load::find($request->load_id);
 
