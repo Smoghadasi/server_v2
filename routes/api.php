@@ -567,33 +567,19 @@ Route::post('InsuranceCallBack', function (Request $request) {
 });
 
 Route::post('botData', function (Request $request) {
-    // \Illuminate\Support\Facades\Log::emergency($request->all());
+
     try {
         $data = convertFaNumberToEn($request->data);
         preg_match('/09\d{2}/', $data, $matches);
-        // $clear = new CargoConvertList();
-        $clear_sticker = remove_emoji($data);
-
-        // $trim_string = trim($clear_sticker);
-        // str_replace('تخلیه', ' ', $trim_string);
-        // str_replace('بارگیری', ' ', $trim_string);
 
         $cargoConvertListCount = CargoConvertList::where([
-            ['cargo', $clear_sticker],
-            // ['message_id', $request->message_id],
+            ['cargo', $data],
             ['created_at', '>', date('Y-m-d h:i:s', strtotime('-180 minute', time()))]
         ])->count();
-
-
         if ($cargoConvertListCount == 0 && isset($matches[0])) {
-
-            $cargoMessage = CargoConvertList::where('message_id', $request->message_id)->count();
-            if ($cargoMessage == 0) {
-                $cargoConvertList = new CargoConvertList();
-                $cargoConvertList->cargo = $clear_sticker;
-                $cargoConvertList->message_id = $request->message_id;
-                $cargoConvertList->save();
-            }
+            $cargoConvertList = new CargoConvertList();
+            $cargoConvertList->cargo = $data;
+            $cargoConvertList->save();
         }
         return 'OK';
     } catch (Exception $exception) {
