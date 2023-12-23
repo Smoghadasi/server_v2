@@ -82,7 +82,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
     // ثبت بار جدید
     Route::post('customer/createNewLoad', [LoadController::class, 'createNewLoad']);
-    // Route::post('customer/createNewLoad1', [LoadController::class, 'createNewLoad1']);
+    Route::post('customer/createNewLoad1', [LoadController::class, 'createNewLoad1']);
 
     // انتخاب راننده برای بار توسط باربری
     Route::post('bearing/selectDriverForLoad', [LoadController::class, 'selectDriverForLoad']);
@@ -162,6 +162,12 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
     // درخواست ثبت نام باربری
     Route::post('customer/registerCustomer', [RegisterController::class, 'registerCustomer']);
+
+    // درخواست اطلاعات مشتری
+    Route::post('customer/requestCustomerInfo', [CustomerController::class, 'requestCustomerInfo']);
+
+    // ویرایش اطلاعات پروفایل مشتری
+    Route::post('customer/editProfile', [CustomerController::class, 'editProfile']);
 
     // درخواست لیست ناوگان ها
     Route::get('customer/requestAllFleetsList', [FleetController::class, 'requestAllFleetsList']);
@@ -422,14 +428,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::post('selectDriverForLoadByCustomer', [LoadController::class, 'selectDriverForLoadByCustomer']);
 
         // بررسی وضعیت شارژ اکانت صاحب بار
-        Route::get('checkCustomerAccountChargeStatus/{customer}/{action}', [CustomerController::class, 'checkCustomerAccountChargeStatus']);
-
-        // درخواست اطلاعات مشتری
-        Route::get('requestCustomerInfo/{customer}', [CustomerController::class, 'requestCustomerInfo']);
-
-        // ویرایش اطلاعات پروفایل مشتری
-        Route::patch('editProfile/{customer}', [CustomerController::class, 'editProfile']);
-
+        Route::get('checkCustomerAccountChargeStatus/{customer}/{action}', [CustomerController::class, 'checkCustomerAccountChargeStatus']);;
     });
 
     Route::group(['prefix' => 'transportationCompany'], function () {

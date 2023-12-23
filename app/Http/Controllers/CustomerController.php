@@ -55,8 +55,16 @@ class CustomerController extends Controller
     }
 
     // درخواست اطلاعات مشتری
-    public function requestCustomerInfo(Customer $customer)
+    public function requestCustomerInfo(Request $request)
     {
+        $id = $request->id;
+        $mobileNumber = $request->mobileNumber;
+
+        $customer = Customer::where([
+            ['id', $id],
+            ['mobileNumber', $mobileNumber]
+        ])->first();
+
         if ($customer) {
             return [
                 'result' => SUCCESS,
@@ -80,12 +88,20 @@ class CustomerController extends Controller
     }
 
     // ویرایش اطلاعات مشتری
-    public function editProfile(Request $request, Customer $customer)
+    public function editProfile(Request $request)
     {
-        if (asset($customer)) {
-            $customer->name = $request->name;
-            $customer->lastName = $request->lastName;
-            $customer->save();
+        $customer_id = $request->customer_id;
+        $name = $request->name;
+        $lastName = $request->lastName;
+
+        $customer = Customer::where('id', $customer_id)->count();
+        if ($customer > 0) {
+
+            Customer::where('id', $customer_id)
+                ->update([
+                    'name' => $name,
+                    'lastName' => $lastName,
+                ]);
 
             return [
                 'result' => SUCCESS
@@ -132,6 +148,7 @@ class CustomerController extends Controller
             Customer::where('id', $customer_id)
                 ->update(['status' => 1]);
             $message = 'وضعیت به فعال تغییر یافت';
+
         } else {
             Customer::where('id', $customer_id)
                 ->update(['status' => 0]);
