@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountingController;
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BearingController;
 use App\Http\Controllers\ComplaintController;
@@ -13,7 +14,9 @@ use App\Http\Controllers\DriverController;
 use App\Http\Controllers\FleetController as AdminFleetController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoadController;
+use App\Http\Controllers\MarketerController;
 use App\Http\Controllers\OperatorContactingController;
+use App\Http\Controllers\PackingTypeController;
 use App\Http\Controllers\ParameterController;
 use App\Http\Controllers\PayController;
 use App\Http\Controllers\RegisterController;
@@ -21,6 +24,7 @@ use App\Http\Controllers\ReportingController;
 use App\Http\Controllers\ServiceController;
 // use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SOSController;
+use App\Http\Controllers\TenderController;
 use App\Http\Controllers\UserController;
 
 use App\Models\City;
@@ -58,8 +62,8 @@ Route::post('check-user', [AuthController::class, 'checkUser'])->name('check.use
 
 
 Route::get('/conf', function () {
-    Artisan::call('cache:clear');
-    Artisan::call('view:clear');
+    // Artisan::call('cache:clear');
+    // Artisan::call('view:clear');
     Artisan::call('config:cache');
 });
 
