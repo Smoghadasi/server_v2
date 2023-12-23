@@ -62,8 +62,8 @@ Route::post('check-user', [AuthController::class, 'checkUser'])->name('check.use
 
 
 Route::get('/conf', function () {
-    // Artisan::call('cache:clear');
-    // Artisan::call('view:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('view:clear');
     Artisan::call('config:cache');
 });
 
