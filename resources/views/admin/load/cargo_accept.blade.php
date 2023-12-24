@@ -61,30 +61,9 @@
                                 @endphp
                                 <td>{{ gregorianDateToPersian($cargoAccept->created_at, '-', true) . ' ' . $pieces[1] }}</td>
                                 <td style="display: flex;">
-                                    <form action="{{ route('accept.cargo.store', ['load' => $cargoAccept->id]) }}"
-                                        method="POST">
-                                        @csrf
-                                        <div class="container">
-                                            <div class="row">
-                                                <div class="col">
-                                                    <input type="hidden" name="accept" value="1">
-                                                    <button type="submit" class="btn btn-success btn-sm">قبول</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
-                                    <form action="{{ route('accept.cargo.store', ['load' => $cargoAccept->id]) }}"
-                                        method="POST">
-                                        @csrf
-                                        <div class="container">
-                                            <div class="row">
-                                                <div class="col">
-                                                    <input type="hidden" name="accept" value="0">
-                                                    <button type="submit" class="btn btn-danger btn-sm">رد</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
+
+                                        <a class="btn btn-sm btn-success"
+                                           href="{{ url('admin/acceptLoadFromLoadList') }}/{{ $cargoAccept->id }}">تایید بار</a>
                                     {{-- <a class="btn btn-danger btn-sm"
                                         href="{{ route('accept.cargo.store', $cargoAccept) }}">رد</a> --}}
                                 </td>

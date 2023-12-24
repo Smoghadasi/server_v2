@@ -594,7 +594,7 @@ Route::post('botData', function (Request $request) {
 
 
 Route::post('botData1', function (Request $request) {
-    \Illuminate\Support\Facades\Log::emergency($request->all());
+    // \Illuminate\Support\Facades\Log::emergency($request->all());
 
     try {
         foreach ($request->data as $value) {
