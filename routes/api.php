@@ -567,6 +567,14 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 Route::post('InsuranceCallBack', function (Request $request) {
 });
 
+// کال بک احراز هویت کدملی
+Route::get('DidarCallBack', function () {
+    return response()->json([
+        'result' => true,
+    ]);
+
+});
+
 Route::post('botData', function (Request $request) {
 
     try {
