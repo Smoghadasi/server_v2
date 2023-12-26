@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Kavenegar\Exceptions\ApiException;
 
 use Kavenegar\KavenegarApi;
+use Log;
 
 class CustomerController extends Controller
 {
@@ -89,14 +90,16 @@ class CustomerController extends Controller
             $customer->postalCode = $request->postalCode;
 
             if ($request->nationalCardPic != "noImage") {
-                if ($request->nationalCardPic !== $customer->nationalCardPic) {
-                    if (file_exists($customer->nationalCardPic))
-                        unlink($customer->nationalCardPic);
-                    $nationalCardPic = "images/customers/nationalCardPic_" . time() . $customer->id . ".jpg";
-                    // file_put_contents($nationalCardPic, base64_decode($request->nationalCardPic));
-                    $request->nationalCardPic->move(public_path('customers/'), $nationalCardPic);
-                    // dd($request->nationalCardImage->move(public_path('images/customers/'), $nationalCardImage));
-                }
+                if (file_exists($customer->nationalCardPic))
+                    unlink($customer->nationalCardPic);
+                $nationalCardPic = "images/customers/nationalCardPic_" . time() . $customer->id . ".jpg";
+                file_put_contents($nationalCardPic, base64_decode($request->nationalCardPic));
+            }
+            if ($request->imageRegisterSana != "noImage") {
+                if (file_exists($customer->imageRegisterSana))
+                    unlink($customer->imageRegisterSana);
+                $imageRegisterSana = "images/customers/imageRegisterSana_" . time() . $customer->id . ".jpg";
+                file_put_contents($imageRegisterSana, base64_decode($request->imageRegisterSana));
             }
             if ($request->imageRegisterSana != "noImage") {
                 if ($request->imageRegisterSana !== $customer->imageRegisterSana) {
@@ -105,16 +108,6 @@ class CustomerController extends Controller
                     $imageRegisterSana = "images/customers/imageRegisterSana_" . time() . $customer->id . ".jpg";
                     // file_put_contents($imageRegisterSana, base64_decode($request->imageRegisterSana));
                     $request->imageRegisterSana->move(public_path('customers/'), $imageRegisterSana);
-                    // dd($request->nationalCardImage->move(public_path('images/customers/'), $nationalCardImage));
-                }
-            }
-            if ($request->customerImage != "noImage") {
-                if ($request->customerImage !== $customer->customerImage) {
-                    if (file_exists($customer->customerImage))
-                        unlink($customer->customerImage);
-                    $customerImage = "images/customers/customerImage_" . time() . $customer->id . ".jpg";
-                    // file_put_contents($customerImage, base64_decode($request->customerImage));
-                    $request->customerImage->move(public_path('customers/'), $customerImage);
                     // dd($request->nationalCardImage->move(public_path('images/customers/'), $nationalCardImage));
                 }
             }
