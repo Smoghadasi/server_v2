@@ -800,7 +800,7 @@ class LoadController extends Controller
                 'loads.fleets',
                 'loads.fromCity',
                 'loads.toCity',
-                'loads.loadingMinute',
+                'loads.loadingHour',
                 'loads.loadingMinute',
                 'loads.status',
                 'loads.score',
