@@ -800,6 +800,8 @@ class LoadController extends Controller
                 'loads.fleets',
                 'loads.fromCity',
                 'loads.toCity',
+                'loads.loadingMinute',
+                'loads.loadingMinute',
                 'loads.status',
                 'loads.score',
                 'loads.gibarDriverRequest as urgent',
