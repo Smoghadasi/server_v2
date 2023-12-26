@@ -67,6 +67,12 @@ Route::get('/conf', function () {
     Artisan::call('config:cache');
 });
 
+Route::get('/cache', function () {
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('config:cache');
+});
+
 
 Route::group(['middleware' => 'throttle:60,1'], function () {
 
