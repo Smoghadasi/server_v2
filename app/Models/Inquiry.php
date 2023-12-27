@@ -12,8 +12,8 @@ class Inquiry extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function driver(): BelongsTo
+    public function fleet(): BelongsTo
     {
-        return $this->belongsTo(Driver::class);
+        return $this->belongsTo(Fleet::class);
     }
 }

@@ -1881,7 +1881,8 @@ class LoadController extends Controller
     public function requestInquiriesOfLoad($load_id)
     {
 
-        $inquiries = Inquiry::with('driver')
+        $inquiries = Inquiry::join('drivers', 'inquiries.driver_id', 'drivers.id')
+            ->with('fleet')
             ->where('load_id', $load_id)
             ->select('drivers.*', 'price')
             ->orderBy('price', 'asc')
