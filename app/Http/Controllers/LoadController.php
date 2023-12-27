@@ -1888,39 +1888,32 @@ class LoadController extends Controller
             ->orderBy('price', 'asc')
             ->get();
 
-        $remainingTime = 0;
-        $remainingTimeStatus = 'noStart';
+        // $remainingTime = 0;
+        // $remainingTimeStatus = 'noStart';
 
-        $inquiry = Inquiry::where('load_id', $load_id)
-            ->orderBy('id', 'asc')
-            ->first();
+        // $inquiry = Inquiry::where('load_id', $load_id)
+        //     ->orderBy('id', 'asc')
+        //     ->first();
 
-        if ($inquiry) {
-            $remainingTime = (TNDER_TIME - DateController::getSecondFromCreateRowToPresent($inquiry->created_at));
-            if ($remainingTime > 0)
-                $remainingTimeStatus = 'start';
-            else
-                $remainingTimeStatus = 'finish';
-        }
+        // if ($inquiry) {
+        //     $remainingTime = (TNDER_TIME - DateController::getSecondFromCreateRowToPresent($inquiry->created_at));
+        //     if ($remainingTime > 0)
+        //         $remainingTimeStatus = 'start';
+        //     else
+        //         $remainingTimeStatus = 'finish';
+        // }
 
-        $load = Load::where('id', $load_id)->first();
+        // $load = Load::where('id', $load_id)->first();
 
-        $fleets = Fleet::get();
+        // $fleets = Fleet::get();
 
-        $selectedDrivers = DriverLoad::where('load_id', $load_id)->select('driver_id')->get();
+        // $selectedDrivers = DriverLoad::where('load_id', $load_id)->select('driver_id')->get();
 
-        $proposedPriceForDriver = 0;
-        if (isset($load->proposedPriceForDriver))
-            $proposedPriceForDriver = $load->proposedPriceForDriver;
+        // $proposedPriceForDriver = 0;
+        // if (isset($load->proposedPriceForDriver))
+        //     $proposedPriceForDriver = $load->proposedPriceForDriver;
 
-        return [
-            'inquiries' => $inquiries,
-            'proposedPriceForDriver' => $proposedPriceForDriver,
-            'remainingTimeStatus' => $remainingTimeStatus,
-            'remainingTime' => $remainingTime,
-            'fleets' => $fleets,
-            'selectedDrivers' => $selectedDrivers
-        ];
+        return response()->json($inquiries,200);
     }
 
     // فرم افزودن بار توسط اپراتور
