@@ -1579,6 +1579,15 @@ class LoadController extends Controller
         return view('admin.loadBackup', compact('loads'));
     }
 
+    public function loadBackupTransportation()
+    {
+        $loads = LoadBackup::orderByDesc('created_at')
+            ->where('userType', ROLE_TRANSPORTATION_COMPANY)
+            ->paginate(20);
+        return view('admin.load.loadBackupTransportation', compact('loads'));
+
+    }
+
     /*************************************************************************************************/
 
     // درخواست لیست باریهای جدید برای راننده

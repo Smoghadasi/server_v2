@@ -209,6 +209,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // بار های ثبت شده
         Route::get('loadBackup', [LoadController::class, 'loadBackup'])->middleware('operator')->name('admin.loadBackup');
 
+        // بار های ثبت شده توسط باربری
+        Route::get('loadBackup-transportation', [LoadController::class, 'loadBackupTransportation'])->middleware('operator')->name('admin.loadBackupTransportation');
+
         // تغییر مشتری به فعال یا غیر فعال
         Route::get('changeCustomerStatus/{customer_id}', [CustomerController::class, 'changeCustomerStatus'])->middleware('operator');
 
