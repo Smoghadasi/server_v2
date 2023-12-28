@@ -190,36 +190,6 @@ class UserController extends Controller
     /*****************************************************************************************/
     // شماره تلفن های مسدود شده
 
-    public function blockedPhoneNumbers()
-    {
-        $blockedPhoneNumbers = BlockPhoneNumber::paginate(20);
-
-        return view('admin.blockedPhoneNumbers', compact('blockedPhoneNumbers'));
-    }
-
-    public function blockPhoneNumber(Request $request)
-    {
-        if (BlockPhoneNumber::where('phoneNumber', $request->phoneNumber)->count())
-            return back()->with('danger', 'شماره تلفن ' . $request->phoneNumber . ' قبلا به لیست ممنوعه اضافه شده است.');
-
-        if (strlen($request->phoneNumber) != 11)
-            return back()->with('danger', 'شماره تلفن باید 11 رقم باشد.');
-
-        $blockedPhoneNumber = new BlockPhoneNumber();
-        $blockedPhoneNumber->phoneNumber = $request->phoneNumber;
-        $blockedPhoneNumber->name = $request->name;
-        $blockedPhoneNumber->description = $request->description;
-        $blockedPhoneNumber->save();
-
-        return back()->with('success', 'شماره تلفن ' . $request->phoneNumber . ' به لیست ممنوعه اضافه شد.');
-    }
-
-    public function unblockPhoneNumber($phoneNumber)
-    {
-        $blockedPhoneNumber = BlockPhoneNumber::where('phoneNumber', $phoneNumber)->delete();
-        return back()->with('success', 'شماره تلفن ' . $phoneNumber . ' از لیست ممنوعه حذف شد.');
-    }
-
     public static function getOnlineAndOfflineUsers()
     {
         return User::select("*")

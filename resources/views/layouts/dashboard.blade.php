@@ -415,7 +415,7 @@
                             </li>
 
                             <li class="menu-item">
-                                <a class="menu-link" href="{{ url('admin/blockedPhoneNumbers') }}">
+                                <a class="menu-link" href="{{ route('blockedPhoneNumber.index') }}">
                                     <span>شماره تلفن های مسدود</span>
                                 </a>
                             </li>

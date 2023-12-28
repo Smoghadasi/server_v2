@@ -15,7 +15,7 @@
                 <div class="modal-dialog">
 
                     <!-- Modal content-->
-                    <form action="{{ url('admin/blockPhoneNumber') }}" method="post" class="modal-content">
+                    <form action="{{ route('blockedPhoneNumber.store') }}" method="post" class="modal-content">
                         @csrf
                         <div class="modal-header">
                             <h4 class="modal-title">وارد کردن شماره تلفن به لیست ممنوعه</h4>
@@ -43,6 +43,25 @@
                     </form>
                 </div>
             </div>
+            <form action="{{ route('search.blockNumber') }}" method="post">
+                @csrf
+                <div class="col-lg-12 border rounded mt-2 mb-2 p-2">
+                    {{-- <h6>جستجو : </h6> --}}
+                    <div class="container">
+                        <div class="row row-cols-4">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label>شماره تلفن :</label>
+                                    <input type="text" name="mobileNumber" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group my-4">
+                            <button class="btn btn-info" type="submit">جستجو</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
 
             <table class="table">
                 <thead>
@@ -51,8 +70,8 @@
                         <th>شماره</th>
                         <th>نام و نام خانوادگی</th>
                         <th>توضیحات</th>
-                        <th>حذف از لیست</th>
                         <th>تاریخ</th>
+                        <th>عملیات</th>
                     </tr>
                 </thead>
                 <tbody class="small text-right">
@@ -64,20 +83,26 @@
                                 {{ $blockedPhoneNumber->phoneNumber }}
                             </td>
                             <td>
-                                {{ $blockedPhoneNumber->name }}
+                                {{ $blockedPhoneNumber->name ?? '-' }}
                             </td>
                             <td>
-                                {{ $blockedPhoneNumber->description }}
+                                {{ $blockedPhoneNumber->description ?? '-' }}
                             </td>
-                            <td>
-                                <a class="btn btn-sm btn-danger"
-                                    href="{{ url('admin/unblockPhoneNumber') }}/{{ $blockedPhoneNumber->phoneNumber }}">حذف
-                                    از لیست</a>
-                            </td>
+
                             @php
-                                $pieces = explode(" ", $blockedPhoneNumber->created_at);
+                                $pieces = explode(' ', $blockedPhoneNumber->created_at);
                             @endphp
-                        <td dir="ltr">{{ gregorianDateToPersian($blockedPhoneNumber->created_at, '-', true) . ' ' . $pieces[1] }}</td>
+                            <td dir="ltr">
+                                {{ gregorianDateToPersian($blockedPhoneNumber->created_at, '-', true) . ' ' . $pieces[1] }}
+                            </td>
+                            <td>
+                                <form action="{{ route('blockedPhoneNumber.destroy', $blockedPhoneNumber->phoneNumber) }}"
+                                    method="POST">
+                                    @csrf
+                                    @method('delete')
+                                    <button type="submit" class="btn btn-danger btn-sm">حذف</button>
+                                </form>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>

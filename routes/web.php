@@ -25,6 +25,7 @@ use App\Http\Controllers\ServiceController;
 // use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SOSController;
 use App\Http\Controllers\TenderController;
+use App\Http\Controllers\User\BlockPhoneNumberController;
 use App\Http\Controllers\UserController;
 
 use App\Models\City;
@@ -356,8 +357,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         //حذف راننده
         Route::get('removeDriver/{driver}', [DriverController::class, 'removeDriver'])->middleware('admin');
 
-         //حذف راننده
-         Route::put('removeActiveDate/{driver}', [DriverController::class, 'removeActiveDate'])->middleware('admin')->name('removeActiveDate');
+        //حذف راننده
+        Route::put('removeActiveDate/{driver}', [DriverController::class, 'removeActiveDate'])->middleware('admin')->name('removeActiveDate');
 
         // تمدید اعتبار رانندگان
         Route::post('creditDriverExtending/{driver}', [DriverController::class, 'creditDriverExtending']);
@@ -470,10 +471,16 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         /**************************************************************************************************************/
         //  شماره تلفن های لیست ممنوعه
+        Route::resource('blockedPhoneNumber', BlockPhoneNumberController::class);
 
-        Route::get('blockedPhoneNumbers', [UserController::class, 'blockedPhoneNumbers'])->middleware('operator');
-        Route::post('blockPhoneNumber', [UserController::class, 'blockPhoneNumber'])->middleware('operator');
-        Route::get('unblockPhoneNumber/{phoneNumber}', [UserController::class, 'unblockPhoneNumber'])->middleware('operator');
+        // جستجوی لیست ممنوعه شماره موبایل
+        Route::post('searchBlockedPhoneNumber', [BlockPhoneNumberController::class, 'searchBlockedPhoneNumber'])
+            ->middleware('operator')
+            ->name('search.blockNumber');
+
+        Route::get('searchBlockedPhoneNumber', function () {
+            return redirect()->route('blockedPhoneNumber.index');
+        });
 
         /**************************************************************************************************************/
         // آی پی های مسدود
