@@ -7,6 +7,25 @@
             لیست بار های ثبت شده توسط صاحبین بار
         </h5>
         <div class="card-body">
+            <form action="{{ route('search.loadback.customer') }}" method="post">
+                @csrf
+                <div class="col-lg-12 border rounded mt-2 mb-2 p-2">
+                    {{-- <h6>جستجو : </h6> --}}
+                    <div class="container">
+                        <div class="row row-cols-4">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label>شماره تلفن :</label>
+                                    <input type="text" name="mobileNumber" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group my-4">
+                            <button class="btn btn-info" type="submit">جستجو</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
             <table class="table">
                 <thead>
                 <tr>

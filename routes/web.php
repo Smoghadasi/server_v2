@@ -206,11 +206,21 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // بارهای مشتریان
         Route::get('customerLoads/{customer_id}', [LoadController::class, 'customerLoads'])->middleware('operator');
 
-        // بار های ثبت شده
+        // بار های ثبت شده توسط صاحبین بار
         Route::get('loadBackup', [LoadController::class, 'loadBackup'])->middleware('operator')->name('admin.loadBackup');
+
+        Route::post('searchLoadBackupCustomer', [LoadController::class, 'searchLoadBackupCustomer'])->middleware('operator')->name('search.loadback.customer');
+        Route::get('searchLoadBackupCustomer', function () {
+            return redirect('admin/loadBackup');
+        });
 
         // بار های ثبت شده توسط باربری
         Route::get('loadBackup-transportation', [LoadController::class, 'loadBackupTransportation'])->middleware('operator')->name('admin.loadBackupTransportation');
+
+        Route::post('searchLoadBackupTransportation', [LoadController::class, 'searchLoadBackupTransportation'])->middleware('operator')->name('search.loadback.Transportation');
+        Route::get('searchLoadBackupCustomer', function () {
+            return redirect('admin/searchLoadBackupTransportation');
+        });
 
         // تغییر مشتری به فعال یا غیر فعال
         Route::get('changeCustomerStatus/{customer_id}', [CustomerController::class, 'changeCustomerStatus'])->middleware('operator');

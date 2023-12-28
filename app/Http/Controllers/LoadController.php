@@ -1571,21 +1571,51 @@ class LoadController extends Controller
         return view('admin/customerLoads', compact('loads', 'customer_id'));
     }
 
-    public function loadBackup()
+    public function loadBackup($loads = [], $showSearchResult = false)
     {
-        $loads = LoadBackup::orderByDesc('created_at')
+        if (!$showSearchResult){
+            $loads = LoadBackup::orderByDesc('created_at')
             ->where('userType', ROLE_CUSTOMER)
             ->paginate(20);
+        }
         return view('admin.loadBackup', compact('loads'));
     }
 
-    public function loadBackupTransportation()
+    // جستجوی بار های صاحبین بار
+    public function searchLoadBackupCustomer(Request $request)
     {
-        $loads = LoadBackup::orderByDesc('created_at')
-            ->where('userType', ROLE_TRANSPORTATION_COMPANY)
+            $loads = LoadBackup::orderByDesc('created_at')
+            ->where('userType', ROLE_CUSTOMER)
+            ->where('mobileNumberForCoordination', 'like', '%' . $request->mobileNumber . '%')
             ->paginate(20);
-        return view('admin.load.loadBackupTransportation', compact('loads'));
 
+            if (count($loads))
+                return $this->loadBackup($loads, true);
+
+        return back()->with('danger', 'آیتم پیدا نشد!');
+    }
+
+    public function loadBackupTransportation($loads = [], $showSearchResult = false)
+    {
+        if (!$showSearchResult){
+            $loads = LoadBackup::orderByDesc('created_at')
+                ->where('userType', ROLE_TRANSPORTATION_COMPANY)
+                ->paginate(20);
+        }
+        return view('admin.load.loadBackupTransportation', compact('loads'));
+    }
+
+    public function searchLoadBackupTransportation(Request $request)
+    {
+            $loads = LoadBackup::orderByDesc('created_at')
+                ->where('userType', ROLE_TRANSPORTATION_COMPANY)
+                ->where('mobileNumberForCoordination', 'like', '%' . $request->mobileNumber . '%')
+                ->paginate(20);
+
+            if (count($loads))
+                return $this->loadBackupTransportation($loads, true);
+
+        return back()->with('danger', 'آیتم پیدا نشد!');
     }
 
     /*************************************************************************************************/
