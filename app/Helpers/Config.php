@@ -143,7 +143,7 @@ function isDriverAutoActive()
     return $siteOption->driverAutoActive;
 }
 
-const DRIVER_FREE_CALLS = 10;
+const DRIVER_FREE_CALLS = 5;
 const DRIVER_FREE_ACCEPT_LOAD = 5;
 
 const CUSTOMER_FREE_DRIVER_CALLS = 3;

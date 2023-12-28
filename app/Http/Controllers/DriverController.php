@@ -123,11 +123,7 @@ class DriverController extends Controller
         if (isDriverAutoActive())
             $driver->status = ACTIVE;
         // خاور و نیسان
-        if ($fleet_id == 81 || $fleet_id == 82 || $fleet_id == 83 || $fleet_id == 84 || $fleet_id == 85 || $fleet_id == 45) {
-            $driver->freeCalls = 7;
-        } else {
-            $driver->freeCalls = DRIVER_FREE_CALLS;
-        }
+        $driver->freeCalls = DRIVER_FREE_CALLS;
 
         $driver->freeAcceptLoads = DRIVER_FREE_ACCEPT_LOAD;
 
@@ -498,13 +494,7 @@ class DriverController extends Controller
         $driver->freeAcceptLoads = DRIVER_FREE_ACCEPT_LOAD;
         // خاور و نیسان
 
-        if ($fleet_id == 81 || $fleet_id == 82 || $fleet_id == 83 || $fleet_id == 84 || $fleet_id == 85) {
-            $driver->freeCalls = 5;
-        } elseif ($fleet_id == 45) {
-            $driver->freeCalls = 7;
-        } else {
-            $driver->freeCalls = DRIVER_FREE_CALLS;
-        }
+        $driver->freeCalls = DRIVER_FREE_CALLS;
 
         $driver->save();
 
@@ -1234,7 +1224,7 @@ class DriverController extends Controller
                 $free_subscription->value = TEN_AUTH_CALLS;
                 $free_subscription->driver_id = $driver->id;
                 $free_subscription->save();
-                $driver->freeCalls += 10;
+                $driver->freeCalls += 25;
             }
 
             $driver->save();
