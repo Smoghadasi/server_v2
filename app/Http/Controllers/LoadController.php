@@ -1923,7 +1923,7 @@ class LoadController extends Controller
         $inquiries = Inquiry::join('drivers', 'inquiries.driver_id', 'drivers.id')
             ->with('fleet')
             ->where('load_id', $load_id)
-            ->select('drivers.name','drivers.lastName','drivers.mobileNumber','drivers.fleet_id', 'price')
+            ->select('drivers.name','drivers.lastName','drivers.mobileNumber','drivers.fleet_id', 'price', 'inquiries.created_at')
             ->orderBy('price', 'asc')
             ->get();
 
