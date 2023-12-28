@@ -55,6 +55,12 @@
                             </div>
                             <div class="col">
                                 <div class="form-group">
+                                    <label>کد نسخه :</label>
+                                    <input type="text" name="version" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
                                     <label>نوع ناوگان :</label>
                                     <select class="form-select" name="fleet_id">
                                         <option value="0">انتخاب ناوگان</option>
