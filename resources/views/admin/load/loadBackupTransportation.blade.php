@@ -4,7 +4,7 @@
 
     <div class="card">
         <h5 class="card-header">
-            لیست بار های ثبت شده توسط صاحبین بار
+            لیست بار های ثبت شده توسط باربری
         </h5>
         <div class="card-body">
             <table class="table">
