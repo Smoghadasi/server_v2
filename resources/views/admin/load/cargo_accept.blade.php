@@ -5,7 +5,7 @@
         <h5 class="card-header">
             تایید بار ها
         </h5>
-        @if (auth()->user()->role == 'admin')
+        {{-- @if (auth()->user()->role == 'admin')
             <div class="alert alert-info text-right">
                 @if(isNewLoadAutoAccept())
                 تایید بار ها بصورت خودکار
@@ -19,7 +19,7 @@
                 </a>
                 @endif
             </div>
-        @endif
+        @endif --}}
 
         <div class="card-body">
 
@@ -61,9 +61,8 @@
                                 @endphp
                                 <td>{{ gregorianDateToPersian($cargoAccept->created_at, '-', true) . ' ' . $pieces[1] }}</td>
                                 <td style="display: flex;">
-
                                         <a class="btn btn-sm btn-success"
-                                           href="{{ url('admin/acceptLoadFromLoadList') }}/{{ $cargoAccept->id }}">تایید بار</a>
+                                           href="{{ route('acceptCustomer', $cargoAccept->user_id) }}">تایید بار</a>
                                     {{-- <a class="btn btn-danger btn-sm"
                                         href="{{ route('accept.cargo.store', $cargoAccept) }}">رد</a> --}}
                                 </td>

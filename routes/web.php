@@ -535,6 +535,10 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // گزارشهای ترکیبی
         Route::get('combinedReports', [ReportingController::class, 'combinedReports'])->middleware('operator');
 
+        // تایید بار بصورت هر شخص صاحب بار
+        Route::get('acceptCustomer/{user}', [CustomerController::class, 'acceptCustomer'])->middleware('operator')->name('acceptCustomer');
+
+
         // لیست صاحب بارها به ترتیب بیشترین بار
         Route::get('getCargoOwnersList', [ReportingController::class, 'getCargoOwnersList'])->middleware('admin');
 

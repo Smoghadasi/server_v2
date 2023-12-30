@@ -6,6 +6,7 @@ use App\Models\ActivationCode;
 use App\Models\City;
 use App\Models\Customer;
 use App\Models\Fleet;
+use App\Models\Load;
 use App\Models\LoadType;
 use App\Models\PackingType;
 use HttpException;
@@ -173,6 +174,21 @@ class CustomerController extends Controller
     {
         $customer->delete();
         return back()->with("success", "مشتری مورد نظر حذف شد");
+    }
+
+    public function acceptCustomer(string $id)
+    {
+        $customer = Customer::findOrFail($id);
+        $customer->isPublish = 1;
+        $customer->save();
+        $loads = Load::where('user_id', $id)->get();
+        foreach ($loads as $load) {
+            if ($load->status = -1) {
+                $load->status = 4;
+                $load->save();
+            }
+        }
+        return back()->with("success", "صاحب بار تایید شد");
     }
 
     // آپدیت اطلاعات صاحب بار

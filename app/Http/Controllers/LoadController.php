@@ -244,9 +244,9 @@ class LoadController extends Controller
 
             if (\auth()->check()) {
                 if (UserActivityReport::where([
-                        ['created_at', '>', date('Y-m-d H:i:s', strtotime('-5 minute', time()))],
-                        ['user_id', \auth()->id()]
-                    ])->count() == 0)
+                    ['created_at', '>', date('Y-m-d H:i:s', strtotime('-5 minute', time()))],
+                    ['user_id', \auth()->id()]
+                ])->count() == 0)
 
                     UserActivityReport::create(['user_id' => \auth()->id()]);
             }
@@ -437,12 +437,15 @@ class LoadController extends Controller
                 $load->mobileNumberForCoordination = convertFaNumberToEn($request->senderMobileNumber);
             }
 
-            if (isNewLoadAutoAccept()) {
-                if ($request->userType == ROLE_TRANSPORTATION_COMPANY || isset(\auth()->user()->role))
-                    $load->status = 4;
-                else
-                    $load->status = 0;
-            }
+            $statusUser = Customer::findOrFail($load->user_id);
+            $statusUser->isPublish == 1 ? $load->status = -1 : $load->status = 4;
+
+            // if (isNewLoadAutoAccept()) {
+            //     if ($request->userType == ROLE_TRANSPORTATION_COMPANY || isset(\auth()->user()->role))
+            //         $load->status = 4;
+            //     else
+            //         $load->status = 0;
+            // }
             $load->storeFor = $request->storeFor;
 
             // if (isset($request->storeFor)) {
@@ -1182,9 +1185,9 @@ class LoadController extends Controller
 
         try {
             if (DriverVisitLoad::where([
-                    ['load_id', $load_id],
-                    ['driver_id', $driver_id]
-                ])->count() == 0) {
+                ['load_id', $load_id],
+                ['driver_id', $driver_id]
+            ])->count() == 0) {
 
                 $driverVisitCount = new DriverVisitLoad();
                 $driverVisitCount->load_id = $load_id;
@@ -1576,11 +1579,11 @@ class LoadController extends Controller
 
     public function loadBackup($loads = [], $showSearchResult = false)
     {
-        if (!$showSearchResult){
+        if (!$showSearchResult) {
             $loads = LoadBackup::orderByDesc('created_at')
-            ->with('customer')
-            ->where('userType', ROLE_CUSTOMER)
-            ->paginate(20);
+                ->with('customer')
+                ->where('userType', ROLE_CUSTOMER)
+                ->paginate(20);
             // return $loads;
         }
         return view('admin.loadBackup', compact('loads'));
@@ -1589,20 +1592,20 @@ class LoadController extends Controller
     // جستجوی بار های صاحبین بار
     public function searchLoadBackupCustomer(Request $request)
     {
-            $loads = LoadBackup::orderByDesc('created_at')
+        $loads = LoadBackup::orderByDesc('created_at')
             ->where('userType', ROLE_CUSTOMER)
             ->where('mobileNumberForCoordination', 'like', '%' . $request->mobileNumber . '%')
             ->paginate(20);
 
-            if (count($loads))
-                return $this->loadBackup($loads, true);
+        if (count($loads))
+            return $this->loadBackup($loads, true);
 
         return back()->with('danger', 'آیتم پیدا نشد!');
     }
 
     public function loadBackupTransportation($loads = [], $showSearchResult = false)
     {
-        if (!$showSearchResult){
+        if (!$showSearchResult) {
             $loads = LoadBackup::orderByDesc('created_at')
                 ->where('userType', ROLE_TRANSPORTATION_COMPANY)
                 ->with('bearing')
@@ -1613,13 +1616,13 @@ class LoadController extends Controller
 
     public function searchLoadBackupTransportation(Request $request)
     {
-            $loads = LoadBackup::orderByDesc('created_at')
-                ->where('userType', ROLE_TRANSPORTATION_COMPANY)
-                ->where('mobileNumberForCoordination', 'like', '%' . $request->mobileNumber . '%')
-                ->paginate(20);
+        $loads = LoadBackup::orderByDesc('created_at')
+            ->where('userType', ROLE_TRANSPORTATION_COMPANY)
+            ->where('mobileNumberForCoordination', 'like', '%' . $request->mobileNumber . '%')
+            ->paginate(20);
 
-            if (count($loads))
-                return $this->loadBackupTransportation($loads, true);
+        if (count($loads))
+            return $this->loadBackupTransportation($loads, true);
 
         return back()->with('danger', 'آیتم پیدا نشد!');
     }
@@ -1929,7 +1932,7 @@ class LoadController extends Controller
         $inquiries = Inquiry::join('drivers', 'inquiries.driver_id', 'drivers.id')
             ->with('fleet')
             ->where('load_id', $load_id)
-            ->select('drivers.name','drivers.lastName','drivers.mobileNumber','drivers.fleet_id', 'price', 'inquiries.created_at')
+            ->select('drivers.name', 'drivers.lastName', 'drivers.mobileNumber', 'drivers.fleet_id', 'price', 'inquiries.created_at')
             ->orderBy('price', 'asc')
             ->get();
 
@@ -1958,7 +1961,7 @@ class LoadController extends Controller
         // if (isset($load->proposedPriceForDriver))
         //     $proposedPriceForDriver = $load->proposedPriceForDriver;
 
-        return response()->json($inquiries,200);
+        return response()->json($inquiries, 200);
     }
 
     // فرم افزودن بار توسط اپراتور
@@ -2998,8 +3001,8 @@ class LoadController extends Controller
 
             Load::where('id', $load_id)->delete();
 
-//            if ($load->loadPic)
-//                unlink($load->loadPic);
+            //            if ($load->loadPic)
+            //                unlink($load->loadPic);
 
             Tender::where('load_id', $load_id)->delete();
 
@@ -3043,7 +3046,6 @@ class LoadController extends Controller
     {
         $load->delete();
         return back()->with('success', 'بار مورد نظر حذف شد');
-
     }
 
     // جستجوی بار
@@ -3323,10 +3325,10 @@ class LoadController extends Controller
         try {
             return [
                 'result' =>
-                    Inquiry::where([
-                        ['load_id', $load_id],
-                        ['driver_id', $driver_id]
-                    ])->count()
+                Inquiry::where([
+                    ['load_id', $load_id],
+                    ['driver_id', $driver_id]
+                ])->count()
             ];
         } catch (\Exception $exception) {
         }
