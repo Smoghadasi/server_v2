@@ -16,7 +16,7 @@ class BlockPhoneNumberController extends Controller
     public function index($blockedPhoneNumbers = [], $showSearchResult = false)
     {
         if (!$showSearchResult)
-            $blockedPhoneNumbers = BlockPhoneNumber::paginate(20);
+            $blockedPhoneNumbers = BlockPhoneNumber::orderByDesc('created_at')->paginate(20);
         return view('admin.blockedPhoneNumbers', compact('blockedPhoneNumbers'));
     }
 
