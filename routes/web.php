@@ -205,7 +205,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::post('customers', [CustomerController::class, 'searchCustomers'])->middleware('operator');
 
         // بارهای مشتریان
-        Route::get('customerLoads/{customer_id}', [LoadController::class, 'customerLoads'])->middleware('operator');
+        Route::get('customerLoads/{customer_id}', [LoadController::class, 'customerLoads'])->middleware('operator')->name('customer.loads');
 
         // بار های ثبت شده توسط صاحبین بار
         Route::get('loadBackup', [LoadController::class, 'loadBackup'])->middleware('operator')->name('admin.loadBackup');

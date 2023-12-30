@@ -1575,8 +1575,10 @@ class LoadController extends Controller
     {
         if (!$showSearchResult){
             $loads = LoadBackup::orderByDesc('created_at')
+            ->with('customer')
             ->where('userType', ROLE_CUSTOMER)
             ->paginate(20);
+            // return $loads;
         }
         return view('admin.loadBackup', compact('loads'));
     }

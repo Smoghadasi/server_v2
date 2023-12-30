@@ -32,6 +32,7 @@
                     <th>#</th>
                     <th>عنوان بار</th>
                     <th>شماره موبایل</th>
+                    <th>مشخصات صاحب بار</th>
 {{--                    <th>باربری یا صاحب بار</th>--}}
                     <th>ناوگان</th>
                     <th>تاریخ</th>
@@ -44,6 +45,9 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $load->title }}</td>
                         <td>{{ $load->senderMobileNumber }}</td>
+                        <td>
+                            {{ $load->customer->name }} {{ $load->customer->lastName }} ({{ $load->customer->mobileNumber }})
+                        </td>
 {{--                        <td>{{ $load->userType == ROLE_CUSTOMER ? 'صاحب بار' : 'باربری' }}</td>--}}
                         <td>
                             @php
@@ -57,7 +61,10 @@
                             $pieces = explode(" ", $load->created_at);
                         @endphp
                         <td>{{ $load->loadingDate }} <br/> {{$pieces[1]}}</td>
-                        <td><a href="{{ url('admin/loadInfo') }}/{{ $load->id }}">نمایش جزئیات</a></td>
+                        <td>
+                            <a class="btn btn-info btn-sm" href="{{ url('admin/loadInfo') }}/{{ $load->id }}">نمایش جزئیات</a>
+                            <a class="btn btn-primary btn-sm" href="{{ route('customer.loads', $load->customer->id) }}">لیست بار ها</a>
+                        </td>
                     </tr>
                 @endforeach
                 </tbody>

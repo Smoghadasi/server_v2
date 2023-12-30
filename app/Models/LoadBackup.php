@@ -72,6 +72,11 @@ class LoadBackup extends Model
     {
         return $this->hasMany(DateOfCargoDeclaration::class);
     }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'user_id');
+    }
     //
 
 
