@@ -174,7 +174,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::post('bearing', [BearingController::class, 'searchBearing'])->middleware('operator');
 
         // نمایش لیست بارهای یک باربری
-        Route::get('bearingLoads/{id}', [LoadController::class, 'bearingLoads'])->middleware('operator');
+        Route::get('bearingLoads/{id}', [LoadController::class, 'bearingLoads'])->middleware('operator')->name('bearing.loads');
 
         // نمایش فرم افزودن باربری
         Route::get('addNewBearingForm', [BearingController::class, 'addNewBearingForm'])->middleware('admin');

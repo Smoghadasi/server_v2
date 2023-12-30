@@ -32,6 +32,7 @@
                     <th>#</th>
                     <th>عنوان بار</th>
                     <th>شماره موبایل</th>
+                    <th>مشخصات باربری</th>
 {{--                    <th>باربری یا صاحب بار</th>--}}
                     <th>ناوگان</th>
                     <th>تاریخ</th>
@@ -41,15 +42,17 @@
                 <tbody>
                 @foreach($loads as $load)
                     <tr>
-                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ ($loads ->currentpage()-1) * $loads ->perpage() + $loop->index + 1 }}</td>
                         <td>{{ $load->title }}</td>
                         <td>{{ $load->senderMobileNumber }}</td>
-{{--                        <td>{{ $load->userType == ROLE_CUSTOMER ? 'صاحب بار' : 'باربری' }}</td>--}}
+                        <td>
+                            {{ $load->bearing->operatorName }} ({{ $load->bearing->mobileNumber }})
+                        </td>
                         <td>
                             @php
                                 $fleets = json_decode($load->fleets, true);
                             @endphp
-                    @foreach ($fleets as $fleet)
+                            @foreach ($fleets as $fleet)
                                 <span class="alert alert-primary p-1 m-1 small" style="line-height: 2rem">{{ $fleet['title'] }}</span>
                             @endforeach
                         </td>
@@ -57,7 +60,10 @@
                             $pieces = explode(" ", $load->created_at);
                         @endphp
                         <td>{{ $load->loadingDate }} <br/> {{$pieces[1]}}</td>
-                        <td><a href="{{ url('admin/loadInfo') }}/{{ $load->id }}">نمایش جزئیات</a></td>
+                        <td>
+                            <a class="btn btn-info btn-sm" href="{{ url('admin/loadInfo') }}/{{ $load->id }}">نمایش جزئیات</a>
+                            <a class="btn btn-primary btn-sm" href="{{ route('bearing.loads', $load->bearing->id) }}">لیست بار ها</a>
+                        </td>
                     </tr>
                 @endforeach
                 </tbody>

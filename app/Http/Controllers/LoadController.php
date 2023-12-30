@@ -1602,6 +1602,7 @@ class LoadController extends Controller
         if (!$showSearchResult){
             $loads = LoadBackup::orderByDesc('created_at')
                 ->where('userType', ROLE_TRANSPORTATION_COMPANY)
+                ->with('bearing')
                 ->paginate(20);
         }
         return view('admin.load.loadBackupTransportation', compact('loads'));
