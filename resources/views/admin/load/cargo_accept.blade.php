@@ -62,7 +62,8 @@
                                 <td>{{ gregorianDateToPersian($cargoAccept->created_at, '-', true) . ' ' . $pieces[1] }}</td>
                                 <td style="display: flex;">
                                         <a class="btn btn-sm btn-success"
-                                           href="{{ route('acceptCustomer', $cargoAccept->user_id) }}">تایید بار</a>
+                                           href="{{ route('acceptCustomer', $cargoAccept->user_id) }}">تایید</a><a class="btn btn-sm btn-success"
+                                           href="{{ route('rejectCustomer', $cargoAccept->user_id) }}">عدم تایید</a>
                                     {{-- <a class="btn btn-danger btn-sm"
                                         href="{{ route('accept.cargo.store', $cargoAccept) }}">رد</a> --}}
                                 </td>

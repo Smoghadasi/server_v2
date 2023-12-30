@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ActivationCode;
+use App\Models\BlockPhoneNumber;
 use App\Models\City;
 use App\Models\Customer;
 use App\Models\Fleet;
@@ -189,6 +190,18 @@ class CustomerController extends Controller
             }
         }
         return back()->with("success", "صاحب بار تایید شد");
+    }
+
+    public function rejectCustomer(string $id)
+    {
+        $customer = Customer::findOrFail($id);
+        $blockNumber = new BlockPhoneNumber();
+        $blockNumber->phoneNumber = $customer->mobileNumber;
+        $blockNumber->name = $customer->name . " " . $customer->lastName;
+        $blockNumber->description = "کلاهبرداری";
+        $blockNumber->save();
+        Load::where('user_id', $id)->delete();
+        return back()->with("success", "صاحب بار رد شد");
     }
 
     // آپدیت اطلاعات صاحب بار

@@ -537,6 +537,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         // تایید بار بصورت هر شخص صاحب بار
         Route::get('acceptCustomer/{user}', [CustomerController::class, 'acceptCustomer'])->middleware('operator')->name('acceptCustomer');
+        Route::get('rejectCustomer/{user}', [CustomerController::class, 'rejectCustomer'])->middleware('operator')->name('rejectCustomer');
 
 
         // لیست صاحب بارها به ترتیب بیشترین بار
