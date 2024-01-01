@@ -1822,13 +1822,13 @@ class LoadController extends Controller
 
         try {
 
-            $page = 15;
+            $page = 30;
 
             $conditions = [];
             if ($lastLoadId > 0) {
                 $conditions[] = ['id', '<', $lastLoadId];
                 $conditions[] = ['urgent', 0];
-                $page = 15;
+                $page = 70;
             }
             $conditions[] = ['status', ON_SELECT_DRIVER];
             $conditions[] = ['created_at', '>', \date('Y-m-d h:i:s', strtotime('-1 day', time()))];
