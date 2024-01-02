@@ -82,9 +82,8 @@ class BearingController extends Controller
     public function requestBearingInfo($id)
     {
 
-        $bearing = Bearing::join('cities', 'cities.id', '=', 'bearings.city_id')
-            ->where('bearings.id', $id)
-            ->select('bearings.title', 'bearings.operatorName', 'bearings.registrationNumber', 'bearings.phoneNumber', 'bearings.mobileNumber', 'bearings.grade', 'bearings.score', 'bearings.wallet', 'cities.name as city')
+        $bearing = Bearing::where('bearings.id', $id)
+            ->select('bearings.title', 'bearings.operatorName', 'bearings.registrationNumber', 'bearings.phoneNumber', 'bearings.mobileNumber', 'bearings.grade', 'bearings.score', 'bearings.wallet')
             ->first();
 
         if ($bearing) {
