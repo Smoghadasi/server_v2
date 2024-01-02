@@ -118,6 +118,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // ثبت شهر جدید
         Route::post('addNewCity/{state}', [AddressController::class, 'addNewCity'])->middleware('operator');
 
+
+        Route::put('updateCity/{city}', [AddressController::class, 'updateCity'])->middleware('operator')->name('city.update');
+
         // حذف شهر
         Route::get('removeCity/{city}', [AddressController::class, 'removeCity'])->middleware('admin');
 

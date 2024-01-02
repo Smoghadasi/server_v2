@@ -98,7 +98,6 @@ class AddressController extends Controller
         try {
             $city = City::where('id', $city_id)->first();
             return $city->state_id;
-
         } catch (\Exception $exception) {
             Log::emergency("------------------------------------------------------------------------------");
             Log::emergency("AddressController : geStateIdFromCityId");
@@ -192,9 +191,16 @@ class AddressController extends Controller
 
             return back()->with('success', 'شهر ' . $city->name . ' به استان ' . $state->name . ' اضافه شد.');
         } catch (\Exception $exception) {
-
         }
         return back()->with('danger', 'خطا در ثبت شهر جدید');
+    }
+
+    public function updateCity(Request $request, string $id)
+    {
+        $city = City::findOrFail($id);
+        $city->name = $request->name;
+        $city->save();
+        return back()->with('success', 'شهر ' . $city->name . ' ویرایش.');
 
     }
 
@@ -205,11 +211,9 @@ class AddressController extends Controller
             $city->delete();
             return back()->with('success', 'شهر مورد نظر حذف شد.');
         } catch (\Exception $exception) {
-
         }
 
         return back()->with('danger', 'خطا در حذف شهر جدید');
-
     }
 
     public function centerOfProvince(City $city)
@@ -224,7 +228,6 @@ class AddressController extends Controller
 
             return back()->with('success', 'مرکز استان انتخاب شد');
         } catch (\Exception $exception) {
-
         }
         return back()->with('danger', 'خطا در انتخاب مرکز استان');
     }
