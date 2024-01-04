@@ -128,7 +128,7 @@
                     <h1 class="text-center">{{ $countOfDrivers }} </h1>
                     <h2 class="text-center">رانندگان</h2>
                 </div>
-                <a class="card-footer text-white clearfix small z-1 btn btn-light" href="{{ url('admin/drivers') }}">
+                <a class="card-footer text-white clearfix small z-1 btn btn-light" href="{{ route('adminDrivers') }}">
                     <span class="float-left">لیست رانندگان</span>
                     <span class="float-right">
                         <i class="fas fa-angle-right"></i>

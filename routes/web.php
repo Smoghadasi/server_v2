@@ -328,6 +328,10 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         // نمایش لیست راننده ها
         Route::get('drivers', [DriverController::class, 'drivers'])->middleware('operator')->name('drivers');
+
+        // نمایش لیست رانندگان برای ادمین
+        Route::get('adminDrivers', [DriverController::class, 'adminDrivers'])->middleware('operator')->name('adminDrivers');
+
         // فرم ثبت راننده جدید
         Route::get('addNewDriverForm', [DriverController::class, 'addNewDriverForm'])->middleware('operator');
 
@@ -348,9 +352,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         // جستجوی راننده
         Route::post('searchDrivers', [DriverController::class, 'searchDrivers'])->middleware('operator');
-        Route::get('searchDrivers', function () {
-            return redirect('admin/drivers');
-        });
+
 
         Route::post('searchDriverCall', [DriverController::class, 'searchDriverCall'])->middleware('operator');
         Route::get('searchDriverCall', function () {

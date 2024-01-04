@@ -40,6 +40,17 @@ class DriverController extends Controller
         return view('admin.drivers', compact('drivers', 'showSearchResult', 'fleets'));
     }
 
+    // لیست رانندگان برای ادمین
+    public function adminDrivers($drivers = [], $showSearchResult = false)
+    {
+        $fleets = Fleet::all();
+        if (!$showSearchResult)
+            $drivers = Driver::orderBy('id', 'desc')->paginate(50);
+
+        return view('admin.driver.adminDrivers', compact('drivers', 'showSearchResult', 'fleets'));
+    }
+
+
     // فرم افزودن راننده جدید
     public function addNewDriverForm($message = '', $alert = '')
     {
@@ -684,6 +695,7 @@ class DriverController extends Controller
         lastName
         mobileNumber
          * */
+        $fleets = Fleet::all();
         $condition = [];
         if (isset($request->name) && strlen($request->name))
             $condition[] = ['name', 'like', '%' . $request->name . '%'];
@@ -702,7 +714,7 @@ class DriverController extends Controller
         if (count($condition)) {
             $drivers = Driver::where($condition)->orderBy('id', 'desc')->paginate(5000);
             if (count($drivers))
-                return $this->drivers($drivers, true);
+                return view('admin.driver.searchDriver', compact('drivers', 'fleets'));
         }
 
         return back()->with('danger', 'راننده ای پیدا نشد!');
