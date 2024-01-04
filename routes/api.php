@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\Api\OwnerController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\BearingController;
@@ -51,9 +52,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
     // اعتبارسنجی کد فعال سازی برای باربری
     Route::post('verifyActivationCodeForBearing', [LoginController::class, 'verifyActivationCodeForBearing']);
-
-    // اعتبارسنجی کد فعال سازی برای باربری و صاحبان بار
-    Route::post('verifyActivationCodeForCustomerBearing', [LoginController::class, 'verifyActivationCodeForCustomerBearing']);
 
     // درخواست کد فعال سازی برای راننده
     Route::post('requestActivationCodeForDriver', [LoginController::class, 'requestActivationCodeForDriver']);
@@ -429,7 +427,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         // ویرایش اطلاعات پروفایل مشتری
         Route::patch('editProfile/{customer}', [CustomerController::class, 'editProfile']);
-
     });
 
     Route::group(['prefix' => 'transportationCompany'], function () {
@@ -561,7 +558,21 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
             'tel' => TELL
         ]);
     });
+
+
+    // برنامه جدید صاحب بار
+    Route::group(['prefix' => 'owner'], function () {
+        Route::post('register', [OwnerController::class, 'register']);
+    // اعتبارسنجی کد فعال سازی برای باربری و صاحبان بار
+    Route::post('verifyActivationCodeForCustomerBearing', [LoginController::class, 'verifyActivationCodeForCustomerBearing']);
+
+        Route::middleware(['auth:sanctum'])->group(function () {
+            //
+
+        });
+    });
 });
+
 
 // کال بک بیمه
 Route::post('InsuranceCallBack', function (Request $request) {
@@ -572,7 +583,6 @@ Route::get('DidarCallBack', function () {
     return response()->json([
         'result' => true,
     ]);
-
 });
 
 Route::post('botData', function (Request $request) {

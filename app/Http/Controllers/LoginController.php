@@ -7,13 +7,10 @@ use App\Models\Bearing;
 use App\Models\City;
 use App\Models\Customer;
 use App\Models\Driver;
-use App\Models\Load;
 use App\Models\Marketer;
-use HttpException;
+use App\Models\Owner;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Kavenegar\Exceptions\ApiException;
-use Kavenegar\KavenegarApi;
 use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
@@ -149,7 +146,6 @@ class LoginController extends Controller
         $validator = Validator::make($request->all(), [
             'mobileNumber' => 'required',
             'code' => 'required',
-            'isOwner' => 'required',
         ]);
         $mobileNumber = ParameterController::convertNumbers($request->mobileNumber);
         // return $mobileNumber;
@@ -163,31 +159,19 @@ class LoginController extends Controller
         ])->count();
         // return $activationCode;
         if ($activationCode > 0) {
-            if ($request->isOwner == 0) {
-                $customer = Customer::where('mobileNumber', '=', $mobileNumber)->first();
-                if ($customer) {
-                    return [
-                        'result' => IS_MEMBER,
-                        'id' => $customer->id
-                    ];
-                }
+            $owner = Owner::where('mobileNumber', $mobileNumber)->first();
+            if ($owner) {
+                $token = $owner->createToken('myapptoken')->plainTextToken;
                 return [
-                    'result' => NOT_MEMBER
+                    'result' => SUCCESS,
+                    'result' => $token
                 ];
-            } else {
-                $bearing = Bearing::where('mobileNumber', '=', $mobileNumber)->first();
-                if ($bearing) {
-                    // قبلا این باربری ذخیره شده است
-                    return [
-                        'result' => IS_MEMBER,
-                        'id' => $bearing->id
-                    ];
-                }
-                // قبلا این باربری ذخیره نشده است
+            }else{
                 return [
                     'result' => NOT_MEMBER
                 ];
             }
+
         } else {
             return [
                 'result' => UN_SUCCESS,
