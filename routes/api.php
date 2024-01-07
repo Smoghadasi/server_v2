@@ -78,8 +78,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     //  مسیرهای مروبوط به بار
     /******************************************************************************************/
 
-    // ثبت بار جدید
-    Route::post('customer/createNewLoad', [LoadController::class, 'createNewLoad']);
     // Route::post('customer/createNewLoad1', [LoadController::class, 'createNewLoad1']);
 
     // انتخاب راننده برای بار توسط باربری
@@ -136,12 +134,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     // مشتری
     /********************************************************************************************/
 
-    // درخواست لیست بارهای مشتری
-    Route::get('customer/requestCustomerLoadsList/{id}', [LoadController::class, 'requestCustomerLoadsList']);
-
-    // درخواست اطلاعات بار
-    Route::get('bearing/requestLoadInfo/{id}', [LoadController::class, 'requestLoadInfo']);
-    Route::get('customer/requestLoadInfo/{id}', [LoadController::class, 'requestLoadInfo']);
 
     // ذخیره پیشنهاد
     Route::post('bearing/suggestionPrice', [TenderController::class, 'suggestionPrice']);
@@ -168,9 +160,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
     // درخواست لیست باربری های که قیمت کمتر را ثبت کرده اند
     Route::get('customer/requestTopBearingListInTender/{load_id}', [TenderController::class, 'requestTopBearingListInTender']);
-
-    // درخواست اطلاعات باربری
-    Route::get('customer/requestBearingInfo/{id}', [BearingController::class, 'requestBearingInfo']);
 
     /********************************************************************************************/
     // ناوگان
@@ -404,11 +393,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // پیگیری انتقاد یا شکایت صاحب بار
         Route::post('getComplaintCustomerResult/{id}', [ComplaintController::class, 'getComplaintCustomerResult']);
 
-        // حذف بار
-        Route::delete('removeCustomerLoad/{load}/{customer}', [LoadController::class, 'removeCustomerLoad']);
-
-        // ویرایش اطلاعات بار
-        Route::patch('editLoadInfo/{load}/{api}', [LoadController::class, 'editLoadInfo']);
 
         // اضافه کردن ناوگان به بار توسط صاحب بار
         Route::post('addFleetToLoadByCustomer', [LoadController::class, 'addFleetToLoadByCustomer']);
@@ -425,8 +409,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // درخواست اطلاعات مشتری
         Route::get('requestCustomerInfo/{customer}', [CustomerController::class, 'requestCustomerInfo']);
 
-        // ویرایش اطلاعات پروفایل مشتری
-        Route::patch('editProfile/{customer}', [CustomerController::class, 'editProfile']);
     });
 
     Route::group(['prefix' => 'transportationCompany'], function () {
@@ -454,8 +436,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // پرداخت شارژ ماهیانه از کیف پول
         Route::post('payMonthlyChargeFromWallet', [BearingController::class, 'payMonthlyChargeFromWallet']);
 
-        // حذف بار
-        Route::delete('removeTransportationCompanyLoad/{load}/{transportationCompany}', [LoadController::class, 'removeTransportationCompanyLoad']);
 
         // انتقاد یا شکایت راننده از صاحب بار یا باربری
         Route::post('storeComplaintTransportationCompany/{transportationCompany}', [ComplaintController::class, 'storeComplaintTransportationCompany']);
@@ -563,13 +543,37 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     // برنامه جدید صاحب بار
     Route::group(['prefix' => 'owner'], function () {
         Route::post('register', [OwnerController::class, 'register']);
-    // اعتبارسنجی کد فعال سازی برای باربری و صاحبان بار
-    Route::post('verifyActivationCodeForCustomerBearing', [LoginController::class, 'verifyActivationCodeForCustomerBearing']);
+        // اعتبارسنجی کد فعال سازی برای باربری و صاحبان بار
+        Route::post('verifyActivationCodeForCustomerBearing', [LoginController::class, 'verifyActivationCodeForCustomerBearing']);
 
-        Route::middleware(['auth:sanctum'])->group(function () {
-            //
+        // احراز هویت صاحب بار
+        Route::put('authOwner/{owner}', [OwnerController::class, 'authOwner'])->name('auth.owner');
 
-        });
+        // احراز هویت باربری
+        Route::put('authBearing/{owner}', [OwnerController::class, 'authBearing'])->name('auth.bearing');
+
+        // تغییر پروفایل کاربری
+        Route::patch('profileImage/{owner}', [OwnerController::class, 'profileImage'])->name('auth.profileImage');
+
+        // ثبت بار جدید
+        Route::post('createNewLoad', [LoadController::class, 'createNewLoad']);
+
+        // درخواست اطلاعات صاحبان بار
+        Route::get('profile/{owner}', [OwnerController::class, 'profile']);
+
+        // حذف بار توسط صاحب بار
+        Route::delete('removeOwnerLoad/{load}/{owner}', [LoadController::class, 'removeOwnerLoad']);
+
+        // درخواست اطلاعات بار
+        Route::get('requestLoadInfo/{id}', [LoadController::class, 'requestLoadInfo']);
+
+        // ویرایش اطلاعات بار
+        Route::patch('editLoadInfo/{load}/{api}', [LoadController::class, 'editLoadInfo']);
+
+        // درخواست لیست بارهای صاحبان بار
+        Route::get('requestCustomerLoadsList/{id}', [LoadController::class, 'requestCustomerLoadsList']);
+
+
     });
 });
 

@@ -1070,7 +1070,7 @@ class DriverController extends Controller
                 'freeAcceptLoads' => $driver->freeAcceptLoads,
                 'activeDate' => $driver->activeDate,
                 'fleetTitle' => $driver->fleetTitle,
-                'fleets' => Fleet::select('id', 'title', 'parent_id', 'pic')->get(),
+                // 'fleets' => Fleet::select('id', 'title', 'parent_id', 'pic')->get(),
                 'authStatus' => $driver->authLevel,
                 'driverAuthStatusTitles' => DRIVER_AUTH_STATUS_TITLE,
                 'address' => $driver->address

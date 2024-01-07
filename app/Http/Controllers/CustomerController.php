@@ -82,48 +82,6 @@ class CustomerController extends Controller
         return 'بدون نام';
     }
 
-    // ویرایش اطلاعات مشتری
-    public function editProfile(Request $request, Customer $customer)
-    {
-        if (asset($customer)) {
-            // $customer->name = $request->name;
-            // $customer->lastName = $request->lastName;
-            $customer->address = $request->address;
-            $customer->postalCode = $request->postalCode;
-
-            if ($request->nationalCardPic != "noImage") {
-                if (file_exists($customer->nationalCardPic))
-                    unlink($customer->nationalCardPic);
-                $nationalCardPic = "images/customers/nationalCardPic_" . time() . $customer->id . ".jpg";
-                file_put_contents($nationalCardPic, base64_decode($request->nationalCardPic));
-            }
-            if ($request->imageRegisterSana != "noImage") {
-                if (file_exists($customer->imageRegisterSana))
-                    unlink($customer->imageRegisterSana);
-                $imageRegisterSana = "images/customers/imageRegisterSana_" . time() . $customer->id . ".jpg";
-                file_put_contents($imageRegisterSana, base64_decode($request->imageRegisterSana));
-            }
-            if ($request->imageRegisterSana != "noImage") {
-                if ($request->imageRegisterSana !== $customer->imageRegisterSana) {
-                    if (file_exists($customer->imageRegisterSana))
-                        unlink($customer->imageRegisterSana);
-                    $imageRegisterSana = "images/customers/imageRegisterSana_" . time() . $customer->id . ".jpg";
-                    // file_put_contents($imageRegisterSana, base64_decode($request->imageRegisterSana));
-                    $request->imageRegisterSana->move(public_path('customers/'), $imageRegisterSana);
-                    // dd($request->nationalCardImage->move(public_path('images/customers/'), $nationalCardImage));
-                }
-            }
-            $customer->save();
-            return [
-                'result' => SUCCESS
-            ];
-        }
-        return [
-            'result' => UN_SUCCESS,
-            'message' => 'چنین کاربری وجود ندارد لطفا دوباره تلاش کنید'
-        ];
-    }
-
     // درخواست نوع ناوگان، شهرها، نوع بسته بندی و نوع بارها
     public function requestFleetAndCitiesAndPackingTypeAndLoadTypeList()
     {

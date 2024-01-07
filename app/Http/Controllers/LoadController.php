@@ -20,6 +20,7 @@ use App\Models\Load;
 use App\Models\LoadBackup;
 use App\Models\LoadStatus;
 use App\Models\LoadType;
+use App\Models\Owner;
 use App\Models\PackingType;
 use App\Models\Tender;
 use App\Models\User;
@@ -279,16 +280,11 @@ class LoadController extends Controller
             // ثبت ip کاربر
             try {
                 if ($request->userType == ROLE_TRANSPORTATION_COMPANY) {
-                    $transportationCompany = Bearing::where('mobileNumber', $senderMobileNumber)->first();
-                    if (isset($transportationCompany->id)) {
-                        $transportationCompany->ip = request()->ip();
-                        $transportationCompany->save();
-                    }
-                } else if ($request->userType == "customer") {
-                    $customer = Customer::where('mobileNumber', $senderMobileNumber)->first();
-                    if (isset($customer->id)) {
-                        $customer->ip = request()->ip();
-                        $customer->save();
+                    $owner = Owner::where('mobileNumber', $senderMobileNumber)->first();
+
+                    if (isset($owner->id)) {
+                        $owner->ip = request()->ip();
+                        $owner->save();
                     }
                 }
             } catch (Exception $e) {
@@ -1024,7 +1020,6 @@ class LoadController extends Controller
     // درخواست اطلاعات بار
     public function requestLoadInfo($id, $userType = '')
     {
-
         try {
             $loadInfo = Load::join('load_statuses', 'load_statuses.status', 'loads.status')
                 ->where('loads.id', $id)
@@ -3810,16 +3805,12 @@ class LoadController extends Controller
     }
 
     // حذف بار توسط باربری
-    public function removeTransportationCompanyLoad(Load $load, Bearing $transportationCompany)
+    public function removeOwnerLoad(Load $load, Owner $owner)
     {
-        if ($load->bearing_id == $transportationCompany->id) {
-
+        if ($load->user_id == $owner->id) {
             $load->delete();
-
             return response()->json([
                 'result' => true,
-                'data' => null,
-                'message' => null,
             ]);
         }
         return response()->json([
@@ -3829,34 +3820,6 @@ class LoadController extends Controller
         ]);
     }
 
-    // حذف بار توسط صاحب بار
-    public function removeCustomerLoad(Load $load, Customer $customer)
-    {
-        try {
-            if ($load->user_id == $customer->id) {
-
-                if ($load->storeFor == ROLE_DRIVER || $load->status <= 2) {
-
-                    $load->delete();
-
-                    return response()->json([
-                        'result' => true,
-                        'data' => null,
-                        'message' => null,
-                    ]);
-                }
-            }
-        } catch (\Exception $exception) {
-            Log::emergency("-----------------------------خطا در حذف بار توسط مشتری----------------------");
-            Log::emergency($exception->getMessage());
-            Log::emergency("---------------------------------------------------------------------------");
-        }
-        return response()->json([
-            'result' => false,
-            'data' => null,
-            'message' => 'امکان حذف بار وجود ندارد! لطفا دوباره تلاش کنید',
-        ]);
-    }
 
     // فرم ثبت بار توسط صاحب بار
     public function createNewLoadForm($storeFor)

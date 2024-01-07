@@ -78,27 +78,6 @@ class BearingController extends Controller
 
     }
 
-    // درخواست اطلاعات باربری
-    public function requestBearingInfo($id)
-    {
-
-        $bearing = Bearing::where('bearings.id', $id)
-            ->select('bearings.title', 'bearings.operatorName', 'bearings.registrationNumber', 'bearings.phoneNumber', 'bearings.mobileNumber', 'bearings.grade', 'bearings.score', 'bearings.wallet')
-            ->first();
-
-        if ($bearing) {
-
-            return [
-                'result' => SUCCESS,
-                'bearing' => $bearing
-            ];
-        }
-
-        return [
-            'result' => UN_SUCCESS,
-            'message' => 'چنین باربری وجود ندارد'
-        ];
-    }
 
     public static function getBearingInfo($id)
     {
