@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\NewLoadRequest;
 use App\Models\Bearing;
 use App\Models\BlockedIp;
 use App\Models\BlockPhoneNumber;
@@ -30,6 +31,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use PHPUnit\Exception;
+use Illuminate\Support\Facades\Validator;
 
 class LoadController extends Controller
 {
@@ -238,7 +240,7 @@ class LoadController extends Controller
         }
     }
 
-    public function createNewLoad(Request $request)
+    public function createNewLoad(NewLoadRequest $request)
     {
 
         try {
