@@ -24,7 +24,7 @@ class NewLoadRequest extends FormRequest
     public function rules()
     {
         return [
-            'mobileNumberForCoordination' => 'required|numeric|phone_number|size:11',
+            'senderMobileNumber' => 'required|digits:11',
         ];
     }
 }

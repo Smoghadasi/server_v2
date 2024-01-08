@@ -43,9 +43,6 @@ class OwnerController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'address' => 'required',
-                'nationalCardImage' => 'required',
-                'nationalFaceImage' => 'required',
-                'sanaImage' => 'required',
             ]);
             if ($validator->fails()) {
                 return response()->json($validator->errors());
@@ -99,7 +96,6 @@ class OwnerController extends Controller
                 'companyName' => 'required',
                 'companyID' => 'required|min:9|max:12|unique:owners,companyID',
                 'address' => 'required|string',
-                'activityLicense' => 'required',
             ]);
             if ($validator->fails()) {
                 return response()->json($validator->errors());

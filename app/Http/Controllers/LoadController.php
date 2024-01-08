@@ -2755,7 +2755,7 @@ class LoadController extends Controller
     }
 
     // ویرایش اطلاعات بار در اپ
-    public function editLoadInfo(Request $request, Load $load, $api = false)
+    public function editLoadInfo(NewLoadRequest $request, Load $load, $api = false)
     {
 
         try {

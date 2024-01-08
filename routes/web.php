@@ -16,6 +16,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoadController;
 use App\Http\Controllers\MarketerController;
 use App\Http\Controllers\OperatorContactingController;
+use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\PackingTypeController;
 use App\Http\Controllers\ParameterController;
 use App\Http\Controllers\PayController;
@@ -653,7 +654,11 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         /************************************************************************************************************/
 
         // احراز هویت راننده توسط اپراتور
-        Route::get('driversAuthenticationByOperator', [DriverController::class, 'driversAuthenticationByOperator'])->middleware('operator');
+        Route::get('driversAuthenticationByOperator', [DriverController::class, 'driversAuthenticationByOperator'])->middleware('operator')->name('driver.auth.operator');
+
+        Route::resource('ownerAuth', OwnerController::class);
+        Route::put('updateAuthOwner/{owner}', [OwnerController::class, 'updateAuthOwner'])->middleware('operator')->name('owner.updateAuthOwner');
+
 
         // حذف فایلهای ارسالی راننده توسط اپراتور
         Route::get('removeDriverFile/{fileType}/{driver}', [DriverController::class, 'removeDriverFile'])->middleware('operator');

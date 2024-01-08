@@ -45,8 +45,8 @@
                                 <td>{{ ($cargoAccepts ->currentpage()-1) * $cargoAccepts ->perpage() + $loop->index + 1 }}</td>
                                 <td>{{ $cargoAccept->title ?? '-' }}</td>
                                 <td>{{ $cargoAccept->userType == ROLE_CUSTOMER ? 'صاحب بار' : 'باربری' }}</td>
-                                <td>{{ $cargoAccept->toCity }}</td>
                                 <td>{{ $cargoAccept->fromCity }}</td>
+                                <td>{{ $cargoAccept->toCity }}</td>
                                 <td>
                                     @php
                                         $fleets = json_decode($cargoAccept->fleets, true);

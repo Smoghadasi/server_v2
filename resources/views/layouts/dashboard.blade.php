@@ -190,14 +190,28 @@
                         </a>
                     </li>
                 @endif
+
                 @if(in_array('driversAuthentication',auth()->user()->userAccess))
-                    <li class="menu-item ">
-                        <a href="{{ url('admin/driversAuthenticationByOperator') }}" class="menu-link">
+                    <li class="menu-item">
+                        <a href="javascript:void(0);" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons bx bx-user-check"></i>
-                            <div data-i18n="Analytics">احراز هویت رانندگان</div>
+                            <div data-i18n="pais">احراز هویت</div>
                         </a>
+                        <ul class="menu-sub">
+                            <li class="menu-item">
+                                <a class="menu-link" href="{{ route('driver.auth.operator') }}">
+                                    <div data-i18n="Without menu">رانندگان</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a class="menu-link" href="{{ route('ownerAuth.index') }}">
+                                    <div data-i18n="Without menu">صاحبان بار</div>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                 @endif
+
 
                 <li class="menu-item">
                     <a href="javascript:void(0);" class="menu-link menu-toggle">
