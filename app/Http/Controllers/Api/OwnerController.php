@@ -115,6 +115,24 @@ class OwnerController extends Controller
                     $file->move('images/owners/activityLicense', $filename);
                     $owner->activityLicense = 'images/owners/activityLicense/' . $filename;
                 }
+                if ($request->hasfile('nationalCardImage')) {
+                    $file = $request->file('nationalCardImage');
+                    $extenstion = $file->getClientOriginalExtension();
+                    $filename = time() . '.' . $extenstion;
+                    if (file_exists($owner->nationalCardImage))
+                        unlink($owner->nationalCardImage);
+                    $file->move('images/owners/nationalCardImage', $filename);
+                    $owner->nationalCardImage = 'images/owners/nationalCardImage/' . $filename;
+                }
+                if ($request->hasfile('nationalFaceImage')) {
+                    $file = $request->file('nationalFaceImage');
+                    $extenstion = $file->getClientOriginalExtension();
+                    $filename = time() . '.' . $extenstion;
+                    if (file_exists($owner->nationalFaceImage))
+                        unlink($owner->nationalFaceImage);
+                    $file->move('images/owners/nationalFaceImage', $filename);
+                    $owner->nationalFaceImage = 'images/owners/nationalFaceImage/' . $filename;
+                }
                 $owner->isAuth = 2;
                 $owner->isOwner = 2;
                 $owner->save();
@@ -145,8 +163,9 @@ class OwnerController extends Controller
     }
 
     // درخواست اطلاعات باربری
-    public function profile(Owner $owner)
+    public function profile(string $id)
     {
+        $owner = Owner::with('opertorMessages')->where('id', $id)->first();
         return [
             'result' => SUCCESS,
             'data' => $owner

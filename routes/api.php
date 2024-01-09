@@ -552,7 +552,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // احراز هویت باربری
         Route::put('authBearing/{owner}', [OwnerController::class, 'authBearing'])->name('auth.bearing');
 
-        // تغییر پروفایل کاربری
+        // تغییر عکس پروفایل کاربری
         Route::patch('profileImage/{owner}', [OwnerController::class, 'profileImage'])->name('auth.profileImage');
 
         // ثبت بار جدید

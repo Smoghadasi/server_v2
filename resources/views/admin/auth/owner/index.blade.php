@@ -23,11 +23,13 @@
                     @forelse($owners as $owner)
                         <tr>
                             <td>{{ ($owners->currentPage() - 1) * $owners->perPage() + ++$i }}</td>
-                            <td>{{ $owner->name }} {{ $owner->lastName }} {{ $owner->companyID !== null ? '(باربری)' : '(صاحب بار)' }}</td>
+                            <td>{{ $owner->name }} {{ $owner->lastName }}
+                                {{ $owner->isOwner == 1 ? '(صاحب بار)' : '(باربری)' }}</td>
                             <td>{{ $owner->nationalCode }}</td>
                             <td>{{ $owner->mobileNumber }}</td>
                             <td>
-                                <a class="btn btn-sm btn-primary" href="{{ route('ownerAuth.edit', $owner) }}">بررسی اطلاعات</a>
+                                <a class="btn btn-sm btn-primary" href="{{ route('ownerAuth.edit', $owner) }}">بررسی
+                                    اطلاعات</a>
                             </td>
                         </tr>
                     @empty
