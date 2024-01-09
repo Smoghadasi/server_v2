@@ -77,6 +77,8 @@ class OwnerController extends Controller
                     $owner->sanaImage = 'images/owners/sanaImage/' . $filename;
                 }
                 $owner->isAuth = 2;
+                $owner->isOwner = 1;
+
                 $owner->save();
                 $response = [
                     'message' => 'با موفقیت ذخیره شد',
@@ -114,6 +116,7 @@ class OwnerController extends Controller
                     $owner->activityLicense = 'images/owners/activityLicense/' . $filename;
                 }
                 $owner->isAuth = 2;
+                $owner->isOwner = 2;
                 $owner->save();
             }
             return response()->json(['message' => 'با موفقیت ذخیره شد'], 201);
