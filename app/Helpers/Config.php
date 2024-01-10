@@ -102,6 +102,7 @@ const ROLE_DRIVER = 'driver'; // راننده
 const ROLE_TRANSPORTATION_COMPANY = 'transportation_company'; // شرکت حمل و نقل
 const ROLE_CARGo_OWNER = 'cargo_owner'; // صاحب بار
 const ROLE_CUSTOMER = 'customer'; // صاحب بار
+const ROLE_OWNER = 'owner'; // صاحبان بار
 const ROLE_ADMIN = 'admin'; // ادمین
 const ROLE_OPERATOR = 'operator'; // اپراتور
 

@@ -82,7 +82,11 @@ class LoadBackup extends Model
     {
         return $this->belongsTo(Bearing::class, 'user_id');
     }
-    //
+
+    public function owner()
+    {
+        return $this->belongsTo(Owner::class, 'user_id');
+    }
 
 
 }

@@ -1586,6 +1586,17 @@ class LoadController extends Controller
         return view('admin.loadBackup', compact('loads'));
     }
 
+    public function loadOwner($loads = [], $showSearchResult = false)
+    {
+        if (!$showSearchResult) {
+            $loads = LoadBackup::orderByDesc('created_at')
+                ->with('owner')
+                ->where('userType', ROLE_OWNER)
+                ->paginate(20);
+        }
+        return view('admin.load.owner', compact('loads'));
+    }
+
     // جستجوی بار های صاحبین بار
     public function searchLoadBackupCustomer(Request $request)
     {

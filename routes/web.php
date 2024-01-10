@@ -16,6 +16,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoadController;
 use App\Http\Controllers\MarketerController;
 use App\Http\Controllers\OperatorContactingController;
+use App\Http\Controllers\Owner\AuthController as OwnerAuthController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\PackingTypeController;
 use App\Http\Controllers\ParameterController;
@@ -208,11 +209,18 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         //جستجو
         Route::post('customers', [CustomerController::class, 'searchCustomers'])->middleware('operator');
 
+        // لیست صاحبان بار
+        Route::resource('owner', OwnerController::class)->middleware("operator");
+
         // بارهای مشتریان
         Route::get('customerLoads/{customer_id}', [LoadController::class, 'customerLoads'])->middleware('operator')->name('customer.loads');
 
         // بار های ثبت شده توسط صاحبین بار
         Route::get('loadBackup', [LoadController::class, 'loadBackup'])->middleware('operator')->name('admin.loadBackup');
+
+        Route::get('loadOwner', [LoadController::class, 'loadOwner'])->middleware('operator')->name('admin.load.owner');
+
+        // بار های ثبت شده توسط صاحبان بار
 
         Route::post('searchLoadBackupCustomer', [LoadController::class, 'searchLoadBackupCustomer'])->middleware('operator')->name('search.loadback.customer');
         Route::get('searchLoadBackupCustomer', function () {
@@ -656,8 +664,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // احراز هویت راننده توسط اپراتور
         Route::get('driversAuthenticationByOperator', [DriverController::class, 'driversAuthenticationByOperator'])->middleware('operator')->name('driver.auth.operator');
 
-        Route::resource('ownerAuth', OwnerController::class);
-        Route::put('updateAuthOwner/{owner}', [OwnerController::class, 'updateAuthOwner'])->middleware('operator')->name('owner.updateAuthOwner');
+        Route::resource('ownerAuth', OwnerAuthController::class);
+        Route::put('updateAuthOwner/{owner}', [OwnerAuthController::class, 'updateAuthOwner'])->middleware('operator')->name('owner.updateAuthOwner');
 
 
         // حذف فایلهای ارسالی راننده توسط اپراتور
