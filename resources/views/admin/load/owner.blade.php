@@ -27,7 +27,7 @@
                             <td>{{ $load->title }}</td>
                             <td>{{ $load->senderMobileNumber }}</td>
                             <td>
-                                {{ $load->owner->name }} {{ $load->owner->lastName }}
+                                {{ $load->owner ?? $load->owner->name }} {{ $load->owner ?? $load->owner->lastName }}
                                 ({{ $load->owner->mobileNumber }})
                             </td>
                             {{--                        <td>{{ $load->userType == ROLE_CUSTOMER ? 'صاحب بار' : 'باربری' }}</td> --}}
