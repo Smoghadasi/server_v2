@@ -573,6 +573,11 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // درخواست لیست بارهای صاحبان بار
         Route::get('requestCustomerLoadsList/{id}', [LoadController::class, 'requestCustomerLoadsList']);
 
+        // انتقاد یا شکایت صاحب بار
+        Route::post('storeComplaintOwner/{owner}', [ComplaintController::class, 'storeComplaintOwner']);
+
+        // پیگیری انتقاد یا شکایت صاحب بار
+        Route::post('getComplaintOwnerResult/{owner}', [ComplaintController::class, 'getComplaintOwnerResult']);
 
     });
 });

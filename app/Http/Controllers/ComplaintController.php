@@ -6,8 +6,10 @@ use App\Models\Bearing;
 use App\Models\ComplaintDriver;
 use App\Models\ComplaintTransportationCompany;
 use App\Models\ComplaintCustomer;
+use App\Models\ComplaintOwner;
 use App\Models\Customer;
 use App\Models\Driver;
+use App\Models\Owner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -213,6 +215,63 @@ class ComplaintController extends Controller
                 return [
                     'result' => true,
                     'data' => ['complaintCustomer' => $complaintCustomer],
+                    'message' => null
+                ];
+
+        } catch (\Exception $exception) {
+            Log::emergency($exception->getMessage());
+        }
+        return [
+            'result' => false,
+            'data' => null,
+            'message' => 'پیام مورد نظر یافت نشد!'
+        ];
+    }
+
+    // انتقاد یا شکایت صاحبان بار
+    public function storeComplaintOwner(Request $request, Owner $owner)
+    {
+        try {
+
+            $complaintOwner = new ComplaintOwner();
+            $complaintOwner->owner_id = $owner->id;
+            $complaintOwner->title = $request->title;
+            $complaintOwner->phoneNumber = $request->phoneNumber;
+            $complaintOwner->message = $request->message;
+            $complaintOwner->trackingCode = rand(10000, 99999);
+            $complaintOwner->save();
+
+            if (isset($complaintOwner->id))
+                return [
+                    'result' => true,
+                    'data' => ['trackingCode' => $complaintOwner->trackingCode],
+                    'message' => ''
+                ];
+
+        } catch (\Exception $exception) {
+            Log::emergency($exception->getMessage());
+        }
+
+        return [
+            'result' => false,
+            'data' => null,
+            'message' => 'خطا در ذخیره پیام! دوباره تلاش کنید'
+        ];
+    }
+
+    // پیگیری انتقاد یا شکایت صاحبان بار
+    public function getComplaintOwnerResult(Request $request, Owner $owner)
+    {
+        try {
+            $complaintOwner = ComplaintOwner::where([
+                ['owner_id', $owner->id],
+                ['trackingCode', $request->trackingCode]
+            ])->first();
+
+            if (isset($complaintOwner->id))
+                return [
+                    'result' => true,
+                    'data' => ['complaintOwner' => $complaintOwner],
                     'message' => null
                 ];
 
