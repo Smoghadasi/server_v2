@@ -2943,6 +2943,20 @@ class LoadController extends Controller
                         }
                         $fleetLoad->save();
                     }
+
+                    try {
+
+                        $load->fleets = FleetLoad::join('fleets', 'fleets.id', 'fleet_loads.fleet_id')
+                            ->where('fleet_loads.load_id', $load->id)
+                            ->select('fleet_id', 'userType', 'suggestedPrice', 'numOfFleets', 'pic', 'title')
+                            ->get();
+
+                        $load->save();
+                    } catch (\Exception $exception) {
+                        Log::emergency("---------------------------------------------------------");
+                        Log::emergency($exception->getMessage());
+                        Log::emergency("---------------------------------------------------------");
+                    }
                 }
 
                 if (isset($request->dateOfCargoDeclaration)) {
