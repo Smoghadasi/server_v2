@@ -34,7 +34,7 @@
                     </div>
                 @endif
 
-                @if (auth()->user()->role == ROLE_ADMIN && auth()->user()->id == 25)
+                @if (auth()->user()->id == 40 || auth()->user()->id == 6 || auth()->user()->id == 25)
                     <div class="mt-3">
                         <a class="btn btn-warning btn-sm" href="{{ route('delete.duplicate') }}">
                             <i class="fas fa-angle-right"></i>
