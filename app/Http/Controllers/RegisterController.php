@@ -40,7 +40,6 @@ class RegisterController extends Controller
                     'id' => $bearing->id
                 ];
             }
-
         } catch (\Exception $exception) {
 
             Log::emergency("---------------------------------- registerBearing ---------------------------------");
@@ -51,7 +50,6 @@ class RegisterController extends Controller
             'result' => UN_SUCCESS,
             'message' => 'خطا! در ذخیره اطلاعات لطفا دوباره تلاش کنید'
         ];
-
     }
 
     // ثبت نام باربری
@@ -224,14 +222,10 @@ class RegisterController extends Controller
             $roles = Role::all();
 
             return view('admin/addNewOperatorForm', compact('message', 'roles'));
-
-
         } catch (\Exception $exception) {
-
         }
 
         return back()->with('danger', 'خطایی رخ داده لطفا دوباره تلاش کنید');
-
     }
 
     // ثبت نام مشتری
@@ -239,6 +233,18 @@ class RegisterController extends Controller
     {
 
         $request->mobileNumber = ParameterController::convertNumbers($request->mobileNumber);
+
+        $customerOld = Customer::where('mobileNumber', $request->mobileNumber)
+            ->orWhere('nationalCode', $request->nationalCode)
+            ->first();
+
+        if (isset($customerOld)) {
+            $message[0] = 'خطا! در ذخیره اطلاعات لطفا دوباره تلاش کنید';
+            return [
+                'result' => UN_SUCCESS,
+                'message' => $message
+            ];
+        }
 
         try {
 
@@ -262,7 +268,6 @@ class RegisterController extends Controller
             if (isset($request->nationalCardPic) && $request->nationalCardPic != 'noImage' && $mode == "app") {
                 $nationalCardPic = "pictures/nationalCardPic/" . sha1(time() . $customer->id) . ".jpg";
                 file_put_contents($nationalCardPic, base64_decode($request->nationalCardPic));
-
             } else if ($mode == "web") {
                 $picture = $request->file('nationalCardPic');
                 if (strlen($picture)) {
@@ -303,10 +308,7 @@ class RegisterController extends Controller
                     'mobileNumber' => $request->mobileNumber,
                     'id' => $customer->id
                 ];
-
             }
-
-
         } catch (\Exception $exception) {
             Log::emergency($exception->getMessage());
             DB::rollBack();
@@ -326,7 +328,7 @@ class RegisterController extends Controller
             'name' => 'required|min:2|max:20',
             'lastName' => 'required|min:2|max:20',
             'mobileNumber' => 'required|regex:/(09)[0-9]{9}/',
-//            'nationalCode' => 'required|min:10|max:10'
+            //            'nationalCode' => 'required|min:10|max:10'
         ];
         $message = [
             'name.required' => 'لطفا نام را وارد نمایید',
@@ -339,19 +341,19 @@ class RegisterController extends Controller
             'mobileNumber.min' => 'شماره تلفن صحیح نمی باشد',
             'mobileNumber.max' => 'شماره تلفن صحیح نمی باشد',
             'mobileNumber.regex' => 'شماره تلفن صحیح نمی باشد',
-//            'nationalCode.required' => 'کدملی الزامی می باشد',
-//            'nationalCode.min' => 'کدملی صحیح نیست',
-//            'nationalCode.max' => 'کدملی صحیح نیست'
+            //            'nationalCode.required' => 'کدملی الزامی می باشد',
+            //            'nationalCode.min' => 'کدملی صحیح نیست',
+            //            'nationalCode.max' => 'کدملی صحیح نیست'
         ];
 
         $this->validate($request, $rules, $message);
 
         $errors = [];
 
-//        $checkNationalCode = Customer::where('nationalCode', $request->nationalCode)->count();
-//        if ($checkNationalCode > 0) {
-//            $errors['nationalCode'] = 'کدملی تکراری می باشد';
-//        }
+        //        $checkNationalCode = Customer::where('nationalCode', $request->nationalCode)->count();
+        //        if ($checkNationalCode > 0) {
+        //            $errors['nationalCode'] = 'کدملی تکراری می باشد';
+        //        }
         $checkMobileNumber = Customer::where('mobileNumber', $request->mobileNumber)->count();
         if ($checkMobileNumber > 0) {
             $errors['mobileNumber'] = 'شماره همراه تکراری می باشد';
@@ -468,5 +470,4 @@ class RegisterController extends Controller
             'message' => 'خطا در ثبت نام، لطفا دوباره تلاش کنید'
         ];
     }
-
 }

@@ -791,6 +791,7 @@ class LoadController extends Controller
             ->join('cities as originCity', 'loads.origin_city_id', 'originCity.id')
             ->join('cities as destinationCity', 'loads.destination_city_id', 'destinationCity.id')
             ->where('user_id', $id)
+            ->where('userType', 'owner')
             ->select(
                 'loads.id',
                 'loads.proposedPriceForDriver',
@@ -2827,8 +2828,8 @@ class LoadController extends Controller
             $load->height = $this->convertNumbers($request->height, false);
             $load->loadingAddress = $request->loadingAddress;
             $load->dischargeAddress = $request->dischargeAddress;
-            $load->senderMobileNumber = $request->senderMobileNumber;
-            $load->receiverMobileNumber = $request->receiverMobileNumber;
+            // $load->senderMobileNumber = $request->senderMobileNumber;
+            // $load->receiverMobileNumber = $request->receiverMobileNumber;
             $load->loadingDate = $request->loadingDate;
             $load->insuranceAmount = strlen($request->insuranceAmount) ? $request->insuranceAmount : 0;
             $load->suggestedPrice = $request->suggestedPrice;
@@ -2918,6 +2919,24 @@ class LoadController extends Controller
             $load->bulk = isset($request->bulk) ? $request->bulk : 2;
             $load->dangerousProducts = isset($request->dangerousProducts) ? $request->dangerousProducts : false;
             $load->deliveryTime = isset($request->deliveryTime) && $request->deliveryTime > 0 ? $request->deliveryTime : 24;
+
+            $loads = Load::where('userType', 'customer')->where('user_id', $load->user_id)->get();
+            foreach ($loads as $item) {
+                $item->status = -1;
+                $item->save();
+            }
+
+            $customer = Customer::findOrFail($load->user_id);
+            if ($customer->status == 0) {
+                Load::where('userType', 'customer')->where('user_id', $load->user_id)->delete();
+                LoadBackup::where('userType', 'customer')->where('user_id', $load->user_id)->delete();
+                $message[1] = 'خطا! لطفا دوباره تلاش کنید';
+                return [
+                    'result' => false,
+                    'message' => 'ویرایش انجام نشد! لطفا دوباره تلاش کنید'
+                ];
+            }
+            $load->save();
 
             $load->save();
 
