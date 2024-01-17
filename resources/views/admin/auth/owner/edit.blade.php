@@ -71,27 +71,27 @@
                             <div class="mb-3 row">
                                 <label for="activityLicense" class="col-md-2 col-form-label">عکس پروانه فعالیت</label>
                                 <div class="col-md-10">
-                                    <img src="{{ asset($ownerAuth->activityLicense) }}" alt="">
+                                    <img class="img-fluid" src="{{ asset($ownerAuth->activityLicense) }}" alt="">
                                 </div>
                             </div>
                         @else
                             <div class="mb-3 row">
                                 <label for="sanaImage" class="col-md-2 col-form-label">تصویر ثنا</label>
                                 <div class="col-md-10">
-                                    <img src="{{ asset($ownerAuth->sanaImage) }}" alt="">
+                                    <img class="img-fluid" src="{{ asset($ownerAuth->sanaImage) }}" alt="">
                                 </div>
                             </div>
                         @endif
                         <div class="mb-3 row">
                             <label for="nationalCardImage" class="col-md-2 col-form-label">تصویر کارت ملی</label>
                             <div class="col-md-10">
-                                <img src="{{ asset($ownerAuth->nationalCardImage) }}" alt="">
+                                <img class="img-fluid" src="{{ asset($ownerAuth->nationalCardImage) }}" alt="">
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label for="nationalFaceImage" class="col-md-2 col-form-label">تصویر کارت ملی کنار چهره</label>
                             <div class="col-md-10">
-                                <img src="{{ asset($ownerAuth->nationalFaceImage) }}" alt="">
+                                <img class="img-fluid" src="{{ asset($ownerAuth->nationalFaceImage) }}" alt="">
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary">بروز رسانی اطلاعات</button>
