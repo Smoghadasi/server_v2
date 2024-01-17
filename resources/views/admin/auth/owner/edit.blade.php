@@ -71,27 +71,35 @@
                             <div class="mb-3 row">
                                 <label for="activityLicense" class="col-md-2 col-form-label">عکس پروانه فعالیت</label>
                                 <div class="col-md-10">
-                                    <img class="img-fluid" src="{{ asset($ownerAuth->activityLicense) }}" alt="">
+                                    <a href="{{ asset($ownerAuth->activityLicense) }}">
+                                        <img width="250"  class="img-fluid" src="{{ asset($ownerAuth->activityLicense) }}" alt="">
+                                    </a>
                                 </div>
                             </div>
                         @else
                             <div class="mb-3 row">
                                 <label for="sanaImage" class="col-md-2 col-form-label">تصویر ثنا</label>
                                 <div class="col-md-10">
-                                    <img class="img-fluid" src="{{ asset($ownerAuth->sanaImage) }}" alt="">
+                                    <a href="{{ asset($ownerAuth->sanaImage) }}">
+                                        <img width="250" class="img-fluid" src="{{ asset($ownerAuth->sanaImage) }}" alt="">
+                                    </a>
                                 </div>
                             </div>
                         @endif
                         <div class="mb-3 row">
                             <label for="nationalCardImage" class="col-md-2 col-form-label">تصویر کارت ملی</label>
                             <div class="col-md-10">
-                                <img class="img-fluid" src="{{ asset($ownerAuth->nationalCardImage) }}" alt="">
+                                <a href="{{ asset($ownerAuth->nationalCardImage) }}">
+                                    <img width="250" class="img-fluid" src="{{ asset($ownerAuth->nationalCardImage) }}" alt="">
+                                </a>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label for="nationalFaceImage" class="col-md-2 col-form-label">تصویر کارت ملی کنار چهره</label>
                             <div class="col-md-10">
-                                <img class="img-fluid" src="{{ asset($ownerAuth->nationalFaceImage) }}" alt="">
+                                <a href="{{ asset($ownerAuth->nationalFaceImage) }}">
+                                    <img width="250" class="img-fluid" src="{{ asset($ownerAuth->nationalFaceImage) }}" alt="">
+                                </a>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary">بروز رسانی اطلاعات</button>
