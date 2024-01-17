@@ -1113,74 +1113,70 @@ class DriverController extends Controller
             $imageAddressDoc = "noImage";
             $imageRegisterSana = "noImage";
 
-            if (isset($request->authImage))
-                if ($request->authImage != "noImage") {
-                    if ($request->authImage !== $driver->authImage) {
-                        if (file_exists($driver->authImage))
-                            unlink($driver->authImage);
-                        $authImage = "images/drivers/authImage_" . time() . $driver->id . ".jpg";
-                        $request->authImage->move(public_path('drivers/'), $authImage);
-                    }
-                }
+            if ($request->hasfile('authImage')) {
+                $file = $request->file('authImage');
+                $extenstion = $file->getClientOriginalExtension();
+                $filename = time() . '.' . $extenstion;
+                if (file_exists($driver->authImage))
+                    unlink($driver->authImage);
+                $file->move('images/drivers/authImage', $filename);
+                $driver->authImage = 'images/drivers/authImage/' . $filename;
+            }
 
-            if ($request->driverImage != "noImage") {
-                if ($request->driverImage !== $driver->driverImage) {
-                    if (file_exists($driver->driverImage))
-                        unlink($driver->driverImage);
-                    $driverImage = "images/drivers/driverImage_" . time() . $driver->id . ".jpg";
-                    $request->driverImage->move(public_path('drivers/'), $driverImage);
-                }
+            if ($request->hasfile('driverImage')) {
+                $file = $request->file('driverImage');
+                $extenstion = $file->getClientOriginalExtension();
+                $filename = time() . '.' . $extenstion;
+                if (file_exists($driver->driverImage))
+                    unlink($driver->driverImage);
+                $file->move('images/drivers/driverImage', $filename);
+                $driver->driverImage = 'images/drivers/driverImage/' . $filename;
             }
-            if ($request->nationalCardImage != "noImage") {
-                if ($request->nationalCardImage !== $driver->nationalCardImage) {
-                    if (file_exists($driver->nationalCardImage))
-                        unlink($driver->nationalCardImage);
-                    $nationalCardImage = "images/drivers/nationalCardImage_" . time() . $driver->id . ".jpg";
-                    // file_put_contents($nationalCardImage, base64_decode($request->nationalCardImage));
-                    $request->nationalCardImage->move(public_path('drivers/'), $nationalCardImage);
-                    // dd($request->nationalCardImage->move(public_path('images/drivers/'), $nationalCardImage));
-                }
+            if ($request->hasfile('nationalCardImage')) {
+                $file = $request->file('nationalCardImage');
+                $extenstion = $file->getClientOriginalExtension();
+                $filename = time() . '.' . $extenstion;
+                if (file_exists($driver->nationalCardImage))
+                    unlink($driver->nationalCardImage);
+                $file->move('images/drivers/nationalCardImage', $filename);
+                $driver->nationalCardImage = 'images/drivers/nationalCardImage/' . $filename;
             }
-            if ($request->carSmartCardImage != "noImage") {
-                if ($request->carSmartCardImage !== $driver->carSmartCardImage) {
-                    if (file_exists($driver->carSmartCardImage))
-                        unlink($driver->carSmartCardImage);
-                    $carSmartCardImage = "images/drivers/carSmartCardImage_" . time() . $driver->id . ".jpg";
-                    // file_put_contents($carSmartCardImage, base64_decode($request->carSmartCardImage));
-                    $request->carSmartCardImage->move(public_path('drivers/'), $carSmartCardImage);
-                }
+            if ($request->hasfile('carSmartCardImage')) {
+                $file = $request->file('carSmartCardImage');
+                $extenstion = $file->getClientOriginalExtension();
+                $filename = time() . '.' . $extenstion;
+                if (file_exists($driver->carSmartCardImage))
+                    unlink($driver->carSmartCardImage);
+                $file->move('images/drivers/carSmartCardImage', $filename);
+                $driver->carSmartCardImage = 'images/drivers/carSmartCardImage/' . $filename;
             }
-            if ($request->driverSmartCardImage != "noImage") {
-                if ($request->driverSmartCardImage !== $driver->driverSmartCardImage) {
-                    if (file_exists($driver->driverSmartCardImage))
-                        unlink($driver->driverSmartCardImage);
-                    $driverSmartCardImage = "images/drivers/driverSmartCardImage_" . time() . $driver->id . ".jpg";
-                    // file_put_contents($driverSmartCardImage, base64_decode($request->driverSmartCardImage));
-
-                    $request->driverSmartCardImage->move(public_path('drivers/'), $driverSmartCardImage);
-                }
+            if ($request->hasfile('driverSmartCardImage')) {
+                $file = $request->file('driverSmartCardImage');
+                $extenstion = $file->getClientOriginalExtension();
+                $filename = time() . '.' . $extenstion;
+                if (file_exists($driver->driverSmartCardImage))
+                    unlink($driver->driverSmartCardImage);
+                $file->move('images/drivers/driverSmartCardImage', $filename);
+                $driver->driverSmartCardImage = 'images/drivers/driverSmartCardImage/' . $filename;
             }
-            if (isset($request->imageAddressDoc))
-                if ($request->imageAddressDoc != "noImage") {
-                    if ($request->imageAddressDoc !== $driver->imageAddressDoc) {
-                        if (file_exists($driver->imageAddressDoc))
-                            unlink($driver->imageAddressDoc);
-                        $imageAddressDoc = "images/drivers/imageAddressDoc_" . time() . $driver->id . ".jpg";
-                        // file_put_contents($imageAddressDoc, base64_decode($request->imageAddressDoc));
-
-                        $request->imageAddressDoc->move(public_path('drivers/'), $imageAddressDoc);
-                    }
-                }
-            if (isset($request->imageRegisterSana))
-                if ($request->imageRegisterSana != "noImage") {
-                    if ($request->imageRegisterSana !== $driver->imageRegisterSana) {
-                        if (file_exists($driver->imageRegisterSana))
-                            unlink($driver->imageRegisterSana);
-                        $imageRegisterSana = "images/drivers/imageRegisterSana_" . time() . $driver->id . ".jpg";
-                        // file_put_contents($imageRegisterSana, base64_decode($request->imageRegisterSana));
-                        $request->imageRegisterSana->move(public_path('drivers/'), $imageRegisterSana);
-                    }
-                }
+            if ($request->hasfile('imageAddressDoc')) {
+                $file = $request->file('imageAddressDoc');
+                $extenstion = $file->getClientOriginalExtension();
+                $filename = time() . '.' . $extenstion;
+                if (file_exists($driver->imageAddressDoc))
+                    unlink($driver->imageAddressDoc);
+                $file->move('images/drivers/imageAddressDoc', $filename);
+                $driver->imageAddressDoc = 'images/drivers/imageAddressDoc/' . $filename;
+            }
+            if ($request->hasfile('imageRegisterSana')) {
+                $file = $request->file('imageRegisterSana');
+                $extenstion = $file->getClientOriginalExtension();
+                $filename = time() . '.' . $extenstion;
+                if (file_exists($driver->imageRegisterSana))
+                    unlink($driver->imageRegisterSana);
+                $file->move('images/drivers/imageRegisterSana', $filename);
+                $driver->imageRegisterSana = 'images/drivers/imageRegisterSana/' . $filename;
+            }
 
             if ($driverImage != "noImage" && file_exists($driverImage))
                 $driver->driverImage = $driverImage;
