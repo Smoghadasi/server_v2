@@ -134,6 +134,8 @@
                                 href="{{ route('owner.change.status', $owner) }}">غیر فعال</a>
                         @endif
                     @endif
+                    <a class="btn btn-primary"
+                        href="{{ route('ownerAuth.edit', $owner) }}">ویرایش اطلاعات</a>
                 </div>
                 <!-- /Account -->
             </div>
