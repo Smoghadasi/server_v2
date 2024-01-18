@@ -89,7 +89,7 @@
                             <div class="mb-3 col-md-6">
                                 <label for="activityLicense" class="col-form-label">عکس پروانه فعالیت</label>
                                 <div class="col-md-10">
-                                    <img src="{{ $owner->activityLicense !== null ? asset($owner->activityLicense) : asset('img/notFound.jpg') }}"
+                                    <img class="img-fluid" src="{{ $owner->activityLicense !== null ? asset($owner->activityLicense) : asset('img/notFound.jpg') }}"
                                         alt="">
                                 </div>
                             </div>
@@ -97,7 +97,7 @@
                             <div class="mb-3 col-md-6">
                                 <label for="sanaImage" class="col-form-label">تصویر ثنا</label>
                                 <div class="col-md-10">
-                                    <img src="{{ $owner->sanaImage !== null ? asset($owner->sanaImage) : asset('img/notFound.jpg') }}"
+                                    <img class="img-fluid" src="{{ $owner->sanaImage !== null ? asset($owner->sanaImage) : asset('img/notFound.jpg') }}"
                                         alt="">
                                 </div>
                             </div>
@@ -105,7 +105,7 @@
                         <div class="mb-3 col-md-6">
                             <label for="nationalCardImage" class="col-form-label">تصویر کارت ملی</label>
                             <div class="col-md-10">
-                                <img src="{{ $owner->nationalCardImage !== null ? asset($owner->nationalCardImage) : asset('img/notFound.jpg') }}"
+                                <img class="img-fluid" src="{{ $owner->nationalCardImage !== null ? asset($owner->nationalCardImage) : asset('img/notFound.jpg') }}"
                                     alt="">
                             </div>
                         </div>
@@ -113,7 +113,7 @@
                             <label for="nationalFaceImage" class="col-form-label">تصویر کارت ملی کنار
                                 چهره</label>
                             <div class="col-md-10">
-                                <img src="{{ $owner->nationalFaceImage !== null ? asset($owner->nationalFaceImage) : asset('img/notFound.jpg') }}"
+                                <img class="img-fluid" src="{{ $owner->nationalFaceImage !== null ? asset($owner->nationalFaceImage) : asset('img/notFound.jpg') }}"
                                     alt="">
                             </div>
                         </div>
