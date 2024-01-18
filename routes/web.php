@@ -475,6 +475,14 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // لیست انقادات و شکایات باربری ها
         Route::get('complaintsCustomerList', [ComplaintController::class, 'complaintsCustomerList'])->middleware('operator');
 
+        // لیست انقادات و شکایات صاحبان بار
+        Route::get('complaintsOwnerList', [ComplaintController::class, 'complaintsOwnerList'])->middleware('operator')->name('complaint.owner.list');
+
+        // ذخیره پاسخ ادمین برای شکایت صاحبان بار
+        Route::post('storeComplaintOwnerAdminMessage/{complaintOwner}', [ComplaintController::class, 'storeComplaintOwnerAdminMessage'])
+            ->middleware('operator')
+            ->name('admin.message.complaintOwner');
+
         // ذخیره پاسخ ادمین برای شکایت باربری
         Route::post('storeComplaintCustomerAdminMessage/{complaintCustomer}', [ComplaintController::class, 'storeComplaintCustomerAdminMessage'])->middleware('operator');
 

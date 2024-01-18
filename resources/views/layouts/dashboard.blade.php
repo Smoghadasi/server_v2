@@ -415,16 +415,9 @@
                                     <div data-i18n="Without menu"> رانندگان</div>
                                 </a>
                             </li>
-
                             <li class="menu-item">
-                                <a class="menu-link" href="{{ url('admin/complaintsTransportationCompanyList') }}">
-                                    <div data-i18n="Without menu"> باربری ها</div>
-                                </a>
-                            </li>
-
-                            <li class="menu-item">
-                                <a class="menu-link" href="{{ url('admin/complaintsCustomerList') }}">
-                                    <div data-i18n="Without menu">صاحب بار</div>
+                                <a class="menu-link" href="{{ route('complaint.owner.list') }}">
+                                    <div data-i18n="Without menu">صاحبان بار</div>
                                 </a>
                             </li>
 
@@ -443,6 +436,17 @@
                             <li class="menu-item">
                                 <a class="menu-link" href="{{ url('admin/messages') }}">
                                     <span>پیام ها</span>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a class="menu-link" href="{{ url('admin/complaintsTransportationCompanyList') }}">
+                                    <div data-i18n="Without menu"> باربری ها(نسخه قدیمی)</div>
+                                </a>
+                            </li>
+
+                            <li class="menu-item">
+                                <a class="menu-link" href="{{ url('admin/complaintsCustomerList') }}">
+                                    <div data-i18n="Without menu">صاحب بار(نسخه قدیمی)</div>
                                 </a>
                             </li>
                         </ul>

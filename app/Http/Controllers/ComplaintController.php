@@ -35,7 +35,6 @@ class ComplaintController extends Controller
                     'data' => ['trackingCode' => $complaintDriver->trackingCode],
                     'message' => ''
                 ];
-
         } catch (\Exception $exception) {
             return $exception->getMessage();
         }
@@ -63,7 +62,6 @@ class ComplaintController extends Controller
                     'data' => ['complaintDriver' => $complaintDriver],
                     'message' => null
                 ];
-
         } catch (\Exception $exception) {
             Log::emergency($exception->getMessage());
         }
@@ -111,7 +109,6 @@ class ComplaintController extends Controller
                     'data' => ['trackingCode' => $complaintTransportationCompany->trackingCode],
                     'message' => ''
                 ];
-
         } catch (\Exception $exception) {
             return $exception->getMessage();
         }
@@ -139,7 +136,6 @@ class ComplaintController extends Controller
                     'data' => ['complaintTransportationCompany' => $complaintTransportationCompany],
                     'message' => null
                 ];
-
         } catch (\Exception $exception) {
             Log::emergency($exception->getMessage());
         }
@@ -157,6 +153,7 @@ class ComplaintController extends Controller
 
         return view('admin.complaintsTransportationCompanyList', compact('complaintsTransportationCompany'));
     }
+
 
     public function storeComplaintTransportationCompanyAdminMessage(Request $request, ComplaintTransportationCompany $complaintTransportationCompany)
     {
@@ -188,7 +185,6 @@ class ComplaintController extends Controller
                     'data' => ['trackingCode' => $complaintCustomer->trackingCode],
                     'message' => ''
                 ];
-
         } catch (\Exception $exception) {
             Log::emergency($exception->getMessage());
         }
@@ -217,7 +213,6 @@ class ComplaintController extends Controller
                     'data' => ['complaintCustomer' => $complaintCustomer],
                     'message' => null
                 ];
-
         } catch (\Exception $exception) {
             Log::emergency($exception->getMessage());
         }
@@ -247,7 +242,6 @@ class ComplaintController extends Controller
                     'data' => ['trackingCode' => $complaintOwner->trackingCode],
                     'message' => ''
                 ];
-
         } catch (\Exception $exception) {
             Log::emergency($exception->getMessage());
         }
@@ -274,7 +268,6 @@ class ComplaintController extends Controller
                     'data' => ['complaintOwner' => $complaintOwner],
                     'message' => null
                 ];
-
         } catch (\Exception $exception) {
             Log::emergency($exception->getMessage());
         }
@@ -297,6 +290,22 @@ class ComplaintController extends Controller
     {
         $complaintCustomer->adminMessage = $request->adminMessage;
         $complaintCustomer->save();
+
+        return back()->with('success', 'پاسخ مورد نظر ثبت شد');
+    }
+
+    // لیست انقادات و شکایات صاحبان بار
+    public function complaintsOwnerList()
+    {
+        $complaintsOwnerLists = ComplaintOwner::orderbyDesc('created_at')->paginate(20);
+
+        return view('admin.complaint.ownerList', compact('complaintsOwnerLists'));
+    }
+
+    public function storeComplaintOwnerAdminMessage(Request $request, ComplaintOwner $complaintOwner)
+    {
+        $complaintOwner->adminMessage = $request->adminMessage;
+        $complaintOwner->save();
 
         return back()->with('success', 'پاسخ مورد نظر ثبت شد');
     }
@@ -343,4 +352,3 @@ class ComplaintController extends Controller
         return back()->with('danger', $result['message']);
     }
 }
-
