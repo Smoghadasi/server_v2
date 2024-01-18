@@ -212,6 +212,12 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // لیست صاحبان بار
         Route::resource('owner', OwnerController::class)->middleware("operator");
 
+        // تغییر وضعیت صاحبان بار
+        Route::get('changeOwnerStatus/{owner}', [OwnerController::class, 'changeOwnerStatus'])->middleware('admin')->name('owner.change.status');
+
+        Route::post('ownerSearch', [OwnerController::class, 'searchOwners'])->middleware('operator')->name('owner.search');
+
+
         // بارهای مشتریان
         Route::get('customerLoads/{customer_id}', [LoadController::class, 'customerLoads'])->middleware('operator')->name('customer.loads');
 

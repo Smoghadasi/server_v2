@@ -64,6 +64,13 @@
                                     value="{{ $owner->postalCode }}" id="postalCode">
                             </div>
                         </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="status" class="col-form-label">وضعیت</label>
+                            <div class="col-md-12">
+                                <input class="form-control" type="text" name="status" disabled
+                                    value="{{ $owner->status == 1 ? 'فعال' : 'غیر فعال' }}" id="status">
+                            </div>
+                        </div>
                         @if ($owner->isOwner == 2)
                             <div class="mb-3 col-md-6">
                                 <label for="companyName" class="col-form-label">نام شرکت</label>
@@ -118,7 +125,15 @@
                         </div> --}}
                 </div>
                 <div class="card-footer">
-
+                    @if (auth()->user()->role == ROLE_ADMIN)
+                        @if ($owner->status == 0)
+                            <a class="btn btn-primary"
+                                href="{{ route('owner.change.status', $owner) }}">فعال</a>
+                        @else
+                            <a class="btn btn-danger"
+                                href="{{ route('owner.change.status', $owner) }}">غیر فعال</a>
+                        @endif
+                    @endif
                 </div>
                 <!-- /Account -->
             </div>

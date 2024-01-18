@@ -83,4 +83,21 @@ class OwnerController extends Controller
     {
         //
     }
+
+    public function changeOwnerStatus(Owner $owner)
+    {
+        $owner->status = !$owner->status;
+        $owner->save();
+        return back()->with("danger", "وضعیت با موفقیت تغییر کرد");
+    }
+
+    // جستجوی صاحبان بار
+    public function searchOwners(Request $request)
+    {
+        $owners = Owner::where('nationalCode', 'LIKE', "%$request->searchWord%")
+            ->orWhere('mobileNumber', 'LIKE', "%$request->searchWord%")
+            ->orderby('id', 'desc')
+            ->paginate(5);
+        return view('admin.owner.index', compact('owners'));
+    }
 }
