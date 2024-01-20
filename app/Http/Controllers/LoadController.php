@@ -1183,20 +1183,23 @@ class LoadController extends Controller
     {
 
         try {
-            if (DriverVisitLoad::where([
-                ['load_id', $load_id],
-                ['driver_id', $driver_id]
-            ])->count() == 0) {
+            // if (DriverVisitLoad::where([
+            //     ['load_id', $load_id],
+            //     ['driver_id', $driver_id]
+            // ])->count() == 0) {
 
-                $driverVisitCount = new DriverVisitLoad();
-                $driverVisitCount->load_id = $load_id;
-                $driverVisitCount->driver_id = $driver_id;
-                $driverVisitCount->save();
+            //     $driverVisitCount = new DriverVisitLoad();
+            //     $driverVisitCount->load_id = $load_id;
+            //     $driverVisitCount->driver_id = $driver_id;
+            //     $driverVisitCount->save();
 
-                $loadInfo = Load::find($load_id);
-                $loadInfo->driverVisitCount++;
-                $loadInfo->save();
-            }
+            //     $loadInfo = Load::find($load_id);
+            //     $loadInfo->driverVisitCount++;
+            //     $loadInfo->save();
+            // }
+            $loadInfo = Load::findOrFail($load_id);
+            $loadInfo->driverVisitCount++;
+            $loadInfo->save();
         } catch (\Exception $exception) {
         }
 
