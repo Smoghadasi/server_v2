@@ -26,7 +26,7 @@
                 @foreach($complaintsDrivers as $key => $complaintDriver)
                     <tr>
                         <td>{{ (($complaintsDrivers->currentPage()-1) * $complaintsDrivers->perPage()) + ($key + 1) }}</td>
-                        <td>{{ $complaintDriver->driver }}</td>
+                        <td><a href="{{ route('driver.detail', $complaintDriver->driverApp->id) }}">{{ $complaintDriver->driver }}</a></td>
                         <td>{{ $complaintDriver->title }}</td>
                         <td>{{ $complaintDriver->complaint }}</td>
                         <td>{{ $complaintDriver->phoneNumber }}</td>

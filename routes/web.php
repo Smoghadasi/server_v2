@@ -354,7 +354,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::post('addNewDriver', [DriverController::class, 'addNewDriver'])->middleware('operator');
 
         // نمایش اطلاعات راننده
-        Route::get('driverInfo/{driver}', [DriverController::class, 'driverInfo'])->middleware('operator');
+        Route::get('driverInfo/{driver}', [DriverController::class, 'driverInfo'])->middleware('operator')->name('driver.detail');
 
         // تغییر راننده به فعال یا غیر فعال
         Route::get('changeDriverStatus/{driver_id}', [DriverController::class, 'changeDriverStatus'])->middleware('operator');

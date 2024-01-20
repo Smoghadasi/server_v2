@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+use Exception;
 use Illuminate\Database\Eloquent\Model;
-use Lcobucci\JWT\Exception;
 
 class ComplaintDriver extends Model
 {
@@ -24,4 +24,10 @@ class ComplaintDriver extends Model
 
         return '';
     }
+
+    public function driverApp()
+    {
+        return $this->belongsTo(Driver::class, 'driver_id');
+    }
+
 }
