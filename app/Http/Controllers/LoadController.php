@@ -809,6 +809,7 @@ class LoadController extends Controller
                 'loads.loadingMinute',
                 'loads.status',
                 'loads.score',
+                'loads.description',
                 'loads.gibarDriverRequest as urgent',
                 'loads.loadingDate',
                 'originCity.name as from',
