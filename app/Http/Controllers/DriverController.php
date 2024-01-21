@@ -1212,8 +1212,8 @@ class DriverController extends Controller
             ) {
                 if ($driver->authLevel == DRIVER_AUTH_SILVER) {
                     $driver->authLevel = DRIVER_AUTH_SILVER;
-                }
-                $driver->authLevel = DRIVER_AUTH_SILVER_PENDING;
+                } else
+                    $driver->authLevel = DRIVER_AUTH_SILVER_PENDING;
             }
             if (
                 $driver->name !== null &&
