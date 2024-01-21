@@ -47,6 +47,10 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     // درخواست کد فعال سازی
     Route::post('requestActivationCode', [LoginController::class, 'requestActivationCode']);
 
+    // درخواست کد فعال سازی برای صاحبین بار
+    Route::post('requestActivationCodeOwner', [LoginController::class, 'requestActivationCodeOwner']);
+
+
     // اعتبارسنجی کد فعال سازی برای مشتری
     Route::post('verifyActivationCodeForCustomer', [LoginController::class, 'verifyActivationCodeForCustomer']);
 

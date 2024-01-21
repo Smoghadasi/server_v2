@@ -21,10 +21,30 @@ class LoginController extends Controller
     {
         $mobileNumber = ParameterController::convertNumbers($request->mobileNumber);
 
-        $checkProfile = Owner::where('mobileNumber', $mobileNumber)->first();
-
         if (strlen($mobileNumber) == 11) {
-            if ($checkProfile->status == 0) {
+
+            if ($this->createAndSendActivationCode($mobileNumber) != 1) {
+                return [
+                    'result' => UN_SUCCESS,
+                    'message' => 'خطا در ارسال پیامک'
+                ];
+            }
+            return response()->json(['result' => SUCCESS]);
+        }
+
+        return [
+            'result' => UN_SUCCESS,
+            'message' => 'شماره ارسال شده صحیح نمی باشد'
+        ];
+    }
+
+    // درخوسات کد فعال سازی
+    public function requestActivationCodeOwner(Request $request)
+    {
+        $mobileNumber = ParameterController::convertNumbers($request->mobileNumber);
+        $checkBlock = Owner::where('mobileNumber', $mobileNumber)->first();
+        if (strlen($mobileNumber) == 11) {
+            if (isset($checkBlock) && $checkBlock->status == 0) {
                 return [
                     'result' => UN_SUCCESS,
                     'message' => 'لطفا با پشتیبانی تماس بگیرید'
