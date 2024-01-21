@@ -1851,26 +1851,27 @@ class LoadController extends Controller
             $loads = Load::where($conditions)
                 ->select(
                     'id',
-                    // 'weight',
-                    // 'numOfTrucks',
-                    // 'loadingHour',
-                    // 'loadingMinute',
-                    // 'proposedPriceForDriver',
                     'suggestedPrice',
                     'title',
                     'priceBased',
                     'mobileNumberForCoordination',
-                    // 'userType',
                     'urgent',
                     'status',
-                    // 'created_at',
                     'time',
                     'fromCity',
                     'toCity',
                     'loadingDate',
                     'fleets',
+                    'time',
+                    'description',
+                    // 'created_at',
                     // 'storeFor'
-                    'time'
+                    // 'weight',
+                    // 'numOfTrucks',
+                    // 'loadingHour',
+                    // 'loadingMinute',
+                    // 'proposedPriceForDriver',
+                    // 'userType',
                 )
                 ->skip(0)
                 ->take($page)
