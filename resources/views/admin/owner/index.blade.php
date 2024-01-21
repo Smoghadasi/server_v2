@@ -42,11 +42,19 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if ($owner->isAuth == 1)
-                                        <span class="badge bg-success">انجام شده</span>
-                                    @else
-                                        <span class="badge bg-danger">انجام نشده</span>
-                                    @endif
+                                    @switch($owner->isAuth)
+                                        @case(0)
+                                            <span class="badge bg-danger">انجام نشده</span>
+                                        @break
+
+                                        @case(1)
+                                            <span class="badge bg-success">انجام شده</span>
+                                        @break
+
+                                        @case(2)
+                                            <span class="badge bg-secondary">انجام شده</span>
+                                        @break
+                                    @endswitch
                                 </td>
                                 <td>
                                     @switch($owner->isOwner)
