@@ -52,7 +52,7 @@
                                         @break
 
                                         @case(2)
-                                            <span class="badge bg-secondary">انجام شده</span>
+                                            <span class="badge bg-secondary">در حال بررسی</span>
                                         @break
                                     @endswitch
                                 </td>
