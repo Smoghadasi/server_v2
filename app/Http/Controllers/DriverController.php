@@ -1210,6 +1210,9 @@ class DriverController extends Controller
                 $driver->nationalCardImage !== null &&
                 $driver->authImage !== null
             ) {
+                if ($driver->authLevel == DRIVER_AUTH_SILVER) {
+                    $driver->authLevel = DRIVER_AUTH_SILVER;
+                }
                 $driver->authLevel = DRIVER_AUTH_SILVER_PENDING;
             }
             if (
