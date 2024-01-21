@@ -1253,7 +1253,7 @@ class DriverController extends Controller
             if ($driver->authLevel !== DRIVER_AUTH_SILVER_PENDING && $driver->authLevel !== DRIVER_AUTH_GOLD_PENDING) {
                 return \response()->json([
                     'result' => false,
-                    'message' => 'اطلاعات شما برای سطح نقره ای یا طلائی کافی نمی باشد.'
+                    'message' => 'اطلاعات جدید ذخیره شد.'
                 ]);
             }
             return \response()->json([
