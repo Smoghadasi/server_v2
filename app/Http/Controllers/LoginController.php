@@ -21,7 +21,15 @@ class LoginController extends Controller
     {
         $mobileNumber = ParameterController::convertNumbers($request->mobileNumber);
 
+        $checkProfile = Owner::where('mobileNumber', $mobileNumber)->first();
+
         if (strlen($mobileNumber) == 11) {
+            if ($checkProfile->status == 0) {
+                return [
+                    'result' => UN_SUCCESS,
+                    'message' => 'لطفا با پشتیبانی تماس بگیرید'
+                ];
+            }
 
             if ($this->createAndSendActivationCode($mobileNumber) != 1) {
                 return [
