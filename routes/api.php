@@ -133,6 +133,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     // درخواست تمام شهر ها
     Route::get('customer/requestAllCitiesList', [AddressController::class, 'requestAllCitiesList']);
     Route::get('bearing/requestAllCitiesList', [AddressController::class, 'requestAllCitiesList']);
+    Route::get('owner/requestAllCitiesList', [AddressController::class, 'requestAllCitiesListOwner']);
+
 
     /********************************************************************************************/
     // مشتری

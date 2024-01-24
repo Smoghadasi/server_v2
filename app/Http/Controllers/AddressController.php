@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\City;
+use App\Models\CityOwner;
 use App\Models\State;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -38,6 +39,17 @@ class AddressController extends Controller
     public function requestAllCitiesList()
     {
         $cities = City::select('id', 'name', 'state', 'latitude', 'longitude', 'centerOfProvince')
+            ->orderby('centerOfProvince', 'desc')
+            ->get();
+
+        return [
+            'cities' => $cities
+        ];
+    }
+
+    public function requestAllCitiesListOwner()
+    {
+        $cities = CityOwner::select('id', 'name', 'state', 'latitude', 'longitude', 'centerOfProvince')
             ->orderby('centerOfProvince', 'desc')
             ->get();
 
