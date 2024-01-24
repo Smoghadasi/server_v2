@@ -292,7 +292,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::post('searchLoad', [LoadController::class, 'searchLoadInWeb'])->middleware('operator');
 
         // جستجوی بارها
-        Route::get('searchLoadsForm', [LoadController::class, 'searchLoadsForm'])->middleware('operator');
+        Route::get('searchLoadsForm', [LoadController::class, 'searchLoadsForm'])->middleware('operator')->name('search.load.form');
         Route::post('searchLoads', [LoadController::class, 'searchLoads'])->middleware('operator');
 
         // نمایش اطلاعات بار
