@@ -3995,6 +3995,6 @@ class LoadController extends Controller
       foreach ($loads as $load){
         $load->delete();
       }
-      return view('admin.searchLoads');
+      return view('admin.searchLoadsForm');
     }
 }
