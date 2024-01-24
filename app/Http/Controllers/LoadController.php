@@ -3988,4 +3988,13 @@ class LoadController extends Controller
 
         return view('admin.searchLoads', compact('loads', 'cities', 'fleets', 'operators'));
     }
+
+    public function deleteAll(Request $request)
+    {
+      $loads = Load::findOrFail($request->loads);
+      foreach ($loads as $load){
+        $load->delete();
+      }
+      return view('admin.searchLoads');
+    }
 }

@@ -145,7 +145,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('logout', [UserController::class, 'logout'])->middleware('operator');
 
         // نمایش لیست اپراتور ها
-        Route::get('operators', [UserController::class, 'operators'])->middleware('admin');
+        Route::get('operators', [UserController::class, 'operators'])->middleware('operator');
 
         // فرم افزودن اپراتور جدید
         Route::get('addNewOperatorForm', [UserController::class, 'addNewOperatorForm'])->middleware('admin');
@@ -318,6 +318,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::post('removeLoad', [LoadController::class, 'removeLoad'])->middleware('operator');
 
         Route::delete('remove/load/{load}', [LoadController::class, 'removeLoadItem'])->middleware('operator')->name('remove.load');
+
+        Route::delete('deleteAll/load', [LoadController::class, 'deleteAll'])->middleware('operator')->name('load.delete.all');
 
         // اجزای مجدد مناقصه
         Route::get('repeatTender/{load_id}', [TenderController::class, 'repeatTender'])->middleware('operator');
