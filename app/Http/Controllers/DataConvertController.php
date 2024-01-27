@@ -651,7 +651,16 @@ class DataConvertController extends Controller
             $load->deliveryTime = 24;
 
             $load->urgent = 0;
-            $load->save();
+
+            $loadDuplicate = Load::whereIn('userType', ['customer', 'owner', 'bearing'])
+                ->where('mobileNumberForCoordination', $load->mobileNumberForCoordination)
+                ->where('origin_city_id', $load->origin_city_id)
+                ->where('destination_city_id', $load->destination_city_id)
+                ->first();
+
+            if (!$loadDuplicate) {
+                $load->save();
+            }
 
             if (isset($load->id)) {
 

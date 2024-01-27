@@ -525,6 +525,21 @@ class LoadController extends Controller
                         ->select('fleet_id', 'userType', 'suggestedPrice', 'numOfFleets', 'pic', 'title')
                         ->get();
 
+                    $fleets = json_decode($load->fleets, true);
+                    $loadDuplicates = Load::where('userType', 'operator')
+                        ->where('mobileNumberForCoordination', $load->mobileNumberForCoordination)
+                        ->where('origin_city_id', $request->origin_city_id)
+                        ->where('destination_city_id', $request->destination_city_id)
+                        ->where('fleets', 'LIKE', '%' . $fleets[0]['fleet_id'] . '%')
+                        ->get();
+                    // return $loadDuplicates;
+
+                    if (count($loadDuplicates) > 0) {
+                        foreach ($loadDuplicates as $loadDuplicate) {
+                            $loadDuplicate->delete();
+                        }
+                    }
+
                     $load->save();
                 } catch (\Exception $exception) {
                     Log::emergency("---------------------------------------------------------");
@@ -3991,10 +4006,10 @@ class LoadController extends Controller
 
     public function deleteAll(Request $request)
     {
-      $loads = Load::findOrFail($request->loads);
-      foreach ($loads as $load){
-        $load->delete();
-      }
-      return redirect()->route('search.load.form');
+        $loads = Load::findOrFail($request->loads);
+        foreach ($loads as $load) {
+            $load->delete();
+        }
+        return redirect()->route('search.load.form');
     }
 }
