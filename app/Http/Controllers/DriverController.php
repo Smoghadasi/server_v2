@@ -1301,7 +1301,7 @@ class DriverController extends Controller
     public function driversAuthenticationByOperator()
     {
         $drivers = Driver::whereIn('authLevel', [DRIVER_AUTH_SILVER_PENDING, DRIVER_AUTH_GOLD_PENDING])
-            ->orderby('updateDateTime', 'desc')
+            ->orderby('updateDateTime', 'asc')
             ->paginate(20);
 
         return view('admin.driversAuthenticationByOperator', compact('drivers'));
