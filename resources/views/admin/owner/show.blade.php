@@ -89,7 +89,8 @@
                             <div class="mb-3 col-md-6">
                                 <label for="activityLicense" class="col-form-label">عکس پروانه فعالیت</label>
                                 <div class="col-md-10">
-                                    <img class="img-fluid" src="{{ $owner->activityLicense !== null ? asset($owner->activityLicense) : asset('img/notFound.jpg') }}"
+                                    <img class="img-fluid"
+                                        src="{{ $owner->activityLicense !== null ? asset($owner->activityLicense) : asset('img/notFound.jpg') }}"
                                         alt="">
                                 </div>
                             </div>
@@ -97,7 +98,8 @@
                             <div class="mb-3 col-md-6">
                                 <label for="sanaImage" class="col-form-label">تصویر ثنا</label>
                                 <div class="col-md-10">
-                                    <img class="img-fluid" src="{{ $owner->sanaImage !== null ? asset($owner->sanaImage) : asset('img/notFound.jpg') }}"
+                                    <img class="img-fluid"
+                                        src="{{ $owner->sanaImage !== null ? asset($owner->sanaImage) : asset('img/notFound.jpg') }}"
                                         alt="">
                                 </div>
                             </div>
@@ -105,7 +107,8 @@
                         <div class="mb-3 col-md-6">
                             <label for="nationalCardImage" class="col-form-label">تصویر کارت ملی</label>
                             <div class="col-md-10">
-                                <img class="img-fluid" src="{{ $owner->nationalCardImage !== null ? asset($owner->nationalCardImage) : asset('img/notFound.jpg') }}"
+                                <img class="img-fluid"
+                                    src="{{ $owner->nationalCardImage !== null ? asset($owner->nationalCardImage) : asset('img/notFound.jpg') }}"
                                     alt="">
                             </div>
                         </div>
@@ -113,7 +116,8 @@
                             <label for="nationalFaceImage" class="col-form-label">تصویر کارت ملی کنار
                                 چهره</label>
                             <div class="col-md-10">
-                                <img class="img-fluid" src="{{ $owner->nationalFaceImage !== null ? asset($owner->nationalFaceImage) : asset('img/notFound.jpg') }}"
+                                <img class="img-fluid"
+                                    src="{{ $owner->nationalFaceImage !== null ? asset($owner->nationalFaceImage) : asset('img/notFound.jpg') }}"
                                     alt="">
                             </div>
                         </div>
@@ -127,15 +131,14 @@
                 <div class="card-footer">
                     @if (auth()->user()->role == ROLE_ADMIN)
                         @if ($owner->status == 0)
-                            <a class="btn btn-primary"
-                                href="{{ route('owner.change.status', $owner) }}">فعال</a>
+                            <a class="btn btn-primary" href="{{ route('owner.change.status', $owner) }}">فعال</a>
                         @else
-                            <a class="btn btn-danger"
-                                href="{{ route('owner.change.status', $owner) }}">غیر فعال</a>
+                            <a class="btn btn-danger" href="{{ route('owner.change.status', $owner) }}">غیر فعال</a>
                         @endif
                     @endif
-                    <a class="btn btn-primary"
-                        href="{{ route('ownerAuth.edit', $owner) }}">ویرایش اطلاعات</a>
+                    <a class="btn btn-primary" href="{{ route('ownerAuth.edit', $owner) }}">ویرایش اطلاعات</a>
+                    <a class="btn btn-secondary" href="{{ route('owner.loads', $owner->id) }}">لیست بار ها</a>
+
                 </div>
                 <!-- /Account -->
             </div>

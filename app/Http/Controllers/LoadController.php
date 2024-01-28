@@ -1248,6 +1248,12 @@ class LoadController extends Controller
             return view('users.alert', compact('message', 'alert'));
         }
         $loadInfo = $this->requestLoadInfo($id, 'admin');
+        $load = Load::where('id', $id)->first();
+        if (!isset($load)) {
+            $message = 'چنین باری وجود ندارد';
+            $alert = 'alert-warning';
+            return view('users.alert', compact('message', 'alert'));
+        }
 
         $load = $loadInfo['loadInfo'];
 
@@ -1592,6 +1598,16 @@ class LoadController extends Controller
             ->orderBy('id', 'desc')
             ->get();
         return view('admin/customerLoads', compact('loads', 'customer_id'));
+    }
+
+    // لیست بارهای مشتری برای ادمین
+    public function ownerLoads($owner_id)
+    {
+        $loads = LoadBackup::where('user_id', $owner_id)
+            ->where('userType', 'owner')
+            ->orderBy('id', 'desc')
+            ->get();
+        return view('admin.customerLoads', compact('loads'));
     }
 
     public function loadBackup($loads = [], $showSearchResult = false)

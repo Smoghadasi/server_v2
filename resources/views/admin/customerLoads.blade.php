@@ -4,8 +4,7 @@
 
     <div class="card">
         <h5 class="card-header">
-            لیست بارهای :
-            {{ \App\Http\Controllers\CustomerController::getCustomerName($customer_id) }}
+            لیست بار ها
         </h5>
         <div class="card-body">
             <table class="table">
