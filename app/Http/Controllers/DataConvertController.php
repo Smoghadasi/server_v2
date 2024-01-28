@@ -652,7 +652,7 @@ class DataConvertController extends Controller
 
             $load->urgent = 0;
 
-            $loadDuplicate = Load::whereIn('userType', ['customer', 'owner', 'bearing'])
+            $loadDuplicate = Load::whereIn('userType', ['customer', 'owner', 'transportation_company'])
                 ->where('mobileNumberForCoordination', $load->mobileNumberForCoordination)
                 ->where('origin_city_id', $load->origin_city_id)
                 ->where('destination_city_id', $load->destination_city_id)
