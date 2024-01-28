@@ -1221,6 +1221,30 @@ class LoadController extends Controller
         return $this->requestLoadInfo($load_id);
     }
 
+    // دریافت اطلاعات بار برای راننده
+    public function loadDetail($load_id)
+    {
+        try {
+            $loadInfo = Load::where('id', $load_id)
+                ->select(
+                    'weightPerTruck',
+                    'dischargeAddress',
+                    'loadingAddress',
+                    'loadingDate',
+                    'deliveryTime',
+                    'bulk',
+                    'dangerousProducts',
+                    'width',
+                    'length',
+                    'height',
+                    'insuranceAmount',
+                )
+                ->first();
+            return response()->json($loadInfo, 200);
+        } catch (\Exception $exception) {
+        }
+    }
+
     // درخواست محاسبه هزنیه انتخاب راننده
     public function requestSelectDriverCost($load_id)
     {
