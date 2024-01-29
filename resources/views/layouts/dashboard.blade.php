@@ -400,6 +400,27 @@
                         </ul>
                     </li>
                 @endif
+                <li class="menu-item">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <i class="menu-icon tf-icons bx bx-check-shield"></i>
+                        <div data-i18n="pais">صاحبان بار</div>
+                    </a>
+
+                    <ul class="menu-sub">
+                        {{-- @if(in_array('operatorsWorkingHoursActivityReport',auth()->user()->userAccess)) --}}
+                            <li class="menu-item">
+                                <a class="menu-link" href="{{ route('admin.load.owner') }}">
+                                    <div data-i18n="Without menu">بار های ثبت شده</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a class="menu-link" href="{{ route('owner.index') }}">
+                                    <div data-i18n="Without menu">لیست صاحبان بار</div>
+                                </a>
+                            </li>
+                        {{-- @endif --}}
+                    </ul>
+                </li>
                 @if(in_array('complaints',auth()->user()->userAccess))
 
 
@@ -562,29 +583,6 @@
                         @endif
                     </ul>
                 </li>
-                <li class="menu-item">
-                    <a href="javascript:void(0);" class="menu-link menu-toggle">
-                        <i class="menu-icon tf-icons bx bx-check-shield"></i>
-                        <div data-i18n="pais">صاحبان بار</div>
-                    </a>
-
-                    <ul class="menu-sub">
-                        {{-- @if(in_array('operatorsWorkingHoursActivityReport',auth()->user()->userAccess)) --}}
-                            <li class="menu-item">
-                                <a class="menu-link" href="{{ route('admin.load.owner') }}">
-                                    <div data-i18n="Without menu">بار های ثبت شده</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a class="menu-link" href="{{ route('owner.index') }}">
-                                    <div data-i18n="Without menu">لیست صاحبان بار</div>
-                                </a>
-                            </li>
-                        {{-- @endif --}}
-                    </ul>
-                </li>
-
-
             </ul>
         </aside>
         <!-- / Menu -->
