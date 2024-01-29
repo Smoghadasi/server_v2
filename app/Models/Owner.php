@@ -11,7 +11,7 @@ class Owner extends Model
 
     protected $guarded = [];
 
-    public function opertorMessages()
+    public function operatorMessages()
     {
         return $this->hasMany(OperatorOwnerAuthMessage::class);
     }

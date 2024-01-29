@@ -64,7 +64,7 @@ class AuthController extends Controller
      */
     public function edit(string $id)
     {
-        $ownerAuth = Owner::with('opertorMessages')->where('id', $id)->first();
+        $ownerAuth = Owner::with('operatorMessages')->where('id', $id)->first();
         return view('admin.auth.owner.edit', compact('ownerAuth'));
     }
 

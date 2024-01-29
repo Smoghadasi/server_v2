@@ -1104,12 +1104,18 @@ class ReportingController extends Controller
     // گزارش بار ها به تفکیک ناوگان
     public function cargoFleetsReport()
     {
-        $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
-        $cargoReports = CargoReportByFleet::with('fleet')
-            // ->where('date', $persian_date)
-            ->orderByDesc('date')
-            ->paginate(25);
-        return view('admin.reporting.cargoFleetsReport', compact('cargoReports'));
+        try {
+            $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+            $cargoReports = CargoReportByFleet::with('fleet')
+                // ->where('date', $persian_date)
+                ->orderByDesc('date')
+                ->paginate(25);
+            return view('admin.reporting.cargoFleetsReport', compact('cargoReports'));
+        } catch (\Exception $exception) {
+            Log::emergency("---------------------------------- cargoFleetsReport ---------------------------------");
+            Log::emergency($exception->getMessage());
+            Log::emergency("------------------------------------------------------------------------------------");
+        }
     }
 
     /*****************************************************************************************************/
