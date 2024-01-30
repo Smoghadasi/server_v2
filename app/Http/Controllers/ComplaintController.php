@@ -23,8 +23,8 @@ class ComplaintController extends Controller
             $complaintDriver = new ComplaintDriver();
             $complaintDriver->driver_id = $driver->id;
             $complaintDriver->title = $request->title;
-            $complaintDriver->phoneNumber = $request->phoneNumber;
-            $complaintDriver->complaint = $request->complaint;
+            $complaintDriver->phoneNumber = 0;
+            $complaintDriver->complaint = 'owner';
             $complaintDriver->message = $request->message;
             $complaintDriver->trackingCode = rand(10000, 99999);
             $complaintDriver->save();

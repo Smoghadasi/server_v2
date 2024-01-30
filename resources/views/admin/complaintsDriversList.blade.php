@@ -14,8 +14,8 @@
                     <th>#</th>
                     <th>راننده</th>
                     <th>عنوان</th>
-                    <th>شکایت یا انتقاد از</th>
-                    <th>شماره تلفن مورد نظر</th>
+                    {{-- <th>شکایت یا انتقاد از</th> --}}
+                    {{-- <th>شماره تلفن مورد نظر</th> --}}
                     <th>کد پیگیری</th>
                     <th>متن پیام</th>
                     <th>پاسخ ادمین</th>
@@ -28,8 +28,8 @@
                         <td>{{ (($complaintsDrivers->currentPage()-1) * $complaintsDrivers->perPage()) + ($key + 1) }}</td>
                         <td><a href="{{ route('driver.detail', $complaintDriver->driverApp->id) }}">{{ $complaintDriver->driver }}</a></td>
                         <td>{{ $complaintDriver->title }}</td>
-                        <td>{{ $complaintDriver->complaint }}</td>
-                        <td>{{ $complaintDriver->phoneNumber }}</td>
+                        {{-- <td>{{ $complaintDriver->complaint }}</td> --}}
+                        {{-- <td>{{ $complaintDriver->phoneNumber }}</td> --}}
                         <td>{{ $complaintDriver->trackingCode }}</td>
                         <td>{{ $complaintDriver->message }}</td>
                         <td>{{ $complaintDriver->adminMessage }}</td>
