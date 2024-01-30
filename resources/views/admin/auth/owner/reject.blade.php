@@ -31,10 +31,10 @@
                             <td>{{ $owner->name }} {{ $owner->lastName }}</td>
                             <td>{{ $owner->nationalCode }}</td>
                             <td>{{ $owner->mobileNumber }}</td>
-                            {{-- <td>
-                                <a class="btn btn-sm btn-primary" href="{{ route('ownerAuth.edit', $owner) }}">بررسی
+                            <td>
+                                <a class="btn btn-sm btn-primary" href="{{ route('owner.show', $owner) }}">بررسی
                                     اطلاعات</a>
-                            </td> --}}
+                            </td>
                         </tr>
                     @empty
                         <tr class="text-center">
