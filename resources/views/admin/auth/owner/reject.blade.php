@@ -20,7 +20,7 @@
                         <th>نام و نام خانوادگی</th>
                         <th>کد ملی</th>
                         <th>شماره موبایل</th>
-                        <th>عملیات</th>
+                        {{-- <th>عملیات</th> --}}
                     </tr>
                 </thead>
                 <tbody class="small">
@@ -32,10 +32,10 @@
                                 {{ $owner->isOwner == 1 ? '(صاحب بار)' : '(باربری)' }}</td>
                             <td>{{ $owner->nationalCode }}</td>
                             <td>{{ $owner->mobileNumber }}</td>
-                            <td>
+                            {{-- <td>
                                 <a class="btn btn-sm btn-primary" href="{{ route('ownerAuth.edit', $owner) }}">بررسی
                                     اطلاعات</a>
-                            </td>
+                            </td> --}}
                         </tr>
                     @empty
                         <tr class="text-center">
