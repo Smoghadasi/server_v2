@@ -28,8 +28,7 @@
                     @forelse($owners as $owner)
                         <tr>
                             <td>{{ ($owners->currentPage() - 1) * $owners->perPage() + ++$i }}</td>
-                            <td>{{ $owner->name }} {{ $owner->lastName }}
-                                {{ $owner->isOwner == 1 ? '(صاحب بار)' : '(باربری)' }}</td>
+                            <td>{{ $owner->name }} {{ $owner->lastName }}</td>
                             <td>{{ $owner->nationalCode }}</td>
                             <td>{{ $owner->mobileNumber }}</td>
                             {{-- <td>
