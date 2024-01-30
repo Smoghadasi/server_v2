@@ -9,6 +9,7 @@ use App\Models\Customer;
 use App\Models\Driver;
 use App\Models\Load;
 use App\Models\LoadBackup;
+use App\Models\Owner;
 use App\Models\SiteOption;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -45,12 +46,22 @@ class HomeController extends Controller
                 $countOfLoads = LoadBackup::count();
                 $countOfBearings = Bearing::count();
                 $countOfCustomers = Customer::count();
+                $countOfOwners = Owner::count();
                 $countOfContactUses = ContactUs::count();
                 $countOfDrivers = Driver::count();
 
                 $users = UserController::getOnlineAndOfflineUsers();
 
-                return view('dashboard', compact('countOfLoads', 'countOfBearings', 'countOfCustomers', 'countOfContactUses', 'countOfDrivers', 'users', 'cargoAcceptsCount'));
+                return view('dashboard', compact(
+                    'countOfLoads',
+                    'countOfBearings',
+                    'countOfCustomers',
+                    'countOfContactUses',
+                    'countOfDrivers',
+                    'users',
+                    'cargoAcceptsCount',
+                    'countOfOwners'
+                ));
             } catch (\Exception $exception) {
                 return $exception->getMessage();
             }

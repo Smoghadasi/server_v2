@@ -683,7 +683,12 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // احراز هویت راننده توسط اپراتور
         Route::get('driversAuthenticationByOperator', [DriverController::class, 'driversAuthenticationByOperator'])->middleware('operator')->name('driver.auth.operator');
 
+        // احراز هویت صاحبان بار
         Route::resource('ownerAuth', OwnerAuthController::class);
+
+        // صاحبان بار تایید نشده
+        Route::get('ownerReject', [OwnerAuthController::class, 'ownerReject'])->middleware('operator')->name('owner.reject');
+
         Route::put('updateAuthOwner/{owner}', [OwnerAuthController::class, 'updateAuthOwner'])->middleware('operator')->name('owner.updateAuthOwner');
 
 

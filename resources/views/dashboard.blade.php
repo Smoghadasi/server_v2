@@ -69,6 +69,23 @@
             </div>
         </div>
         <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="card text-white bg-success o-hidden h-100">
+                <div class="card-body">
+                    <div class="card-body-icon">
+                        <i class="fas fa-fw fa-users"></i>
+                    </div>
+                    <h1 class="text-center text-white">{{ $countOfOwners }} </h1>
+                    <h2 class="text-center text-white">کل صاحبان بار</h2>
+                </div>
+                <a class="card-footer text-white clearfix small z-1 btn btn-light" href="{{ route('owner.index') }}">
+                    <span class="float-left">لیست صاحبان بار</span>
+                    <span class="float-right">
+                        <i class="fas fa-angle-right"></i>
+                    </span>
+                </a>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-3">
             <div class="card text-white bg-warning o-hidden h-100">
 
                 <div class="card-body">
@@ -89,8 +106,8 @@
                     <div class="card-body-icon">
                         <i class="fas fa-fw fa-users"></i>
                     </div>
-                    <h1 class="text-center">{{ $countOfCustomers }} </h1>
-                    <h2 class="text-center">کل صاحب بارها</h2>
+                    <h1 class="text-center text-white">{{ $countOfCustomers }} </h1>
+                    <h2 class="text-center text-white">کل صاحب بارها</h2>
                 </div>
                 <a class="card-footer text-white clearfix small z-1 btn btn-light" href="{{ url('admin/customers') }}">
                     <span class="float-left">لیست صاحب بارها</span>
@@ -125,8 +142,8 @@
                     <div class="card-body-icon">
                         <i class="fas fa-fw fa-truck"></i>
                     </div>
-                    <h1 class="text-center">{{ $countOfDrivers }} </h1>
-                    <h2 class="text-center">رانندگان</h2>
+                    <h1 class="text-center text-white">{{ $countOfDrivers }} </h1>
+                    <h2 class="text-center text-white">رانندگان</h2>
                 </div>
                 <a class="card-footer text-white clearfix small z-1 btn btn-light" href="{{ route('adminDrivers') }}">
                     <span class="float-left">لیست رانندگان</span>

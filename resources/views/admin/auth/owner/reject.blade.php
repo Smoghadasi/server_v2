@@ -5,10 +5,10 @@
 
 
     <div class="card">
-        <h5 class="card-header">احراز هویت صاحبان بار(در حال بررسی)</h5>
+        <h5 class="card-header">صاحبان بار (تایید نشده)</h5>
         <div class="card-body">
             <div class="col-lg-12 m-2 mb-3 text-right">
-                <a href="{{ route('owner.index') }}" class="alert p-1 alert-secondary">در حال بررسی
+                <a href="{{ route('ownerAuth.index') }}" class="alert p-1 alert-secondary">در حال بررسی
                     : {{ $ownerPenddingCounts }}</a>
                 <a href="{{ route('owner.reject') }}" class="alert p-1 alert-danger">تایید نشده : {{ $ownerRejectCounts }}</a>
             </div>

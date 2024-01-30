@@ -228,13 +228,6 @@
                                                         تایید و ثبت دسته ای بار
                                                     </label>
                                                 </div>
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="driversAuthentication"
-                                                            @if (in_array('driversAuthentication', $user->userAccess)) checked @endif>
-                                                        احراز هویت رانندگان
-                                                    </label>
-                                                </div>
 
                                                 <div class="form-group">
                                                     <label>
@@ -478,6 +471,30 @@
                                                                         <input type="checkbox" name="driversPaymentReport"
                                                                             @if (in_array('driversPaymentReport', $user->userAccess)) checked @endif>
                                                                         لیست پرداختی و تمدید اعتبار
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                                <ul id="myUL">
+                                                    <li><span class="caret">احراز هویت</span>
+                                                        <ul class="nested">
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="driversAuthentication"
+                                                                        @if (in_array('driversAuthentication', $user->userAccess)) checked @endif>
+                                                                        رانندگان
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="ownersAuthentication"
+                                                                            @if (in_array('ownersAuthentication', $user->userAccess)) checked @endif>
+                                                                        صاحبان بار
                                                                     </label>
                                                                 </div>
                                                             </li>

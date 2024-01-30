@@ -20,8 +20,17 @@ class AuthController extends Controller
     public function index()
     {
         $owners = Owner::where('isAuth', 2)->paginate(10);
-        return view('admin.auth.owner.index', compact('owners'));
+        $ownerPenddingCounts = Owner::where('isAuth', 2)->count();
+        $ownerRejectCounts = Owner::where('isAuth', 0)->count();
+        return view('admin.auth.owner.index', compact('owners', 'ownerPenddingCounts', 'ownerRejectCounts'));
+    }
 
+    public function ownerReject()
+    {
+        $owners = Owner::where('isAuth', 0)->paginate(10);
+        $ownerPenddingCounts = Owner::where('isAuth', 2)->count();
+        $ownerRejectCounts = Owner::where('isAuth', 0)->count();
+        return view('admin.auth.owner.reject', compact('owners', 'ownerPenddingCounts', 'ownerRejectCounts'));
     }
 
     /**

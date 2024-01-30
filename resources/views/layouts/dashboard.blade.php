@@ -191,26 +191,31 @@
                     </li>
                 @endif
 
-                @if(in_array('driversAuthentication',auth()->user()->userAccess))
                     <li class="menu-item">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons bx bx-user-check"></i>
                             <div data-i18n="pais">احراز هویت</div>
                         </a>
                         <ul class="menu-sub">
-                            <li class="menu-item">
-                                <a class="menu-link" href="{{ route('driver.auth.operator') }}">
-                                    <div data-i18n="Without menu">رانندگان</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a class="menu-link" href="{{ route('ownerAuth.index') }}">
-                                    <div data-i18n="Without menu">صاحبان بار</div>
-                                </a>
-                            </li>
+                            @if(in_array('driversAuthentication',auth()->user()->userAccess))
+                                <li class="menu-item">
+                                    <a class="menu-link" href="{{ route('driver.auth.operator') }}">
+                                        <div data-i18n="Without menu">رانندگان</div>
+                                    </a>
+                                </li>
+                            @endif
+                            @if(in_array('ownersAuthentication',auth()->user()->userAccess))
+
+                                <li class="menu-item">
+                                    <a class="menu-link" href="{{ route('ownerAuth.index') }}">
+                                        <div data-i18n="Without menu">صاحبان بار</div>
+                                    </a>
+                                </li>
+                            @endif
+
                         </ul>
                     </li>
-                @endif
+
 
 
                 <li class="menu-item">
@@ -413,11 +418,13 @@
                                     <div data-i18n="Without menu">بار های ثبت شده</div>
                                 </a>
                             </li>
-                            <li class="menu-item">
-                                <a class="menu-link" href="{{ route('owner.index') }}">
-                                    <div data-i18n="Without menu">لیست صاحبان بار</div>
-                                </a>
-                            </li>
+                            @if(auth()->user()->role == 'admin')
+                                <li class="menu-item">
+                                    <a class="menu-link" href="{{ route('owner.index') }}">
+                                        <div data-i18n="Without menu">لیست صاحبان بار</div>
+                                    </a>
+                                </li>
+                            @endif
                         {{-- @endif --}}
                     </ul>
                 </li>
