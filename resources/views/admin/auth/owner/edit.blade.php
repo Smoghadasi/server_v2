@@ -40,6 +40,15 @@
                             </div>
                         </div>
                         <div class="mb-3 row">
+                            <label for="isOwner" class="col-md-2 col-form-label">نوع</label>
+                            <div class="col-md-10">
+                                <select class="form-select" name="isOwner" id="isOwner">
+                                    <option @if($ownerAuth->isOwner == 1) selected @endif value="1">صاحب بار</option>
+                                    <option @if($ownerAuth->isOwner == 2) selected @endif value="2">باربری</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
                             <label for="postalCode" class="col-md-2 col-form-label">آدرس</label>
                             <div class="col-md-10">
                                 <input class="form-control" type="text" name="address" value="{{ $ownerAuth->address }}"

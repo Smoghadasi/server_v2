@@ -73,6 +73,11 @@ class Load extends Model
         return $this->hasMany(DateOfCargoDeclaration::class);
     }
 
+    public function driverCall()
+    {
+        return $this->hasOne(DriverCall::class);
+    }
+
 //    public function getDriverVisitCountAttribute(): int
 //    {
 //        try {

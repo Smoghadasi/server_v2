@@ -1930,6 +1930,9 @@ class LoadController extends Controller
                 )
                 ->skip(0)
                 ->take($page)
+                ->with(['driverCall' => function ($query) use ($driver) {
+                    $query->where('driver_id', $driver->id);
+                }])
                 ->orderBy('urgent', 'desc')
                 ->orderBy('id', 'desc')
                 ->get();
