@@ -39,15 +39,17 @@
                                     value="{{ $ownerAuth->mobileNumber }}" id="mobileNumber">
                             </div>
                         </div>
-                        <div class="mb-3 row">
-                            <label for="isOwner" class="col-md-2 col-form-label">نوع</label>
-                            <div class="col-md-10">
-                                <select class="form-select" name="isOwner" id="isOwner">
-                                    <option @if($ownerAuth->isOwner == 1) selected @endif value="1">صاحب بار</option>
-                                    <option @if($ownerAuth->isOwner == 2) selected @endif value="2">باربری</option>
-                                </select>
+                        @if(auth()->user()->role == 'admin')
+                            <div class="mb-3 row">
+                                <label for="isOwner" class="col-md-2 col-form-label">نوع</label>
+                                <div class="col-md-10">
+                                    <select class="form-select" name="isOwner" id="isOwner">
+                                        <option @if($ownerAuth->isOwner == 1) selected @endif value="1">صاحب بار</option>
+                                        <option @if($ownerAuth->isOwner == 2) selected @endif value="2">باربری</option>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
+                        @endif
                         <div class="mb-3 row">
                             <label for="postalCode" class="col-md-2 col-form-label">آدرس</label>
                             <div class="col-md-10">
