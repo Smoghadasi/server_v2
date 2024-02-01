@@ -500,6 +500,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // از نسخه 52 به بعد این امکان را دارند
         Route::get('getNewLoadForDriver/{driver}/{lastLoadId}', [LoadController::class, 'getNewLoadForDriver']);
 
+        // تاریخچه تماس راننده
+        Route::get('callHistory/{driver}', [LoadController::class, 'callHistory']);
+
         // دریافت اطلاعات پروفایل راننده
         Route::get('getDriverProfileInfo/{driver}', [DriverController::class, 'getDriverProfileInfo']);
 

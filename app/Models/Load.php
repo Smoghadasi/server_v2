@@ -78,6 +78,11 @@ class Load extends Model
         return $this->hasOne(DriverCall::class);
     }
 
+    public function driverCalls()
+    {
+        return $this->hasMany(DriverCall::class);
+    }
+
 //    public function getDriverVisitCountAttribute(): int
 //    {
 //        try {

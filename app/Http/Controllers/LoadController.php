@@ -11,6 +11,7 @@ use App\Models\Customer;
 use App\Models\DateOfCargoDeclaration;
 use App\Models\Driver;
 use App\Models\DriverActivity;
+use App\Models\DriverCall;
 use App\Models\DriverLoad;
 use App\Models\DriverVisitLoad;
 use App\Models\Fleet;
@@ -1956,6 +1957,31 @@ class LoadController extends Controller
             'data' => ['driverStatus' => true],
             'message' => 'درحال حاضر باری برای ناوگان شما آماده نیست'
         ];
+    }
+
+    // تاریخچه لیست تماس های راننده
+    public function callHistory(string $driver_id)
+    {
+        $driverCalls = Load::whereHas('driverCalls', function ($q) use ($driver_id) {
+            $q->where('driver_id', $driver_id);
+        })->select(
+                'id',
+                'suggestedPrice',
+                'title',
+                'priceBased',
+                'mobileNumberForCoordination',
+                'urgent',
+                'status',
+                'time',
+                'fromCity',
+                'toCity',
+                'loadingDate',
+                'fleets',
+                'time',
+                'description',
+            )
+            ->get();
+        return response()->json($driverCalls, 200);
     }
 
     /*************************************************************************************************/
