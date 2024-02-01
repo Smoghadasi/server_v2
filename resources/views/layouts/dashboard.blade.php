@@ -418,7 +418,7 @@
                                     <div data-i18n="Without menu">بار های ثبت شده</div>
                                 </a>
                             </li>
-                            @if(auth()->user()->role == 'admin' || auth()->user()->id == 25)
+                            @if(auth()->user()->role == 'admin' || auth()->user()->id == 29)
                                 <li class="menu-item">
                                     <a class="menu-link" href="{{ route('owner.index') }}">
                                         <div data-i18n="Without menu">لیست صاحبان بار</div>
