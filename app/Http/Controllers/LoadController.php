@@ -3009,24 +3009,6 @@ class LoadController extends Controller
             $load->dangerousProducts = isset($request->dangerousProducts) ? $request->dangerousProducts : false;
             $load->deliveryTime = isset($request->deliveryTime) && $request->deliveryTime > 0 ? $request->deliveryTime : 24;
 
-            $loads = Load::where('userType', 'customer')->where('user_id', $load->user_id)->get();
-            foreach ($loads as $item) {
-                $item->status = -1;
-                $item->save();
-            }
-
-            $customer = Customer::findOrFail($load->user_id);
-            if ($customer->status == 0) {
-                Load::where('userType', 'customer')->where('user_id', $load->user_id)->delete();
-                LoadBackup::where('userType', 'customer')->where('user_id', $load->user_id)->delete();
-                $message[1] = 'خطا! لطفا دوباره تلاش کنید';
-                return [
-                    'result' => false,
-                    'message' => 'ویرایش انجام نشد! لطفا دوباره تلاش کنید'
-                ];
-            }
-            $load->save();
-
             $load->save();
 
             if (isset($load->id) && isset($request->fleetList)) {
