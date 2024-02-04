@@ -14,7 +14,7 @@ class OwnerController extends Controller
      */
     public function index()
     {
-        $owners = Owner::orderBy('isAuth', 'asc')->paginate(10);
+        $owners = Owner::orderByDesc('created_at')->paginate(10);
         return view('admin.owner.index', compact('owners'));
     }
 
