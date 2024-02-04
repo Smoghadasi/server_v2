@@ -320,7 +320,7 @@ class LoadController extends Controller
 
             $load = new Load();
             $load->title = strlen($request->title) > 0 ? $request->title : "بدون عنوان";
-            $load->weight = $this->convertNumbers((strlen($request->weight) == 0) ? 0 : $request->weight, false);
+            $load->weight = $request->weight;
             $load->width = $this->convertNumbers($request->width, false);
             $load->length = $this->convertNumbers($request->length, false);
             $load->height = $this->convertNumbers($request->height, false);

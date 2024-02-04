@@ -26,6 +26,7 @@
                             <th>نوع</th>
                             <th>کد ملی</th>
                             <th>شماره موبایل</th>
+                            <th class="text-center">تاریخ</th>
                             <th>عملیات</th>
                         </tr>
                     </thead>
@@ -72,6 +73,12 @@
                                 </td>
                                 <td>{{ $owner->nationalCode }}</td>
                                 <td>{{ $owner->mobileNumber }}</td>
+                                @php
+                                    $pieces = explode(' ', $owner->created_at);
+                                @endphp
+                                <td dir="ltr">
+                                    {{ gregorianDateToPersian($owner->created_at, '-', true) . ' ' . $pieces[1] }}
+                                </td>
 
                                 <td>
                                     <a class="btn btn-sm btn-primary" href="{{ route('owner.show', $owner) }}">مشاهده</a>
