@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Load extends Model
 {
+
+    use SoftDeletes;
     private static $transportationCompany_id;
     protected $appends = ['numOfRequestedDrivers', 'numOfSelectedDrivers', 'originCity', 'destinationCity'];
 
