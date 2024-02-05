@@ -45,7 +45,7 @@ class OwnerController extends Controller
                 'address' => 'nullable',
             ]);
             if ($validator->fails()) {
-                return response()->json($validator->errors());
+                return response()->json($validator->errors(), 422);
             } else {
                 $owner->address = $request->address;
                 $owner->postalCode = $request->postalCode;
@@ -96,11 +96,11 @@ class OwnerController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'companyName' => 'nullable',
-                'companyID' => 'nullable|min:9|max:12|unique:owners,companyID',
+                'companyID' => 'nullable',
                 'address' => 'nullable|string',
             ]);
             if ($validator->fails()) {
-                return response()->json($validator->errors());
+                return response()->json($validator->errors(), 422);
             } else {
                 $owner->companyName = $request->companyName;
                 $owner->companyID = $request->companyID;
