@@ -810,28 +810,47 @@ class LoadController extends Controller
             ->where('userType', 'owner')
             ->select(
                 'loads.id',
+                'loads.proposedPriceForDriver',
                 'loads.suggestedPrice',
                 'loads.origin_city_id',
                 'loads.destination_city_id',
                 'loads.priceBased',
                 'loads.title',
+                'loads.time',
                 'loads.driverVisitCount',
                 'loads.fleets',
                 'loads.fromCity',
                 'loads.toCity',
                 'loads.loadingHour',
                 'loads.loadingMinute',
+                'loads.status',
+                'loads.score',
+                'loads.description',
+                'loads.gibarDriverRequest as urgent',
                 'loads.loadingDate',
+                'originCity.name as from',
+                'load_statuses.title as statusTitle',
+                'destinationCity.name as to',
+                'load_statuses.title as statusTitle'
             )
             ->orderBy('id', 'desc')
-            ->paginate(10);
+            ->skip(0)
+            ->take(80)
+            ->get();
 
 
         if (count($loads) > 0) {
-            return response()->json($loads, 200);
-        } else {
-            return response()->json(['message' => 'هیچ باری وجود ندارد'], 404);
+            return [
+                'result' => SUCCESS,
+                'loads' => $loads,
+                'loadStatus' => LoadStatus::get(),
+                'currentTime' => time()
+            ];
         }
+        return [
+            'result' => UN_SUCCESS,
+            'message' => 'هیچ باری وجود ندارد'
+        ];
     }
 
     // درخواست لیست بارهای بایگانی صاحبان بار
