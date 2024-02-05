@@ -810,42 +810,61 @@ class LoadController extends Controller
             ->where('userType', 'owner')
             ->select(
                 'loads.id',
-                'loads.proposedPriceForDriver',
                 'loads.suggestedPrice',
                 'loads.origin_city_id',
                 'loads.destination_city_id',
                 'loads.priceBased',
                 'loads.title',
-                'loads.time',
                 'loads.driverVisitCount',
                 'loads.fleets',
                 'loads.fromCity',
                 'loads.toCity',
                 'loads.loadingHour',
                 'loads.loadingMinute',
-                'loads.status',
-                'loads.score',
-                'loads.description',
-                'loads.gibarDriverRequest as urgent',
                 'loads.loadingDate',
-                'originCity.name as from',
-                'load_statuses.title as statusTitle',
-                'destinationCity.name as to',
-                'load_statuses.title as statusTitle'
             )
             ->orderBy('id', 'desc')
-            ->skip(0)
-            ->take(80)
-            ->get();
+            ->paginate(10);
 
 
         if (count($loads) > 0) {
-            return [
-                'result' => SUCCESS,
-                'loads' => $loads,
-                'loadStatus' => LoadStatus::get(),
-                'currentTime' => time()
-            ];
+            return response()->json($loads, 200);
+        } else {
+            return response()->json(['message' => 'هیچ باری وجود ندارد'], 404);
+        }
+    }
+
+    // درخواست لیست بارهای بایگانی صاحبان بار
+    public function requestCustomerLoadsTrashed($id)
+    {
+
+        $loads = Load::join('load_statuses', 'loads.status', '=', 'load_statuses.status')
+            ->join('cities as originCity', 'loads.origin_city_id', 'originCity.id')
+            ->join('cities as destinationCity', 'loads.destination_city_id', 'destinationCity.id')
+            ->where('user_id', $id)
+            ->where('userType', 'owner')
+            ->select(
+                'loads.id',
+                'loads.suggestedPrice',
+                'loads.origin_city_id',
+                'loads.destination_city_id',
+                'loads.priceBased',
+                'loads.title',
+                'loads.driverVisitCount',
+                'loads.fleets',
+                'loads.fromCity',
+                'loads.toCity',
+                'loads.loadingHour',
+                'loads.loadingMinute',
+                'loads.loadingDate',
+            )
+            ->orderBy('id', 'desc')
+            ->onlyTrashed()
+            ->paginate(10);
+        if (count($loads) > 0) {
+            return response()->json($loads, 200);
+        } else {
+            return response()->json(['message' => 'هیچ باری وجود ندارد', 404]);
         }
         return [
             'result' => UN_SUCCESS,
@@ -1965,21 +1984,21 @@ class LoadController extends Controller
         $driverCalls = Load::whereHas('driverCalls', function ($q) use ($driver_id) {
             $q->where('driver_id', $driver_id);
         })->select(
-                'id',
-                'suggestedPrice',
-                'title',
-                'priceBased',
-                'mobileNumberForCoordination',
-                'urgent',
-                'status',
-                'time',
-                'fromCity',
-                'toCity',
-                'loadingDate',
-                'fleets',
-                'time',
-                'description',
-            )
+            'id',
+            'suggestedPrice',
+            'title',
+            'priceBased',
+            'mobileNumberForCoordination',
+            'urgent',
+            'status',
+            'time',
+            'fromCity',
+            'toCity',
+            'loadingDate',
+            'fleets',
+            'time',
+            'description',
+        )
             ->get();
         return response()->json($driverCalls, 200);
     }
@@ -3921,20 +3940,30 @@ class LoadController extends Controller
         return $this->searchTheNearestCargo($request, $driver, $city, 200);
     }
 
-    // حذف بار توسط باربری
-    public function removeOwnerLoad(Load $load, Owner $owner)
+    // حذف بار
+    public function removeOwnerLoad(string $load, string $owner)
     {
-        if ($load->user_id == $owner->id) {
-            $load->delete();
-            return response()->json([
-                'result' => true,
+        Load::where('id', $load)
+            ->where('userType', 'owner')
+            ->where('user_id', $owner)
+            ->delete();
+        return response()->json(['result' => true], 200);
+    }
+
+    // تکرار بار
+    public function repeatOwnerLoad(string $load)
+    {
+        $load = Load::withTrashed()
+            ->where('id', $load)
+            ->update([
+                'created_at' => now(),
+                'loadingDate' => gregorianDateToPersian(date('Y-m-d', time()), '-'),
+                'loadingHour' => date('h'),
+                'loadingMinute' => date('m'),
+                'deleted_at' => null
             ]);
-        }
-        return response()->json([
-            'result' => false,
-            'data' => null,
-            'message' => 'خطا در حذف بار! لطفا دوباره تلاش کنید',
-        ]);
+        return response()->json(['result' => true], 200);
+
     }
 
 

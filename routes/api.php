@@ -576,6 +576,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // حذف بار توسط صاحب بار
         Route::delete('removeOwnerLoad/{load}/{owner}', [LoadController::class, 'removeOwnerLoad']);
 
+        // تکرار بار
+        Route::get('repeatOwnerLoad/{load}', [LoadController::class, 'repeatOwnerLoad']);
+
         // درخواست اطلاعات بار
         Route::get('requestLoadInfo/{id}', [LoadController::class, 'requestLoadInfo']);
 
@@ -584,6 +587,11 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         // درخواست لیست بارهای صاحبان بار
         Route::get('requestCustomerLoadsList/{id}', [LoadController::class, 'requestCustomerLoadsList']);
+
+        // درخواست لیست بارهای بایگانی صاحبان بار
+        Route::get('requestCustomerLoadsTrashed/{id}', [LoadController::class, 'requestCustomerLoadsTrashed']);
+
+        // Route::get('requestCustomerLoadsList/{id}', [LoadController::class, 'requestCustomerLoadsList']);
 
         // انتقاد یا شکایت صاحب بار
         Route::post('storeComplaintOwner/{owner}', [ComplaintController::class, 'storeComplaintOwner']);
