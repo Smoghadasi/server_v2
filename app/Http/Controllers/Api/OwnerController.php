@@ -42,7 +42,7 @@ class OwnerController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'address' => 'required',
+                'address' => 'nullable',
             ]);
             if ($validator->fails()) {
                 return response()->json($validator->errors());
@@ -95,9 +95,9 @@ class OwnerController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'companyName' => 'required',
-                'companyID' => 'required|min:9|max:12|unique:owners,companyID',
-                'address' => 'required|string',
+                'companyName' => 'nullable',
+                'companyID' => 'nullable|min:9|max:12|unique:owners,companyID',
+                'address' => 'nullable|string',
             ]);
             if ($validator->fails()) {
                 return response()->json($validator->errors());
