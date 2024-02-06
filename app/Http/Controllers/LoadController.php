@@ -853,6 +853,39 @@ class LoadController extends Controller
         ];
     }
 
+    // درخواست لیست بارهای مشتری
+    public function requestCustomerLoadsLists($id)
+    {
+        $loads = Load::join('load_statuses', 'loads.status', '=', 'load_statuses.status')
+            ->join('cities as originCity', 'loads.origin_city_id', 'originCity.id')
+            ->join('cities as destinationCity', 'loads.destination_city_id', 'destinationCity.id')
+            ->where('user_id', $id)
+            ->where('userType', 'owner')
+            ->select(
+                'loads.id',
+                'loads.suggestedPrice',
+                'loads.origin_city_id',
+                'loads.destination_city_id',
+                'loads.priceBased',
+                'loads.title',
+                'loads.driverVisitCount',
+                'loads.fleets',
+                'loads.fromCity',
+                'loads.toCity',
+                'loads.loadingHour',
+                'loads.loadingMinute',
+                'loads.loadingDate',
+            )
+            ->orderBy('id', 'desc')
+            ->paginate(10);
+
+        if (count($loads) > 0) {
+            return response()->json($loads, 200);
+        } else{
+            return response()->json(['message' => 'هیچ باری وجود ندارد'], 404);
+        }
+    }
+
     // درخواست لیست بارهای بایگانی صاحبان بار
     public function requestCustomerLoadsTrashed($id)
     {

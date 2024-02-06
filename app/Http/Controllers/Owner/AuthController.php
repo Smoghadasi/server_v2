@@ -104,7 +104,6 @@ class AuthController extends Controller
 
     public function updateAuthOwner(Request $request, Owner $owner)
     {
-        // return $request->all();
         $owner->isAuth = $request->status;
         if ($request->status == ACCEPT) {
             $owner->acceptCustomerSms($owner->mobileNumber);

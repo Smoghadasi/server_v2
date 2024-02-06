@@ -588,10 +588,11 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // درخواست لیست بارهای صاحبان بار
         Route::get('requestCustomerLoadsList/{id}', [LoadController::class, 'requestCustomerLoadsList']);
 
+        Route::get('requestCustomerLoadsLists/{id}', [LoadController::class, 'requestCustomerLoadsLists']);
+
         // درخواست لیست بارهای بایگانی صاحبان بار
         Route::get('requestCustomerLoadsTrashed/{id}', [LoadController::class, 'requestCustomerLoadsTrashed']);
 
-        // Route::get('requestCustomerLoadsList/{id}', [LoadController::class, 'requestCustomerLoadsList']);
 
         // انتقاد یا شکایت صاحب بار
         Route::post('storeComplaintOwner/{owner}', [ComplaintController::class, 'storeComplaintOwner']);
