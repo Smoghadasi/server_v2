@@ -916,7 +916,7 @@ class LoadController extends Controller
         if (count($loads) > 0) {
             return response()->json($loads, 200);
         } else {
-            return response()->json(['message' => 'هیچ باری وجود ندارد', 404]);
+            return response()->json(['message' => 'هیچ باری وجود ندارد'],404);
         }
         return [
             'result' => UN_SUCCESS,
