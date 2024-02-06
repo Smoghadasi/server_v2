@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use SoapClient;
 
 class Owner extends Model
 {
@@ -14,5 +15,19 @@ class Owner extends Model
     public function operatorMessages()
     {
         return $this->hasMany(OperatorOwnerAuthMessage::class);
+    }
+
+    public function acceptCustomerSms($mobile)
+    {
+        $client = new SoapClient("http://ippanel.com/class/sms/wsdlservice/server.php?wsdl");
+        $user = "09184696188";
+        $pass = "faraz3300131545";
+        $fromNum = "+983000505";
+        $toNum = array($mobile);
+        $pattern_code = "vw1a1y5nsom0xye";
+        $rand = rand(10000, 99999);
+        $input_data = array("tell" => TELL);
+        $client->sendPatternSms($fromNum, $toNum, $user, $pass, $pattern_code, $input_data);
+        return $rand;
     }
 }

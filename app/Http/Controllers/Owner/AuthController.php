@@ -106,6 +106,9 @@ class AuthController extends Controller
     {
         // return $request->all();
         $owner->isAuth = $request->status;
+        if ($request->status == ACCEPT) {
+            $owner->acceptCustomerSms($owner->mobileNumber);
+        }
         $owner->save();
         try {
             $operatorAuthOwner = new OperatorOwnerAuthMessage();

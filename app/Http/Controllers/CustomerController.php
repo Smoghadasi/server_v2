@@ -140,6 +140,9 @@ class CustomerController extends Controller
         $customer = Customer::findOrFail($id);
         $customer->isPublish = 1;
         $customer->save();
+        $sms = new Customer();
+        $sms->acceptCustomerSms($customer->mobileNumber);
+
         $loads = Load::where('user_id', $id)->get();
         foreach ($loads as $load) {
             if ($load->status = -1) {
