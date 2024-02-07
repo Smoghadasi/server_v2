@@ -436,14 +436,13 @@ class LoadController extends Controller
                 $load->mobileNumberForCoordination = convertFaNumberToEn($request->senderMobileNumber);
             }
 
-            $load->status = 4;
 
-            // if (isNewLoadAutoAccept()) {
-            //     if ($request->userType == ROLE_TRANSPORTATION_COMPANY || isset(\auth()->user()->role))
-            //         $load->status = 4;
-            //     else
-            //         $load->status = 0;
-            // }
+            if (isNewLoadAutoAccept()) {
+                if ($request->userType == ROLE_OWNER || isset(\auth()->user()->role))
+                    $load->status = 4;
+                else
+                    $load->status = 0;
+            }
             $load->storeFor = $request->storeFor;
 
             // if (isset($request->storeFor)) {
