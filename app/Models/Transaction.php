@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transaction extends Model
 {
-    protected $appends = ['userTypeTitle', 'payerName', 'payerMobileNumber', 'paymentDate', 'paymentDates', 'driverFleetName', 'countOfSuccess','countOfAllTries'];
+    protected $appends = ['userTypeTitle', 'payerName', 'payerMobileNumber','FleetDriver', 'paymentDate', 'paymentDates', 'driverFleetName', 'countOfSuccess','countOfAllTries'];
 
     public function getUserTypeTitleAttribute()
     {
@@ -58,6 +58,19 @@ class Transaction extends Model
         } catch (\Exception $e) {
         }
         return 'بدون شماره';
+    }
+
+    public function getFleetDriverAttribute()
+    {
+        try {
+            switch ($this->userType) {
+                case ROLE_DRIVER:
+                    $user = Driver::findOrFail($this->user_id);
+                    return $user->driverFleetName;
+            }
+        } catch (\Exception $e) {
+        }
+        return 'بدون ناوگان';
     }
 
     public function getPaymentDateAttribute()

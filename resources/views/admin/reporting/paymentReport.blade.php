@@ -26,6 +26,7 @@
                         <th>تعداد امروز</th>
                         <th>شماره تلفن</th>
                         <th>نوع کاربر</th>
+                        <th>ناوگان</th>
                         <th>مبلغ پرداخت شده</th>
                         <th>تاریخ پرداخت</th>
                         <th>وضعیت</th>
@@ -49,7 +50,8 @@
                             <td>{{ $transaction->countOfAllTries }}</td>
                             <td>{{ $transaction->total }}</td>
                             <td>{{ $transaction->payerMobileNumber }}</td>
-                            <td>{{ $transaction->userTypeTitle }}</td>
+                            <td>{{ $transaction->userTypeTitle }} </td>
+                            <td>{{ $transaction->driverFleetName }} </td>
                             <td>{{ number_format($transaction->amount) }}</td>
                             <td>{{ $transaction->paymentDate }}</td>
                             <td>
