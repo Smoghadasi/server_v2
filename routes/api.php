@@ -514,6 +514,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
 
         Route::get('requestNewLoads/{driver}', [LoadController::class, 'requestNewLoadsForDriversV2']);
+
+        Route::get('driverMessages/{mobileNumber}', [ContactUsController::class, 'driverMessages']);
+
     });
 
     // وب سرویس های عمومی

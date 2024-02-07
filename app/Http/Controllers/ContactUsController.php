@@ -41,7 +41,6 @@ class ContactUsController extends Controller
         }
 
         return ['result' => UN_SUCCESS];
-
     }
 
     // ارسال پیام
@@ -70,7 +69,6 @@ class ContactUsController extends Controller
         }
 
         return ['result' => UN_SUCCESS];
-
     }
 
     // نمایش پیام ها
@@ -78,6 +76,18 @@ class ContactUsController extends Controller
     {
         $messages = ContactUs::orderby('id', 'desc')->paginate(20);
         return view('admin/messages', compact('messages'));
+    }
+
+    // نمایش پیام ها رانندگان
+    public function driverMessages($mobileNumber)
+    {
+        $messages = ContactUs::where('role', 'driver')
+            ->where('mobileNumber', $mobileNumber)
+            ->get();
+        if ($messages->isEmpty())
+            return response()->json('Empty', 404);
+        else
+            return response()->json($messages, 200);
     }
 
     // ارسال امتیاز و نظر از طرف صاحب بار برای باربری
@@ -117,5 +127,3 @@ class ContactUsController extends Controller
         return back()->with('success', ' پیام مورد نظر حذف شد.');
     }
 }
-
-
