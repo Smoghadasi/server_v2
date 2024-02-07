@@ -437,12 +437,7 @@ class LoadController extends Controller
             }
 
 
-            if (isNewLoadAutoAccept()) {
-                if ($request->userType == ROLE_OWNER || isset(\auth()->user()->role))
-                    $load->status = 4;
-                else
-                    $load->status = 0;
-            }
+            $load->status = 4;
             $load->storeFor = $request->storeFor;
 
             // if (isset($request->storeFor)) {
