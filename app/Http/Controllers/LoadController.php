@@ -436,8 +436,7 @@ class LoadController extends Controller
                 $load->mobileNumberForCoordination = convertFaNumberToEn($request->senderMobileNumber);
             }
 
-            // $statusUser = Customer::findOrFail($load->user_id);
-            // $statusUser->isPublish == 1 ? $load->status = -1 : $load->status = 4;
+            $load->status = 4;
 
             // if (isNewLoadAutoAccept()) {
             //     if ($request->userType == ROLE_TRANSPORTATION_COMPANY || isset(\auth()->user()->role))
