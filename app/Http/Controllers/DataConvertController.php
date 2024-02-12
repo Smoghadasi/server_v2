@@ -658,15 +658,15 @@ class DataConvertController extends Controller
                 ->where('destination_city_id', $load->destination_city_id)
                 ->first();
 
-            $loadDuplicateHour = Load::where('userType', 'operator')
-                ->where('mobileNumberForCoordination', $load->mobileNumberForCoordination)
-                ->where('origin_city_id', $load->origin_city_id)
-                ->where('destination_city_id', $load->destination_city_id)
-                ->where('cargoPattern', 'LIKE', '%' . $fleet . '%')
-                ->first();
+            // $loadDuplicateHour = Load::where('userType', 'operator')
+            //     ->where('mobileNumberForCoordination', $load->mobileNumberForCoordination)
+            //     ->where('origin_city_id', $load->origin_city_id)
+            //     ->where('destination_city_id', $load->destination_city_id)
+            //     ->where('cargoPattern', 'LIKE', '%' . $fleet . '%')
+            //     ->first();
 
 
-            if (!$loadDuplicate || !$loadDuplicateHour) {
+            if (!$loadDuplicate) {
                 $load->save();
             }
 
