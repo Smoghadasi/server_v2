@@ -1107,6 +1107,7 @@ class LoadController extends Controller
         try {
             $loadInfo = Load::join('load_statuses', 'load_statuses.status', 'loads.status')
                 ->where('loads.id', $id)
+                ->withTrashed()
                 ->select(
                     'loads.*',
                     'load_statuses.title as statusTitle',
@@ -1330,14 +1331,14 @@ class LoadController extends Controller
     // نمایش اطلاعات بار
     public function loadInfo($id)
     {
+        // if (LoadBackup::where('id', $id)->count() == 0) {
+        //     $message = 'چنین باری وجود ندارد';
+        //     $alert = 'alert-warning';
+        //     return view('users.alert', compact('message', 'alert'));
+        // }
 
-        if (LoadBackup::where('id', $id)->count() == 0) {
-            $message = 'چنین باری وجود ندارد';
-            $alert = 'alert-warning';
-            return view('users.alert', compact('message', 'alert'));
-        }
         $loadInfo = $this->requestLoadInfo($id, 'admin');
-        $load = Load::where('id', $id)->first();
+        $load = Load::where('id', $id)->withTrashed()->first();
         if (!isset($load)) {
             $message = 'چنین باری وجود ندارد';
             $alert = 'alert-warning';
@@ -1686,7 +1687,7 @@ class LoadController extends Controller
         $loads = LoadBackup::where('user_id', $customer_id)
             ->orderBy('id', 'desc')
             ->get();
-        return view('admin/customerLoads', compact('loads', 'customer_id'));
+        return view('admin.customerLoads', compact('loads', 'customer_id'));
     }
 
     // لیست بارهای مشتری برای ادمین

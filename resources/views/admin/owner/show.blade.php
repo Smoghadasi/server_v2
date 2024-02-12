@@ -9,11 +9,11 @@
                 <div class="card-header">
                     @switch($owner->isOwner)
                         @case(1)
-                            صاحب بار : {{ $owner->name }} {{ $owner->lastName }}
+                            صاحب بار
                         @break
 
                         @case(2)
-                            باربری: {{ $owner->companyName }}
+                            باربری
                         @break
 
                         @default
@@ -53,7 +53,7 @@
                         <div class="mb-3 col-md-6">
                             <label for="postalCode" class="col-form-label">آدرس</label>
                             <div class="col-md-12">
-                                <input class="form-control" type="text" name="address" value="{{ $owner->address }}"
+                                <input class="form-control" type="text" name="address" value="{{ $owner->address ?? '-' }}"
                                     disabled id="address">
                             </div>
                         </div>
@@ -61,7 +61,7 @@
                             <label for="postalCode" class="col-form-label">کد پستی</label>
                             <div class="col-md-12">
                                 <input class="form-control" type="text" name="postalCode" disabled
-                                    value="{{ $owner->postalCode }}" id="postalCode">
+                                    value="{{ $owner->postalCode ?? '-' }}" id="postalCode">
                             </div>
                         </div>
                         <div class="mb-3 col-md-6">
@@ -91,7 +91,7 @@
                                 <div class="col-md-10">
                                     <img class="img-fluid"
                                         src="{{ $owner->activityLicense !== null ? asset($owner->activityLicense) : asset('img/notFound.jpg') }}"
-                                        alt="">
+                                        >
                                 </div>
                             </div>
                         @else
@@ -100,7 +100,7 @@
                                 <div class="col-md-10">
                                     <img class="img-fluid"
                                         src="{{ $owner->sanaImage !== null ? asset($owner->sanaImage) : asset('img/notFound.jpg') }}"
-                                        alt="">
+                                        >
                                 </div>
                             </div>
                         @endif
@@ -109,7 +109,7 @@
                             <div class="col-md-10">
                                 <img class="img-fluid"
                                     src="{{ $owner->nationalCardImage !== null ? asset($owner->nationalCardImage) : asset('img/notFound.jpg') }}"
-                                    alt="">
+                                    >
                             </div>
                         </div>
                         <div class="mb-3 col-md-6">
@@ -117,8 +117,7 @@
                                 چهره</label>
                             <div class="col-md-10">
                                 <img class="img-fluid"
-                                    src="{{ $owner->nationalFaceImage !== null ? asset($owner->nationalFaceImage) : asset('img/notFound.jpg') }}"
-                                    alt="">
+                                    src="{{ $owner->nationalFaceImage !== null ? asset($owner->nationalFaceImage) : asset('img/notFound.jpg') }}" >
                             </div>
                         </div>
 

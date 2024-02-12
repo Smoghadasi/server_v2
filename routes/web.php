@@ -222,7 +222,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('customerLoads/{customer_id}', [LoadController::class, 'customerLoads'])->middleware('operator')->name('customer.loads');
 
         // بارهای صاحبان بار
-        Route::get('ownerLoads/{customer_id}', [LoadController::class, 'ownerLoads'])->middleware('operator')->name('owner.loads');
+        Route::get('ownerLoads/{owner_id}', [LoadController::class, 'ownerLoads'])->middleware('operator')->name('owner.loads');
 
         // بار های ثبت شده توسط صاحبین بار
         Route::get('loadBackup', [LoadController::class, 'loadBackup'])->middleware('operator')->name('admin.loadBackup');

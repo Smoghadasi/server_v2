@@ -26,7 +26,12 @@
                     @forelse($loads as $key => $load)
                         <tr>
                             <td>{{ $key + 1 }}</td>
-                            <td>{{ $load->title }}</td>
+                            <td>
+                                @if ($load->deleted_at != null)
+                                    <i class="menu-icon tf-icons bx bx-trash text-danger"></i>
+                                @endif
+                                {{ $load->title }}
+                            </td>
                             <td>{{ $load->mobileNumberForCoordination }}</td>
                             <td>{{ $load->fromCity }}</td>
                             <td>{{ $load->toCity }}</td>

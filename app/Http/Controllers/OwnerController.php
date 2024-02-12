@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Load;
 use App\Models\Owner;
 use Illuminate\Http\Request;
 
@@ -14,12 +15,22 @@ class OwnerController extends Controller
      */
     public function index()
     {
+        $loadsToday = Load::where('userType', ROLE_OWNER)
+            ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
+            ->withTrashed()
+            ->count();
         $ownerPenddingCounts = Owner::where('isAuth', 2)->count();
         $ownerRejectCounts = Owner::where('isAuth', 0)->count();
         $ownerAcceptCounts = Owner::where('isAuth', 1)->count();
 
         $owners = Owner::orderByDesc('created_at')->paginate(10);
-        return view('admin.owner.index', compact('owners', 'ownerPenddingCounts', 'ownerRejectCounts', 'ownerAcceptCounts'));
+        return view('admin.owner.index', compact([
+            'owners',
+            'ownerPenddingCounts',
+            'ownerRejectCounts',
+            'ownerAcceptCounts',
+            'loadsToday'
+        ]));
     }
 
     /**
