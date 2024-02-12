@@ -8,7 +8,8 @@
         </h5>
         <div class="card-body">
             <div class="col-lg-12 m-2 mb-3 text-right">
-                <a href="{{ route('loadToday.owner') }}" class="alert p-1 alert-success">تعداد بار های ثبت شده امروز: {{ $loadsToday }}</a>
+                <a href="{{ route('loadToday.owner') }}" class="alert p-1 alert-success">تعداد بار های ثبت شده امروز:
+                    {{ $loadsToday }}</a>
             </div>
             <table class="table">
                 <thead>
@@ -16,11 +17,13 @@
                         <th>#</th>
                         <th>عنوان بار</th>
                         <th>شماره موبایل</th>
-                        <th>مشخصات صاحب بار</th>
+                        <th>صاحب بار</th>
                         {{-- <th>باربری یا صاحب بار</th> --}}
                         <th>ناوگان</th>
+                        <th>مبدا</th>
+                        <th>مقصد</th>
                         <th>تاریخ</th>
-                        {{-- <th>نمایش</th> --}}
+                        <th>عملیات</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -56,16 +59,16 @@
                                         style="line-height: 2rem">{{ $fleet['title'] }}</span>
                                 @endforeach
                             </td>
+                            <td>{{ $load->fromCity }}</td>
+                            <td>{{ $load->toCity }}</td>
                             @php
                                 $pieces = explode(' ', $load->created_at);
                             @endphp
                             <td>{{ $load->loadingDate }} <br /> {{ $pieces[1] }}</td>
-                            {{-- <td>
-                                    <a class="btn btn-info btn-sm" href="{{ url('admin/loadInfo') }}/{{ $load->id }}">نمایش
-                                        جزئیات</a>
-                                    <a class="btn btn-primary btn-sm"
-                                        href="{{ route('customer.loads', $load->customer->id) }}">لیست بار ها</a>
-                                </td> --}}
+                            <td>
+                                <a class="btn btn-info btn-sm"
+                                    href="{{ route('loadInfo', $load->id) }}">جزئیات</a>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>

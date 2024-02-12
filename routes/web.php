@@ -303,7 +303,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::post('searchLoads', [LoadController::class, 'searchLoads'])->middleware('operator');
 
         // نمایش اطلاعات بار
-        Route::get('loadInfo/{load_id}', [LoadController::class, 'loadInfo'])->middleware('operator');
+        Route::get('loadInfo/{load_id}', [LoadController::class, 'loadInfo'])->middleware('operator')->name('loadInfo');
 
         // فرم افزودن بار جدید
         Route::get('addNewLoadForm/{userType}', [LoadController::class, 'addNewLoadForm'])->middleware('operator');
