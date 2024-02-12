@@ -874,7 +874,7 @@ class LoadController extends Controller
 
         if (count($loads) > 0) {
             return response()->json($loads, 200);
-        } else{
+        } else {
             return response()->json(['message' => 'هیچ باری وجود ندارد'], 404);
         }
     }
@@ -909,7 +909,7 @@ class LoadController extends Controller
         if (count($loads) > 0) {
             return response()->json($loads, 200);
         } else {
-            return response()->json(['message' => 'هیچ باری وجود ندارد'],404);
+            return response()->json(['message' => 'هیچ باری وجود ندارد'], 404);
         }
         return [
             'result' => UN_SUCCESS,
@@ -1692,9 +1692,10 @@ class LoadController extends Controller
     // لیست بارهای مشتری برای ادمین
     public function ownerLoads($owner_id)
     {
-        $loads = LoadBackup::where('user_id', $owner_id)
+        $loads = Load::where('user_id', $owner_id)
             ->where('userType', 'owner')
             ->orderBy('id', 'desc')
+            ->withTrashed()
             ->get();
         return view('admin.customerLoads', compact('loads'));
     }
@@ -1711,15 +1712,46 @@ class LoadController extends Controller
         return view('admin.loadBackup', compact('loads'));
     }
 
-    public function loadOwner($loads = [], $showSearchResult = false)
+    public function loadOwner()
     {
-        if (!$showSearchResult) {
-            $loads = LoadBackup::orderByDesc('created_at')
-                ->with('owner')
-                ->where('userType', ROLE_OWNER)
-                ->paginate(20);
-        }
-        return view('admin.load.owner', compact('loads'));
+        $loads = Load::orderByDesc('created_at')
+            ->with('owner')
+            ->withTrashed()
+            ->where('userType', ROLE_OWNER)
+            ->paginate(20);
+        $loadsCount = Load::orderByDesc('created_at')
+            ->where('userType', ROLE_OWNER)
+            ->withTrashed()
+            ->count();
+
+        $loadsToday = Load::where('userType', ROLE_OWNER)
+            ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
+            ->withTrashed()
+            ->count();
+
+        return view('admin.load.owner', compact('loads', 'loadsCount', 'loadsToday'));
+    }
+    // بار های ثبت شده توسط صاحبین بار (امروز)
+    public function loadOwnerToday()
+    {
+        $loads = Load::orderByDesc('created_at')
+            ->with('owner')
+            ->withTrashed()
+            ->where('userType', ROLE_OWNER)
+            ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
+            ->paginate(20);
+
+        $loadsCount = Load::orderByDesc('created_at')
+            ->where('userType', ROLE_OWNER)
+            ->withTrashed()
+            ->count();
+
+        $loadsToday = Load::where('userType', ROLE_OWNER)
+            ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
+            ->withTrashed()
+            ->count();
+
+        return view('admin.load.owner', compact('loads', 'loadsCount', 'loadsToday'));
     }
 
     // جستجوی بار های صاحبین بار

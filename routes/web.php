@@ -227,7 +227,11 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // بار های ثبت شده توسط صاحبین بار
         Route::get('loadBackup', [LoadController::class, 'loadBackup'])->middleware('operator')->name('admin.loadBackup');
 
+        // بار های ثبت شده صاحبان بار
         Route::get('loadOwner', [LoadController::class, 'loadOwner'])->middleware('operator')->name('admin.load.owner');
+
+        // (امروز)بار های ثبت شده صاحبان بار
+        Route::get('loadOwnerToday', [LoadController::class, 'loadOwnerToday'])->middleware('operator')->name('loadToday.owner');
 
         // بار های ثبت شده توسط صاحبان بار
 

@@ -40,7 +40,12 @@
                                         style="line-height: 2rem">{{ $fleet['title'] }}</span>
                                 @endforeach
                             </td>
-                            <td>{{ $load->loadingDate }}</td>
+                            @php
+                                $pieces = explode(' ', $load->created_at);
+                            @endphp
+                            <td dir="ltr">
+                                {{ gregorianDateToPersian($load->created_at, '-', true) . ' ' . $pieces[1] }}
+                            </td>
                             <td><a href="{{ url('admin/loadInfo') }}/{{ $load->id }}">نمایش جزئیات</a></td>
                         </tr>
                     @empty

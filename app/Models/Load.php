@@ -86,6 +86,11 @@ class Load extends Model
         return $this->hasMany(DriverCall::class);
     }
 
+    public function owner()
+    {
+        return $this->belongsTo(Owner::class, 'user_id');
+    }
+
 //    public function getDriverVisitCountAttribute(): int
 //    {
 //        try {
