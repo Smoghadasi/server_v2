@@ -4,7 +4,7 @@
 
     <div class="card">
         <h5 class="card-header">
-            بار های ثبت شده صاحبین بار (امروز)
+            لیست بار های ثبت شده توسط صاحبان بار ({{ $loadsCount }})
         </h5>
         <div class="card-body">
             <div class="col-lg-12 m-2 mb-3 text-right">
