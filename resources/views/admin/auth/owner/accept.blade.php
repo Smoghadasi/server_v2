@@ -3,10 +3,10 @@
 @section('content')
 
     <div class="card">
-        <h5 class="card-header">لیست صاحبان بار</h5>
+        <h5 class="card-header">لیست صاحبان بار (تایید شده)</h5>
         <div class="card-body">
             <div class="col-lg-12 m-2 mb-3 text-right">
-                <a href="#" class="alert p-1 alert-secondary">در حال بررسی
+                <a href="{{ route('ownerAuth.index') }}" class="alert p-1 alert-secondary">در حال بررسی
                     : {{ $ownerPenddingCounts }}</a>
                 <a href="{{ route('owner.reject') }}" class="alert p-1 alert-danger">تایید نشده : {{ $ownerRejectCounts }}</a>
                 @if (Auth::user()->role == 'admin')
