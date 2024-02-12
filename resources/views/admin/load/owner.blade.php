@@ -38,13 +38,11 @@
                                 <td>
                                     <a href="{{ route('owner.show', $load->owner->id) }}">
                                         {{ $load->owner->name }} {{ $load->owner->lastName }}
-                                        ({{ $load->owner->mobileNumber }})
                                     </a>
                                 </td>
                             @else
                                 <td>
                                     {{ $load->owner->name }} {{ $load->owner->lastName }}
-                                    ({{ $load->owner->mobileNumber }})
                                 </td>
                             @endif
 
