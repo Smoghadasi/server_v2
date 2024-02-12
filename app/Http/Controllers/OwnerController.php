@@ -14,8 +14,12 @@ class OwnerController extends Controller
      */
     public function index()
     {
+        $ownerPenddingCounts = Owner::where('isAuth', 2)->count();
+        $ownerRejectCounts = Owner::where('isAuth', 0)->count();
+        $ownerAcceptCounts = Owner::where('isAuth', 1)->count();
+
         $owners = Owner::orderByDesc('created_at')->paginate(10);
-        return view('admin.owner.index', compact('owners'));
+        return view('admin.owner.index', compact('owners', 'ownerPenddingCounts', 'ownerRejectCounts', 'ownerAcceptCounts'));
     }
 
     /**

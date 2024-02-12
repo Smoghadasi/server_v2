@@ -11,6 +11,9 @@
                 <a href="{{ route('ownerAuth.index') }}" class="alert p-1 alert-secondary">در حال بررسی
                     : {{ $ownerPenddingCounts }}</a>
                 <a href="{{ route('owner.reject') }}" class="alert p-1 alert-danger">تایید نشده : {{ $ownerRejectCounts }}</a>
+                @if (Auth::user()->role == 'admin')
+                    <a href="{{ route('owner.accept') }}" class="alert p-1 alert-success">تایید شده : {{ $ownerAcceptCounts }}</a>
+                @endif
             </div>
             <div class="table-responsive">
                 <table class="table">

@@ -6,9 +6,12 @@
         <h5 class="card-header">لیست صاحبان بار</h5>
         <div class="card-body">
             <div class="col-lg-12 m-2 mb-3 text-right">
-                <a href="{{ route('ownerAuth.index') }}" class="alert p-1 alert-secondary">در حال بررسی : {{ $ownerPenddingCounts }}</a>
+                <a href="#" class="alert p-1 alert-secondary">در حال بررسی
+                    : {{ $ownerPenddingCounts }}</a>
                 <a href="{{ route('owner.reject') }}" class="alert p-1 alert-danger">تایید نشده : {{ $ownerRejectCounts }}</a>
-                <a href="{{ route('owner.accept') }}" class="alert p-1 alert-success">تایید شده : {{ $ownerAcceptCounts }}</a>
+                @if (Auth::user()->role == 'admin')
+                    <a href="{{ route('owner.accept') }}" class="alert p-1 alert-success">تایید شده : {{ $ownerAcceptCounts }}</a>
+                @endif
             </div>
             <form method="post" action="{{ route('owner.search') }}">
                 @csrf

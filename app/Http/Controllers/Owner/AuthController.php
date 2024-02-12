@@ -22,7 +22,14 @@ class AuthController extends Controller
         $owners = Owner::where('isAuth', 2)->paginate(10);
         $ownerPenddingCounts = Owner::where('isAuth', 2)->count();
         $ownerRejectCounts = Owner::where('isAuth', 0)->count();
-        return view('admin.auth.owner.index', compact('owners', 'ownerPenddingCounts', 'ownerRejectCounts'));
+        $ownerAcceptCounts = Owner::where('isAuth', 1)->count();
+
+        return view('admin.auth.owner.index', compact(
+            'owners',
+            'ownerPenddingCounts',
+            'ownerRejectCounts',
+            'ownerAcceptCounts'
+        ));
     }
 
     public function ownerReject()
@@ -30,7 +37,28 @@ class AuthController extends Controller
         $owners = Owner::where('isAuth', 0)->paginate(10);
         $ownerPenddingCounts = Owner::where('isAuth', 2)->count();
         $ownerRejectCounts = Owner::where('isAuth', 0)->count();
-        return view('admin.auth.owner.reject', compact('owners', 'ownerPenddingCounts', 'ownerRejectCounts'));
+        $ownerAcceptCounts = Owner::where('isAuth', 1)->count();
+
+        return view('admin.auth.owner.reject', compact(
+            'owners',
+            'ownerPenddingCounts',
+            'ownerRejectCounts',
+            'ownerAcceptCounts'
+        ));
+    }
+
+    public function ownerAccept()
+    {
+        $owners = Owner::where('isAuth', 1)->paginate(10);
+        $ownerAcceptCounts = Owner::where('isAuth', 1)->count();
+        $ownerPenddingCounts = Owner::where('isAuth', 2)->count();
+        $ownerRejectCounts = Owner::where('isAuth', 0)->count();
+        return view('admin.auth.owner.accept', compact(
+            'owners',
+            'ownerPenddingCounts',
+            'ownerRejectCounts',
+            'ownerAcceptCounts'
+        ));
     }
 
     /**
