@@ -589,8 +589,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::patch('editLoadInfo/{load}/{api}', [LoadController::class, 'editLoadInfo']);
 
         // درخواست لیست بارهای صاحبان بار
-        Route::get('requestCustomerLoadsList/{id}', [LoadController::class, 'requestCustomerLoadsList']);
-
         Route::get('requestCustomerLoadsLists/{id}', [LoadController::class, 'requestCustomerLoadsLists']);
 
         // درخواست لیست بارهای بایگانی صاحبان بار

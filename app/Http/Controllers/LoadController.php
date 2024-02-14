@@ -792,59 +792,6 @@ class LoadController extends Controller
         return $result . "</div>";
     }
 
-    // درخواست لیست بارهای مشتری
-    public function requestCustomerLoadsList($id)
-    {
-
-        $loads = Load::join('load_statuses', 'loads.status', '=', 'load_statuses.status')
-            ->join('cities as originCity', 'loads.origin_city_id', 'originCity.id')
-            ->join('cities as destinationCity', 'loads.destination_city_id', 'destinationCity.id')
-            ->where('user_id', $id)
-            ->where('userType', 'owner')
-            ->select(
-                'loads.id',
-                'loads.proposedPriceForDriver',
-                'loads.suggestedPrice',
-                'loads.origin_city_id',
-                'loads.destination_city_id',
-                'loads.priceBased',
-                'loads.title',
-                'loads.time',
-                'loads.driverVisitCount',
-                'loads.fleets',
-                'loads.fromCity',
-                'loads.toCity',
-                'loads.loadingHour',
-                'loads.loadingMinute',
-                'loads.status',
-                'loads.score',
-                'loads.description',
-                'loads.gibarDriverRequest as urgent',
-                'loads.loadingDate',
-                'originCity.name as from',
-                'load_statuses.title as statusTitle',
-                'destinationCity.name as to',
-                'load_statuses.title as statusTitle'
-            )
-            ->orderBy('id', 'desc')
-            ->skip(0)
-            ->take(80)
-            ->get();
-
-
-        if (count($loads) > 0) {
-            return [
-                'result' => SUCCESS,
-                'loads' => $loads,
-                'loadStatus' => LoadStatus::get(),
-                'currentTime' => time()
-            ];
-        }
-        return [
-            'result' => UN_SUCCESS,
-            'message' => 'هیچ باری وجود ندارد'
-        ];
-    }
 
     // درخواست لیست بارهای مشتری
     public function requestCustomerLoadsLists($id)
@@ -868,6 +815,7 @@ class LoadController extends Controller
                 'loads.loadingHour',
                 'loads.loadingMinute',
                 'loads.loadingDate',
+                'loads.created_at',
             )
             ->orderBy('id', 'desc')
             ->paginate(10);
@@ -902,6 +850,7 @@ class LoadController extends Controller
                 'loads.loadingHour',
                 'loads.loadingMinute',
                 'loads.loadingDate',
+                'loads.created_at',
             )
             ->orderBy('id', 'desc')
             ->onlyTrashed()
