@@ -135,6 +135,12 @@ class AuthController extends Controller
         $owner->isAuth = $request->status;
         if ($request->status == ACCEPT) {
             $owner->acceptCustomerSms($owner->mobileNumber);
+        }else{
+            $owner->nationalCardImage = null;
+            $owner->nationalFaceImage = null;
+            $owner->profileImage = null;
+            $owner->sanaImage = null;
+            $owner->activityLicense = null;
         }
         $owner->save();
         try {
