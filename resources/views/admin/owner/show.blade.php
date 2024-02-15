@@ -53,8 +53,8 @@
                         <div class="mb-3 col-md-6">
                             <label for="postalCode" class="col-form-label">آدرس</label>
                             <div class="col-md-12">
-                                <input class="form-control" type="text" name="address" value="{{ $owner->address ?? '-' }}"
-                                    disabled id="address">
+                                <input class="form-control" type="text" name="address"
+                                    value="{{ $owner->address ?? '-' }}" disabled id="address">
                             </div>
                         </div>
                         <div class="mb-3 col-md-6">
@@ -90,8 +90,7 @@
                                 <label for="activityLicense" class="col-form-label">عکس پروانه فعالیت</label>
                                 <div class="col-md-10">
                                     <img class="img-fluid"
-                                        src="{{ $owner->activityLicense !== null ? asset($owner->activityLicense) : asset('img/notFound.jpg') }}"
-                                        >
+                                        src="{{ $owner->activityLicense !== null ? asset($owner->activityLicense) : asset('img/notFound.jpg') }}">
                                 </div>
                             </div>
                         @else
@@ -99,8 +98,7 @@
                                 <label for="sanaImage" class="col-form-label">تصویر ثنا</label>
                                 <div class="col-md-10">
                                     <img class="img-fluid"
-                                        src="{{ $owner->sanaImage !== null ? asset($owner->sanaImage) : asset('img/notFound.jpg') }}"
-                                        >
+                                        src="{{ $owner->sanaImage !== null ? asset($owner->sanaImage) : asset('img/notFound.jpg') }}">
                                 </div>
                             </div>
                         @endif
@@ -108,8 +106,7 @@
                             <label for="nationalCardImage" class="col-form-label">تصویر کارت ملی</label>
                             <div class="col-md-10">
                                 <img class="img-fluid"
-                                    src="{{ $owner->nationalCardImage !== null ? asset($owner->nationalCardImage) : asset('img/notFound.jpg') }}"
-                                    >
+                                    src="{{ $owner->nationalCardImage !== null ? asset($owner->nationalCardImage) : asset('img/notFound.jpg') }}">
                             </div>
                         </div>
                         <div class="mb-3 col-md-6">
@@ -117,7 +114,7 @@
                                 چهره</label>
                             <div class="col-md-10">
                                 <img class="img-fluid"
-                                    src="{{ $owner->nationalFaceImage !== null ? asset($owner->nationalFaceImage) : asset('img/notFound.jpg') }}" >
+                                    src="{{ $owner->nationalFaceImage !== null ? asset($owner->nationalFaceImage) : asset('img/notFound.jpg') }}">
                             </div>
                         </div>
 
@@ -137,6 +134,41 @@
                     @endif
                     <a class="btn btn-primary" href="{{ route('ownerAuth.edit', $owner) }}">ویرایش اطلاعات</a>
                     <a class="btn btn-secondary" href="{{ route('owner.loads', $owner->id) }}">لیست بار ها</a>
+                    @if (auth()->user()->role == ROLE_ADMIN)
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                            data-bs-target="#removeOwner_{{ $owner->id }}">حذف
+                        </button>
+                        <div id="removeOwner_{{ $owner->id }}" class="modal fade" role="dialog">
+                            <div class="modal-dialog">
+
+                                <!-- Modal content-->
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">حذف صاحب بار</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>آیا مایل به حذف صاحب بار
+                                            <span class="text-primary">
+                                                {{ $owner->name }}{{ $owner->lastName }}</span>
+                                            هستید؟
+                                        </p>
+                                    </div>
+                                    <div class="modal-footer text-left">
+                                        <form action="{{ route('owner.destroy', $owner) }}" method="post">
+                                            @method('DELETE')
+                                            @csrf
+                                            <button type="submit" class="btn btn-primary">حذف صاحب بار</button>
+                                        </form>
+
+                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                                            انصراف
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    @endif
 
                 </div>
                 <!-- /Account -->

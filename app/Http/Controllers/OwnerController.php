@@ -94,9 +94,10 @@ class OwnerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Owner $owner)
     {
-        //
+        $owner->delete();
+        return redirect()->route('owner.index')->with('danger', 'صاحب بار مورد نظر حذف شد');
     }
 
     public function changeOwnerStatus(Owner $owner)

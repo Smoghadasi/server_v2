@@ -135,7 +135,22 @@ class AuthController extends Controller
         $owner->isAuth = $request->status;
         if ($request->status == ACCEPT) {
             $owner->acceptCustomerSms($owner->mobileNumber);
-        }else{
+        } else {
+            if (file_exists($owner->nationalCardImage))
+                unlink($owner->nationalCardImage);
+
+            if (file_exists($owner->nationalFaceImage))
+                unlink($owner->nationalFaceImage);
+
+            if (file_exists($owner->profileImage))
+                unlink($owner->profileImage);
+
+            if (file_exists($owner->sanaImage))
+                unlink($owner->sanaImage);
+
+            if (file_exists($owner->activityLicense))
+                unlink($owner->activityLicense);
+
             $owner->nationalCardImage = null;
             $owner->nationalFaceImage = null;
             $owner->profileImage = null;
