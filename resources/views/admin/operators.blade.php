@@ -174,7 +174,8 @@
                                 <!-- Modal -->
                                 <div id="changePassOperator_{{ $user->id }}" class="modal fade" role="dialog">
                                     <div class="modal-dialog">
-                                        <form method="POST" action="{{ route('user.resetPass', $user->id) }}" class="modal-content">
+                                        <form method="POST" action="{{ route('user.resetPass', $user->id) }}"
+                                            class="modal-content">
                                             @csrf
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="modalTopTitle">تغییر رمز عبور :
@@ -185,8 +186,8 @@
                                                 <div class="row">
                                                     <div class="col mb-3">
                                                         <label for="password" class="form-label">رمز عبور</label>
-                                                        <input type="text" id="password" name="password" class="form-control"
-                                                            placeholder="" />
+                                                        <input type="text" id="password" name="password"
+                                                            class="form-control" placeholder="" />
                                                     </div>
                                                 </div>
 
@@ -214,13 +215,86 @@
                                                 <h4 class="modal-title">دسترسی ها</h4>
                                             </div>
                                             <div class="modal-body text-right">
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="dashboard"
-                                                            @if (in_array('dashboard', $user->userAccess)) checked @endif>
-                                                        داشبورد
-                                                    </label>
-                                                </div>
+                                                <ul id="myUL">
+                                                    <li><span class="caret">داشبورد</span>
+                                                        <ul class="nested">
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="dashboard"
+                                                                            @if (in_array('dashboard', $user->userAccess)) checked @endif>
+                                                                        داشبورد
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="dashboardAllCargo"
+                                                                            @if (in_array('dashboardAllCargo', $user->userAccess)) checked @endif>
+                                                                        کل بارها
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="dashboardAllOwner"
+                                                                            @if (in_array('dashboardAllOwner', $user->userAccess)) checked @endif>
+                                                                        کل صاحبان بار
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="dashboardAllBearing"
+                                                                            @if (in_array('dashboardAllBearing', $user->userAccess)) checked @endif>
+                                                                        کل باربری ها
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="dashboardAllCustomers"
+                                                                            @if (in_array('dashboardAllCustomers', $user->userAccess)) checked @endif>
+                                                                        کل صاحب بارها
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="dashboardAllMessage"
+                                                                            @if (in_array('dashboardAllMessage', $user->userAccess)) checked @endif>
+                                                                        کل پیام ها
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="dashboardAllDriver"
+                                                                            @if (in_array('dashboardAllDriver', $user->userAccess)) checked @endif>
+                                                                        کل رانندگان
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="dashboardAllDriverActivity"
+                                                                            @if (in_array('dashboardAllDriverActivity', $user->userAccess)) checked @endif>
+                                                                        گزارش فعالیت رانندگان
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+
                                                 <div class="form-group">
                                                     <label>
                                                         <input type="checkbox" name="finalApprovalAndStoreCargo"
@@ -483,8 +557,9 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox" name="driversAuthentication"
-                                                                        @if (in_array('driversAuthentication', $user->userAccess)) checked @endif>
+                                                                        <input type="checkbox"
+                                                                            name="driversAuthentication"
+                                                                            @if (in_array('driversAuthentication', $user->userAccess)) checked @endif>
                                                                         رانندگان
                                                                     </label>
                                                                 </div>

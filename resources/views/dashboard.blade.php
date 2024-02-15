@@ -49,129 +49,143 @@
 
     <!-- Icon Cards-->
     <div class="row">
-        <div class="col-xl-3 col-sm-6 mb-3">
-            <div class="card text-white bg-primary o-hidden h-100">
+        @if (in_array('dashboardAllCargo', auth()->user()->userAccess))
+            <div class="col-xl-3 col-sm-6 mb-3">
 
-                <div class="card-body">
-                    <div class="card-body-icon">
-                        <i class="fas fa-fw fa-truck-loading"></i>
-                    </div>
-                    <h1 class="text-center  text-white">{{ $countOfLoads }} </h1>
-                    <h2 class="text-center text-white">کل بارها</h2>
-                </div>
-                <a class="card-footer text-white clearfix small z-1 btn btn-light" href="{{ url('admin/loads') }}">
-                    <span class="float-left">لیست بارها</span>
-                    <span class="float-right">
-                        <i class="fas fa-angle-right"></i>
-                    </span>
-                    <span class="badge bg-secondary">{{ $cargoAcceptsCount }}</span>
-                </a>
-            </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 mb-3">
-            <div class="card text-white bg-success o-hidden h-100">
-                <div class="card-body">
-                    <div class="card-body-icon">
-                        <i class="fas fa-fw fa-users"></i>
-                    </div>
-                    <h1 class="text-center text-white">{{ $countOfOwners }} </h1>
-                    <h2 class="text-center text-white">کل صاحبان بار</h2>
-                </div>
-                <a class="card-footer text-white clearfix small z-1 btn btn-light" href="{{ route('owner.index') }}">
-                    <span class="float-left">لیست صاحبان بار</span>
-                    <span class="float-right">
-                        <i class="fas fa-angle-right"></i>
-                    </span>
-                </a>
-            </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 mb-3">
-            <div class="card text-white bg-warning o-hidden h-100">
+                <div class="card text-white bg-primary o-hidden h-100">
 
-                <div class="card-body">
-                    <div class="card-body-icon">
-                        <i class="fas fa-fw fa-building"></i>
+                    <div class="card-body">
+                        <div class="card-body-icon">
+                            <i class="fas fa-fw fa-truck-loading"></i>
+                        </div>
+                        <h1 class="text-center  text-white">{{ $countOfLoads }} </h1>
+                        <h2 class="text-center text-white">کل بارها</h2>
                     </div>
-                    <h1 class="text-center text-white">{{ $countOfBearings }} </h1>
-                    <h2 class="text-center text-white">کل باربریها</h2>
+                    <a class="card-footer text-white clearfix small z-1 btn btn-light" href="{{ url('admin/loads') }}">
+                        <span class="float-left">لیست بارها</span>
+                        <span class="float-right">
+                            <i class="fas fa-angle-right"></i>
+                        </span>
+                        <span class="badge bg-secondary">{{ $cargoAcceptsCount }}</span>
+                    </a>
                 </div>
-                <a class="card-footer text-white clearfix small z-1 btn btn-light" href="{{ url('admin/bearing') }}">
-                    <span class="">لیست باربریها</span>
-                </a>
             </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 mb-3">
-            <div class="card text-white bg-success o-hidden h-100">
-                <div class="card-body">
-                    <div class="card-body-icon">
-                        <i class="fas fa-fw fa-users"></i>
+        @endif
+        @if (in_array('dashboardAllOwner', auth()->user()->userAccess))
+            <div class="col-xl-3 col-sm-6 mb-3">
+                <div class="card text-white bg-success o-hidden h-100">
+                    <div class="card-body">
+                        <div class="card-body-icon">
+                            <i class="fas fa-fw fa-users"></i>
+                        </div>
+                        <h1 class="text-center text-white">{{ $countOfOwners }} </h1>
+                        <h2 class="text-center text-white">کل صاحبان بار</h2>
                     </div>
-                    <h1 class="text-center text-white">{{ $countOfCustomers }} </h1>
-                    <h2 class="text-center text-white">کل صاحب بارها</h2>
+                    <a class="card-footer text-white clearfix small z-1 btn btn-light" href="{{ route('owner.index') }}">
+                        <span class="float-left">لیست صاحبان بار</span>
+                        <span class="float-right">
+                            <i class="fas fa-angle-right"></i>
+                        </span>
+                    </a>
                 </div>
-                <a class="card-footer text-white clearfix small z-1 btn btn-light" href="{{ url('admin/customers') }}">
-                    <span class="float-left">لیست صاحب بارها</span>
-                    <span class="float-right">
-                        <i class="fas fa-angle-right"></i>
-                    </span>
-                </a>
             </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 mb-3">
-            <div class="card text-white bg-danger o-hidden h-100">
-                <div class="card-body">
-                    <div class="card-body-icon">
-                        <i class="fas fa-fw fa-comments"></i>
-                    </div>
-                    <h1 class="text-center text-white">{{ $countOfContactUses }} </h1>
-                    <h2 class="text-center text-white">کل پیام ها</h2>
-                </div>
-                <a class="card-footer text-white clearfix small z-1 btn btn-light" href="{{ url('admin/messages') }}">
-                    <span class="float-left">لیست پیام ها</span>
-                    <span class="float-right">
-                        <i class="fas fa-angle-right"></i>
-                    </span>
-                </a>
-            </div>
-        </div>
+        @endif
+        @if (in_array('dashboardAllBearing', auth()->user()->userAccess))
+            <div class="col-xl-3 col-sm-6 mb-3">
+                <div class="card text-white bg-warning o-hidden h-100">
 
-
-        <div class="col-xl-3 col-sm-6 mb-3">
-            <div class="card text-white bg-success o-hidden h-100">
-                <div class="card-body">
-                    <div class="card-body-icon">
-                        <i class="fas fa-fw fa-truck"></i>
+                    <div class="card-body">
+                        <div class="card-body-icon">
+                            <i class="fas fa-fw fa-building"></i>
+                        </div>
+                        <h1 class="text-center text-white">{{ $countOfBearings }} </h1>
+                        <h2 class="text-center text-white">کل باربریها</h2>
                     </div>
-                    <h1 class="text-center text-white">{{ $countOfDrivers }} </h1>
-                    <h2 class="text-center text-white">رانندگان</h2>
+                    <a class="card-footer text-white clearfix small z-1 btn btn-light" href="{{ url('admin/bearing') }}">
+                        <span class="">لیست باربریها</span>
+                    </a>
                 </div>
-                <a class="card-footer text-white clearfix small z-1 btn btn-light" href="{{ route('adminDrivers') }}">
-                    <span class="float-left">لیست رانندگان</span>
-                    <span class="float-right">
-                        <i class="fas fa-angle-right"></i>
-                    </span>
-                </a>
             </div>
-        </div>
-
-        <div class="col-xl-3 col-sm-6 mb-3">
-            <div class="card text-white bg-primary o-hidden h-100">
-                <div class="card-body">
-                    <div class="card-body-icon">
-                        <i class="fas fa-fw fa-mobile"></i>
+        @endif
+        @if (in_array('dashboardAllCustomers', auth()->user()->userAccess))
+            <div class="col-xl-3 col-sm-6 mb-3">
+                <div class="card text-white bg-success o-hidden h-100">
+                    <div class="card-body">
+                        <div class="card-body-icon">
+                            <i class="fas fa-fw fa-users"></i>
+                        </div>
+                        <h1 class="text-center text-white">{{ $countOfCustomers }} </h1>
+                        <h2 class="text-center text-white">کل صاحب بارها</h2>
                     </div>
-                    <h1 class="text-center text-white"></h1>
-                    <h2 class="text-center text-white">گزارش فعالیت رانندگان</h2>
+                    <a class="card-footer text-white clearfix small z-1 btn btn-light" href="{{ url('admin/customers') }}">
+                        <span class="float-left">لیست صاحب بارها</span>
+                        <span class="float-right">
+                            <i class="fas fa-angle-right"></i>
+                        </span>
+                    </a>
                 </div>
-                <a class="card-footer text-white clearfix small z-1 btn btn-light"
-                    href="{{ url('admin/driversActivities') }}">
-                    <span class="float-left">گزارش فعالیت رانندگان</span>
-                    <span class="float-right">
-                        <i class="fas fa-angle-right"></i>
-                    </span>
-                </a>
             </div>
-        </div>
+        @endif
+        @if (in_array('dashboardAllMessage', auth()->user()->userAccess))
+            <div class="col-xl-3 col-sm-6 mb-3">
+                <div class="card text-white bg-danger o-hidden h-100">
+                    <div class="card-body">
+                        <div class="card-body-icon">
+                            <i class="fas fa-fw fa-comments"></i>
+                        </div>
+                        <h1 class="text-center text-white">{{ $countOfContactUses }} </h1>
+                        <h2 class="text-center text-white">کل پیام ها</h2>
+                    </div>
+                    <a class="card-footer text-white clearfix small z-1 btn btn-light" href="{{ url('admin/messages') }}">
+                        <span class="float-left">لیست پیام ها</span>
+                        <span class="float-right">
+                            <i class="fas fa-angle-right"></i>
+                        </span>
+                    </a>
+                </div>
+            </div>
+        @endif
+
+        @if (in_array('dashboardAllDriver', auth()->user()->userAccess))
+            <div class="col-xl-3 col-sm-6 mb-3">
+                <div class="card text-white bg-success o-hidden h-100">
+                    <div class="card-body">
+                        <div class="card-body-icon">
+                            <i class="fas fa-fw fa-truck"></i>
+                        </div>
+                        <h1 class="text-center text-white">{{ $countOfDrivers }} </h1>
+                        <h2 class="text-center text-white">رانندگان</h2>
+                    </div>
+                    <a class="card-footer text-white clearfix small z-1 btn btn-light" href="{{ route('adminDrivers') }}">
+                        <span class="float-left">لیست رانندگان</span>
+                        <span class="float-right">
+                            <i class="fas fa-angle-right"></i>
+                        </span>
+                    </a>
+                </div>
+            </div>
+        @endif
+
+        @if (in_array('dashboardAllDriverActivity', auth()->user()->userAccess))
+            <div class="col-xl-3 col-sm-6 mb-3">
+                <div class="card text-white bg-primary o-hidden h-100">
+                    <div class="card-body">
+                        <div class="card-body-icon">
+                            <i class="fas fa-fw fa-mobile"></i>
+                        </div>
+                        <h1 class="text-center text-white"></h1>
+                        <h2 class="text-center text-white">گزارش فعالیت رانندگان</h2>
+                    </div>
+                    <a class="card-footer text-white clearfix small z-1 btn btn-light"
+                        href="{{ url('admin/driversActivities') }}">
+                        <span class="float-left">گزارش فعالیت رانندگان</span>
+                        <span class="float-right">
+                            <i class="fas fa-angle-right"></i>
+                        </span>
+                    </a>
+                </div>
+            </div>
+        @endif
 
     </div>
 
