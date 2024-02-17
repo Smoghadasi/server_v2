@@ -1110,7 +1110,26 @@ class ReportingController extends Controller
                 // ->where('date', $persian_date)
                 ->orderByDesc('date')
                 ->paginate(25);
-            return view('admin.reporting.cargoFleetsReport', compact('cargoReports'));
+            $fleets = Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
+            return view('admin.reporting.cargoFleetsReport', compact('cargoReports', 'fleets'));
+        } catch (\Exception $exception) {
+            Log::emergency("---------------------------------- cargoFleetsReport ---------------------------------");
+            Log::emergency($exception->getMessage());
+            Log::emergency("------------------------------------------------------------------------------------");
+        }
+    }
+
+    // جستجو گزارش بار ها به تفکیک ناوگان
+    public function searchCargoFleets(Request $request)
+    {
+        try {
+            $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+            $cargoReports = CargoReportByFleet::with('fleet')
+                ->where('fleet_id', $request->fleet_id)
+                ->orderByDesc('date')
+                ->paginate(25);
+            $fleets = Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
+            return view('admin.reporting.cargoFleetsReport', compact('cargoReports', 'fleets'));
         } catch (\Exception $exception) {
             Log::emergency("---------------------------------- cargoFleetsReport ---------------------------------");
             Log::emergency($exception->getMessage());

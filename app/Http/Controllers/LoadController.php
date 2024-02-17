@@ -759,16 +759,6 @@ class LoadController extends Controller
                 }
 
                 $load->operator_id = 0;
-                // ذخیره توسط اپراتور
-                try {
-                    if (isset(\auth()->user()->role) && (\auth()->user()->role == ROLE_OPERATOR || \auth()->user()->role == ROLE_ADMIN)) {
-                        $load->operator_id = \auth()->id();
-                        $load->proposedPriceForDriver = $request->suggestedPrice;
-                        $load->status = ON_SELECT_DRIVER;
-                        $load->userType = ROLE_TRANSPORTATION_COMPANY;
-                    }
-                } catch (Exception $e) {
-                }
 
                 if (isset($request->proposedPriceForDriver))
                     $load->proposedPriceForDriver = $this->convertNumbers($request->proposedPriceForDriver, false);

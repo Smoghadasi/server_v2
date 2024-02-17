@@ -680,6 +680,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         //  گزارش بار ها به تفکیک ناوگان
         Route::get('cargo-fleets', [ReportingController::class, 'cargoFleetsReport'])->middleware('operator')->name('report.cargo.fleets');
 
+        // جستجو بار ها به تفکیک ناوگان
+        Route::post('searchCargoFleets', [ReportingController::class, 'searchCargoFleets'])->middleware('operator')->name('search.report.cargo.fleets');
+
 
         /************************************************************************************************************/
         /************************************************************************************************************/
