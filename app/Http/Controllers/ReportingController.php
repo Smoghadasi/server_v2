@@ -1124,13 +1124,14 @@ class ReportingController extends Controller
     {
         try {
             $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+            $fleet_id = $request->fleet_id;
             $cargoReports = CargoReportByFleet::with('fleet')
                 ->where('fleet_id', $request->fleet_id)
                 ->orderByDesc('date')
                 ->take(50)
                 ->get();
             $fleets = Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
-            return view('admin.reporting.cargoFleetsReport', compact('cargoReports', 'fleets'));
+            return view('admin.reporting.cargoFleetsReport', compact('cargoReports', 'fleets', 'fleet_id'));
         } catch (\Exception $exception) {
             Log::emergency("---------------------------------- cargoFleetsReport ---------------------------------");
             Log::emergency($exception->getMessage());

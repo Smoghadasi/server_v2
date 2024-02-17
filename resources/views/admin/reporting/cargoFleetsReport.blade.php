@@ -61,10 +61,12 @@
                     </tbody>
                 </table>
             </div>
+            @if ($fleet_id)
+                <div class="mt-2 mb-2">
+                    {{ $cargoReports }}
+                </div>
+            @endif
 
-            <div class="mt-2 mb-2">
-                {{ $cargoReports }}
-            </div>
         </div>
     </div>
 @endsection
