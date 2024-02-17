@@ -165,12 +165,16 @@ class OwnerController extends Controller
     // درخواست اطلاعات باربری
     public function profile(string $id)
     {
-        $owner = Owner::with('operatorMessages')->where('id', $id)->first();
-        $owner->version = '2';
-        $owner->save();
-        return [
-            'result' => SUCCESS,
-            'data' => $owner
-        ];
+        try {
+            $owner = Owner::with('operatorMessages')->where('id', $id)->first();
+            $owner->version = '2';
+            $owner->save();
+            return [
+                'result' => SUCCESS,
+                'data' => $owner
+            ];
+        } catch (\Exception $exception) {
+            return $exception->getMessage();
+        }
     }
 }
