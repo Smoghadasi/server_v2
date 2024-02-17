@@ -166,7 +166,7 @@ class OwnerController extends Controller
     public function profile(string $id)
     {
         $owner = Owner::with('operatorMessages')->where('id', $id)->first();
-        $owner->version = '2.1.0';
+        $owner->version = '2';
         $owner->save();
         return [
             'result' => SUCCESS,
