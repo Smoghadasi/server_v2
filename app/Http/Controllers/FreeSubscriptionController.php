@@ -17,9 +17,13 @@ class FreeSubscriptionController extends Controller
     {
         $freeSubscriptions = FreeSubscription::with('driver')
             ->orderByDesc('created_at')
-            ->where('value', '!=' , 0)
+            ->where('value', '!=', 0)
             ->paginate(20);
-        return view('admin.freeSubscription', compact('freeSubscriptions'));
+        $authCallToDay = FreeSubscription::where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
+            ->where('type', 'AuthCalls')
+            ->get();
+        $freeCallCount = $authCallToDay->sum('value');
+        return view('admin.freeSubscription.index', compact('freeSubscriptions', 'freeCallCount'));
     }
 
     /**
@@ -76,7 +80,6 @@ class FreeSubscriptionController extends Controller
     {
         return $freeSubscription;
         return view('admin.freeSubscription', compact('freeSubscriptions'));
-
     }
 
     /**
@@ -88,5 +91,21 @@ class FreeSubscriptionController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function search(Request $request)
+    {
+        $freeSubscriptions = FreeSubscription::with('driver')
+            ->whereHas('driver', function ($q) use ($request) {
+                $q->where('mobileNumber', $request->mobileNumber);
+            })
+            ->orderByDesc('created_at')
+            ->where('value', '!=', 0)
+            ->get();
+        $authCallToDay = FreeSubscription::where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
+            ->where('type', 'AuthCalls')
+            ->get();
+        $freeCallCount = $authCallToDay->sum('value');
+        return view('admin.freeSubscription.search', compact('freeSubscriptions', 'freeCallCount'));
     }
 }

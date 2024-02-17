@@ -664,6 +664,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         Route::resource('freeSubscription', FreeSubscriptionController::class)->middleware('operator');
 
+        Route::post('searchFreeSubscription', [FreeSubscriptionController::class, 'search'])->name('search.free.subscription')->middleware('operator');
+
+
         // نتیجه تماس ها
         Route::get('contactingWithDriverResult/{driver}', [OperatorContactingController::class, 'contactingWithDriverResult'])->middleware('operator')->name('contactingWithDriverResult');
 
