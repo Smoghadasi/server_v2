@@ -1127,6 +1127,7 @@ class ReportingController extends Controller
             $cargoReports = CargoReportByFleet::with('fleet')
                 ->where('fleet_id', $request->fleet_id)
                 ->orderByDesc('date')
+                ->take(50)
                 ->get();
             $fleets = Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
             return view('admin.reporting.cargoFleetsReport', compact('cargoReports', 'fleets'));
