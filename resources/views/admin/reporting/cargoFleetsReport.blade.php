@@ -61,7 +61,7 @@
                     </tbody>
                 </table>
             </div>
-            @if ($fleet_id)
+            @if (!isset($fleet_id))
                 <div class="mt-2 mb-2">
                     {{ $cargoReports }}
                 </div>
