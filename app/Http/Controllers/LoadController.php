@@ -282,7 +282,7 @@ class LoadController extends Controller
 
             // ثبت ip کاربر
             try {
-                if ($request->userType == ROLE_TRANSPORTATION_COMPANY) {
+                if ($request->userType == ROLE_OWNER) {
                     $owner = Owner::where('mobileNumber', $senderMobileNumber)->first();
 
                     if (isset($owner->id)) {
@@ -612,6 +612,302 @@ class LoadController extends Controller
             Log::emergency($exception);
             Log::emergency("---------------------------------------------------------");
         }
+
+        $message[1] = 'خطا! لطفا دوباره تلاش کنید';
+        return [
+            'result' => UN_SUCCESS,
+            'message' => $message
+        ];
+    }
+
+    public function createNewLoads(NewLoadRequest $request)
+    {
+        try {
+
+            if (\auth()->check()) {
+                if (UserActivityReport::where([
+                    ['created_at', '>', date('Y-m-d H:i:s', strtotime('-5 minute', time()))],
+                    ['user_id', \auth()->id()]
+                ])->count() == 0)
+
+                    UserActivityReport::create(['user_id' => \auth()->id()]);
+            }
+        } catch (Exception $e) {
+            Log::emergency("-------------------------- UserActivityReport ----------------------------------------");
+            Log::emergency($e->getMessage());
+            Log::emergency("------------------------------------------------------------------");
+        }
+
+        try {
+            $senderMobileNumber = isset($request->mobileNumberForCoordination) ? $request->mobileNumberForCoordination : $request->senderMobileNumber;
+            if (BlockPhoneNumber::where('phoneNumber', $senderMobileNumber)->count()) {
+                $message[1] = 'شماره تلفن وارد شده در لیست ممنوعه می باشد، و امکان ثبت بار با شماره تلفن ' . $senderMobileNumber .
+                    ' امکان پذیر نمی باشد. لطفا برای دلیل آن با ایران ترابر تماس بگیرید';
+                return [
+                    'result' => UN_SUCCESS,
+                    'message' => $message
+                ];
+            }
+
+            if (BlockedIp::where('ip', request()->ip())->count()) {
+                $message[1] = 'عدم ثبت بار به دلیل مسدود شدن IP';
+                return [
+                    'result' => UN_SUCCESS,
+                    'message' => $message
+                ];
+            }
+
+
+            // ثبت ip کاربر
+            try {
+                if ($request->userType == ROLE_OWNER) {
+                    $owner = Owner::where('mobileNumber', $senderMobileNumber)->first();
+
+                    if (isset($owner->id)) {
+                        $owner->ip = request()->ip();
+                        $owner->save();
+                    }
+                }
+            } catch (Exception $e) {
+                Log::emergency("=========================== Error Store Ip ================================");
+                Log::emergency($e->getMessage());
+                Log::emergency("========================= End Error Store Ip ==============================");
+            }
+        } catch (\Exception $exception) {
+        }
+        foreach ($request->destinationCities as $destination_city) {
+            try {
+                $message[1] = '';
+                $loadPic = null;
+
+                if (isset($request->marketing_price))
+                    $request->marketing_price = $request->marketing_price;
+                else
+                    $request->marketing_price = 0;
+
+                if (!isset($request->tenderTimeDuration))
+                    $request->tenderTimeDuration = 15;
+
+                if ($request->image != "noImage") {
+                    $loadPic = "pictures/loads/" . sha1(time() . $request->user_id) . ".jpg";
+                    file_put_contents($loadPic, base64_decode($request->image));
+                }
+
+                DB::beginTransaction();
+
+                $load = new Load();
+                $load->title = strlen($request->title) > 0 ? $request->title : "بدون عنوان";
+                $load->weight = $request->weight;
+                $load->width = $this->convertNumbers($request->width, false);
+                $load->length = $this->convertNumbers($request->length, false);
+                $load->height = $this->convertNumbers($request->height, false);
+                // $load->loadingAddress = $request->loadingAddress;
+                // $load->dischargeAddress = $request->dischargeAddress;
+                $load->senderMobileNumber = $request->senderMobileNumber;
+                $load->receiverMobileNumber = $request->receiverMobileNumber;
+                $load->insuranceAmount = strlen($request->insuranceAmount) ? $request->insuranceAmount : 0;
+                $load->suggestedPrice = $request->suggestedPrice;
+                $load->marketing_price = $request->marketing_price;
+                $load->emergencyPhone = $request->emergencyPhone;
+                $load->dischargeTime = $request->dischargeTime;
+                $load->fleet_id = $request->fleet_id;
+                $load->load_type_id = $request->load_type_id;
+                $load->tenderTimeDuration = $request->tenderTimeDuration;
+                $load->packing_type_id = $request->packing_type_id;
+                $load->loadPic = $loadPic;
+                $load->user_id = $request->user_id;
+                $load->userType = $request->userType;
+                $load->loadMode = $request->loadMode;
+                $load->loadingHour = $request->loadingHour;
+                $load->loadingMinute = $request->loadingMinute;
+                $load->numOfTrucks = $request->numOfTrucks;
+
+                $load->origin_city_id = $request->origin_city_id;
+                $load->destination_city_id = $destination_city;
+
+                $load->fromCity = $this->getCityName($request->origin_city_id);
+                $load->toCity = $this->getCityName($destination_city);
+                try {
+                    $city = City::find($request->origin_city_id);
+                    if (isset($city->id)) {
+                        $load->latitude = $city->latitude;
+                        $load->longitude = $city->longitude;
+                    }
+                } catch (\Exception $exception) {
+                }
+
+
+                $load->loadingDate = $request->loadingDate;
+                $load->time = time();
+
+
+                $load->weightPerTruck = isset($request->weightPerTruck) && $request->weightPerTruck > 0 ? $this->convertNumbers($request->weightPerTruck, false) : 0;
+
+                $load->bulk = isset($request->bulk) ? $request->bulk : 2;
+                $load->dangerousProducts = isset($request->dangerousProducts) ? $request->dangerousProducts : false;
+
+                $load->origin_state_id = AddressController::geStateIdFromCityId($request->origin_city_id);
+                $load->description = $request->description;
+                if ($load->suggestedPrice == 0 && $request->storeFor == ROLE_DRIVER)
+                    $load->priceBased = 'توافقی';
+                else
+                    $load->priceBased = $request->priceBased;
+
+                if ($request->userType == ROLE_TRANSPORTATION_COMPANY) {
+                    $load->bearing_id = $request->user_id;
+                    $load->proposedPriceForDriver = $request->suggestedPrice;
+                }
+
+                $load->operator_id = 0;
+                // ذخیره توسط اپراتور
+                try {
+                    if (isset(\auth()->user()->role) && (\auth()->user()->role == ROLE_OPERATOR || \auth()->user()->role == ROLE_ADMIN)) {
+                        $load->operator_id = \auth()->id();
+                        $load->proposedPriceForDriver = $request->suggestedPrice;
+                        $load->status = ON_SELECT_DRIVER;
+                        $load->userType = ROLE_TRANSPORTATION_COMPANY;
+                    }
+                } catch (Exception $e) {
+                }
+
+                if (isset($request->proposedPriceForDriver))
+                    $load->proposedPriceForDriver = $this->convertNumbers($request->proposedPriceForDriver, false);
+
+                if ($request->loadMode == 'innerCity') {
+                    $load->origin_latitude = $request->origin_latitude;
+                    $load->origin_longitude = $request->origin_longitude;
+                    $load->destination_latitude = $request->destination_latitude;
+                    $load->destination_longitude = $request->destination_longitude;
+                }
+
+                if (isset($request->mobileNumberForCoordination)) {
+                    $load->mobileNumberForCoordination = convertFaNumberToEn($request->mobileNumberForCoordination);
+                } else if (isset($request->senderMobileNumber)) {
+                    $load->mobileNumberForCoordination = convertFaNumberToEn($request->senderMobileNumber);
+                    $load->mobileNumberForCoordination = convertFaNumberToEn($request->senderMobileNumber);
+                }
+
+
+                $load->status = 4;
+                $load->storeFor = $request->storeFor;
+
+                // if (isset($request->storeFor)) {
+
+
+                //     if ($request->storeFor == ROLE_DRIVER) {
+                //         $load->status = ON_SELECT_DRIVER;
+                //         //                    $load->userType = ROLE_CARGo_OWNER;
+                //     } else if ($request->storeFor == ROLE_TRANSPORTATION_COMPANY) {
+                //     }
+                // }
+
+                $load->deliveryTime = isset($request->deliveryTime) && $request->deliveryTime > 0 ? $request->deliveryTime : 24;
+
+                if ($load->operator_id == NO_OPERATOR)
+                    $load->urgent = true;
+
+                $load->save();
+
+                if (isset($request->dateOfCargoDeclaration)) {
+
+                    $dateOfCargoDeclarations = explode(",", str_replace(" ", "", str_replace("[", "", str_replace("]", "", $request->dateOfCargoDeclaration))));
+
+                    for ($dateOfCargoDeclarationIndex = 0; $dateOfCargoDeclarationIndex < count($dateOfCargoDeclarations); $dateOfCargoDeclarationIndex++) {
+                        if (strlen($dateOfCargoDeclarations[$dateOfCargoDeclarationIndex]) > 0) {
+                            $dateOfCargoDeclaration = new DateOfCargoDeclaration();
+                            $dateOfCargoDeclaration->load_id = $load->id;
+                            $dateOfCargoDeclaration->declarationDate = $dateOfCargoDeclarations[$dateOfCargoDeclarationIndex];
+                            $dateOfCargoDeclaration->save();
+                        }
+                    }
+                }
+
+                if (isset($load->id) && isset($request->fleetList)) {
+
+                    if ($request->userType == ROLE_TRANSPORTATION_COMPANY) {
+                        try {
+                            $tender = new Tender();
+                            $tender->load_id = $load->id;
+                            $tender->bearing_id = $request->user_id;
+                            $tender->suggestedPrice = $request->suggestedPrice;
+                            $tender->status = 0;
+                            $tender->save();
+                        } catch (\Exception $e) {
+                            Log::emergency($e->getMessage());
+                        }
+                    } else if ($request->userType == "customer") {
+                        try {
+                            $customer = Customer::find($request->user_id);
+                            if (isset($customer->freeLoads)) {
+                                $customer->freeLoads--;
+                                $customer->save();
+                            }
+                        } catch (\Exception $e) {
+                            Log::emergency("Error Save Load for customer: " . $e->getMessage());
+                        }
+                    }
+
+                    foreach ($request->fleetList as $item) {
+
+                        $fleetLoad = new FleetLoad();
+                        $fleetLoad->load_id = $load->id;
+                        $fleetLoad->fleet_id = $item['fleet_id'];
+                        $fleetLoad->numOfFleets = $item['numOfFleets'];
+                        $fleetLoad->userType = $load->userType;
+                        if ($request->userType == ROLE_TRANSPORTATION_COMPANY) {
+                            $load->proposedPriceForDriver = $request->suggestedPrice;
+                            $transportationCompany = Bearing::find($request->user_id);
+                            $transportationCompany->countOfLoadsAfterValidityDate -= 1;
+                            $transportationCompany->save();
+                        }
+                        $fleetLoad->save();
+                    }
+
+                    try {
+
+                        $load->fleets = FleetLoad::join('fleets', 'fleets.id', 'fleet_loads.fleet_id')
+                            ->where('fleet_loads.load_id', $load->id)
+                            ->select('fleet_id', 'userType', 'suggestedPrice', 'numOfFleets', 'pic', 'title')
+                            ->get();
+
+                        $fleets = json_decode($load->fleets, true);
+                        $loadDuplicates = Load::where('userType', 'operator')
+                            ->where('mobileNumberForCoordination', $load->mobileNumberForCoordination)
+                            ->where('origin_city_id', $request->origin_city_id)
+                            ->where('destination_city_id', $request->destination_city_id)
+                            ->where('fleets', 'LIKE', '%' . $fleets[0]['fleet_id'] . '%')
+                            ->get();
+                        // return $loadDuplicates;
+
+                        if (count($loadDuplicates) > 0) {
+                            foreach ($loadDuplicates as $loadDuplicate) {
+                                $loadDuplicate->delete();
+                            }
+                        }
+
+                        $load->save();
+                    } catch (\Exception $exception) {
+                        Log::emergency("---------------------------------------------------------");
+                        Log::emergency($exception->getMessage());
+                        Log::emergency("---------------------------------------------------------");
+                    }
+                    DB::commit();
+                }
+
+            } catch (\Exception $exception) {
+                DB::rollBack();
+                Log::emergency("----------------------ثبت بار جدید-----------------------");
+                Log::emergency($exception);
+                Log::emergency("---------------------------------------------------------");
+            }
+        }
+        if (isset($load->id)) {
+            return [
+                'result' => SUCCESS,
+                // 'load_id' => $load->id
+            ];
+        }
+
 
         $message[1] = 'خطا! لطفا دوباره تلاش کنید';
         return [
