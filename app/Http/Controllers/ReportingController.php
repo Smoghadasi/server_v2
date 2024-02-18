@@ -304,15 +304,36 @@ class ReportingController extends Controller
 
         return view('admin.reporting.driversContactCall', compact(['basedCalls', 'basedFleets', 'groupBy']));
     }
-    public function driversCountCall()
+    public function driversCountCall($basedCalls = [], $showSearchResult = false)
     {
-        $basedCalls = DriverCallCount::with('driver')->groupBy('driver_id')
+        if (!$showSearchResult) {
+            $basedCalls = DriverCallCount::with('driver')->groupBy('driver_id')
+                ->select('driver_id', 'persian_date', 'created_date', DB::raw('sum(calls) as countOfCalls'))
+                //            ->orderByDesc('persian_date')
+                ->orderByDesc('countOfCalls')
+                ->paginate(20);
+        }
+        return view('admin.reporting.driversCountCall', compact('basedCalls'));
+    }
+
+    public function searchDriversCountCall(Request $request)
+    {
+        $basedCalls = DriverCallCount::with('driver')
+            ->whereHas('driver', function ($q) use ($request) {
+                $q->where('mobileNumber', $request->mobileNumber);
+            })
+            ->groupBy('driver_id')
             ->select('driver_id', 'persian_date', 'created_date', DB::raw('sum(calls) as countOfCalls'))
             //            ->orderByDesc('persian_date')
             ->orderByDesc('countOfCalls')
             ->paginate(20);
+        if (count($basedCalls))
+            return $this->driversCountCall($basedCalls, true);
+
         return view('admin.reporting.driversCountCall', compact('basedCalls'));
     }
+
+
 
 
     // تفکیک ناوگان ثبت نامی از ابتدا

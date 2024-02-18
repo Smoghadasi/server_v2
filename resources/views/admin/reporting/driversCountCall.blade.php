@@ -7,6 +7,18 @@
         </h5>
         <div class="card-body">
 
+            <form class="my-4" method="post" action="{{ route('search.driverCall.count') }}">
+                @csrf
+                <div class="form-group row">
+                    <div class="col-md-4">
+                        <input class="form-control" name="mobileNumber" id="mobileNumber" placeholder="شماره موبایل...">
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-primary mr-2">جستجو</button>
+                    </div>
+                </div>
+            </form>
+
             <div class="mt-2">
                 <table class="table table-bordered">
                     <thead>
