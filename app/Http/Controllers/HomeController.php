@@ -7,6 +7,7 @@ use App\Models\Bearing;
 use App\Models\ContactUs;
 use App\Models\Customer;
 use App\Models\Driver;
+use App\Models\DriverActivity;
 use App\Models\Load;
 use App\Models\LoadBackup;
 use App\Models\Owner;
@@ -124,5 +125,27 @@ class HomeController extends Controller
         } catch (\Exception $exception) {
         }
         return back()->with('success', 'ذخیره شد');
+    }
+
+    public function driverActivityVersion($version)
+    {
+
+        $activityReportOfDriversFromPreviousMonth = [];
+        for ($index = 30; $index >= 0; $index--) {
+            $day = date('Y-m-d', strtotime('-' . $index . 'day', time()));
+            $activityReportOfDriversFromPreviousMonth[] = [
+                'label' => str_replace('-', '/', convertEnNumberToFa(gregorianDateToPersian($day, '-'))),
+                'value' => DriverActivity::whereHas('driver', function ($q) use ($version) {
+                    $q->where('version', $version);
+                })->where([
+                    ['created_at', '>', $day . ' 00:00:00'],
+                    ['created_at', '<', $day . ' 23:59:59']
+                ])->count()
+            ];
+        }
+        return view(
+            'admin.reporting.driverActivityReportVersion',
+            compact('activityReportOfDriversFromPreviousMonth')
+        );
     }
 }

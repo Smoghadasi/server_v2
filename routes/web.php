@@ -111,6 +111,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('appVersions', [HomeController::class, 'appVersions']);
         Route::post('storeAppVersions', [HomeController::class, 'storeAppVersions']);
 
+        Route::get('driverActivityVersion/{version}', [HomeController::class, 'driverActivityVersion'])->name('driver.activity.version');
+
+
         // شهرها و استان ها
         Route::get('provincesAndCities', [AddressController::class, 'provincesAndCities'])->middleware('operator');
 
