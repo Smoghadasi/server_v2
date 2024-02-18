@@ -313,7 +313,10 @@ class ReportingController extends Controller
                 ->orderByDesc('countOfCalls')
                 ->paginate(20);
         }
-        return view('admin.reporting.driversCountCall', compact('basedCalls'));
+        $fromDate = gregorianDateToPersian(date('Y/m/d', time()), '/');
+        $toDate = $fromDate;
+
+        return view('admin.reporting.driversCountCall', compact('basedCalls', 'fromDate', 'toDate'));
     }
 
     public function searchDriversCountCall(Request $request)
@@ -324,13 +327,11 @@ class ReportingController extends Controller
             })
             ->groupBy('driver_id')
             ->select('driver_id', 'persian_date', 'created_date', DB::raw('sum(calls) as countOfCalls'))
-            //            ->orderByDesc('persian_date')
             ->orderByDesc('countOfCalls')
+            ->whereBetween('persian_date', [$request->fromDate, $request->toDate])
             ->paginate(20);
         if (count($basedCalls))
             return $this->driversCountCall($basedCalls, true);
-
-        return view('admin.reporting.driversCountCall', compact('basedCalls'));
     }
 
 
