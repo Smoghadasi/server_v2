@@ -30,7 +30,7 @@
                         <tr>
                             <th>#</th>
                             <th>نام و نام خانوادگی</th>
-                            <th>مجموع تماس های رایگان</th>
+                            {{-- <th>مجموع تماس های رایگان</th> --}}
                             <th>نوع</th>
                             <th>تعداد</th>
                             <th>تاریخ</th>
@@ -46,7 +46,7 @@
                                 <td>{{ $freeSubscription->driver->name . ' ' . $freeSubscription->driver->lastName }}
                                     ({{ $freeSubscription->driver->mobileNumber }})
                                 </td>
-                                <td>{{ $freeSubscription->driver->freeCallTotal }}</td>
+                                {{-- <td>{{ $freeSubscription->driver->freeCallTotal }}</td> --}}
                                 <td>
                                     @switch($freeSubscription->type)
                                         @case(AUTH_CALLS)
