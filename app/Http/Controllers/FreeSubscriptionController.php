@@ -18,6 +18,7 @@ class FreeSubscriptionController extends Controller
         $freeSubscriptions = FreeSubscription::with('driver')
             ->orderByDesc('created_at')
             ->where('value', '!=', 0)
+            ->whereIn('type', ['AuthCalls', 'AuthValidity'])
             ->paginate(20);
         $authCallToDay = FreeSubscription::where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
             ->where('type', 'AuthCalls')
@@ -101,6 +102,7 @@ class FreeSubscriptionController extends Controller
             })
             ->orderByDesc('created_at')
             ->where('value', '!=', 0)
+            ->whereIn('type', ['AuthCalls', 'AuthValidity'])
             ->get();
         $authCallToDay = FreeSubscription::where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
             ->where('type', 'AuthCalls')

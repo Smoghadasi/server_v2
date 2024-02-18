@@ -46,7 +46,7 @@
                                 <td>{{ $freeSubscription->driver->name . ' ' . $freeSubscription->driver->lastName }}
                                     ({{ $freeSubscription->driver->mobileNumber }})
                                 </td>
-                                <td>{{ $freeSubscription->driver->freeAcceptLoads }}</td>
+                                <td>{{ $freeSubscription->driver->freeCallTotal }}</td>
                                 <td>
                                     @switch($freeSubscription->type)
                                         @case(AUTH_CALLS)
