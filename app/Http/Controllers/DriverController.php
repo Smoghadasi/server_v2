@@ -835,6 +835,20 @@ class DriverController extends Controller
                 $driverCall->callingDate = date("Y-m-d");
                 $driverCall->save();
 
+                $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+
+                $driverCallCount = DriverCallCount::where('persian_date', $persian_date)->first();
+                if ($driverCallCount === null) {
+                    $driverCallCountNew = new DriverCallCount();
+                    $driverCallCountNew->persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+                    $driverCallCountNew->calls = 1;
+                    $driverCallCountNew->driver_id = $driver->id;
+                    $driverCallCountNew->save();
+                }else{
+                    $driverCallCount->calls += 1;
+                    $driverCallCount->save();
+                }
+
 
                 $load = Load::find($load_id);
 
