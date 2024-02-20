@@ -62,12 +62,12 @@ class Load extends Model
 
     public function getOriginCityAttribute()
     {
-        return City::where('id', $this->origin_city_id)->select('name as from', 'state as provinceFrom')->first();
+        return CityOwner::where('id', $this->origin_city_id)->select('name as from', 'state as provinceFrom')->first();
     }
 
     public function getDestinationCityAttribute()
     {
-        return City::where('id', $this->destination_city_id)->select('name as to', 'state as provinceTo')->first();
+        return CityOwner::where('id', $this->destination_city_id)->select('name as to', 'state as provinceTo')->first();
     }
 
 

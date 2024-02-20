@@ -344,6 +344,10 @@ class LoadController extends Controller
             $load->loadingHour = $request->loadingHour;
             $load->loadingMinute = $request->loadingMinute;
             $load->numOfTrucks = $request->numOfTrucks;
+            $load->originLatitude = $request->originLatitude;
+            $load->originLongitude = $request->originLongitude;
+            $load->destinationLatitude = $request->destinationLatitude;
+            $load->destinationLongitude = $request->destinationLongitude;
 
             if (isset($request->origin_city_id) && isset($request->destination_city_id)) {
 
@@ -377,10 +381,6 @@ class LoadController extends Controller
                 } else
                     $load->toCity = $request->dischargeAddress;
 
-                $load->originLatitude = $request->originLatitude;
-                $load->originLongitude = $request->originLongitude;
-                $load->destinationLatitude = $request->destinationLatitude;
-                $load->destinationLongitude = $request->destinationLongitude;
 
                 $load->latitude = $load->originLatitude;
                 $load->longitude = $load->originLongitude;
@@ -3270,6 +3270,13 @@ class LoadController extends Controller
             $load->origin_city_id = $request->origin_city_id;
             $load->destination_city_id = $request->destination_city_id;
 
+            if ($request->loadMode == 'innerCity') {
+                $load->origin_latitude = $request->origin_latitude;
+                $load->origin_longitude = $request->origin_longitude;
+                $load->destination_latitude = $request->destination_latitude;
+                $load->destination_longitude = $request->destination_longitude;
+            }
+
             if (isset($request->origin_city_id) && isset($request->destination_city_id)) {
 
                 $load->origin_city_id = $request->origin_city_id;
@@ -3324,12 +3331,7 @@ class LoadController extends Controller
             if (isset($request->proposedPriceForDriver))
                 $load->proposedPriceForDriver = $this->convertNumbers($request->proposedPriceForDriver, false);
 
-            if ($request->loadMode == 'innerCity') {
-                $load->origin_latitude = $request->origin_latitude;
-                $load->origin_longitude = $request->origin_longitude;
-                $load->destination_latitude = $request->destination_latitude;
-                $load->destination_longitude = $request->destination_longitude;
-            }
+
 
             if (isset($request->mobileNumberForCoordination))
                 $load->mobileNumberForCoordination = convertFaNumberToEn($request->mobileNumberForCoordination);
