@@ -791,10 +791,27 @@ class DriverController extends Controller
                     $driver->freeCalls--;
                     $driver->save();
                 }
+                $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+
+                // گزارش رانندگان بر اساس تماس
+                $driverCallCount = DriverCallCount::where('driver_id', $driver->id)
+                    ->where('persian_date', $persian_date)
+                    ->first();
+                if (isset($driverCallCount->id)) {
+                    $driverCallCount->calls += 1;
+                    $driverCallCount->created_date = $driver->created_at;
+                    $driverCallCount->save();
+                } else {
+                    $driverCallCount = new DriverCallCount();
+                    $driverCallCount->persian_date = $persian_date;
+                    $driverCallCount->calls = 1;
+                    $driverCallCount->driver_id = $driver->id;
+                    $driverCallCount->created_date = $driver->created_at;
+                    $driverCallCount->save();
+                }
 
                 // فعالیت رانندگان بر اساس تماس
                 if (DriverCall::where('created_at', '>', date("Y-m-d", time()) . " 00:00:00")->where('driver_id', $driver->id)->count() == 0) {
-                    $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
 
                     // گزارش رانندگان بر اساس ناوگان
                     $driverCallReport = DriverCallReport::where('fleet_id', $driver->fleet_id)
@@ -809,22 +826,6 @@ class DriverController extends Controller
                         $driverCallReport->calls = 1;
                         $driverCallReport->fleet_id = $driver->fleet_id;
                         $driverCallReport->save();
-                    }
-                    // گزارش رانندگان بر اساس تماس
-                    $driverCallCount = DriverCallCount::where('driver_id', $driver->id)
-                        ->where('persian_date', $persian_date)
-                        ->first();
-                    if (isset($driverCallCount->id)) {
-                        $driverCallCount->calls += 1;
-                        $driverCallCount->created_date = $driver->created_at;
-                        $driverCallCount->save();
-                    } else {
-                        $driverCallCount = new DriverCallCount();
-                        $driverCallCount->persian_date = $persian_date;
-                        $driverCallCount->calls = 1;
-                        $driverCallCount->driver_id = $driver->id;
-                        $driverCallCount->created_date = $driver->created_at;
-                        $driverCallCount->save();
                     }
                 }
 

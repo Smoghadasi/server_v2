@@ -332,6 +332,8 @@ class ReportingController extends Controller
             ->paginate(20);
         if (count($basedCalls))
             return $this->driversCountCall($basedCalls, true);
+        else
+            return back()->with('danger', 'در این تاریخ یافت نشد.');
     }
 
 

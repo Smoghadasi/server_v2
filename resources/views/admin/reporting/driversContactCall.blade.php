@@ -3,7 +3,7 @@
 @section('content')
     <div class="card">
         <h5 class="card-header">
-            نمدار فعالیت رانندگان بر اساس تماس
+            نمودار فعالیت رانندگان بر اساس تماس
         </h5>
         <div class="card-body">
             <table class="table">
