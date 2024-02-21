@@ -4,7 +4,14 @@
 
     <div class="card">
         <h5 class="card-header">
-            لیست بار ها
+            <div class="row justify-content-between">
+                <div class="col-6">لیست بار ها</div>
+                <div class="col-6" style="text-align: left">
+                    <a href="{{ route('owner.reject') }}" class="alert p-1 alert-danger">بار های فعال : {{ $loadsCount }}</a>
+                    <a href="{{ route('owner.accept') }}" class="alert p-1 alert-success">بایگانی : {{ $loadsTrashedCount }}</a>
+
+                </div>
+            </div>
         </h5>
         <div class="card-body">
             <table class="table">

@@ -1933,7 +1933,9 @@ class LoadController extends Controller
             ->orderBy('id', 'desc')
             ->withTrashed()
             ->get();
-        return view('admin.customerLoads', compact('loads'));
+        $loadsTrashedCount = Load::onlyTrashed()->where('userType', 'owner')->where('user_id', $owner_id)->count();
+        $loadsCount = Load::where('userType', 'owner')->where('user_id', $owner_id)->count();
+        return view('admin.customerLoads', compact(['loads', 'loadsTrashedCount','loadsCount']));
     }
 
     public function loadBackup($loads = [], $showSearchResult = false)

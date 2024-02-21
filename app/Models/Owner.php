@@ -11,10 +11,16 @@ class Owner extends Model
     use HasFactory;
 
     protected $guarded = [];
+    protected $appends = ['numOfLoads'];
 
     public function operatorMessages()
     {
         return $this->hasMany(OperatorOwnerAuthMessage::class);
+    }
+
+    public function getNumOfLoadsAttribute()
+    {
+        return Load::where('user_id', $this->id)->where('userType', 'owner')->withTrashed()->count();
     }
 
     public function acceptCustomerSms($mobile)
