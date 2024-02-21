@@ -470,7 +470,7 @@ class DriverController extends Controller
         }
 
         //        if ($countOfMobileNumber > 0 || $countOfNationalCode > 0 || $countOfSmartCode > 0) {
-        if ($countOfMobileNumber > 0 || $countOfNationalCode > 0) {
+        if ($countOfMobileNumber > 0) {
             return [
                 'result' => UN_SUCCESS,
                 'message' => $message
@@ -1292,6 +1292,15 @@ class DriverController extends Controller
             'result' => false,
             'message' => 'خطا در ذخیره اطلاعات! لطفا دوباره تلاش کنید'
         ]);
+    }
+
+    public function updateLocation(Request $request, Driver $driver)
+    {
+        $driver->latitude = $request->latitude;
+        $driver->longitude = $request->longitude;
+        // $driver->city_id = $request->city_id;
+        $driver->save();
+        return response()->json('اطلاعات جدید ذخیره شد', 200);
     }
 
     /*******************************************************************************************************/

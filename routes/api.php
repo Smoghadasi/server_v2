@@ -509,6 +509,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // بروز رسانی اطلاعات راننده
         Route::put('updateDriverProfileInfo/{driver}', [DriverController::class, 'updateProfileInfo']);
 
+        Route::put('updateLocation/{driver}', [DriverController::class, 'updateLocation']);
+
         //
         Route::get('driverAppVersion/{driver}/{version}', [DriverController::class, 'driverAppVersion']);
 
