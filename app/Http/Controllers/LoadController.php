@@ -4393,7 +4393,7 @@ class LoadController extends Controller
         if ($request->mobileNumber != "0" && $request->mobileNumber != null)
             $condition[] = ['mobileNumberForCoordination', $request->mobileNumber];
 
-        $loads = Load::where($condition)->get();
+        $loads = Load::where($condition)->withTrashed()->get();
         $cities = City::orderby('centerOfProvince', 'desc')->get();
         $fleets = Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
         $operators = User::where([['role', 'operator'], ['status', 1]])->get();

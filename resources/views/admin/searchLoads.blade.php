@@ -79,8 +79,8 @@
                         <table class="table small">
                             <thead>
                                 <tr>
-                                    <th>انتخاب</th>
-                                    <th>#</th>
+                                    <th></th>
+                                    <th>ردیف</th>
                                     <th>عنوان بار</th>
                                     <th>شماره تماس</th>
                                     <th>ناوگان</th>
@@ -100,7 +100,12 @@
                                         <td>
                                             {{ $key + 1 }}
                                         </td>
-                                        <td>{{ $load->title }}</td>
+                                        <td>
+                                            @if ($load->deleted_at != null)
+                                                <i class="menu-icon tf-icons bx bx-trash text-danger"></i>
+                                            @endif
+                                            {{ $load->title }}
+                                        </td>
                                         <td>{{ $load->mobileNumberForCoordination }}</td>
                                         <td>
                                             @php
@@ -137,12 +142,7 @@
                                                                 جزئیات
                                                             </a>
                                                         </li>
-                                                        <li>
-                                                            <a class="dropdown-item"
-                                                            href="{{ url('admin/acceptLoadFromLoadList') }}/{{ $load->id }}">تایید
-                                                                بار
-                                                            </a>
-                                                        </li>
+
                                                         <li>
                                                             <button type="button" class="dropdown-item" data-bs-toggle="modal"
                                                                     data-bs-target="#removeLoad_{{ $load->id }}">حذف
