@@ -3,10 +3,27 @@
 @section('content')
     <div class="card">
         <h5 class="card-header">
-            فعالیت رانندگان بر اساس زمان (امروز)
+            <div class="row justify-content-between">
+                <div class="col">
+                    فعالیت رانندگان بر اساس زمان (امروز)
+                </div>
+                <div class="col" style="text-align: left;">
+                    <a href="#" class="alert p-1 alert-primary">مجموع تماس های رایگان امروز: {{ $driversActivitiesCallDatesCount }}</a>
+                </div>
+            </div>
         </h5>
         <div class="card-body">
-
+            <form method="post" action="{{ route('search.driver.activitiesCallDate') }}">
+                @csrf
+                <div class="form-group row">
+                    <div class="col-md-4 my-3">
+                        <input class="form-control" name="phoneNumber" id="phoneNumber" placeholder="جستجو بر اساس: شماره تماس گرفته شده">
+                    </div>
+                    <div class="col-md-4 mt-3">
+                        <button type="submit" class="btn btn-primary mr-2">جستجو</button>
+                    </div>
+                </div>
+            </form>
             <div class="mt-2">
                 <table class="table table-bordered">
                     <thead>
@@ -20,9 +37,11 @@
                     </thead>
 
                     <tbody>
-                        @foreach ($driversActivitiesCallDates as $driversActivitiesCallDate)
+                        @foreach ($driversActivitiesCallDates as $key => $driversActivitiesCallDate)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
+                                <td>
+                                    {{ ($driversActivitiesCallDates->currentPage() - 1) * $driversActivitiesCallDates->perPage() + ($key + 1) }}
+                                </td>
                                 <td>{{ $driversActivitiesCallDate->driver->name . ' ' . $driversActivitiesCallDate->driver->lastName . ' ( ' . $driversActivitiesCallDate->driver->mobileNumber . ' ) ' }}</td>
                                 <td>{{ $driversActivitiesCallDate->driver->fleetTitle}}</td>
                                 <td>{{ $driversActivitiesCallDate->phoneNumber }}</td>

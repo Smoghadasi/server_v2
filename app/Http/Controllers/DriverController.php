@@ -867,13 +867,19 @@ class DriverController extends Controller
         return getDriverPackagesInfo();
     }
 
-    public function driversActivitiesCallDate()
+    public function driversActivitiesCallDate($driversActivitiesCallDates = [], $showSearchResult = false)
     {
-        $driversActivitiesCallDates = DriverCall::with('driver')
+        if (!$showSearchResult) {
+            $driversActivitiesCallDates = DriverCall::with('driver')
+                ->where('callingDate', now()->format('Y-m-d'))
+                ->orderByDesc('created_at')
+                ->paginate(20);
+        }
+        $driversActivitiesCallDatesCount = DriverCall::with('driver')
             ->where('callingDate', now()->format('Y-m-d'))
             ->orderByDesc('created_at')
-            ->paginate(20);
-        return view('admin.driversActivitiesCallDate', compact('driversActivitiesCallDates'));
+            ->count();
+        return view('admin.driversActivitiesCallDate', compact('driversActivitiesCallDates', 'driversActivitiesCallDatesCount'));
     }
     public function driversActivitiesCall(Driver $driver)
     {
@@ -882,7 +888,22 @@ class DriverController extends Controller
             ->where('driver_id', $driver->id)
             ->orderByDesc('created_at')
             ->paginate(20);
-        return view('admin.driversActivitiesCallDate', compact('driversActivitiesCallDates'));
+        $driversActivitiesCallDatesCount = DriverCall::with('driver')
+            ->where('callingDate', now()->format('Y-m-d'))
+            ->orderByDesc('created_at')
+            ->count();
+        return view('admin.driversActivitiesCallDate', compact('driversActivitiesCallDates', 'driversActivitiesCallDatesCount'));
+    }
+
+    public function searchDriversActivitiesCallDate(Request $request)
+    {
+        $driversActivitiesCallDates = DriverCall::with('driver')
+            ->where('callingDate', now()->format('Y-m-d'))
+            ->where('phoneNumber', $request->phoneNumber)
+            ->orderByDesc('created_at')
+            ->paginate(20);
+        if (count($driversActivitiesCallDates))
+            return $this->driversActivitiesCallDate($driversActivitiesCallDates, true);
     }
 
     public function driversActivities(Request $request, $date = null)

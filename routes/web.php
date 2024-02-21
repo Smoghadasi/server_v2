@@ -138,6 +138,13 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('driversActivitiesCallDate', [DriverController::class, 'driversActivitiesCallDate'])->middleware('operator')->name('report.driversActivitiesCallDate');
         Route::get('driversActivitiesCallDate/{driver}', [DriverController::class, 'driversActivitiesCall'])->middleware('operator')->name('report.driversActivitiesCallDate.show');
 
+        Route::post('searchDriversActivitiesCallDate', [DriverController::class, 'searchDriversActivitiesCallDate'])
+            ->middleware('operator')
+            ->name('search.driver.activitiesCallDate');
+
+        Route::get('searchDriversActivitiesCallDate', function () {
+            return redirect('admin/driversActivitiesCallDate');
+        });
 
         Route::match(['post', 'get'], 'driversActivities/{date?}', [DriverController::class, 'driversActivities'])->middleware('operator');
 
