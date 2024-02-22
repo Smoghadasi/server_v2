@@ -243,7 +243,7 @@ class LoadController extends Controller
 
     public function createNewLoad(NewLoadRequest $request)
     {
-
+        Log::emergency($request);
         try {
 
             if (\auth()->check()) {
@@ -675,7 +675,7 @@ class LoadController extends Controller
             }
         } catch (\Exception $exception) {
         }
-        foreach ($request->destinationCities as $destination_city) {
+        foreach ($request->destinationCities as $key => $destination_city) {
             try {
                 $message[1] = '';
                 $loadPic = null;
@@ -721,6 +721,12 @@ class LoadController extends Controller
                 $load->loadingHour = $request->loadingHour;
                 $load->loadingMinute = $request->loadingMinute;
                 $load->numOfTrucks = $request->numOfTrucks;
+
+                $load->originLatitude = $request->originLatitude;
+                $load->originLongitude = $request->originLongitude;
+
+                $load->destinationLatitude = $request->destinationLatitudes[$key];
+                $load->destinationLongitude = $request->destinationLongitudes[$key];
 
                 $load->origin_city_id = $request->origin_city_id;
                 $load->destination_city_id = $destination_city;
