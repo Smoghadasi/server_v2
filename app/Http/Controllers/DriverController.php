@@ -24,6 +24,7 @@ use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use SoapClient;
 
@@ -1292,15 +1293,6 @@ class DriverController extends Controller
             'result' => false,
             'message' => 'خطا در ذخیره اطلاعات! لطفا دوباره تلاش کنید'
         ]);
-    }
-
-    public function updateLocation(Request $request, Driver $driver)
-    {
-        $driver->latitude = $request->latitude;
-        $driver->longitude = $request->longitude;
-        // $driver->city_id = $request->city_id;
-        $driver->save();
-        return response()->json('اطلاعات جدید ذخیره شد', 200);
     }
 
     /*******************************************************************************************************/

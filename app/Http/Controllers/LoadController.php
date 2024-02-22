@@ -3901,6 +3901,9 @@ class LoadController extends Controller
     // جستجوی بارهای نزدیک من
     public function searchTheNearestCargo(Request $request, Driver $driver, $city = null, $radius = 1000)
     {
+        $driver->latitude = $request->latitude;
+        $driver->longitude = $request->longitude;
+        $driver->save();
         $rows = 150;
 
         try {
