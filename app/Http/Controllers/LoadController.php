@@ -3277,6 +3277,11 @@ class LoadController extends Controller
             $load->numOfTrucks = $request->numOfTrucks;
             $load->origin_city_id = $request->origin_city_id;
             $load->destination_city_id = $request->destination_city_id;
+            $load->originLatitude = $request->originLatitude;
+            $load->originLongitude = $request->originLongitude;
+            $load->destinationLatitude = $request->destinationLatitude;
+            $load->destinationLongitude = $request->destinationLongitude;
+
 
             if ($request->loadMode == 'innerCity') {
                 $load->origin_latitude = $request->origin_latitude;
@@ -3300,30 +3305,6 @@ class LoadController extends Controller
                     }
                 } catch (\Exception $exception) {
                 }
-            } else {
-
-                $originCity = $this->getCountyFromFullAddress($request->loadingAddress);
-                $destinationCity = $this->getCountyFromFullAddress($request->dischargeAddress);
-
-                if (isset($originCity->id)) {
-                    $load->origin_city_id = $originCity->id;
-                    $load->fromCity = $originCity->state . ', ' . $originCity->name;
-                } else
-                    $load->fromCity = $request->loadingAddress;
-
-                if (isset($destinationCity->id)) {
-                    $load->destination_city_id = $destinationCity->id;
-                    $load->toCity = $destinationCity->state . ', ' . $destinationCity->name;
-                } else
-                    $load->toCity = $request->dischargeAddress;
-
-                $load->originLatitude = $request->originLatitude;
-                $load->originLongitude = $request->originLongitude;
-                $load->destinationLatitude = $request->destinationLatitude;
-                $load->destinationLongitude = $request->destinationLongitude;
-
-                $load->latitude = $load->originLatitude;
-                $load->longitude = $load->originLongitude;
             }
 
             $load->origin_state_id = AddressController::geStateIdFromCityId($request->origin_city_id);
