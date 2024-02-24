@@ -290,10 +290,15 @@
                         @if(in_array('reportcargofleets',auth()->user()->userAccess))
                             <li class="menu-item">
                                 <a class="menu-link" href="{{ route('report.cargo.fleets') }}">
-                                    <span>گزارش بار ها به تفکیک ناوگان</span>
+                                    <span>بار ها به تفکیک ناوگان</span>
                                 </a>
                             </li>
                         @endif
+                        <li class="menu-item">
+                            <a class="menu-link" href="{{ route('reporting.usersByCity') }}">
+                                <span>استفاده کنندگان به تفکیک شهرستان</span>
+                            </a>
+                        </li>
                         @if(in_array('freeSubscription',auth()->user()->userAccess))
                             <li class="menu-item">
                                 <a class="menu-link" href="{{ route('freeSubscription.index') }}">
@@ -304,24 +309,24 @@
                         @if(in_array('driverActivityReport',auth()->user()->userAccess))
                             <li class="menu-item">
                                 <a class="menu-link" href="{{ url('admin/driverActivityReport') }}">
-                                    <div data-i18n="Without menu">گزارش فعالیت رانندگان</div>
+                                    <div data-i18n="Without menu">فعالیت رانندگان</div>
                                 </a>
                             </li>
                             <li class="menu-item">
                                 <a class="menu-link" href="{{ url('admin/driversPaymentReport') }}">
-                                    <div data-i18n="Without menu">گزارش پرداخت رانندگان</div>
+                                    <div data-i18n="Without menu">پرداخت رانندگان</div>
                                 </a>
                             </li>
                         @endif
                         @if(in_array('driversContactCall',auth()->user()->userAccess))
                             <li class="menu-item">
                                 <a href="{{ route('report.driversContactCall') }}" class="menu-link">
-                                    <div data-i18n="Without menu">گزارش ناوگان بر اساس تماس</div>
+                                    <div data-i18n="Without menu">ناوگان بر اساس تماس</div>
                                 </a>
                             </li>
                             <li class="menu-item">
                                 <a href="{{ route('report.driversCountCall') }}" class="menu-link">
-                                    <div data-i18n="Without menu">گزارش رانندگان بر اساس بیشترین تماس</div>
+                                    <div data-i18n="Without menu">رانندگان بر اساس بیشترین تماس</div>
                                 </a>
                             </li>
                             <li class="menu-item">
@@ -340,7 +345,7 @@
                             <li class="menu-item">
                                 <a class="menu-link"
                                 href="{{ url('admin/transportationCompaniesActivityReport') }}">
-                                    <div data-i18n="Without menu">گزارش فعالیت باربری ها</div>
+                                    <div data-i18n="Without menu">فعالیت باربری ها</div>
                                 </a>
                             </li>
                             <li class="menu-item">

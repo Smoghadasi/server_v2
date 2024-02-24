@@ -322,14 +322,11 @@ class ReportingController extends Controller
 
     public function usersByCity()
     {
-        // $users = Driver::whereNotNull('city_id')->get();
-
         $users = Driver::with('cityOwner')->select('city_id', DB::raw('count(`city_id`) as count'))
             ->groupBy('city_id')
             ->having('count', '>', 1)
             ->orderByDesc('count')
             ->paginate(15);
-            // return $users;
 
         return view('admin.reporting.usersByCity', compact('users'));
     }
