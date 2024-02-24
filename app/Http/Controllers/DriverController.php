@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AppVersion;
 use App\Models\CargoConvertList;
 use App\Models\City;
+use App\Models\CityOwner;
 use App\Models\Driver;
 use App\Models\DriverActivity;
 use App\Models\DriverCall;
@@ -1293,6 +1294,22 @@ class DriverController extends Controller
             'result' => false,
             'message' => 'خطا در ذخیره اطلاعات! لطفا دوباره تلاش کنید'
         ]);
+    }
+
+    public function updateLocation(Request $request, Driver $driver)
+    {
+
+        try {
+
+            $driver->latitude = $request->latitude;
+            $driver->longitude = $request->longitude;
+            $city = CityOwner::where('name', $request->city)->first();
+            $driver->city_id = $city->id;
+            $driver->save();
+            return response()->json('اطلاعات جدید ذخیره شد', 200);
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
     }
 
     /*******************************************************************************************************/
