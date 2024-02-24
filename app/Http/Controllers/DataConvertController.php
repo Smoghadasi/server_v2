@@ -743,6 +743,66 @@ class DataConvertController extends Controller
                     Log::emergency($exception->getMessage());
                     Log::emergency("---------------------------------------------------------");
                 }
+
+                try {
+                    $backup = new LoadBackup();
+                    $backup->id = $load->id;
+                    $backup->title = $load->title;
+                    $backup->weight = $load->weight;
+                    $backup->width = $load->width;
+                    $backup->length = $load->length;
+                    $backup->height = $load->height;
+                    $backup->loadingAddress = $load->loadingAddress;
+                    $backup->dischargeAddress = $load->dischargeAddress;
+                    $backup->senderMobileNumber = $load->senderMobileNumber;
+                    $backup->receiverMobileNumber = $load->receiverMobileNumber;
+                    $backup->insuranceAmount = $load->insuranceAmount;
+                    $backup->marketing_price = 0;
+                    $backup->emergencyPhone = $load->emergencyPhone;
+                    $backup->dischargeTime = $load->dischargeTime;
+                    $backup->fleet_id = $load->fleet_id;
+                    $backup->load_type_id = $load->load_type_id;
+                    $backup->tenderTimeDuration = $load->tenderTimeDuration;
+                    $backup->packing_type_id = $load->packing_type_id;
+                    $backup->loadPic = $load->loadPic;
+                    $backup->user_id = $load->user_id;
+                    $backup->loadMode = $load->loadMode;
+                    $backup->loadingHour = $load->loadingHour;
+                    $backup->loadingMinute = $load->loadingMinute;
+                    $backup->numOfTrucks = $load->numOfTrucks;
+                    $backup->origin_city_id = $load->origin_city_id;
+                    $backup->destination_city_id = $load->destination_city_id;
+                    $backup->fromCity = $load->fromCity;
+                    $backup->toCity = $load->toCity;
+                    $backup->loadingDate = $load->loadingDate;
+                    $backup->time = $load->time;
+                    $backup->latitude = $load->latitude;
+                    $backup->longitude = $load->longitude;
+                    $backup->weightPerTruck = $load->weightPerTruck;
+                    $backup->bulk = $load->bulk;
+                    $backup->dangerousProducts = $load->dangerousProducts;
+                    $backup->origin_state_id = $load->origin_state_id;
+                    $backup->description = $load->description;
+                    $backup->priceBased = $load->priceBased;
+                    $backup->bearing_id = $load->bearing_id;
+                    $backup->proposedPriceForDriver = $load->proposedPriceForDriver;
+                    $backup->suggestedPrice = $load->suggestedPrice;
+                    $backup->operator_id = $load->operator_id;
+                    $backup->userType = $load->userType;
+                    $backup->origin_longitude = $load->origin_longitude;
+                    $backup->destination_longitude = $load->destination_longitude;
+                    $backup->mobileNumberForCoordination = $load->mobileNumberForCoordination;
+                    $backup->storeFor = $load->storeFor;
+                    $backup->status = $load->status;
+                    $backup->fleets = $load->fleets;
+                    $backup->deliveryTime = $load->deliveryTime;
+                    $backup->save();
+                } catch (\Exception $e) {
+
+                    Log::emergency("========================= Load Backup ==================================");
+                    Log::emergency($e->getMessage());
+                    Log::emergency("==============================================================");
+                }
             }
 
             $counter++;
