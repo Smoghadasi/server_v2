@@ -15,7 +15,9 @@ use App\Models\DriverCallReport;
 use App\Models\Fleet;
 use App\Models\FleetLoad;
 use App\Models\FleetRatioToDriverActivityReport;
+use App\Models\Load;
 use App\Models\LoadBackup;
+use App\Models\Owner;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\UserActivityReport;
@@ -48,34 +50,34 @@ class ReportingController extends Controller
             'month' => Driver::where('created_at', '>=', $monthDate)->count()
         ];
 
-        $transportationCompanies = [
-            'total' => Bearing::count(),
-            'toDay' => Bearing::where('created_at', '>', $todayDate)->count(),
-            'yesterday' => Bearing::where([
+        $owners = [
+            'total' => Owner::count(),
+            'toDay' => Owner::where('created_at', '>', $todayDate)->count(),
+            'yesterday' => Owner::where([
                 ['created_at', '>', $yesterdayDate],
                 ['created_at', '<', $todayDate]
             ])->count(),
-            'week' => Bearing::where('created_at', '>', $weekDate)->count(),
-            'month' => Bearing::where('created_at', '>=', $monthDate)->count(),
-            'toDayLoads' => LoadBackup::where([
+            'week' => Owner::where('created_at', '>', $weekDate)->count(),
+            'month' => Owner::where('created_at', '>=', $monthDate)->count(),
+            'toDayLoads' => Load::where([
                 ['created_at', '>', $todayDate],
-                ['userType', ROLE_TRANSPORTATION_COMPANY],
+                ['userType', ROLE_OWNER],
                 ['operator_id', 0]
-            ])->count(),
-            'yesterdayLoads' => LoadBackup::where([
+            ])->withTrashed()->count(),
+            'yesterdayLoads' => Load::where([
                 ['created_at', '>', $yesterdayDate],
                 ['created_at', '<', $todayDate],
-                ['userType', ROLE_TRANSPORTATION_COMPANY],
+                ['userType', ROLE_OWNER],
                 ['operator_id', 0]
-            ])->count(),
-            'weekLoads' => LoadBackup::where([
+            ])->withTrashed()->count(),
+            'weekLoads' => Load::where([
                 ['created_at', '>', $weekDate],
-                ['userType', ROLE_TRANSPORTATION_COMPANY],
+                ['userType', ROLE_OWNER],
                 ['operator_id', 0]
-            ])->count(),
-            'monthLoads' => LoadBackup::where([
+            ])->withTrashed()->count(),
+            'monthLoads' => Load::where([
                 ['created_at', '>=', $monthDate],
-                ['userType', ROLE_TRANSPORTATION_COMPANY],
+                ['userType', ROLE_OWNER],
                 ['operator_id', 0]
             ])->count()
         ];
@@ -172,7 +174,7 @@ class ReportingController extends Controller
         //تعداد بار ثبت شده 30 روز قبل
         $countOfLoadsInPrevious30Days = []; // $this->countOfLoadsInPrevious30Days();
 
-        return view('admin.reporting.summaryOfDaysReport', compact('drivers', 'transportationCompanies', 'cargoOwners', 'operators', 'incomes', 'countOfLoadsInPrevious30Days'));
+        return view('admin.reporting.summaryOfDaysReport', compact('drivers', 'owners', 'cargoOwners', 'operators', 'incomes', 'countOfLoadsInPrevious30Days'));
     }
 
     // هزینه وایزی توسط کاربران از 60 روز قبل
