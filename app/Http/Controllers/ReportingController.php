@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Bearing;
 use App\Models\CargoReportByFleet;
+use App\Models\CityOwner;
 use App\Models\ContactReportWithCargoOwner;
 use App\Models\ContactReportWithCargoOwnerResult;
 use App\Models\Customer;
@@ -317,6 +318,20 @@ class ReportingController extends Controller
         $toDate = $fromDate;
 
         return view('admin.reporting.driversCountCall', compact('basedCalls', 'fromDate', 'toDate'));
+    }
+
+    public function usersByCity()
+    {
+        // $users = Driver::whereNotNull('city_id')->get();
+
+        $users = Driver::with('cityOwner')->select('city_id', DB::raw('count(`city_id`) as count'))
+            ->groupBy('city_id')
+            ->having('count', '>', 1)
+            ->orderByDesc('count')
+            ->paginate(15);
+            // return $users;
+
+        return view('admin.reporting.usersByCity', compact('users'));
     }
 
     public function searchDriversCountCall(Request $request)

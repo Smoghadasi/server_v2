@@ -13,4 +13,9 @@ class CityOwner extends Model
     {
         return $this->belongsTo(State::class);
     }
+
+    public function drivers()
+    {
+        return $this->hasMany(Driver::class, 'city_id');
+    }
 }
