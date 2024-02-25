@@ -132,6 +132,12 @@
                         <td class="font-weight-bold">آدرس محل تخلیه بار</td>
                         <td>{{ $load->dischargeAddress }}</td>
                     </tr>
+                    <tr>
+                        <td class="font-weight-bold">تعداد بازدیدکننده</td>
+                        <td>{{ $load->driverVisitCount }}</td>
+                        <td class="font-weight-bold">تعداد درخواست</td>
+                        <td>{{ $load->numOfInquiryDrivers }}</td>
+                    </tr>
                     </tbody>
                 </table>
 

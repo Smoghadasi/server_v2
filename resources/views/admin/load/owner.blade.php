@@ -22,6 +22,7 @@
                         <th>ناوگان</th>
                         <th>مبدا</th>
                         <th>مقصد</th>
+                        <th>تعداد</th>
                         <th>تاریخ</th>
                         <th>عملیات</th>
                     </tr>
@@ -61,6 +62,10 @@
                             </td>
                             <td>{{ $load->fromCity }}</td>
                             <td>{{ $load->toCity }}</td>
+                            <td>
+                                <span class="badge bg-primary">بازدید : {{ $load->driverVisitCount }}</span>
+                                <span class="badge bg-danger">درخواست: {{ $load->numOfInquiryDrivers }}</span>
+                            </td>
                             @php
                                 $pieces = explode(' ', $load->created_at);
                             @endphp

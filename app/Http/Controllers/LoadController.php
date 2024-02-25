@@ -1604,7 +1604,6 @@ class LoadController extends Controller
             ->orderBy('suggestedPrice', 'asc')
             ->get();
 
-
         $bearings = Bearing::select('id', 'title')->get();
 
         return view('admin/loadInfo', compact('load', 'path', 'drivers', 'tenders', 'bearings', 'fleetLoads'));

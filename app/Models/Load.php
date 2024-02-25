@@ -10,7 +10,7 @@ class Load extends Model
 
     use SoftDeletes;
     private static $transportationCompany_id;
-    protected $appends = ['numOfRequestedDrivers', 'numOfSelectedDrivers', 'originCity', 'destinationCity'];
+    protected $appends = ['numOfRequestedDrivers', 'numOfSelectedDrivers', 'numOfInquiryDrivers' , 'originCity', 'destinationCity'];
 
     public function diver()
     {
@@ -51,6 +51,11 @@ class Load extends Model
     {
         return 0;
         return FleetLoad::where('load_id', $this->id)->sum("numOfFleets");
+    }
+
+    public function getNumOfInquiryDriversAttribute()
+    {
+        return Inquiry::where('load_id', $this->id)->count();
     }
 
     public function getNumOfSelectedDriversAttribute()
