@@ -138,6 +138,10 @@
                         <td class="font-weight-bold">تعداد درخواست</td>
                         <td>{{ $load->numOfInquiryDrivers }}</td>
                     </tr>
+                    <tr>
+                        <td class="font-weight-bold">تعداد تماس</td>
+                        <td>{{ $load->numOfDriverCalls }}</td>
+                    </tr>
                     </tbody>
                 </table>
 

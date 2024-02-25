@@ -65,6 +65,7 @@
                             <td>
                                 <span class="badge bg-primary">بازدید : {{ $load->driverVisitCount }}</span>
                                 <span class="badge bg-danger">درخواست: {{ $load->numOfInquiryDrivers }}</span>
+                                <span class="badge bg-success">تماس: {{ $load->numOfDriverCalls }}</span>
                             </td>
                             @php
                                 $pieces = explode(' ', $load->created_at);

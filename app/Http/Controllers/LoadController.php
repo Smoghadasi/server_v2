@@ -1971,7 +1971,6 @@ class LoadController extends Controller
             ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
             ->withTrashed()
             ->count();
-
         return view('admin.load.owner', compact('loads', 'loadsCount', 'loadsToday'));
     }
     // بار های ثبت شده توسط صاحبین بار (امروز)

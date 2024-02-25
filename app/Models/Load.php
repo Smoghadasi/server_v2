@@ -10,7 +10,7 @@ class Load extends Model
 
     use SoftDeletes;
     private static $transportationCompany_id;
-    protected $appends = ['numOfRequestedDrivers', 'numOfSelectedDrivers', 'numOfInquiryDrivers' , 'originCity', 'destinationCity'];
+    protected $appends = ['numOfRequestedDrivers', 'numOfSelectedDrivers', 'numOfDriverCalls', 'numOfInquiryDrivers', 'originCity', 'destinationCity'];
 
     public function diver()
     {
@@ -57,6 +57,10 @@ class Load extends Model
     {
         return Inquiry::where('load_id', $this->id)->count();
     }
+    public function getNumOfDriverCallsAttribute()
+    {
+        return DriverCall::where('load_id', $this->id)->count();
+    }
 
     public function getNumOfSelectedDriversAttribute()
     {
@@ -96,15 +100,15 @@ class Load extends Model
         return $this->belongsTo(Owner::class, 'user_id');
     }
 
-//    public function getDriverVisitCountAttribute(): int
-//    {
-//        try {
-//            return DriverVisitLoad::where('load_id', $this->id)->count();
-//        } catch (\Exception $exception) {
-//
-//        }
-//
-//        return 0;
-//    }
+    //    public function getDriverVisitCountAttribute(): int
+    //    {
+    //        try {
+    //            return DriverVisitLoad::where('load_id', $this->id)->count();
+    //        } catch (\Exception $exception) {
+    //
+    //        }
+    //
+    //        return 0;
+    //    }
 
 }
