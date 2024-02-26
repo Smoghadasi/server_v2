@@ -721,6 +721,7 @@ class LoadController extends Controller
                 $load->loadingHour = $request->loadingHour;
                 $load->loadingMinute = $request->loadingMinute;
                 $load->numOfTrucks = $request->numOfTrucks;
+                $load->date = now();
 
                 $load->originLatitude = $request->originLatitude;
                 $load->originLongitude = $request->originLongitude;
