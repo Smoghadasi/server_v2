@@ -1109,6 +1109,7 @@ class LoadController extends Controller
                 'loads.loadingMinute',
                 'loads.loadingDate',
                 'loads.created_at',
+                'loads.date',
             )
             ->orderBy('id', 'desc')
             ->paginate(10);
