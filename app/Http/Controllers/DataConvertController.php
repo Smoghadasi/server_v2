@@ -351,11 +351,11 @@ class DataConvertController extends Controller
                 $cityName = '';
             }
 
-            if (in_array($item, ['[از]', '[مبدا]', '[بارگیری]']) == true) {
+            if (in_array($item, ['[از]']) == true) {
                 $originPrefixWord = true;
                 $originPostfixWord = false;
                 $isOrigin = true;
-            } else if (in_array($item, ['[به]', '[مقصد]', '[تخلیه]']) == true && strlen($cityName)) {
+            } else if (in_array($item, ['[به]']) == true && strlen($cityName)) {
                 $originPostfixWord = true;
                 $originPrefixWord = false;
                 $isOrigin = true;
@@ -373,7 +373,7 @@ class DataConvertController extends Controller
                 $cargoPhoneNumber = $phoneNumber;
 
             if ($isOrigin == false && in_array($item, $origins) == false && in_array($item, $citiesList)) {
-                if (isset($cleanedText[$key + 1]) && !in_array($cleanedText[$key + 1], ['[به]', '[مقصد]', '[تخلیه]'])) {
+                if (isset($cleanedText[$key + 1]) && !in_array($cleanedText[$key + 1], ['[به]'])) {
                     $destinations[$currentOrigin][] = $item;
                     if ($currentOrigin > -1) {
                         $cargoList[] = [
