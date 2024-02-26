@@ -722,7 +722,7 @@ class LoadController extends Controller
                 $load->loadingMinute = $request->loadingMinute;
                 $load->numOfTrucks = $request->numOfTrucks;
                 $load->date = gregorianDateToPersian(date('Y/m/d', time()), '/');
-                $load->dateTime = now('H:i:s');
+                $load->dateTime = now()->format('H:i:s');
 
                 $load->originLatitude = $request->originLatitude;
                 $load->originLongitude = $request->originLongitude;
