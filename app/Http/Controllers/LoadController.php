@@ -721,7 +721,8 @@ class LoadController extends Controller
                 $load->loadingHour = $request->loadingHour;
                 $load->loadingMinute = $request->loadingMinute;
                 $load->numOfTrucks = $request->numOfTrucks;
-                $load->date = now();
+                $load->date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+                $load->time = time();
 
                 $load->originLatitude = $request->originLatitude;
                 $load->originLongitude = $request->originLongitude;
@@ -1110,6 +1111,7 @@ class LoadController extends Controller
                 'loads.loadingDate',
                 'loads.created_at',
                 'loads.date',
+                'loads.time',
             )
             ->orderBy('id', 'desc')
             ->paginate(10);
