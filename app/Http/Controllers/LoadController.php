@@ -893,7 +893,6 @@ class LoadController extends Controller
                     }
                     DB::commit();
                 }
-
             } catch (\Exception $exception) {
                 DB::rollBack();
                 Log::emergency("----------------------ثبت بار جدید-----------------------");
@@ -1115,7 +1114,7 @@ class LoadController extends Controller
                 'loads.date',
                 'loads.dateTime',
             )
-            ->orderBy('id', 'desc')
+            ->orderByDesc('created_at')
             ->paginate(10);
 
         if (count($loads) > 0) {
@@ -1948,7 +1947,7 @@ class LoadController extends Controller
             ->get();
         $loadsTrashedCount = Load::onlyTrashed()->where('userType', 'owner')->where('user_id', $owner_id)->count();
         $loadsCount = Load::where('userType', 'owner')->where('user_id', $owner_id)->count();
-        return view('admin.customerLoads', compact(['loads', 'loadsTrashedCount','loadsCount']));
+        return view('admin.customerLoads', compact(['loads', 'loadsTrashedCount', 'loadsCount']));
     }
 
     public function loadBackup($loads = [], $showSearchResult = false)
@@ -4264,17 +4263,15 @@ class LoadController extends Controller
     // تکرار بار
     public function repeatOwnerLoad(string $load)
     {
-        $load = Load::withTrashed()
-            ->where('id', $load)
-            ->update([
-                'created_at' => now(),
-                'loadingDate' => gregorianDateToPersian(date('Y-m-d', time()), '-'),
-                'date' => gregorianDateToPersian(date('Y-m-d', time()), '-'),
-                'dateTime' => now()->format('H:i:s'),
-                'loadingHour' => date('h'),
-                'loadingMinute' => date('m'),
-                'deleted_at' => null
-            ]);
+        $load = Load::withTrashed()->where('id', $load)->first();
+        $load->created_at = now();
+        $load->loadingDate = gregorianDateToPersian(date('Y-m-d', time()), '-');
+        $load->date = gregorianDateToPersian(date('Y-m-d', time()), '-');
+        $load->dateTime = now()->format('H:i:s');
+        $load->loadingHour = date('h');
+        $load->loadingMinute = date('m');
+        $load->deleted_at = null;
+        $load->save();
         return response()->json(['result' => true], 200);
     }
 
