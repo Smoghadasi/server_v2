@@ -72,6 +72,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     Route::get('requestCitiesListOfState/{state_id}', [AddressController::class, 'requestCitiesListOfState']);
     Route::get('ipAddress/{driver_id}', [DriverController::class, 'ipAddress']);
 
+    Route::post('storeDistanceCalculate', [LoadController::class, 'storeDistanceCalculate']);
+
 
     // درخواست ثبت نام باربری
     Route::post('registerBearing', [RegisterController::class, 'registerBearing']);

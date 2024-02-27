@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -10,7 +11,15 @@ class Load extends Model
 
     use SoftDeletes;
     private static $transportationCompany_id;
-    protected $appends = ['numOfRequestedDrivers', 'numOfSelectedDrivers', 'numOfDriverCalls', 'numOfInquiryDrivers', 'originCity', 'destinationCity'];
+    protected $appends = [
+        'numOfRequestedDrivers',
+        'numOfSelectedDrivers',
+        'numOfDriverCalls',
+        'numOfInquiryDrivers',
+        'originCity',
+        'destinationCity',
+        'distanceCity',
+    ];
 
     public function diver()
     {
@@ -98,6 +107,19 @@ class Load extends Model
     public function owner()
     {
         return $this->belongsTo(Owner::class, 'user_id');
+    }
+
+    public function getDistanceCityAttribute()
+    {
+        try {
+            $cityDistance = CityDistanceCalculate::where('fromCity_id', $this->origin_city_id)->where('toCity_id', $this->destination_city_id)->first();
+            if (isset($cityDistance->id))
+                return $cityDistance->value;
+            else
+                return 0;
+        } catch (Exception $exception) {
+            //throw $th;
+        }
     }
 
     //    public function getDriverVisitCountAttribute(): int

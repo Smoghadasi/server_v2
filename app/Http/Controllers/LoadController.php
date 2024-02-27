@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\NewLoadRequest;
 use App\Models\Bearing;
 use App\Models\BlockedIp;
+use App\Models\CityDistanceCalculate;
 use App\Models\BlockPhoneNumber;
 use App\Models\City;
 use App\Models\Customer;
@@ -1552,6 +1553,8 @@ class LoadController extends Controller
                     'length',
                     'height',
                     'insuranceAmount',
+                    'origin_city_id',
+                    'destination_city_id'
                 )
                 ->first();
             return response()->json($loadInfo, 200);
@@ -4400,5 +4403,14 @@ class LoadController extends Controller
             $load->forceDelete();
         }
         return redirect()->route('search.load.form');
+    }
+    public function storeDistanceCalculate(Request $request)
+    {
+        $cityDistance = new CityDistanceCalculate();
+        $cityDistance->fromCity_id = $request->fromCity;
+        $cityDistance->fromCity_id = $request->toCity;
+        $cityDistance->value = $request->value;
+        $cityDistance->save();
+        return response()->json('با موفقیت ذخیره شد', 200);
     }
 }
