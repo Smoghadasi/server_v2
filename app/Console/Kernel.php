@@ -68,7 +68,20 @@ class Kernel extends ConsoleKernel
                 // Log::emergency($exception->getMessage());
                 // Log::emergency("------------------------------------------------------------------------------");
             }
-        })->everyMinute();
+        })->every();
+
+        $schedule->call(function () {
+            try {
+                Load::where('driverVisitCount', '>', 50)
+                    ->where('userType', 'owner')
+                    ->update(['driverVisitCount' => +1]);
+            } catch (\Exception $exception) {
+                Log::emergency("-------------------------------- ConsoleEveryFiveMinutes -----------------------------");
+                Log::emergency($exception->getMessage());
+                Log::emergency("------------------------------------------------------------------------------");
+            }
+
+        })->everyFiveMinutes();
 
 
         //        $schedule->call(function () {

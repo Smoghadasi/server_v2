@@ -4267,7 +4267,7 @@ class LoadController extends Controller
         $load->created_at = now();
         $load->loadingDate = gregorianDateToPersian(date('Y-m-d', time()), '-');
         $load->date = gregorianDateToPersian(date('Y-m-d', time()), '-');
-        $load->dateTime = now()->format('H:i:s');
+        $load->dateTime = date('H:i:s');
         $load->loadingHour = date('h');
         $load->loadingMinute = date('m');
         $load->deleted_at = null;
