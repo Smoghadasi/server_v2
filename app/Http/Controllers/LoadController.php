@@ -348,6 +348,8 @@ class LoadController extends Controller
             $load->originLongitude = $request->originLongitude;
             $load->destinationLatitude = $request->destinationLatitude;
             $load->destinationLongitude = $request->destinationLongitude;
+            $load->date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+            $load->dateTime = now()->format('H:i:s');
 
             if (isset($request->origin_city_id) && isset($request->destination_city_id)) {
 
@@ -1147,8 +1149,10 @@ class LoadController extends Controller
                 'loads.loadingMinute',
                 'loads.loadingDate',
                 'loads.created_at',
+                'loads.date',
+                'loads.dateTime',
             )
-            ->orderBy('id', 'desc')
+            ->orderByDesc('created_at')
             ->onlyTrashed()
             ->paginate(10);
         if (count($loads) > 0) {
@@ -4265,6 +4269,8 @@ class LoadController extends Controller
             ->update([
                 'created_at' => now(),
                 'loadingDate' => gregorianDateToPersian(date('Y-m-d', time()), '-'),
+                'date' => gregorianDateToPersian(date('Y-m-d', time()), '-'),
+                'dateTime' => now()->format('H:i:s'),
                 'loadingHour' => date('h'),
                 'loadingMinute' => date('m'),
                 'deleted_at' => null

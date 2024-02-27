@@ -383,8 +383,6 @@ class DataConvertController extends Controller
                             'mobileNumber' => $cargoPhoneNumber,
                             'freight' => 0,
                             'priceType' => 'توافقی'
-                            //                            'freight' => $freight,
-                            //                            'priceType' => $priceType
                         ];
                     }
                 }
