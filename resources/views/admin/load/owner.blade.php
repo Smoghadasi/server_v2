@@ -70,7 +70,7 @@
                             @php
                                 $pieces = explode(' ', $load->created_at);
                             @endphp
-                            <td>{{ $load->loadingDate }} <br /> {{ $pieces[1] }}</td>
+                            <td>{{ $load->created_at }} <br /> {{ $pieces[1] }}</td>
                             <td>
                                 <a class="btn btn-info btn-sm"
                                     href="{{ route('loadInfo', $load->id) }}">جزئیات</a>
