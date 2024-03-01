@@ -21,9 +21,30 @@ class NotificationController extends Controller
         return null;
     }
 
-    public static function sendNotification($fcm_token, $data, $userType)
+    public function sendCustomMessage(Request $request)
     {
-        $API_ACCESS_KEY = self::getApiAccessKey($userType);
+        try {
+            $driverFCM_tokens = Driver::whereRaw('LENGTH(FCM_token)>10')->where('id', '45172')->pluck('FCM_token');
+
+            $data = [
+                'title' => $request->title,
+                'body' => $request->body,
+                'notificationType' => 'newLoad',
+            ];
+            if (count($driverFCM_tokens))
+                $this->sendNotification($driverFCM_tokens, $data, API_ACCESS_KEY_DRIVER);
+            return response()->json('OK', 200);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+        // FCM_token
+
+        // }
+    }
+
+
+    public static function sendNotification($fcm_token, $data, $API_ACCESS_KEY)
+    {
 
         $url = 'https://fcm.googleapis.com/fcm/send';
         $notification = [
@@ -66,8 +87,7 @@ class NotificationController extends Controller
                 return [
                     'result' => SUCCESS
                 ];
-            }
-            else if ($userType == 'bearing') {
+            } else if ($userType == 'bearing') {
                 Bearing::where('id', $request->bearing_id)
                     ->update(['notification' => $function]);
                 return [

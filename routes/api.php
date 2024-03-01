@@ -271,6 +271,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     Route::post('bearing/changeNotificationFunction', [NotificationController::class, 'changeNotificationFunction']);
     Route::post('customer/changeNotificationFunction', [NotificationController::class, 'changeNotificationFunction']);
 
+    // ارسال نوتیفیکیشن برای تمامی رانندگان
+    Route::post('driver/sendCustomMessage', [NotificationController::class, 'sendCustomMessage']);
+
 
     /********************************************************************************************/
     // درخواست وضعیت کاربران
