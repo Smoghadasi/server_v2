@@ -4274,6 +4274,7 @@ class LoadController extends Controller
         $load->dateTime = date('H:i:s');
         $load->loadingHour = date('h');
         $load->loadingMinute = date('m');
+        $load->deleted_at = null;
         $load->time = time();
         $load->save();
         return response()->json(['result' => true], 200);
