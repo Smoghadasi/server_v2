@@ -4266,14 +4266,14 @@ class LoadController extends Controller
     // تکرار بار
     public function repeatOwnerLoad(string $load)
     {
-        $load = Load::withTrashed()->where('id', $load)->first();
+        $task = Load::withTrashed()->find($load);
+        $load = $task->replicate();
         $load->created_at = now();
         $load->loadingDate = gregorianDateToPersian(date('Y-m-d', time()), '-');
         $load->date = gregorianDateToPersian(date('Y-m-d', time()), '-');
         $load->dateTime = date('H:i:s');
         $load->loadingHour = date('h');
         $load->loadingMinute = date('m');
-        $load->deleted_at = null;
         $load->time = time();
         $load->save();
         return response()->json(['result' => true], 200);
