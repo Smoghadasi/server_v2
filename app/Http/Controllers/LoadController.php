@@ -244,7 +244,7 @@ class LoadController extends Controller
 
     public function createNewLoad(NewLoadRequest $request)
     {
-        Log::emergency($request);
+        // Log::emergency($request);
         try {
 
             if (\auth()->check()) {
@@ -4274,6 +4274,7 @@ class LoadController extends Controller
         $load->loadingHour = date('h');
         $load->loadingMinute = date('m');
         $load->deleted_at = null;
+        $load->time = time();
         $load->save();
         return response()->json(['result' => true], 200);
     }
