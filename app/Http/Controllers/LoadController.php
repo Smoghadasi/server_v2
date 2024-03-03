@@ -4369,10 +4369,10 @@ class LoadController extends Controller
     public function searchLoadsForm()
     {
         $cities = City::orderby('centerOfProvince', 'desc')->get();
-        // $fleets = Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
+        $fleets = Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
         $operators = User::where([['role', 'operator'], ['status', 1]])->get();
         $loads = [];
-        return view('admin.searchLoads', compact('loads', 'cities', 'operators'));
+        return view('admin.searchLoads', compact('loads', 'cities', 'fleets', 'operators'));
     }
 
     public function searchLoads(Request $request)
@@ -4384,7 +4384,8 @@ class LoadController extends Controller
             $condition[] = ['origin_city_id', $request->origin_city_id];
         if ($request->destination_city_id != "0")
             $condition[] = ['destination_city_id', $request->destination_city_id];
-
+        if ($request->fleet_id != "0")
+            $condition[] = ['fleets', 'LIKE', '%:' . $request->fleet_id . ',%'];
         if ($request->operator_id != "0")
             $condition[] = ['operator_id', $request->operator_id];
         if ($request->mobileNumber != "0" && $request->mobileNumber != null)
@@ -4392,9 +4393,10 @@ class LoadController extends Controller
 
         $loads = Load::where($condition)->withTrashed()->get();
         $cities = City::orderby('centerOfProvince', 'desc')->get();
+        $fleets = Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
         $operators = User::where([['role', 'operator'], ['status', 1]])->get();
 
-        return view('admin.searchLoads', compact('loads', 'cities', 'operators'));
+        return view('admin.searchLoads', compact('loads', 'cities', 'fleets', 'operators'));
     }
 
     public function deleteAll(Request $request)

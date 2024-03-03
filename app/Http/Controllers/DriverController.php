@@ -35,11 +35,11 @@ class DriverController extends Controller
     // لیست رانندگان
     public function drivers($drivers = [], $showSearchResult = false)
     {
-        $fleets = Fleet::all();
+        // $fleets = Fleet::all();
         if (!$showSearchResult)
             $drivers = Driver::orderBy('id', 'desc')->paginate(50);
 
-        return view('admin.drivers', compact('drivers', 'showSearchResult', 'fleets'));
+        return view('admin.drivers', compact('drivers', 'showSearchResult'));
     }
 
     // لیست رانندگان برای ادمین
@@ -697,7 +697,6 @@ class DriverController extends Controller
         lastName
         mobileNumber
          * */
-        $fleets = Fleet::all();
         $condition = [];
         if (isset($request->name) && strlen($request->name))
             $condition[] = ['name', 'like', '%' . $request->name . '%'];
@@ -709,14 +708,10 @@ class DriverController extends Controller
         if (isset($request->version) && strlen($request->version))
             $condition[] = ['version', 'like', '%' . $request->version . '%'];
 
-        if (isset($request->fleet_id) && $request->fleet_id > 0)
-            $condition[] = ['fleet_id', $request->fleet_id];
-
-
         if (count($condition)) {
             $drivers = Driver::where($condition)->orderBy('id', 'desc')->paginate(5000);
             if (count($drivers))
-                return view('admin.driver.searchDriver', compact('drivers', 'fleets'));
+                return view('admin.driver.searchDriver', compact('drivers'));
         }
 
         return back()->with('danger', 'راننده ای پیدا نشد!');

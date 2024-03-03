@@ -59,17 +59,6 @@
                                     <input type="text" name="version" class="form-control">
                                 </div>
                             </div>
-                            <div class="col">
-                                <div class="form-group">
-                                    <label>نوع ناوگان :</label>
-                                    <select class="form-select" name="fleet_id">
-                                        <option value="0">انتخاب ناوگان</option>
-                                        @foreach ($fleets as $fleet)
-                                            <option value="{{ $fleet->id }}">{{ $fleet->title }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
                         </div>
                         <div class="form-group my-4">
                             <button class="btn btn-info" type="submit">جستجو</button>
