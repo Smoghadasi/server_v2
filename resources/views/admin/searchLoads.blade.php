@@ -36,18 +36,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-3">
-                                <select class="form-control col-md-4" name="fleet_id" id="fleet_id">
-                                    <option value="0">نوع ناوگان</option>
-                                    @foreach ($fleets as $fleet)
-                                        <option value="{{ $fleet->id }}">
-                                            {{ \App\Http\Controllers\FleetController::getFleetName($fleet->parent_id) }}
-                                            -
-                                            {{ $fleet->title }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
+
                             <div class="col-md-3">
                                 <select class="form-control col-md-4" name="operator_id" id="operator_id">
                                     <option value="0">اپراتور</option>
