@@ -81,9 +81,12 @@ class ProvinceCityController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, ProvinceCity $provinceCity)
     {
-        //
+        $provinceCity->name = $request->name;
+        $provinceCity->save();
+        return back()->with('success', 'شهر ' . $provinceCity->name . ' ویرایش.');
+
     }
 
     /**
@@ -92,8 +95,14 @@ class ProvinceCityController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(ProvinceCity $provinceCity)
     {
-        //
+        try {
+            $provinceCity->delete();
+            return back()->with('success', 'شهر مورد نظر حذف شد.');
+        } catch (\Exception $exception) {
+            return back()->with('danger', 'خطا در حذف شهر جدید');
+        }
+
     }
 }

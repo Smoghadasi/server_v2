@@ -78,7 +78,7 @@
                                     </button>
                                     <div id="editCity_{{ $city->id }}" class="modal fade" role="dialog">
                                         <div class="modal-dialog">
-                                            <form method="post" action="{{ route('city.update', $city->id) }}"
+                                            <form method="post" action="{{ route('provinceCity.update', $city->id) }}"
                                                 class="modal-content">
                                                 @method('PUT')
                                                 @csrf
@@ -120,9 +120,11 @@
                                                     </p>
                                                 </div>
                                                 <div class="modal-footer text-left">
-                                                    <a class="btn btn-primary"
-                                                        href="{{ url('admin/removeCity') }}/{{ $city->id }}">حذف
-                                                        شهر</a>
+                                                    <form action="{{ route('provinceCity.destroy', $city->id) }}" method="post">
+                                                        @method('DELETE')
+                                                        @csrf
+                                                        <button class="btn btn-primary" type="submit">حذف</button>
+                                                    </form>
                                                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
                                                         انصراف
                                                     </button>
