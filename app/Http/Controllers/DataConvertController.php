@@ -18,7 +18,9 @@ use App\Models\FleetLoad;
 use App\Models\Load;
 use App\Models\LoadBackup;
 use App\Models\CargoReportByFleet;
+use App\Models\Equivalent;
 use App\Models\OperatorCargoListAccess;
+use App\Models\ProvinceCity;
 use App\Models\RejectCargoOperator;
 use App\Models\Tender;
 use App\Models\Transaction;
@@ -861,6 +863,43 @@ class DataConvertController extends Controller
         return view('admin.dictionary', compact('cities', 'fleets', 'dictionary'));
     }
 
+    // دیکشنری کلمات معادل در ثبت بار
+    public function equivalents()
+    {
+        $cities = ProvinceCity::all();
+        $fleets = Fleet::where('parent_id', '>', 0)->get();
+
+        $dictionary = Equivalent::paginate(500);
+
+        return view('admin.equivalent.index', compact('cities', 'dictionary', 'fleets'));
+    }
+
+    public function addWordToEquivalent(Request $request)
+    {
+        try {
+            $original_word_id = $request->type == 'city' ? $request->city_id : $request->fleet_id;
+            if (Equivalent::where([
+                ['equivalentWord', $request->equivalentWord],
+                ['type', $request->type],
+                ['original_word_id', $original_word_id],
+            ])->count() > 0)
+                return back()->with('danger', 'کلمه اصلی، کلمه معادل و دسته تکراری است');
+
+            if (strlen($request->equivalentWord)) {
+                $dictionary = new Equivalent();
+                $dictionary->type = $request->type;
+                $dictionary->original_word_id = $original_word_id;
+                $dictionary->equivalentWord = $request->equivalentWord;
+                $dictionary->save();
+
+                return back()->with('success', 'کلمه مورد نظر ثبت شد');
+            }
+        } catch (\Exception $exception) {
+        }
+
+        return back()->with('danger', 'خطا در ذخیره');
+    }
+
     public function addWordToDictionary(Request $request)
     {
         try {
@@ -891,6 +930,12 @@ class DataConvertController extends Controller
     {
         $dictionary->delete();
         return back()->with('success', ' کلمه ' . $dictionary->equivalentWord . ' حذف شد ');
+    }
+
+    public function removeEquivalentWord(Equivalent $equivalent)
+    {
+        $equivalent->delete();
+        return back()->with('success', ' کلمه ' . $equivalent->equivalentWord . ' حذف شد ');
     }
 
     /**************************************************************************************************/

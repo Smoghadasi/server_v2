@@ -21,6 +21,7 @@ use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\PackingTypeController;
 use App\Http\Controllers\ParameterController;
 use App\Http\Controllers\PayController;
+use App\Http\Controllers\ProvinceCityController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ReportingController;
 use App\Http\Controllers\ServiceController;
@@ -110,9 +111,19 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         Route::get('appVersions', [HomeController::class, 'appVersions']);
         Route::post('storeAppVersions', [HomeController::class, 'storeAppVersions']);
-
         Route::get('driverActivityVersion/{version}', [HomeController::class, 'driverActivityVersion'])->name('driver.activity.version');
 
+        // equivalents
+        Route::get('equivalents', [DataConvertController::class, 'equivalents'])
+            ->middleware('operator')
+            ->name('equivalents');
+
+        Route::post('addWordToEquivalent', [DataConvertController::class, 'addWordToEquivalent'])->middleware('operator');
+        Route::delete('removeEquivalentWord/{equivalent}', [DataConvertController::class, 'removeEquivalentWord'])->middleware('operator')->name('removeEquivalentWord');
+
+
+        // استان ها و شهرها جدید
+        Route::resource('provinceCity', ProvinceCityController::class)->middleware("operator");
 
         // شهرها و استان ها
         Route::get('provincesAndCities', [AddressController::class, 'provincesAndCities'])->middleware('operator');
