@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Bearing;
 use App\Models\Driver;
 use App\Models\DriverActivity;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Log;
 
@@ -28,7 +29,7 @@ class NotificationController extends Controller
         try {
 
             $driverFCM_tokens = Driver::where('version', 58)->whereHas('driverActivities', function ($q) {
-                $q->whereBetween('created_at', ['2024-03-03 00:00:00', '2024-03-04 23:00:00']);
+                $q->where('created_at', '<=', Carbon::now()->subDays(1)->toDateTimeString());
             })->pluck('FCM_token');
             foreach ($driverFCM_tokens as $driverFCM_token) {
                 $data = [
