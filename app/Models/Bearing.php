@@ -15,7 +15,7 @@ class Bearing extends Authenticatable
 
     public function city()
     {
-        return $this->hasOne(City::class);
+        return $this->hasOne(ProvinceCity::class);
     }
 
     public function tender()

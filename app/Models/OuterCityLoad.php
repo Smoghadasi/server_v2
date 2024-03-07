@@ -9,12 +9,12 @@ class OuterCityLoad extends Model
 
     public function origin_city_id()
     {
-        return $this->hasOne(City::class);
+        return $this->hasOne(ProvinceCity::class);
     }
 
     public function destination_city_id()
     {
-        return $this->hasOne(City::class);
+        return $this->hasOne(ProvinceCity::class);
     }
 
     public function loads()

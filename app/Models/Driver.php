@@ -12,13 +12,13 @@ class Driver extends Authenticatable
     protected $appends = ['fleetTitle', 'countOfPais', 'countOfCalls', 'operatorMessage','blockedIp'];
     public function city()
     {
-        return $this->hasOne(City::class);
+        return $this->hasOne(ProvinceCity::class, 'city_id');
     }
 
-    public function cityOwner()
-    {
-        return $this->belongsTo(CityOwner::class, 'city_id');
-    }
+    // public function cityOwner()
+    // {
+    //     return $this->belongsTo(CityOwner::class);
+    // }
 
 //    public function loads()
 //    {

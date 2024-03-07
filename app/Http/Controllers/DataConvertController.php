@@ -171,7 +171,7 @@ class DataConvertController extends Controller
 
             if (count($operatorCargoListAccess)) {
 
-                $dictionary = Dictionary::where('type', 'fleet')
+                $dictionary = Equivalent::where('type', 'fleet')
                     ->whereIn('original_word_id', $operatorCargoListAccess)
                     ->select('equivalentWord')
                     ->pluck('equivalentWord')
@@ -223,7 +223,7 @@ class DataConvertController extends Controller
     // دریافت لیست شهرها
     private function getCitiesList()
     {
-        $cities = City::select('name')->pluck('name')->toArray();
+        $cities = ProvinceCity::where('parent_id', '!=', 0)->select('name')->pluck('name')->toArray();
         for ($i = 0; $i < count($cities); $i++)
             $cities[$i] = $this->replaceToPersianAlphabet($cities[$i]);
         return $cities;
@@ -486,7 +486,7 @@ class DataConvertController extends Controller
     // دریافت لیست کلمات اصلی
     private function getOriginWords()
     {
-        $dictionary = Dictionary::get()->pluck('originalWord');
+        $dictionary = Equivalent::get()->pluck('originalWord');
         $array = [];
         foreach ($dictionary as $item)
             $array[] = str_replace(' ', '_', $item);
@@ -497,7 +497,7 @@ class DataConvertController extends Controller
     // دریافت لیست کلمات معادل
     private function getEquivalentWords(): array
     {
-        return Dictionary::get()->pluck('equivalentWord')->toArray();
+        return Equivalent::get()->pluck('equivalentWord')->toArray();
     }
 
     // فرم ثبت بار (بررسی و ثبت)
@@ -509,7 +509,7 @@ class DataConvertController extends Controller
     }
 
     // ذخیره دسته ای بارها
-    public function storeMultiCargo(Request $request, CargoConvertList $cargo)
+     public function storeMultiCargo(Request $request, CargoConvertList $cargo)
     {
 
         try {
@@ -625,7 +625,7 @@ class DataConvertController extends Controller
             $load->time = time();
 
             try {
-                $city = City::find($load->origin_city_id);
+                $city = ProvinceCity::where('parent_id', '!=', 0)->find($load->origin_city_id);
                 if (isset($city->id)) {
                     $load->latitude = $city->latitude;
                     $load->longitude = $city->longitude;
@@ -821,15 +821,15 @@ class DataConvertController extends Controller
     private function getCityId($cityName)
     {
         try {
-            $city = City::where('name', $cityName)->select('id')->first();
+            $city = ProvinceCity::where('name', $cityName)->where('parent_id', '!=', 0)->select('id')->first();
             if (!isset($city->id)) {
-                $city = City::where('name', str_replace('ک', 'ك', $cityName))->select('id')->first();
+                $city = ProvinceCity::where('name', str_replace('ک', 'ك', $cityName))->where('parent_id', '!=', 0)->select('id')->first();
             }
             if (!isset($city->id)) {
-                $city = City::where('name', str_replace('ی', 'ي', $cityName))->select('id')->first();
+                $city = ProvinceCity::where('name', str_replace('ی', 'ي', $cityName))->where('parent_id', '!=', 0)->select('id')->first();
             }
             if (!isset($city->id)) {
-                $city = City::where('name', str_replace('ی', 'ي', str_replace('ک', 'ك', $cityName)))->select('id')->first();
+                $city = ProvinceCity::where('name', str_replace('ی', 'ي', str_replace('ک', 'ك', $cityName)))->where('parent_id', '!=', 0)->select('id')->first();
             }
             if (isset($city->id))
                 return $city->id;
@@ -843,9 +843,10 @@ class DataConvertController extends Controller
     private function getCityName($city_id)
     {
         try {
-            $city = City::where('id', $city_id)->select('name', 'state as province')->first();
+            $city = ProvinceCity::where('id', $city_id)->where('parent_id', '!=', 0)->select('name', 'parent_id')->first();
+            $state = ProvinceCity::where('id', $city->parent_id)->first();
             if (isset($city->name))
-                return $city->province . ', ' . $city->name;
+                return $state->name . ', ' . $city->name;
         } catch (\Exception $e) {
         }
         return '';
@@ -855,10 +856,10 @@ class DataConvertController extends Controller
     // دیکشنری کلمات معادل در ثبت بار
     public function dictionary()
     {
-        $cities = City::all();
+        $cities = ProvinceCity::all();
         $fleets = Fleet::where('parent_id', '>', 0)->get();
 
-        $dictionary = Dictionary::paginate(300);
+        $dictionary = Equivalent::paginate(300);
 
         return view('admin.dictionary', compact('cities', 'fleets', 'dictionary'));
     }
@@ -1285,8 +1286,8 @@ class DataConvertController extends Controller
         if ($cities == null)
             $cities = $this->getCitiesList();
 
-        $prefixOriginConditions = array('[از]', '[مبدا]', '[بارگیری]');
-        $postfixOriginConditions = array('[به]', '[مقصد]', '[تخلیه]');
+        $prefixOriginConditions = array('[از]');
+        $postfixOriginConditions = array('[به]');
         $originConditions = false;
 
         $origin = '';
@@ -1321,7 +1322,7 @@ class DataConvertController extends Controller
     private function getDestination(array $cities, array $array, $origin)
     {
         // شرط مهم مبدا و مقصد نباید یکی باشند
-        $prefixDestinationConditions = array('تخلیه', 'به', 'مقصد');
+        $prefixDestinationConditions = array('به');
         $postfixDestinationConditions = array('از');
         $destinationConditions = false;
 
@@ -1443,7 +1444,7 @@ class DataConvertController extends Controller
             $load->time = time();
 
             try {
-                $city = City::find($load->origin_city_id);
+                $city = ProvinceCity::find($load->origin_city_id);
                 if (isset($city->id)) {
                     $load->latitude = $city->latitude;
                     $load->longitude = $city->longitude;

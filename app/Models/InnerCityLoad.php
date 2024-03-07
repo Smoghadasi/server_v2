@@ -8,7 +8,7 @@ class InnerCityLoad extends Model
 {
     public function city()
     {
-        return $this->hasOne(City::class);
+        return $this->hasOne(ProvinceCity::class);
     }
 
     public function load()

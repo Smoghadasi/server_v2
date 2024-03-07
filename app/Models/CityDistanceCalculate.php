@@ -11,11 +11,11 @@ class CityDistanceCalculate extends Model
 
     public function fromCity()
     {
-        return $this->belongsTo(CityOwner::class, 'fromCity_id');
+        return $this->belongsTo(ProvinceCity::class, 'fromCity_id');
     }
 
     public function toCity()
     {
-        return $this->belongsTo(CityOwner::class, 'toCity_id');
+        return $this->belongsTo(ProvinceCity::class, 'toCity_id');
     }
 }
