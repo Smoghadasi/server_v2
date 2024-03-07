@@ -18,4 +18,9 @@ class CityOwner extends Model
     {
         return $this->hasMany(Driver::class, 'city_id');
     }
+
+    public function inner_city_load()
+    {
+        return $this->belongsTo(InnerCityLoad::class);
+    }
 }

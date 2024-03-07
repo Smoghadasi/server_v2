@@ -79,7 +79,11 @@ class Driver extends Authenticatable
         }
 
         return '';
+    }
 
+    public function driverActivities()
+    {
+        return $this->hasMany(DriverActivity::class);
     }
 
 

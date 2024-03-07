@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Bearing;
 use App\Models\Driver;
+use App\Models\DriverActivity;
 use Illuminate\Http\Request;
+use Log;
 
 class NotificationController extends Controller
 {
@@ -24,35 +26,35 @@ class NotificationController extends Controller
     public function sendCustomMessage(Request $request)
     {
         try {
-            $driverFCM_tokens = Driver::whereRaw('LENGTH(FCM_token)>10')->where('id', '45172')->pluck('FCM_token');
 
-            $data = [
-                'title' => $request->title,
-                'body' => $request->body,
-                'notificationType' => 'newLoad',
-            ];
-            if (count($driverFCM_tokens))
-                $this->sendNotification($driverFCM_tokens, $data, API_ACCESS_KEY_DRIVER);
+            $driverFCM_tokens = Driver::where('version', 58)->whereHas('driverActivities', function ($q) {
+                $q->whereBetween('created_at', ['2024-03-03 00:00:00', '2024-03-04 23:00:00']);
+            })->pluck('FCM_token');
+            foreach ($driverFCM_tokens as $driverFCM_token) {
+                $data = [
+                    'title' => $request->title,
+                    'body' => $request->body,
+                    'notificationType' => 'newLoad',
+                ];
+                $this->sendNotification($driverFCM_token, $data, API_ACCESS_KEY_DRIVER);
+            }
+
             return response()->json('OK', 200);
-        } catch (\Throwable $th) {
+        } catch (\Exception $e) {
             //throw $th;
         }
-        // FCM_token
-
-        // }
     }
 
 
-    public static function sendNotification($fcm_token, $data, $API_ACCESS_KEY)
+    private function sendNotification($FCM_token, $data, $API_ACCESS_KEY)
     {
-
         $url = 'https://fcm.googleapis.com/fcm/send';
         $notification = [
             'body' => $data['body'],
             'sound' => true,
         ];
         $fields = array(
-            'to' => $fcm_token,
+            'registration_ids' => $FCM_token,
             'notification' => $notification,
             'data' => $data
         );
@@ -70,6 +72,11 @@ class NotificationController extends Controller
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
         $result = curl_exec($ch);
+        if ($result === FALSE) {
+            Log::emergency("------------------------------------------------------------");
+            Log::emergency("notificationErrors : " . curl_error($ch));
+            Log::emergency("------------------------------------------------------------");
+        }
         curl_close($ch);
     }
 
