@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\City;
 use App\Models\CityOwner;
+use App\Models\ProvinceCity;
 use App\Models\State;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -95,7 +96,7 @@ class AddressController extends Controller
 
     public static function geCityName($city_id)
     {
-        $city = City::where('id', $city_id)->first();
+        $city = ProvinceCity::where('id', $city_id)->first();
         return $city->name ?? 'انتخاب نشده';
     }
 
@@ -123,7 +124,7 @@ class AddressController extends Controller
     public static function geStateNameFromCityId($city_id)
     {
         try {
-            $city = City::where('id', $city_id)->first();
+            $city = ProvinceCity::where('id', $city_id)->first();
             return $city->state;
         } catch (\Exception $exception) {
         }
@@ -134,7 +135,7 @@ class AddressController extends Controller
     public static function getLatLong($city_id)
     {
         try {
-            $city = City::find($city_id);
+            $city = ProvinceCity::find($city_id);
             if (isset($city->id))
                 return [
                     'latitude' => $city->latitude,
