@@ -59,12 +59,12 @@ class LoadBackup extends Model
 
     public function getOriginCityAttribute()
     {
-        return City::where('id', $this->origin_city_id)->select('name as from', 'state as provinceFrom')->first();
+        return City::where('id', $this->origin_city_id)->first();
     }
 
     public function getDestinationCityAttribute()
     {
-        return City::where('id', $this->destination_city_id)->select('name as to', 'state as provinceTo')->first();
+        return City::where('id', $this->destination_city_id)->first();
     }
 
 
