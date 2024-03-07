@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\Api\OwnerController;
+use App\Http\Controllers\Api\ProvinceCityController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\BearingController;
@@ -611,6 +612,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         // پیگیری انتقاد یا شکایت صاحب بار
         Route::post('getComplaintOwnerResult/{owner}', [ComplaintController::class, 'getComplaintOwnerResult']);
+
+        Route::get('provinceCities', [ProvinceCityController::class, 'index']);
 
     });
 });
