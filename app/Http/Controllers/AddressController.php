@@ -154,13 +154,13 @@ class AddressController extends Controller
     {
         try {
             $provinces = ProvinceCity::where('parent_id', 0)->select('id', 'name')->get();
-            $cities = ProvinceCity::where('parent_id', '!=', 0)->select('id', 'name')->get();
+            // $cities = ProvinceCity::where('parent_id', '!=', 0)->select('id', 'name')->get();
 
             return [
                 'result' => true,
                 'data' => [
                     'provinces' => $provinces,
-                    'cities' => $cities
+                    // 'cities' => $cities
                 ],
                 'message' => null
             ];

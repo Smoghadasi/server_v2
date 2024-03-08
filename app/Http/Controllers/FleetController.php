@@ -262,7 +262,7 @@ class FleetController extends Controller
     {
         return [
             'fleets' => Fleet::where('status', 1)
-                ->select('id', 'title', 'parent_id', 'pic', 'length', 'width', 'height', 'capacity')
+                ->select('id', 'title', 'parent_id')
                 ->get()
         ];
     }

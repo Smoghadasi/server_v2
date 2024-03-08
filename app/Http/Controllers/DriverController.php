@@ -1313,21 +1313,21 @@ class DriverController extends Controller
         $driver->version = $version;
         $driver->save();
 
-        return [
-            'version' => AppVersion::orderBy('id', 'desc')->first()->driverVersion,
-            'link' => 'https://cafebazaar.ir/app/com.iran_tarabar.driver',
-            'tell' => TELL,
-            'BANK_NAME' => BANK_NAME,
-            'CARD_NUMBER' => CARD_NUMBER,
-            'BANK_CARD_OWNER' => BANK_CARD_OWNER,
-            'authLevel' => $driver->authLevel,
-            'unAuthLevelMessage' => 'تعداد تماس بدون احراز هویت : ' . CALL_LIMIT_FOR_UNAUTH_DRIVERS . '  تماس تا تکمیل مدارک و احراز هویت. ',
-            'acceptAuthLevelAlertMessage' =>
-            'احزار هویت شما به منظور جلب اعتماد اعلام کنندگان بار و معرفی شما به عنوان راننده تایید شده صورت می گیرد.' .
-                ' ' .
-                'احراز هویت سطح نقره ای :   روزانه  ' . NUMBER_FOR_CALLS_PAY_DAY_FOR_SILVER_LEVEL_DRIVER . ' تماس ' .
-                ' ' . 'احراز هویت سطح طلایی :   روزانه ' . NUMBER_FOR_CALLS_PAY_DAY_FOR_GOLD_LEVEL_DRIVER . ' تماس',
-        ];
+        // return [
+        //     'version' => AppVersion::orderBy('id', 'desc')->first()->driverVersion,
+        //     'link' => 'https://cafebazaar.ir/app/com.iran_tarabar.driver',
+        //     'tell' => TELL,
+        //     'BANK_NAME' => BANK_NAME,
+        //     'CARD_NUMBER' => CARD_NUMBER,
+        //     'BANK_CARD_OWNER' => BANK_CARD_OWNER,
+        //     'authLevel' => $driver->authLevel,
+        //     'unAuthLevelMessage' => 'تعداد تماس بدون احراز هویت : ' . CALL_LIMIT_FOR_UNAUTH_DRIVERS . '  تماس تا تکمیل مدارک و احراز هویت. ',
+        //     'acceptAuthLevelAlertMessage' =>
+        //     'احزار هویت شما به منظور جلب اعتماد اعلام کنندگان بار و معرفی شما به عنوان راننده تایید شده صورت می گیرد.' .
+        //         ' ' .
+        //         'احراز هویت سطح نقره ای :   روزانه  ' . NUMBER_FOR_CALLS_PAY_DAY_FOR_SILVER_LEVEL_DRIVER . ' تماس ' .
+        //         ' ' . 'احراز هویت سطح طلایی :   روزانه ' . NUMBER_FOR_CALLS_PAY_DAY_FOR_GOLD_LEVEL_DRIVER . ' تماس',
+        // ];
     }
 
 
