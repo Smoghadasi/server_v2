@@ -580,10 +580,10 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::patch('profileImage/{owner}', [OwnerController::class, 'profileImage'])->name('auth.profileImage');
 
         // ثبت بار جدید
-        // Route::post('createNewLoad', [LoadController::class, 'createNewLoad']);
+        Route::post('createNewLoad', [LoadController::class, 'createNewLoad']);
 
         // ثبت بار بصورت ارایه
-        // Route::post('createNewLoads', [LoadController::class, 'createNewLoads']);
+        Route::post('createNewLoads', [LoadController::class, 'createNewLoads']);
 
         // درخواست اطلاعات صاحبان بار
         Route::get('profile/{owner}', [OwnerController::class, 'profile']);
