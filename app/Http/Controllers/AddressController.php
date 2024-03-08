@@ -24,8 +24,8 @@ class AddressController extends Controller
     public function requestCitiesList(Request $request)
     {
         return [
-            'selectedLoadingCitiesIds' => City::where('state_id', $request->selectedLoadingCitiesIds)->get(),
-            'selectedDischargeCitiesIds' => City::where('state_id', $request->selectedDischargeCitiesIds)->get(),
+            'selectedLoadingCitiesIds' => ProvinceCity::where('parent_id', $request->selectedLoadingCitiesIds)->get(),
+            'selectedDischargeCitiesIds' => ProvinceCity::where('parent_id', $request->selectedDischargeCitiesIds)->get(),
         ];
     }
 
@@ -153,8 +153,8 @@ class AddressController extends Controller
     public function requestProvinceAndCitiesList()
     {
         try {
-            $provinces = State::select('id', 'name as province')->get();
-            $cities = City::select('id', 'name as city', 'state_id as province_id')->get();
+            $provinces = ProvinceCity::where('parent_id', 0)->select('id', 'name')->get();
+            $cities = ProvinceCity::where('parent_id', '!=', 0)->select('id', 'name')->get();
 
             return [
                 'result' => true,
