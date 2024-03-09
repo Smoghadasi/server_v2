@@ -102,15 +102,15 @@ class AddressController extends Controller
 
     public static function geStateName($state_id)
     {
-        $state = State::where('id', $state_id)->first();
+        $state = ProvinceCity::where('parent_id', 0)->where('id', $state_id)->first();
         return $state->name ?? 'انتخاب نشده';
     }
 
     public static function geStateIdFromCityId($city_id)
     {
         try {
-            $city = City::where('id', $city_id)->first();
-            return $city->state_id;
+            $city = ProvinceCity::where('id', $city_id)->first();
+            return $city->parent_id;
         } catch (\Exception $exception) {
             Log::emergency("------------------------------------------------------------------------------");
             Log::emergency("AddressController : geStateIdFromCityId");

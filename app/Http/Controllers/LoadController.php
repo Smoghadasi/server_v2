@@ -25,6 +25,7 @@ use App\Models\LoadStatus;
 use App\Models\LoadType;
 use App\Models\Owner;
 use App\Models\PackingType;
+use App\Models\ProvinceCity;
 use App\Models\Tender;
 use App\Models\User;
 use App\Models\UserActivityReport;
@@ -739,7 +740,7 @@ class LoadController extends Controller
                 $load->fromCity = $this->getCityName($request->origin_city_id);
                 $load->toCity = $this->getCityName($destination_city);
                 try {
-                    $city = City::find($request->origin_city_id);
+                    $city = ProvinceCity::find($request->origin_city_id);
                     if (isset($city->id)) {
                         $load->latitude = $city->latitude;
                         $load->longitude = $city->longitude;
@@ -4307,9 +4308,10 @@ class LoadController extends Controller
     private function getCityName($city_id)
     {
         try {
-            $city = City::where('id', $city_id)->select('name', 'state as province')->first();
+            $city = ProvinceCity::where('id', $city_id)->where('parent_id', '!=', 0)->select('name', 'parent_id')->first();
+            $state = ProvinceCity::where('id', $city->parent_id)->first();
             if (isset($city->name))
-                return $city->province . ', ' . $city->name;
+                return $state->name . ', ' . $city->name;
         } catch (\Exception $e) {
         }
         return '';
