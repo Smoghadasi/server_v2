@@ -23,6 +23,7 @@ use App\Http\Controllers\ParameterController;
 use App\Http\Controllers\PayController;
 use App\Http\Controllers\ProvinceCityController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReportingController;
 use App\Http\Controllers\ServiceController;
 // use App\Http\Controllers\ServiceController;
@@ -698,6 +699,10 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         // نتیجه تماس ها
         Route::get('contactingWithDriverResult/{driver}', [OperatorContactingController::class, 'contactingWithDriverResult'])->middleware('operator')->name('contactingWithDriverResult');
+
+
+        Route::resource('report', ReportController::class)->middleware('operator');
+
 
         // ذخیره نتیجه تماس با راننده
         Route::post('storeContactReportWithDriver', [OperatorContactingController::class, 'storeContactReportWithDriver'])->middleware('operator');

@@ -471,7 +471,13 @@
                                     <span>پیام ها</span>
                                 </a>
                             </li>
+
                             <li class="menu-item">
+                                <a class="menu-link" href="{{ route('report.index') }}">
+                                    <span>گزارش تخلف</span>
+                                </a>
+                            </li>
+                            {{-- <li class="menu-item">
                                 <a class="menu-link" href="{{ url('admin/complaintsTransportationCompanyList') }}">
                                     <div data-i18n="Without menu"> باربری ها(نسخه قدیمی)</div>
                                 </a>
@@ -481,7 +487,7 @@
                                 <a class="menu-link" href="{{ url('admin/complaintsCustomerList') }}">
                                     <div data-i18n="Without menu">صاحب بار(نسخه قدیمی)</div>
                                 </a>
-                            </li>
+                            </li> --}}
                         </ul>
                     </li>
 

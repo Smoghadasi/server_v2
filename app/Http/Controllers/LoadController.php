@@ -4370,7 +4370,7 @@ class LoadController extends Controller
     // جستجو بارها
     public function searchLoadsForm()
     {
-        $cities = City::orderby('centerOfProvince', 'desc')->get();
+        $cities = ProvinceCity::where('parent_id', '!=', 0)->get();
         $fleets = Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
         $operators = User::where([['role', 'operator'], ['status', 1]])->get();
         $loads = [];
@@ -4394,7 +4394,7 @@ class LoadController extends Controller
             $condition[] = ['mobileNumberForCoordination', $request->mobileNumber];
 
         $loads = Load::where($condition)->withTrashed()->get();
-        $cities = City::orderby('centerOfProvince', 'desc')->get();
+        $cities = ProvinceCity::where('parent_id', '!=', 0)->get();
         $fleets = Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
         $operators = User::where([['role', 'operator'], ['status', 1]])->get();
 
