@@ -3,6 +3,7 @@
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\Api\OwnerController;
 use App\Http\Controllers\Api\ProvinceCityController;
+use App\Http\Controllers\Api\ReportController as ApiReportController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\BearingController;
@@ -614,6 +615,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::post('getComplaintOwnerResult/{owner}', [ComplaintController::class, 'getComplaintOwnerResult']);
 
         Route::get('provinceCities', [ProvinceCityController::class, 'index']);
+
+        Route::post('report', [ApiReportController::class, 'store']);
 
     });
 });
