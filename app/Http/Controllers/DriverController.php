@@ -777,10 +777,11 @@ class DriverController extends Controller
     }
 
     // بررسی وضعیت شارژ راننده برای تماس
-    public function checkDriverStatusForCalling(Driver $driver, $phoneNumber = '0', $load_id = 0)
+    public function checkDriverStatusForCalling(Driver $driver, $phoneNumber = '0', $load_id = 0, $latitude = 0, $longitude = 0)
     {
         try {
             if ($driver->activeDate > date("Y-m-d H:i:s", time()) || $driver->freeCalls > 0) {
+
                 if (DriverCall::where('load_id', $load_id)->where('driver_id', $driver->id)->count() > 0) {
                     return ['result' => true];
                 }
@@ -789,6 +790,7 @@ class DriverController extends Controller
                     $driver->freeCalls--;
                     $driver->save();
                 }
+
                 $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
 
                 // گزارش رانندگان بر اساس تماس
@@ -832,6 +834,10 @@ class DriverController extends Controller
                 $driverCall->load_id = $load_id;
                 $driverCall->phoneNumber = $phoneNumber;
                 $driverCall->callingDate = date("Y-m-d");
+                $driverCall->date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+                $driverCall->dateTime = now()->format('H:i:s');
+                $driverCall->latitude = $latitude == 0 ? 0 : $latitude;
+                $driverCall->longitude = $longitude == 0 ? 0 : $longitude;
                 $driverCall->save();
 
 

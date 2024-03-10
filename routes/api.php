@@ -476,7 +476,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::post('searchLoadForDriver/{driver}', [LoadController::class, 'searchLoadForDriver']);
 
         // بررسی وضعیت شارژ راننده برای تماس
-        Route::get('checkDriverStatusForCalling/{driver}/{phoneNumber?}/{load_id?}', [DriverController::class, 'checkDriverStatusForCalling']);
+        Route::get('checkDriverStatusForCalling/{driver}/{phoneNumber?}/{load_id?}/{latitude?}/{longitude?}', [DriverController::class, 'checkDriverStatusForCalling']);
 
         Route::get('getPackagesInfo', [DriverController::class, 'getPackagesInfo']);
 
