@@ -141,6 +141,12 @@
                     <tr>
                         <td class="font-weight-bold">تعداد تماس</td>
                         <td>{{ $load->numOfDriverCalls }}</td>
+                        @if (Auth::user()->role == 'admin')
+                            <td class="font-weight-bold">موقعیت جغرافیایی</td>
+                            <td>
+                                <a class="text-danger" href="http://maps.google.com/maps?f=q&q={{$load->originLatitude}},{{$load->originLongitude}}">نقشه مپ</a>
+                            </td>
+                        @endif
                     </tr>
                     </tbody>
                 </table>
