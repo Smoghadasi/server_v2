@@ -2350,19 +2350,24 @@ class LoadController extends Controller
                 ['load_id', $request->load_id],
             ])->update(['price' => $request->price]);
 
-            $this->sendNewInquiryNotification($request->load_id, $request->price, $request->driver_id);
+            // $this->sendNewInquiryNotification($request->load_id, $request->price, $request->driver_id);
 
             return ['result' => SUCCESS];
         }
+
+        $city = ProvinceCity::where('parent_id', '!=', 0)->where('name', $request->city)->first();
 
         $inquiry = new Inquiry();
         $inquiry->driver_id = $request->driver_id;
         $inquiry->load_id = $request->load_id;
         $inquiry->price = $request->price;
+        $inquiry->city_id = $city ? $city->id : null;
+        $inquiry->latitude = $request->latitude == null ? 0 : $request->latitude;
+        $inquiry->longitude = $request->longitude == null ? 0 : $request->longitude;
         $inquiry->save();
 
         if ($inquiry) {
-            $this->sendNewInquiryNotification($request->load_id, $request->price, $request->driver_id);
+            // $this->sendNewInquiryNotification($request->load_id, $request->price, $request->driver_id);
             return ['result' => SUCCESS];
         }
 
@@ -2962,48 +2967,48 @@ class LoadController extends Controller
      * @param $load_id
      * @param $price
      */
-    private function sendNewInquiryNotification($load_id, $price, $driver_id)
-    {
-        $load = Load::where('id', $load_id)->first();
+    // private function sendNewInquiryNotification($load_id, $price, $driver_id)
+    // {
+    //     $load = Load::where('id', $load_id)->first();
 
-        $bearing = Bearing::where('id', $load->bearing_id)->first();
+    //     $bearing = Bearing::where('id', $load->bearing_id)->first();
 
-        if ($load->userType == ROLE_CARGo_OWNER) {
-            $customer = Customer::find($load->user_id);
-            if (isset($customer->id)) {
-                $data = [
-                    'title' => '',
-                    'body' => '',
-                    'notificationType' => REFRESH_LOAD_INFO_PAGE
-                ];
-                $this->sendNotification($customer->FCM_token, $data, API_ACCESS_KEY_USER);
-            }
-        }
+    //     if ($load->userType == ROLE_CARGo_OWNER) {
+    //         $customer = Customer::find($load->user_id);
+    //         if (isset($customer->id)) {
+    //             $data = [
+    //                 'title' => '',
+    //                 'body' => '',
+    //                 'notificationType' => REFRESH_LOAD_INFO_PAGE
+    //             ];
+    //             $this->sendNotification($customer->FCM_token, $data, API_ACCESS_KEY_USER);
+    //         }
+    //     }
 
-        $data = [
-            'title' => 'قیمت جدید در استعلام',
-            'body' => 'یک قیمت جدید به مبلغ ' . $price . ' تومان  در استعلام ثبت شد',
-            'load_id' => $load_id,
-            'notificationType' => 'newInquiryPrice',
-        ];
+    //     $data = [
+    //         'title' => 'قیمت جدید در استعلام',
+    //         'body' => 'یک قیمت جدید به مبلغ ' . $price . ' تومان  در استعلام ثبت شد',
+    //         'load_id' => $load_id,
+    //         'notificationType' => 'newInquiryPrice',
+    //     ];
 
-        if (isset($bearing->FCM_token))
-            $this->sendNotification($bearing->FCM_token, $data, API_ACCESS_KEY_TRANSPORTATION_COMPANY);
+    //     if (isset($bearing->FCM_token))
+    //         $this->sendNotification($bearing->FCM_token, $data, API_ACCESS_KEY_TRANSPORTATION_COMPANY);
 
-        //
-        //        $drivers = Driver::join('inquiries', 'drivers.id', '=', 'inquiries.driver_id')
-        //            ->where([
-        //                ['inquiries.load_id', $load_id],
-        //                ['inquiries.driver_id', '!=', $driver_id]
-        //            ])
-        //            ->select('drivers.FCM_token')
-        //            ->get();
-        //
-        //
-        //        foreach ($drivers as $driver)
-        //            $this->sendNotification($driver->FCM_token, $data, API_ACCESS_KEY_DRIVER);
+    //     //
+    //     //        $drivers = Driver::join('inquiries', 'drivers.id', '=', 'inquiries.driver_id')
+    //     //            ->where([
+    //     //                ['inquiries.load_id', $load_id],
+    //     //                ['inquiries.driver_id', '!=', $driver_id]
+    //     //            ])
+    //     //            ->select('drivers.FCM_token')
+    //     //            ->get();
+    //     //
+    //     //
+    //     //        foreach ($drivers as $driver)
+    //     //            $this->sendNotification($driver->FCM_token, $data, API_ACCESS_KEY_DRIVER);
 
-    }
+    // }
 
     /**
      * @param $load_id
@@ -4278,6 +4283,7 @@ class LoadController extends Controller
         $load->deleted_at = null;
         $load->driverVisitCount = 0;
         $load->time = time();
+        $load->urgent = 1;
         $load->save();
         return response()->json(['result' => true], 200);
     }

@@ -16,6 +16,7 @@ use App\Models\Fleet;
 use App\Models\FreeSubscription;
 use App\Models\Load;
 use App\Models\OperatorDriverAuthMessage;
+use App\Models\ProvinceCity;
 use App\Models\ReportDriver;
 use App\Models\ResultOfContactingWithDriver;
 use App\Models\State;
@@ -1298,7 +1299,7 @@ class DriverController extends Controller
 
             $driver->latitude = $request->latitude;
             $driver->longitude = $request->longitude;
-            $city = CityOwner::where('name', $request->city)->first();
+            $city = ProvinceCity::where('parent_id', '!=', 0)->where('name', $request->city)->first();
             $driver->city_id = $city->id;
             $driver->save();
             return response()->json('اطلاعات جدید ذخیره شد', 200);
