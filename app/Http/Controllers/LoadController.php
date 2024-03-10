@@ -2364,6 +2364,8 @@ class LoadController extends Controller
         $inquiry->city_id = $city ? $city->id : null;
         $inquiry->latitude = $request->latitude == null ? 0 : $request->latitude;
         $inquiry->longitude = $request->longitude == null ? 0 : $request->longitude;
+        $inquiry->date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+        $inquiry->dateTime = now()->format('H:i:s');
         $inquiry->save();
 
         if ($inquiry) {
@@ -2380,40 +2382,41 @@ class LoadController extends Controller
     // درخواست لیست قیمت های استعلام بار رانندگان
     public function requestInquiriesOfLoad($load_id)
     {
-
         $inquiries = Inquiry::join('drivers', 'inquiries.driver_id', 'drivers.id')
             ->with('fleet')
             ->where('load_id', $load_id)
-            ->select('drivers.name', 'drivers.lastName', 'drivers.mobileNumber', 'drivers.fleet_id', 'price', 'inquiries.created_at')
+            ->select('drivers.name', 'drivers.lastName', 'drivers.mobileNumber', 'drivers.fleet_id', 'price', 'inquiries.created_at','inquiries.date', 'inquiries.dateTime')
+            ->orderBy('price', 'asc')
+            ->get();
+        return response()->json($inquiries, 200);
+    }
+    // درخواست لیست قیمت های استعلام بار رانندگان
+    public function requestInquiriesOfLoadCall($load_id)
+    {
+        $inquiries = Inquiry::join('drivers', 'inquiries.driver_id', 'drivers.id')
+            ->with('fleet')
+            ->where('load_id', $load_id)
+            ->select('drivers.name', 'drivers.lastName', 'drivers.mobileNumber', 'drivers.fleet_id', 'price', 'inquiries.created_at','inquiries.date', 'inquiries.dateTime')
             ->orderBy('price', 'asc')
             ->get();
 
-        // $remainingTime = 0;
-        // $remainingTimeStatus = 'noStart';
+        $calls = DriverCall::join('drivers', 'driver_calls.driver_id', 'drivers.id')
+            ->where('load_id', $load_id)
+            ->select(
+                'drivers.name',
+                'drivers.lastName',
+                'drivers.mobileNumber',
+                )
+            ->get();
 
-        // $inquiry = Inquiry::where('load_id', $load_id)
-        //     ->orderBy('id', 'asc')
-        //     ->first();
+        // $calls = DriverCall::with('driver')
+        // ->where('load_id', $load_id)
+        // ->get();
 
-        // if ($inquiry) {
-        //     $remainingTime = (TNDER_TIME - DateController::getSecondFromCreateRowToPresent($inquiry->created_at));
-        //     if ($remainingTime > 0)
-        //         $remainingTimeStatus = 'start';
-        //     else
-        //         $remainingTimeStatus = 'finish';
-        // }
-
-        // $load = Load::where('id', $load_id)->first();
-
-        // $fleets = Fleet::get();
-
-        // $selectedDrivers = DriverLoad::where('load_id', $load_id)->select('driver_id')->get();
-
-        // $proposedPriceForDriver = 0;
-        // if (isset($load->proposedPriceForDriver))
-        //     $proposedPriceForDriver = $load->proposedPriceForDriver;
-
-        return response()->json($inquiries, 200);
+        return response()->json([
+            'inquiries' => $inquiries,
+            'calls' => $calls
+        ], 200);
     }
 
     // فرم افزودن بار توسط اپراتور

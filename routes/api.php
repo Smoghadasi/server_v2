@@ -222,6 +222,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     // درخواست لیست قیمت های استعلام بار راننده
     Route::get('driver/requestInquiriesOfLoad/{load_id}', [LoadController::class, 'requestInquiriesOfLoad']);
 
+    // درخواست لیست درخواست رانندگان و تماس ها
+    Route::get('driver/requestInquiriesOfLoadCall/{load_id}', [LoadController::class, 'requestInquiriesOfLoadCall']);
+
     // درخواست لیست قیمت های استعلام بار برای باربری
     Route::get('bearing/requestInquiriesOfLoad/{load_id}', [LoadController::class, 'requestInquiriesOfLoad']);
 
