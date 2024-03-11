@@ -64,7 +64,13 @@
                                     @endswitch
                                 </td>
                                 <td>{{ $freeSubscription->value }}</td>
-                                <td>{{ $freeSubscription->operator->name }} {{ $freeSubscription->operator->lastName }}</td>
+                                <td>
+                                    @if ($freeSubscription->opeator_id != null)
+                                        {{ $freeSubscription->operator->name }} {{ $freeSubscription->operator->lastName }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
                                 @php
                                     $pieces = explode(' ', $freeSubscription->created_at);
                                 @endphp
