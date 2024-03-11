@@ -2269,6 +2269,8 @@ class LoadController extends Controller
                     'fleets',
                     'time',
                     'description',
+                    'origin_city_id',
+                    'destination_city_id',
                     // 'created_at',
                     // 'storeFor'
                     // 'weight',
