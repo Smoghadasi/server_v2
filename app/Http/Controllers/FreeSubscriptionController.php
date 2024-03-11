@@ -15,7 +15,7 @@ class FreeSubscriptionController extends Controller
      */
     public function index()
     {
-        $freeSubscriptions = FreeSubscription::with('driver')
+        $freeSubscriptions = FreeSubscription::with('driver', 'operator')
             ->orderByDesc('created_at')
             ->where('value', '!=', 0)
             ->whereIn('type', ['AuthCalls', 'AuthValidity'])
@@ -96,7 +96,7 @@ class FreeSubscriptionController extends Controller
 
     public function search(Request $request)
     {
-        $freeSubscriptions = FreeSubscription::with('driver')
+        $freeSubscriptions = FreeSubscription::with('driver', 'operator')
             ->whereHas('driver', function ($q) use ($request) {
                 $q->where('mobileNumber', $request->mobileNumber);
             })

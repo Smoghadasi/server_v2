@@ -10,4 +10,9 @@ class FreeSubscription extends Model
     {
         return $this->belongsTo(Driver::class);
     }
+
+    public function operator()
+    {
+        return $this->belongsTo(User::class, 'operator_id');
+    }
 }

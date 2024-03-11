@@ -965,8 +965,8 @@ class DriverController extends Controller
             $oneMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+30 day', time())), '/');
             $threeMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+90 day', time())), '/');
             $sixMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+180 day', time())), '/');
-            if ($request->month > 0 || $request->month !== null) {
 
+            if ($request->month > 0) {
                 $free_subscription = new FreeSubscription();
                 $free_subscription->type = AUTH_VALIDITY;
                 $free_subscription->value = $request->month;
@@ -981,17 +981,18 @@ class DriverController extends Controller
                 if ($request->month == 6)
                     $sms->freeSubscription($driver->mobileNumber, $persian_date, $sixMonth);
             }
-            if ($request->freeCalls > 0 || $request->freeCalls !== null) {
+            if ($request->freeCalls > 0) {
                 $free_subscription = new FreeSubscription();
                 $free_subscription->type = AUTH_CALLS;
                 $free_subscription->value = $request->freeCalls;
                 $free_subscription->driver_id = $driver->id;
+                $free_subscription->operator_id = Auth::id();
                 $free_subscription->save();
-                $driver_free_total = Driver::where('id', $driver->id)->first();
-                $driver_free_total->freeCallTotal += $request->freeCalls;
-                $driver_free_total->save();
+                $driver->freeCallTotal += $request->freeCalls;
+                $driver->save();
             }
-            if ($request->freeAcceptLoads > 0 || $request->freeAcceptLoads !== null) {
+            if ($request->freeAcceptLoads > 0) {
+                return $request;
                 $free_subscription = new FreeSubscription();
                 $free_subscription->type = AUTH_CARGO;
                 $free_subscription->value = $request->freeCalls;
@@ -1345,8 +1346,11 @@ class DriverController extends Controller
         $drivers = Driver::whereIn('authLevel', [DRIVER_AUTH_SILVER_PENDING, DRIVER_AUTH_GOLD_PENDING])
             ->orderby('updateDateTime', 'asc')
             ->paginate(20);
+        $driverCount = Driver::whereIn('authLevel', [DRIVER_AUTH_SILVER_PENDING, DRIVER_AUTH_GOLD_PENDING])
+        ->orderby('updateDateTime', 'asc')
+        ->count();
 
-        return view('admin.driversAuthenticationByOperator', compact('drivers'));
+        return view('admin.driversAuthenticationByOperator', compact(['drivers', 'driverCount']));
     }
 
     public function removeDriverFile($fileType, Driver $driver)

@@ -9,7 +9,7 @@
                     استان ها و شهرها
                 </div>
                 <div class="col" style="text-align: left;">
-                    <a href="{{ route('equivalents') }}" class="btn btn-danger btn-sm">کلمات معادل شهر</a>
+                    <a href="{{ route('equivalent.index') }}" class="btn btn-danger btn-sm">کلمات معادل شهر</a>
                 </div>
         </h5>
         <div class="card-body">

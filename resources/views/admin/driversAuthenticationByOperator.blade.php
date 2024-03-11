@@ -5,7 +5,7 @@
 
 
     <div class="card">
-        <h5 class="card-header">احراز هویت رانندگان</h5>
+        <h5 class="card-header">احراز هویت رانندگان ({{ $driverCount }})</h5>
         <div class="table-responsive">
             <table class="table">
                 <thead>

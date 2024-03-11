@@ -265,7 +265,7 @@
                             </li>
 
                             <li class="menu-item">
-                                <a class="menu-link" href="{{ url('admin/dictionary') }}">
+                                <a class="menu-link" href="{{ route('equivalent.index') }}">
                                     <div data-i18n="Without menu">کلمات معادل در ثبت بار</div>
                                 </a>
                             </li>
@@ -577,19 +577,19 @@
                         @endif
                         @if(in_array('provincesAndCities',auth()->user()->userAccess))
                             <li class="menu-item">
-                                <a class="menu-link" href="{{ url('admin/provincesAndCities') }}">
+                                <a class="menu-link" href="{{ route('provinceCity.index') }}">
                                     <span>استان ها و شهرها</span>
                                 </a>
                             </li>
                         @endif
 
-                        @if(in_array('SOSList',auth()->user()->userAccess))
+                        {{-- @if(in_array('SOSList',auth()->user()->userAccess))
                             <li class="menu-item">
                                 <a class="menu-link" href="{{ url('admin/SOSList/0') }}">
                                     <div data-i18n="Without menu">درخواست های امداد</div>
                                 </a>
                             </li>
-                        @endif
+                        @endif --}}
 
 
                         @if(in_array('services',auth()->user()->userAccess))

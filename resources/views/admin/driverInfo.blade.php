@@ -89,10 +89,9 @@
                             <div class="alert alert-primary d-inline-block">درحال حمل بار</div>
                         @endif
                     </td>
-                    <th>تصویر</th>
+                    <th></th>
                     <td>
-                        <img src="{{ url('pictures/drivers') }}/{{ $driver->pic }}" class="img-thumbnail" width="100"
-                            height="100">
+
                     </td>
                 </tr>
             </table>

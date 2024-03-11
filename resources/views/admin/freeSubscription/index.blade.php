@@ -32,6 +32,7 @@
                             <th>نام و نام خانوادگی</th>
                             {{-- <th>مجموع تماس های رایگان</th> --}}
                             <th>نوع</th>
+                            <th>اپراتور</th>
                             <th>تعداد</th>
                             <th>تاریخ</th>
 
@@ -62,6 +63,7 @@
                                         @break
                                     @endswitch
                                 </td>
+                                <td>{{ $freeSubscription->operator->name }} {{ $freeSubscription->operator->lastName }}</td>
                                 <td>{{ $freeSubscription->value }}</td>
                                 @php
                                     $pieces = explode(' ', $freeSubscription->created_at);

@@ -117,7 +117,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // equivalents
         Route::get('equivalents', [DataConvertController::class, 'equivalents'])
             ->middleware('operator')
-            ->name('equivalents');
+            ->name('equivalent.index');
 
         Route::post('addWordToEquivalent', [DataConvertController::class, 'addWordToEquivalent'])->middleware('operator');
         Route::delete('removeEquivalentWord/{equivalent}', [DataConvertController::class, 'removeEquivalentWord'])->middleware('operator')->name('removeEquivalentWord');
