@@ -997,6 +997,7 @@ class DriverController extends Controller
                 $free_subscription->type = AUTH_CARGO;
                 $free_subscription->value = $request->freeCalls;
                 $free_subscription->driver_id = $driver->id;
+                $free_subscription->operator_id = Auth::id();
                 $free_subscription->save();
             }
             return redirect('admin/drivers')->with('success', 'تمدید اعتبار راننده انجام شد.');
