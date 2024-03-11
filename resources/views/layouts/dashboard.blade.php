@@ -152,7 +152,7 @@
             <div class="app-brand demo">
                 <a href="{{ url('/dashboard') }}" class="app-brand-link">
                     <span class="app-brand-logo demo">
-                        <img src="{{ asset('img/sabze1.png') }}" width="40" height="40"/>
+                        <img src="{{ asset('img/7sin.png') }}" width="80" height="60"/>
                     </span>
                     <span class="app-brand-text demo menu-text fw-bolder ms-2">ایران ترابر</span>
 
