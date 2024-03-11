@@ -4422,7 +4422,7 @@ class LoadController extends Controller
     {
         $cityDistance = new CityDistanceCalculate();
         $cityDistance->fromCity_id = $request->fromCity;
-        $cityDistance->fromCity_id = $request->toCity;
+        $cityDistance->toCity_id = $request->toCity;
         $cityDistance->value = $request->value;
         $cityDistance->save();
         return response()->json('با موفقیت ذخیره شد', 200);
