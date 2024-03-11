@@ -1261,14 +1261,14 @@ class DriverController extends Controller
                 $driver->authLevel = DRIVER_AUTH_GOLD_PENDING;
             }
 
-            if (FreeSubscription::where('driver_id', $driver->id)->where('type', AUTH_CALLS)->where('value', TEN_AUTH_CALLS)->count() == 0) {
-                $free_subscription = new FreeSubscription();
-                $free_subscription->type = AUTH_CALLS;
-                $free_subscription->value = TEN_AUTH_CALLS;
-                $free_subscription->driver_id = $driver->id;
-                $free_subscription->save();
-                $driver->freeCalls += 25;
-            }
+            // if (FreeSubscription::where('driver_id', $driver->id)->where('type', AUTH_CALLS)->where('value', TEN_AUTH_CALLS)->count() == 0) {
+            //     $free_subscription = new FreeSubscription();
+            //     $free_subscription->type = AUTH_CALLS;
+            //     $free_subscription->value = TEN_AUTH_CALLS;
+            //     $free_subscription->driver_id = $driver->id;
+            //     $free_subscription->save();
+            //     $driver->freeCalls += 25;
+            // }
 
             $driver->save();
 
