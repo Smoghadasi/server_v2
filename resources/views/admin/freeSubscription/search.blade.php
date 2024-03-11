@@ -65,7 +65,7 @@
                                 </td>
                                 <td>{{ $freeSubscription->value }}</td>
                                 <td>
-                                    @if ($freeSubscription->opeator_id != null)
+                                    @if ($freeSubscription->operator_id != null)
                                         {{ $freeSubscription->operator->name }} {{ $freeSubscription->operator->lastName }}
                                     @else
                                         -
