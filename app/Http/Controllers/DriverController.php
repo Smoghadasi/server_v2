@@ -971,6 +971,7 @@ class DriverController extends Controller
                 $free_subscription->type = AUTH_VALIDITY;
                 $free_subscription->value = $request->month;
                 $free_subscription->driver_id = $driver->id;
+                $free_subscription->operator_id = Auth::id();
                 $free_subscription->save();
                 $sms = new Driver();
 
@@ -992,7 +993,6 @@ class DriverController extends Controller
                 $driver->save();
             }
             if ($request->freeAcceptLoads > 0) {
-                return $request;
                 $free_subscription = new FreeSubscription();
                 $free_subscription->type = AUTH_CARGO;
                 $free_subscription->value = $request->freeCalls;
