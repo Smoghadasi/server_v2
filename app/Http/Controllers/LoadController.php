@@ -2411,8 +2411,7 @@ class LoadController extends Controller
                 'date',
                 'dateTime',
                 'driver_calls.latitude',
-                'driver_calls.longitude',
-                'driver_calls.city_id'
+                'driver_calls.longitude'
                 )
             ->get();
 
