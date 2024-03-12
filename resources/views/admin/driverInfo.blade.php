@@ -89,9 +89,9 @@
                             <div class="alert alert-primary d-inline-block">درحال حمل بار</div>
                         @endif
                     </td>
-                    <th></th>
+                    <th>تماس رایگان</th>
                     <td>
-
+                        {{ $driver->freeCalls }}
                     </td>
                 </tr>
             </table>
