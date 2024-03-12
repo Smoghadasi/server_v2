@@ -4416,7 +4416,7 @@ class LoadController extends Controller
     {
         $loads = Load::findOrFail($request->loads);
         foreach ($loads as $load) {
-            $load->forceDelete();
+            $load->delete();
         }
         return redirect()->route('search.load.form');
     }
