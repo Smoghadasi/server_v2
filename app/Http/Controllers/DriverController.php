@@ -46,11 +46,14 @@ class DriverController extends Controller
     // لیست رانندگان برای ادمین
     public function adminDrivers($drivers = [], $showSearchResult = false)
     {
-        $fleets = Fleet::all();
-        if (!$showSearchResult)
-            $drivers = Driver::orderBy('id', 'desc')->paginate(50);
-
-        return view('admin.driver.adminDrivers', compact('drivers', 'showSearchResult', 'fleets'));
+        if (Auth::user()->role == 'admin') {
+            $fleets = Fleet::all();
+            if (!$showSearchResult)
+                $drivers = Driver::orderBy('id', 'desc')->paginate(50);
+            return view('admin.driver.adminDrivers', compact('drivers', 'showSearchResult', 'fleets'));
+        }else{
+            return response()->view("errors.404");
+        }
     }
 
 
