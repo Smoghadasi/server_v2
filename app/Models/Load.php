@@ -113,10 +113,14 @@ class Load extends Model
     {
         try {
             $cityDistance = CityDistanceCalculate::where('fromCity_id', $this->origin_city_id)->where('toCity_id', $this->destination_city_id)->first();
+            $cityDistanceReverse = CityDistanceCalculate::where('toCity_id', $this->origin_city_id)->where('fromCity_id', $this->destination_city_id)->first();
             if (isset($cityDistance->id))
                 return $cityDistance->value;
-            else
-                return 0;
+
+            if (isset($cityDistanceReverse->id))
+                return $cityDistanceReverse->value;
+
+            return 0;
         } catch (Exception $exception) {
             //throw $th;
         }
