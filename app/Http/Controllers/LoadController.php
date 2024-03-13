@@ -4349,22 +4349,22 @@ class LoadController extends Controller
             try {
                 if ($i > 0 && $fullAddress[$i - 1] == "شهرستان") {
 
-                    $city = City::where('name', $fullAddress[$i])->first();
+                    $city = ProvinceCity::where('name', $fullAddress[$i])->where('parent_id', '!=', 0)->first();
                     if (isset($city->id))
                         return $city;
 
                     $fullAddress[$i] = str_replace('ک', 'ك', $fullAddress[$i]);
-                    $city = City::where('name', $fullAddress[$i])->first();
+                    $city = ProvinceCity::where('name', $fullAddress[$i])->where('parent_id', '!=', 0)->first();
                     if (isset($city->id))
                         return $city;
 
                     $fullAddress[$i] = str_replace('ی', 'ي', $fullAddress[$i]);
-                    $city = City::where('name', $fullAddress[$i])->first();
+                    $city = ProvinceCity::where('name', $fullAddress[$i])->where('parent_id', '!=', 0)->first();
                     if (isset($city->id))
                         return $city;
 
                     $fullAddress[$i] = str_replace('ا', 'أ', $fullAddress[$i]);
-                    $city = City::where('name', $fullAddress[$i])->first();
+                    $city = ProvinceCity::where('name', $fullAddress[$i])->where('parent_id', '!=', 0)->first();
                     if (isset($city->id))
                         return $city;
                 }
@@ -4423,11 +4423,14 @@ class LoadController extends Controller
     }
     public function storeDistanceCalculate(Request $request)
     {
-        $cityDistance = new CityDistanceCalculate();
-        $cityDistance->fromCity_id = $request->fromCity;
-        $cityDistance->toCity_id = $request->toCity;
-        $cityDistance->value = $request->value;
-        $cityDistance->save();
-        return response()->json('با موفقیت ذخیره شد', 200);
+        $duplicates = CityDistanceCalculate::where('fromCity_id', $request->fromCity)->where('toCity_id', $request->toCity)->get();
+        if (count($duplicates) == 0) {
+            $cityDistance = new CityDistanceCalculate();
+            $cityDistance->fromCity_id = $request->fromCity;
+            $cityDistance->toCity_id = $request->toCity;
+            $cityDistance->value = $request->value;
+            $cityDistance->save();
+            return response()->json('با موفقیت ذخیره شد', 200);
+        }
     }
 }
