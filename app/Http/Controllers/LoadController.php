@@ -2402,18 +2402,9 @@ class LoadController extends Controller
             ->orderBy('price', 'asc')
             ->get();
 
-        $calls = DriverCall::join('drivers', 'driver_calls.driver_id', 'drivers.id')
-            ->where('load_id', $load_id)
-            ->select(
-                'drivers.name',
-                'drivers.lastName',
-                'drivers.mobileNumber',
-                'date',
-                'dateTime',
-                'driver_calls.latitude',
-                'driver_calls.longitude',
-                'driver_calls.driver_id',
-                )
+        $calls = DriverCall::where('load_id', $load_id)
+            ->with('driverSelect')
+
             ->get();
 
         return response()->json([

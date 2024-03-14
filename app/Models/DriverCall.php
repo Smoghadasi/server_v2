@@ -16,4 +16,14 @@ class DriverCall extends Model
     {
         return $this->belongsTo(Driver::class);
     }
+
+    /**
+     * Get the user that owns the DriverCall
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function driverSelect(): BelongsTo
+    {
+        return $this->belongsTo(Driver::class, 'driver_id')->select('id', 'fleet_id');
+    }
 }
