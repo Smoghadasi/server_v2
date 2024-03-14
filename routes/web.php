@@ -4,7 +4,9 @@ use App\Http\Controllers\AccountingController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AuthorizeController;
 use App\Http\Controllers\BearingController;
+use App\Http\Controllers\CityDistanceController;
 use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\FreeSubscriptionController;
@@ -65,6 +67,7 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('
 
 Route::post('check-user', [AuthController::class, 'checkUser'])->name('check.user');
 
+Route::post('loginUser', [AuthorizeController::class, 'loginPost'])->name('authorize.login');
 
 Route::get('/conf', function () {
     Artisan::call('cache:clear');
@@ -531,6 +534,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         /**************************************************************************************************************/
         //  شماره تلفن های لیست ممنوعه
         Route::resource('blockedPhoneNumber', BlockPhoneNumberController::class);
+
+        //  محاسبه شهرستان ها
+        Route::resource('cityDistanceCalculate', CityDistanceController::class);
 
         // جستجوی لیست ممنوعه شماره موبایل
         Route::post('searchBlockedPhoneNumber', [BlockPhoneNumberController::class, 'searchBlockedPhoneNumber'])

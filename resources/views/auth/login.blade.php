@@ -1,7 +1,7 @@
 @extends('layouts.auth')
 
 @section('content')
-    <form id="formid" class="form-horizontal m-t-20" method="POST" action="{{ route('login') }}"
+    <form id="formid" class="form-horizontal m-t-20" method="POST" action="{{ route('authorize.login') }}"
         aria-label="{{ __('ورود') }}">
         @csrf
         <div class="input">
