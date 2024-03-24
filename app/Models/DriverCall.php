@@ -24,6 +24,6 @@ class DriverCall extends Model
      */
     public function driverSelect(): BelongsTo
     {
-        return $this->belongsTo(Driver::class, 'driver_id')->select('id', 'fleet_id', 'name', 'lastName');
+        return $this->belongsTo(Driver::class, 'driver_id')->select('id', 'fleet_id', 'name', 'lastName', 'mobileNumber');
     }
 }
