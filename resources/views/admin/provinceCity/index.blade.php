@@ -10,6 +10,7 @@
                 </div>
                 <div class="col" style="text-align: left;">
                     <a href="{{ route('equivalent.index') }}" class="btn btn-danger btn-sm">کلمات معادل شهر</a>
+                    <a href="{{ route('cityDistanceCalculate.index') }}" class="btn btn-dark btn-sm">محاسبه شهرستان ها</a>
                 </div>
         </h5>
         <div class="card-body">
