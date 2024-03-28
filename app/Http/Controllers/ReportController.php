@@ -14,7 +14,9 @@ class ReportController extends Controller
      */
     public function index()
     {
-        $reports = Report::with(['cargo', 'driver', 'owner'])
+        $reports = Report::with(['cargo' => function ($query) {
+            $query->withTrashed();
+        }, 'driver', 'owner'])
             ->orderByDesc('created_at')
             ->paginate(20);
         return view('admin.report.index', compact('reports'));
