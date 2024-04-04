@@ -49,7 +49,10 @@
             اپراتورها
         </h5>
         <div class="card-body">
-            <p><a class="btn btn-primary" href="{{ url('admin/addNewOperatorForm') }}"> + افزودن اپراتور</a></p>
+            <p>
+                <a class="btn btn-primary" href="{{ url('admin/addNewOperatorForm') }}"> + افزودن اپراتور</a>
+                <a class="btn btn-primary" href="{{ route('vacations.index') }}">  + مرخصی روزانه</a>
+            </p>
 
             <table class="table">
                 <thead>
@@ -130,6 +133,9 @@
                                                     data-bs-target="#operatorAccess_{{ $user->id }}">
                                                     دسترسی ها
                                                 </button>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{{ route('vacation.day', $user->id) }}"> مرخصی روزانه</a>
                                             </li>
                                             <li>
                                                 <button type="button" class="dropdown-item" data-bs-toggle="modal"

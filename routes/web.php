@@ -33,7 +33,7 @@ use App\Http\Controllers\SOSController;
 use App\Http\Controllers\TenderController;
 use App\Http\Controllers\User\BlockPhoneNumberController;
 use App\Http\Controllers\UserController;
-
+use App\Http\Controllers\VacationController;
 use App\Models\City;
 use App\Models\Load;
 use App\Models\State;
@@ -171,6 +171,12 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         // نمایش لیست اپراتور ها
         Route::get('operators', [UserController::class, 'operators'])->middleware('operator');
+
+        Route::get('operator/vacationDay/{user_id}', [VacationController::class, 'vacationDay'])->middleware('operator')->name('vacation.day');
+
+
+        //  مرخصی ها
+        Route::resource('vacations', VacationController::class);
 
         // فرم افزودن اپراتور جدید
         Route::get('addNewOperatorForm', [UserController::class, 'addNewOperatorForm'])->middleware('admin');
