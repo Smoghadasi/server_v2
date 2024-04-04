@@ -4400,8 +4400,8 @@ class LoadController extends Controller
         $cities = ProvinceCity::where('parent_id', '!=', 0)->get();
         $fleets = Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
         $operators = User::where([['role', 'operator'], ['status', 1]])->get();
-
-        return view('admin.searchLoads', compact('loads', 'cities', 'fleets', 'operators'));
+        $countLoads = LoadBackup::where('mobileNumberForCoordination', $request->mobileNumber)->count();
+        return view('admin.searchLoads', compact('loads', 'cities', 'fleets', 'operators', 'countLoads'));
     }
 
     public function deleteAll(Request $request)
