@@ -52,6 +52,7 @@
             <p>
                 <a class="btn btn-primary" href="{{ url('admin/addNewOperatorForm') }}"> + افزودن اپراتور</a>
                 <a class="btn btn-primary" href="{{ route('vacations.index') }}">  + مرخصی روزانه</a>
+                <a class="btn btn-primary" href="{{ route('vacationHour.index') }}">  + مرخصی ساعتی</a>
             </p>
 
             <table class="table">
@@ -136,6 +137,9 @@
                                             </li>
                                             <li>
                                                 <a class="dropdown-item" href="{{ route('vacation.day', $user->id) }}"> مرخصی روزانه</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{{ route('vacation.hour', $user->id) }}"> مرخصی ساعتی</a>
                                             </li>
                                             <li>
                                                 <button type="button" class="dropdown-item" data-bs-toggle="modal"
