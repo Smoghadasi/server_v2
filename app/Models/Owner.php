@@ -36,4 +36,18 @@ class Owner extends Model
         $client->sendPatternSms($fromNum, $toNum, $user, $pass, $pattern_code, $input_data);
         return $rand;
     }
+
+    public function rejectCustomerSms($mobile)
+    {
+        $client = new SoapClient("http://ippanel.com/class/sms/wsdlservice/server.php?wsdl");
+        $user = "09184696188";
+        $pass = "faraz3300131545";
+        $fromNum = "+983000505";
+        $toNum = array($mobile);
+        $pattern_code = "rpncsb872e9qih3";
+        $rand = rand(10000, 99999);
+        $input_data = array("tell" => TELL);
+        $client->sendPatternSms($fromNum, $toNum, $user, $pass, $pattern_code, $input_data);
+        return $rand;
+    }
 }
