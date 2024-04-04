@@ -4377,7 +4377,8 @@ class LoadController extends Controller
         $fleets = Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
         $operators = User::where([['role', 'operator'], ['status', 1]])->get();
         $loads = [];
-        return view('admin.searchLoads', compact('loads', 'cities', 'fleets', 'operators'));
+        $countLoads = 0;
+        return view('admin.searchLoads', compact('loads', 'cities', 'fleets', 'operators', 'countLoads'));
     }
 
     public function searchLoads(Request $request)
