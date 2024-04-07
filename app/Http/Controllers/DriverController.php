@@ -985,7 +985,7 @@ class DriverController extends Controller
     // تمدید اعتبار رانندگان
     public function creditDriverExtending(Request $request, Driver $driver)
     {
-        if ($driver->freeCallTotal > 10) {
+        if ($driver->freeCallTotal > 10 || $driver->freeCallTotal + $request->freeCalls > 10) {
             return back()->with('danger', 'خطا! تماس رایگان داده شده بیشتر از 10 تا است');
         }
         if ($this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, $request->month, $request->freeCalls, $driver->freeAcceptLoads)) {
