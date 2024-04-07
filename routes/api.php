@@ -491,6 +491,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // پیگیری انتقاد یا شکایت راننده از صاحب بار یا باربری
         Route::post('getComplaintDriverResult/{driver}', [ComplaintController::class, 'getComplaintDriverResult']);
 
+        // لیست شکایات و انتقادات راننده
+        Route::get('getComplaintDriver/{driver}', [ComplaintController::class, 'getComplaintDriver']);
+
         // بررسی وضعیت شارژ راننده برای قبول بار
         Route::get('checkDriverStatusForAcceptLoad/{driver}', [DriverController::class, 'checkDriverStatusForAcceptLoad']);
 

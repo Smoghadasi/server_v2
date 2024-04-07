@@ -79,6 +79,17 @@ class ComplaintController extends Controller
         return view('admin.complaintsDriversList', compact('complaintsDrivers'));
     }
 
+    // لیست انقادات و شکایات راننده
+    public function getComplaintDriver($driver)
+    {
+        $complaints = ComplaintDriver::where('driver_id', $driver)
+            // ->select(['title', 'trackingCode', 'message', 'adminMessage'])
+            ->orderByDesc('created_at')
+            ->get();
+        return response()->json($complaints, 200);
+
+    }
+
     public function storeComplaintDriverAdminMessage(Request $request, ComplaintDriver $complaintDriver)
     {
         $complaintDriver->adminMessage = $request->adminMessage;
