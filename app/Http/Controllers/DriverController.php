@@ -6,6 +6,7 @@ use App\Models\AppVersion;
 use App\Models\CargoConvertList;
 use App\Models\City;
 use App\Models\CityOwner;
+use App\Models\ComplaintDriver;
 use App\Models\Driver;
 use App\Models\DriverActivity;
 use App\Models\DriverCall;
@@ -984,6 +985,9 @@ class DriverController extends Controller
     // تمدید اعتبار رانندگان
     public function creditDriverExtending(Request $request, Driver $driver)
     {
+        if ($driver->freeCallTotal > 10) {
+            return back()->with('danger', 'خطا! تماس رایگان داده شده بیشتر از 10 تا است');
+        }
         if ($this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, $request->month, $request->freeCalls, $driver->freeAcceptLoads)) {
             $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
             $oneMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+30 day', time())), '/');
