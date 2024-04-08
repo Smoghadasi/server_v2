@@ -868,7 +868,7 @@ class DriverController extends Controller
 
                 $load = Load::find($load_id);
 
-                if (isset($load->id) && $load->operator_id > 0) {
+                if (isset($load->id) && $load->operator_id > 0 || $load->isBot == 1) {
 
                     $load->driverCallCounter--;
                     $load->save();
