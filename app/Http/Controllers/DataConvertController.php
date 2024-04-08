@@ -609,15 +609,19 @@ class DataConvertController extends Controller
                     $load->user_id = $owner->id;
                     $load->userType = ROLE_OWNER;
                     $load->operator_id = 0;
+                    $load->urgent = 1;
+
                 } else {
                     $load->user_id = auth()->id();
                     $load->userType = ROLE_OPERATOR;
                     $load->operator_id = auth()->id();
+                    $load->urgent = 0;
                 }
             } else {
                 $load->user_id = auth()->id();
                 $load->userType = ROLE_OPERATOR;
                 $load->operator_id = auth()->id();
+                $load->urgent = 0;
             }
             $load->loadMode = 'outerCity';
             $load->loadingHour = 0;
@@ -664,7 +668,8 @@ class DataConvertController extends Controller
             $load->status = ON_SELECT_DRIVER;
             $load->deliveryTime = 24;
 
-            $load->urgent = 0;
+            $load->date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+            $load->dateTime = now()->format('H:i:s');
 
             $loadDuplicate = Load::whereIn('userType', ['customer', 'owner', 'transportation_company'])
                 ->where('mobileNumberForCoordination', $load->mobileNumberForCoordination)
@@ -810,6 +815,8 @@ class DataConvertController extends Controller
                     $backup->status = $load->status;
                     $backup->fleets = $load->fleets;
                     $backup->deliveryTime = $load->deliveryTime;
+                    $backup->date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+                    $backup->dateTime = now()->format('H:i:s');
                     $backup->save();
                 } catch (\Exception $e) {
 
