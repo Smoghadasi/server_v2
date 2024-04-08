@@ -1129,10 +1129,9 @@ class LoadController extends Controller
     // درخواست لیست بارهای بایگانی صاحبان بار
     public function requestCustomerLoadsTrashed($id)
     {
-
         $loads = Load::join('load_statuses', 'loads.status', '=', 'load_statuses.status')
-            ->join('cities as originCity', 'loads.origin_city_id', 'originCity.id')
-            ->join('cities as destinationCity', 'loads.destination_city_id', 'destinationCity.id')
+            ->join('province_cities as originCity', 'loads.origin_city_id', 'originCity.id')
+            ->join('province_cities as destinationCity', 'loads.destination_city_id', 'destinationCity.id')
             ->where('user_id', $id)
             ->where('userType', 'owner')
             ->select(
@@ -1276,8 +1275,8 @@ class LoadController extends Controller
                 ->get();
         } else {
             $loads = Load::join('load_statuses', 'loads.status', '=', 'load_statuses.status')
-                ->join('cities as originCity', 'loads.origin_city_id', 'originCity.id')
-                ->join('cities as destinationCity', 'loads.destination_city_id', 'destinationCity.id')
+                ->join('province_cities as originCity', 'loads.origin_city_id', 'originCity.id')
+                ->join('province_cities as destinationCity', 'loads.destination_city_id', 'destinationCity.id')
                 ->where([
                     ['loads.status', '<', 3],
                     ['loads.status', '>', -1],
@@ -3731,8 +3730,8 @@ class LoadController extends Controller
 
         $condition[] = ['loads.created_at', '>', \date('Y-m-d h:i:s', strtotime('-1 day', time()))];
 
-        $loads = Load::join('cities as originCity', 'loads.origin_city_id', 'originCity.id')
-            ->join('cities as destinationCity', 'loads.destination_city_id', 'destinationCity.id')
+        $loads = Load::join('province_cities as originCity', 'loads.origin_city_id', 'originCity.id')
+            ->join('province_cities as destinationCity', 'loads.destination_city_id', 'destinationCity.id')
             ->join('load_statuses', 'load_statuses.status', 'loads.status')
             ->where($condition)
             ->select(
