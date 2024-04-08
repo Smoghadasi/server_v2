@@ -1094,8 +1094,8 @@ class LoadController extends Controller
     public function requestCustomerLoadsLists($id)
     {
         $loads = Load::join('load_statuses', 'loads.status', '=', 'load_statuses.status')
-            ->join('cities as originCity', 'loads.origin_city_id', 'originCity.id')
-            ->join('cities as destinationCity', 'loads.destination_city_id', 'destinationCity.id')
+            ->join('province_cities as originCity', 'loads.origin_city_id', 'originCity.id')
+            ->join('province_cities as destinationCity', 'loads.destination_city_id', 'destinationCity.id')
             ->where('user_id', $id)
             ->where('userType', 'owner')
             ->select(
