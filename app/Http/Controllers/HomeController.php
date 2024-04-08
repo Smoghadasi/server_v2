@@ -84,6 +84,9 @@ class HomeController extends Controller
             case 'transportationCompanyAutoActive':
                 $siteOption->transportationCompanyAutoActive = !$siteOption->transportationCompanyAutoActive;
                 break;
+            case 'sendBotLoadOwner':
+                $siteOption->sendBotLoadOwner = !$siteOption->sendBotLoadOwner;
+                break;
         }
         $siteOption->save();
 

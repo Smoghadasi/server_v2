@@ -20,6 +20,7 @@ use App\Models\LoadBackup;
 use App\Models\CargoReportByFleet;
 use App\Models\Equivalent;
 use App\Models\OperatorCargoListAccess;
+use App\Models\Owner;
 use App\Models\ProvinceCity;
 use App\Models\RejectCargoOperator;
 use App\Models\Tender;
@@ -509,7 +510,7 @@ class DataConvertController extends Controller
     }
 
     // ذخیره دسته ای بارها
-     public function storeMultiCargo(Request $request, CargoConvertList $cargo)
+    public function storeMultiCargo(Request $request, CargoConvertList $cargo)
     {
 
         try {
@@ -602,8 +603,22 @@ class DataConvertController extends Controller
             $load->tenderTimeDuration = 0;
             $load->packing_type_id = 0;
             $load->loadPic = "noImage";
-            $load->user_id = auth()->id();
-            $load->userType = ROLE_OPERATOR;
+            $owner = Owner::where('mobileNumber', $mobileNumber)->first();
+            if (isSendBotLoadOwner() == true) {
+                if ($owner != null) {
+                    $load->user_id = $owner->id;
+                    $load->userType = ROLE_OWNER;
+                    $load->operator_id = 0;
+                } else {
+                    $load->user_id = auth()->id();
+                    $load->userType = ROLE_OPERATOR;
+                    $load->operator_id = auth()->id();
+                }
+            } else {
+                $load->user_id = auth()->id();
+                $load->userType = ROLE_OPERATOR;
+                $load->operator_id = auth()->id();
+            }
             $load->loadMode = 'outerCity';
             $load->loadingHour = 0;
             $load->loadingMinute = 0;
@@ -642,7 +657,6 @@ class DataConvertController extends Controller
             $load->description = '';
 
             $load->priceBased = $priceType;
-            $load->operator_id = auth()->id();
             $load->proposedPriceForDriver = $freight;
             $load->suggestedPrice = $freight;
             $load->mobileNumberForCoordination = $mobileNumber;

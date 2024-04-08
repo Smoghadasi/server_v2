@@ -4,7 +4,25 @@
 
     <div class="card">
         <h5 class="card-header">
-            لیست بار های ثبت شده توسط صاحبان بار ({{ $loadsCount }})
+            <div class="row justify-content-between">
+                <div class="col-4">
+                    لیست بار های ثبت شده توسط صاحبان بار ({{ $loadsCount }})
+                </div>
+                <div class="col-4" style="text-align: left">
+                    @if (isSendBotLoadOwner())
+                        ارسال بار ربات به بار های ثبت شده
+                        <a class="btn btn-danger btn-sm" href="{{ url('admin/changeSiteOption/sendBotLoadOwner') }}">
+                            غیر فعال
+                        </a>
+                    @else
+                        ارسال بار ربات به بار های ثبت شده
+                        <a class="btn btn-primary btn-sm" href="{{ url('admin/changeSiteOption/sendBotLoadOwner') }}">
+                            فعال
+                        </a>
+                    @endif
+                </div>
+            </div>
+
         </h5>
         <div class="card-body">
             <div class="col-lg-12 m-2 mb-3 text-right">
@@ -70,8 +88,7 @@
 
                             <td>{{ $load->date }} {{ $load->dateTime }}</td>
                             <td>
-                                <a class="btn btn-info btn-sm"
-                                    href="{{ route('loadInfo', $load->id) }}">جزئیات</a>
+                                <a class="btn btn-info btn-sm" href="{{ route('loadInfo', $load->id) }}">جزئیات</a>
                             </td>
                         </tr>
                     @endforeach
