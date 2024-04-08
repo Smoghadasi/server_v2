@@ -1349,6 +1349,7 @@ class DriverController extends Controller
     {
         $driver->version = $version;
         $driver->save();
+        return response()->json($driver->transactionCount, 200);
 
         // return [
         //     'version' => AppVersion::orderBy('id', 'desc')->first()->driverVersion,

@@ -9,21 +9,28 @@ use SoapClient;
 class Driver extends Authenticatable
 {
 
-    protected $appends = ['fleetTitle', 'countOfPais', 'countOfCalls', 'operatorMessage','blockedIp'];
+    protected $appends = [
+        'fleetTitle',
+        'countOfPais',
+        'countOfCalls',
+        'operatorMessage',
+        'blockedIp',
+        'transactionCount'
+    ];
     public function city()
     {
         return $this->hasOne(ProvinceCity::class, 'city_id');
     }
 
-    // public function cityOwner()
-    // {
-    //     return $this->belongsTo(CityOwner::class);
-    // }
+    public function cityOwner()
+    {
+        return $this->belongsTo(ProvinceCity::class);
+    }
 
-//    public function loads()
-//    {
-//        return $this->belongsTo(Load::class);
-//    }
+    //    public function loads()
+    //    {
+    //        return $this->belongsTo(Load::class);
+    //    }
 
     public function sos()
     {
@@ -35,7 +42,16 @@ class Driver extends Authenticatable
         try {
             return Fleet::find($this->fleet_id)->title;
         } catch (\Exception $exception) {
+        }
 
+        return '';
+    }
+
+    public function getTransactionCountAttribute()
+    {
+        try {
+            return Transaction::where('user_id', $this->id)->where('status', '>', 0)->count();
+        } catch (\Exception $exception) {
         }
 
         return '';
@@ -52,7 +68,6 @@ class Driver extends Authenticatable
             'isPaid' => Transaction::where([['user_id', $this->id], ['status', '>', 0]])->count(),
             'unPaid' => Transaction::where([['user_id', $this->id], ['status', 0]])->count(),
         ];
-
     }
 
     public function getCountOfCallsAttribute()
@@ -75,7 +90,6 @@ class Driver extends Authenticatable
             if (isset($operatorMessage->message))
                 return $operatorMessage->message;
         } catch (\Exception $e) {
-
         }
 
         return '';
