@@ -48,11 +48,16 @@
                         @forelse($owners as $owner)
                             <tr>
                                 <td>{{ ($owners->currentPage() - 1) * $owners->perPage() + ++$i }}</td>
-                                <td>{{ $owner->name }} {{ $owner->lastName }}
+                                <td>
+                                    {{ $owner->name }} {{ $owner->lastName }}
                                     @if ($owner->status == 1)
                                         <span class="badge bg-success">فعال</span>
                                     @else
                                         <span class="badge bg-danger">غیر فعال</span>
+                                    @endif
+                                    @if ($owner->moreDayLoad >= 3)
+
+                                        <span class="badge bg-primary">3+</span>
                                     @endif
                                 </td>
                                 <td>

@@ -11,7 +11,7 @@ class Owner extends Model
     use HasFactory;
 
     protected $guarded = [];
-    protected $appends = ['numOfLoads'];
+    protected $appends = ['numOfLoads', 'moreDayLoad'];
 
     public function operatorMessages()
     {
@@ -49,5 +49,17 @@ class Owner extends Model
         $input_data = array("tell" => TELL);
         $client->sendPatternSms($fromNum, $toNum, $user, $pass, $pattern_code, $input_data);
         return $rand;
+    }
+
+    public function getMoreDayLoadAttribute()
+    {
+        $lastLoad = Load::where('userType', ROLE_OWNER)
+            ->where('user_id', $this->id)
+            ->withTrashed()
+            ->orderByDesc('created_at')->first();
+        $now = now();
+        if ($lastLoad != null) {
+            return $lastLoad->created_at->diff($now)->format("%a") ;
+        }
     }
 }
