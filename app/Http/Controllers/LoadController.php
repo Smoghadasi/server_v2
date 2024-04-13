@@ -4248,7 +4248,7 @@ class LoadController extends Controller
     }
 
     // بارهای موجود در مقصد
-    public function LoadsInDestinationCity(Driver $driver, City $city)
+    public function LoadsInDestinationCity(Driver $driver, ProvinceCity $city)
     {
         $request = new Request();
 
