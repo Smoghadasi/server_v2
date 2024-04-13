@@ -290,8 +290,8 @@
 
                             <div class="col-lg-12 border-top border-primary">
                                 <div class="col-lg-12 mb-3 text-center pt-3 btn"
-                                     data-toggle="collapse"
-                                     data-target="#collapseFormA" aria-expanded="false" aria-controls="collapseFormA">
+                                     data-bs-toggle="collapse"
+                                     data-bs-target="#collapseFormA" aria-expanded="false" aria-controls="collapseFormA">
                                     پر کردن اطلاعات زیر
                                     <span class="text-danger">اختیاری</span>
                                     است
