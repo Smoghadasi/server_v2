@@ -19,6 +19,7 @@ class Load extends Model
         'originCity',
         'destinationCity',
         'distanceCity',
+        'ownerAuthenticated',
     ];
 
     public function diver()
@@ -86,6 +87,19 @@ class Load extends Model
     public function getDestinationCityAttribute()
     {
         return ProvinceCity::where('id', $this->destination_city_id)->first();
+    }
+
+    public function getOwnerAuthenticatedAttribute()
+    {
+        if (Owner::where('mobileNumber', $this->mobileNumberForCoordination)->count() > 0) {
+            if (Load::where('id', $this->id)->count() >= 10) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
 
