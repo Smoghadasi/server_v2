@@ -1052,7 +1052,7 @@ class DriverController extends Controller
                 $driver->activeDate = date('Y-m-d', $time + $month * 30 * 24 * 60 * 60);
 
             $driver->freeCalls = ($driver->freeCalls > 0 ? $driver->freeCalls : 0) + $freeCalls;
-            $driver->freeAcceptLoads += $freeAcceptLoads;
+            // $driver->freeAcceptLoads += $freeAcceptLoads;
             $driver->save();
 
             try {

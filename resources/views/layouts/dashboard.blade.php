@@ -630,9 +630,9 @@
                     <!-- /Search -->
                     <ul class="navbar-nav flex-row align-items-center mr-auto f-ir">
                         <!-- Place this tag where you want the button to render. -->
-                        <li class="menu-item lh-1 me-3 f-ir">
+                        {{-- <li class="menu-item lh-1 me-3 f-ir">
                             <a class="f-ir" href="#"> <i class="bx bx-star fs-4 lh-0"></i> امتیاز</a>
-                        </li>
+                        </li> --}}
                         <!-- User -->
                         <li class="menu-item navbar-dropdown dropdown-user dropdown">
                             <a class="menu-link dropdown-toggle hide-arrow" href="javascript:void(0);"
