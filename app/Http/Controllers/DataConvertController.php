@@ -609,21 +609,19 @@ class DataConvertController extends Controller
                     $load->user_id = $owner->id;
                     $load->userType = ROLE_OWNER;
                     $load->operator_id = 0;
-                    $load->urgent = 1;
                     $load->isBot = 1;
 
                 } else {
                     $load->user_id = auth()->id();
                     $load->userType = ROLE_OPERATOR;
                     $load->operator_id = auth()->id();
-                    $load->urgent = 0;
                 }
             } else {
                 $load->user_id = auth()->id();
                 $load->userType = ROLE_OPERATOR;
                 $load->operator_id = auth()->id();
-                $load->urgent = 0;
             }
+            $load->urgent = 0;
             $load->loadMode = 'outerCity';
             $load->loadingHour = 0;
             $load->loadingMinute = 0;
