@@ -3962,9 +3962,8 @@ class LoadController extends Controller
 
             return [
                 'result' => SUCCESS,
-                'loads' => $loads,
-                'currentTime' => time(),
-                'fleet_id' => $driver->fleet_id
+                'loads' => $loads
+                // 'currentTime' => time(),
             ];
         } catch (\Exception $exception) {
             Log::emergency("-------------------------------------------------------------------------");
@@ -4248,9 +4247,9 @@ class LoadController extends Controller
     }
 
     // بارهای موجود در مقصد
-    public function LoadsInDestinationCity(Driver $driver, ProvinceCity $city)
+    public function LoadsInDestinationCity(Request $request, Driver $driver, ProvinceCity $city)
     {
-        $request = new Request();
+        // $request = new Request();
 
         return $this->searchTheNearestCargo($request, $driver, $city, 200);
     }

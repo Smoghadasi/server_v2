@@ -483,7 +483,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('getLoadListFromDate/{driver}/{day}/{fleetId?}', [LoadController::class, 'getLoadListFromDate']);
 
         // بارهای موجود در مقصد
-        Route::get('LoadsInDestinationCity/{driver}/{city}', [LoadController::class, 'LoadsInDestinationCity']);
+        Route::post('LoadsInDestinationCity/{driver}/{city}', [LoadController::class, 'LoadsInDestinationCity']);
 
         // انتقاد یا شکایت راننده از صاحب بار یا باربری
         Route::post('storeComplaintDriver/{driver}', [ComplaintController::class, 'storeComplaintDriver']);
