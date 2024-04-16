@@ -290,6 +290,11 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
             return redirect('admin/searchLoadBackupTransportation');
         });
 
+        // جستجو همه جدول ها
+        Route::post('searchAll', [HomeController::class, 'searchAll'])
+            ->middleware('operator')
+            ->name('admin.searchAll');
+
         // تغییر مشتری به فعال یا غیر فعال
         Route::get('changeCustomerStatus/{customer_id}', [CustomerController::class, 'changeCustomerStatus'])->middleware('operator');
 
