@@ -9,13 +9,12 @@
         <!-- Search -->
         <div class="navbar-nav align-items-center">
             <div class="menu-item d-flex align-items-center">
-                <form class="d-flex" action="{{ route('admin.searchAll') }}" method="POST">
-                    @csrf
-                    <div class="input-group">
-                        <input type="text" required class="form-control" name="mobileNumber" placeholder="جستجو..." />
-                        <span class="input-group-text"><i class="tf-icons bx bx-search"></i></span>
-                    </div>
-                </form>
+                @if(in_array('searchAll',auth()->user()->userAccess))
+                    <form class="d-flex" action="{{ route('admin.searchAll') }}" method="POST">
+                        @csrf
+                        <input type="text" class="form-control border-0 shadow-none" name="mobileNumber" placeholder="جستجو..." aria-label="Search...">
+                    </form>
+                @endif
             </div>
         </div>
         <!-- /Search -->

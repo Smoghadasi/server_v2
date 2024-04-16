@@ -587,6 +587,23 @@
                                                     </li>
                                                 </ul>
 
+                                                <ul id="myUL">
+                                                    <li><span class="caret">جستجو</span>
+                                                        <ul class="nested">
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="searchAll"
+                                                                            @if (in_array('searchAll', $user->userAccess)) checked @endif>
+                                                                        جستجو هدر
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+
 
                                             </div>
                                             <div class="modal-footer text-left">
