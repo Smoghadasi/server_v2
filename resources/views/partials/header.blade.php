@@ -12,7 +12,7 @@
                 <form class="d-flex" action="{{ route('admin.searchAll') }}" method="POST">
                     @csrf
                     <div class="input-group">
-                        <input type="text" class="form-control" name="mobileNumber" placeholder="جستجو..." />
+                        <input type="text" required class="form-control" name="mobileNumber" placeholder="جستجو..." />
                         <span class="input-group-text"><i class="tf-icons bx bx-search"></i></span>
                     </div>
                 </form>

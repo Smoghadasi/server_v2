@@ -71,9 +71,6 @@
                     </tbody>
                 </table>
             </div>
-            @if (!isset($showSearchResult) || !$showSearchResult)
-                {{ $drivers }}
-            @endif
 
         </div>
     </div>
@@ -164,9 +161,6 @@
                             @endforelse
                         </tbody>
                     </table>
-                    <div class="mt-2">
-                        {{ $owners }}
-                    </div>
                 </div>
             </div>
         </div>
