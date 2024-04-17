@@ -814,8 +814,8 @@ class DataConvertController extends Controller
                     $backup->status = $load->status;
                     $backup->fleets = $load->fleets;
                     $backup->deliveryTime = $load->deliveryTime;
-                    $backup->date = gregorianDateToPersian(date('Y/m/d', time()), '/');
-                    $backup->dateTime = now()->format('H:i:s');
+                    // $backup->date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+                    // $backup->dateTime = now()->format('H:i:s');
                     $backup->save();
                 } catch (\Exception $e) {
 
