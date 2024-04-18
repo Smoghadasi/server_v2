@@ -992,8 +992,8 @@ class LoadController extends Controller
         $driverLoads = DriverLoad::where('driver_id', $driver_id)->pluck('load_id');
         $driver = Driver::find($driver_id);
 
-        $loads = Load::join('cities as originCity', 'loads.origin_city_id', 'originCity.id')
-            ->join('cities as destinationCity', 'loads.destination_city_id', 'destinationCity.id')
+        $loads = Load::join('province_cities as originCity', 'loads.origin_city_id', 'originCity.id')
+            ->join('province_cities as destinationCity', 'loads.destination_city_id', 'destinationCity.id')
             ->join('load_statuses', 'load_statuses.status', 'loads.status')
             ->whereIn('loads.id', $driverLoads)
             ->select(
@@ -1013,7 +1013,7 @@ class LoadController extends Controller
 
         $loadsList = [];
         foreach ($loads as $load) {
-            if (FleetLoad::where([['fleet_id', $driver->fleet_id], ['load_id', $load->id]])->count()) {
+            if (FleetLoad::where([['load_id', $load->id]])->count()) {
                 $load['fleets'] = FleetLoad::join('fleets', 'fleet_loads.fleet_id', 'fleets.id')
                     ->where('fleet_loads.load_id', $load->id)
                     ->select('fleets.title', 'fleet_loads.userType', 'fleet_loads.suggestedPrice', 'fleet_loads.fleet_id')
