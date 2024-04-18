@@ -26,6 +26,7 @@ use App\Models\LoadType;
 use App\Models\Owner;
 use App\Models\PackingType;
 use App\Models\ProvinceCity;
+use App\Models\Score;
 use App\Models\Tender;
 use App\Models\User;
 use App\Models\UserActivityReport;
@@ -1730,30 +1731,17 @@ class LoadController extends Controller
         ];
     }
 
-    public function selectDriverForLoadByCustomer(Request $request)
+    public function selectDriverForLoadByOwner(Request $request)
     {
         try {
 
-            if (DriverLoad::where([['load_id', $request->load_id], ['driver_id', $request->driver_id]])->count())
+            if (DriverLoad::where([['load_id', $request->load_id], ['driver_id', $request->driver_id]])->count()) {
                 return [
                     'result' => UN_SUCCESS,
-                    'data' => null,
                     'message' => 'این راننده قبلا برای این بار ثبت شده است'
-                ];
-
-
-            if ($request->driver_id == 0) {
-                Load::where('id', $request->load_id)
-                    ->update(['status' => 5]);
-                return [
-                    'result' => SUCCESS
                 ];
             }
 
-            $load = Load::where([
-                ['id', $request->load_id],
-                ['user_id', $request->customer_id]
-            ])->first();
 
             $driver = Driver::find($request->driver_id);
 
@@ -1763,26 +1751,20 @@ class LoadController extends Controller
             $driverLoad->fleet_id = $driver->fleet_id;
             $driverLoad->save();
 
-            if ($load->numOfRequestedDrivers <= $load->numOfSelectedDrivers)
-                Load::where('id', $request->load_id)
-                    ->update([
-                        'status' => 5
-                    ]);
+            Load::where('id', $request->load_id)->update(['status' => 5]);
 
-            // ارسال نوتیفیکیشن استعلام بار برای رانندگان
-            $data = [
-                'title' => 'انتخاب راننده',
-                'body' => 'شما به عنوان راننده این بار انتخاب شدید',
-                'load_id' => $request->load_id,
-                'notificationType' => 'selectedAsLoadDriver',
-            ];
+            // // ارسال نوتیفیکیشن استعلام بار برای رانندگان
+            // $data = [
+            //     'title' => 'انتخاب راننده',
+            //     'body' => 'شما به عنوان راننده این بار انتخاب شدید',
+            //     'load_id' => $request->load_id,
+            //     'notificationType' => 'selectedAsLoadDriver',
+            // ];
 
-            $this->sendNotification($driver->FCM_token, $data, API_ACCESS_KEY_DRIVER);
+            // $this->sendNotification($driver->FCM_token, $data, API_ACCESS_KEY_DRIVER);
 
             return [
                 'result' => SUCCESS,
-                'data' => null,
-                'message' => null
             ];
         } catch (\Exception $exception) {
 
@@ -2386,7 +2368,7 @@ class LoadController extends Controller
         $inquiries = Inquiry::join('drivers', 'inquiries.driver_id', 'drivers.id')
             ->with('fleet')
             ->where('load_id', $load_id)
-            ->select('drivers.name', 'drivers.lastName', 'drivers.mobileNumber', 'drivers.fleet_id', 'price', 'inquiries.created_at','inquiries.date', 'inquiries.dateTime')
+            ->select('drivers.name', 'drivers.lastName', 'drivers.mobileNumber', 'drivers.fleet_id', 'price', 'inquiries.created_at', 'inquiries.date', 'inquiries.dateTime')
             ->orderBy('price', 'asc')
             ->get();
         return response()->json($inquiries, 200);
@@ -2397,7 +2379,7 @@ class LoadController extends Controller
         $inquiries = Inquiry::join('drivers', 'inquiries.driver_id', 'drivers.id')
             ->with('fleet')
             ->where('load_id', $load_id)
-            ->select('drivers.name', 'drivers.lastName', 'drivers.mobileNumber', 'drivers.fleet_id', 'price', 'inquiries.created_at','inquiries.date', 'inquiries.dateTime', 'inquiries.latitude', 'inquiries.longitude', 'inquiries.city_id','inquiries.driver_id')
+            ->select('drivers.name', 'drivers.id',  'drivers.lastName', 'drivers.mobileNumber', 'drivers.fleet_id', 'price', 'inquiries.created_at', 'inquiries.date', 'inquiries.dateTime', 'inquiries.latitude', 'inquiries.longitude', 'inquiries.city_id', 'inquiries.driver_id', 'inquiries.load_id')
             ->orderBy('price', 'asc')
             ->get();
 
@@ -4422,5 +4404,18 @@ class LoadController extends Controller
             $cityDistance->save();
             return response()->json('با موفقیت ذخیره شد', 200);
         }
+    }
+
+    public function score(Request $request)
+    {
+        $score = new Score();
+        $score->owner_id = $request->owner_id;
+        $score->driver_id = $request->driver_id;
+        $score->value = $request->value;
+        $score->description = $request->description;
+        $score->type = $request->type;
+        $score->save();
+
+        return response()->json($score, 200);
     }
 }

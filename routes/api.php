@@ -252,6 +252,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     // جستجوی بار
     Route::post('driver/searchLoad', [LoadController::class, 'searchLoad']);
 
+    Route::post('score', [LoadController::class, 'score']);
+
 
     // مبلغ شهریه
     Route::get('driver/expenseForDriver', function () {
@@ -415,9 +417,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         // حذف ناوگان از بار
         Route::delete('removeFleetOfLoadByCustomer/{fleetLoad}', [LoadController::class, 'removeFleetOfLoadByCustomer']);
-
-        // انتخاب راننده برای بار توسط صاحب بار
-        Route::post('selectDriverForLoadByCustomer', [LoadController::class, 'selectDriverForLoadByCustomer']);
 
         // بررسی وضعیت شارژ اکانت صاحب بار
         Route::get('checkCustomerAccountChargeStatus/{customer}/{action}', [CustomerController::class, 'checkCustomerAccountChargeStatus']);
@@ -613,7 +612,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // درخواست لیست بارهای بایگانی صاحبان بار
         Route::get('requestCustomerLoadsTrashed/{id}', [LoadController::class, 'requestCustomerLoadsTrashed']);
 
-
         // انتقاد یا شکایت صاحب بار
         Route::post('storeComplaintOwner/{owner}', [ComplaintController::class, 'storeComplaintOwner']);
 
@@ -624,6 +622,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         Route::post('report', [ApiReportController::class, 'store']);
 
+        // انتخاب راننده برای بار توسط صاحب بار
+        Route::post('selectDriverForLoadByOwner', [LoadController::class, 'selectDriverForLoadByOwner']);
     });
 });
 
