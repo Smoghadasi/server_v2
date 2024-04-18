@@ -1008,7 +1008,7 @@ class LoadController extends Controller
                 'loads.fromCity',
                 'loads.toCity',
                 'loads.fleets',
-                'loads.times',
+                'loads.time',
             )
             ->orderBy('loads.id', 'desc')
             ->skip(0)
