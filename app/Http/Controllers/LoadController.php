@@ -1007,31 +1007,22 @@ class LoadController extends Controller
                 'loads.urgent',
                 'loads.fromCity',
                 'loads.toCity',
+                'loads.fleets',
             )
             ->orderBy('loads.id', 'desc')
             ->skip(0)
             ->take(1000)
             ->get();
 
-        $loadsList = [];
-        foreach ($loads as $load) {
-            if (FleetLoad::where([['load_id', $load->id]])->count()) {
-                $load['fleets'] = FleetLoad::join('fleets', 'fleet_loads.fleet_id', 'fleets.id')
-                    ->where('fleet_loads.load_id', $load->id)
-                    ->select('fleets.title', 'fleet_loads.userType', 'fleet_loads.suggestedPrice', 'fleet_loads.fleet_id')
-                    ->get();
-
-                if (count($load['fleets']))
-                    $loadsList[] = $load;
-            }
-        }
+        $loadsList = $loads;
+        // $loadsList[] = $loads;
 
         if (count($loads) > 0) {
 
             return [
                 'result' => SUCCESS,
                 'loads' => $loadsList,
-                'fleet_id' => $driver->fleet_id
+                // 'fleet_id' => $driver->fleet_id
             ];
         }
 
