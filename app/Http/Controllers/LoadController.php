@@ -1016,6 +1016,7 @@ class LoadController extends Controller
                 'loads.mobileNumberForCoordination',
                 'loads.origin_city_id',
                 'loads.destination_city_id',
+                'loads.dateTime',
             )
             ->orderBy('loads.id', 'desc')
             ->skip(0)
