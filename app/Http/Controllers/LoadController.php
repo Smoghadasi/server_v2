@@ -1014,6 +1014,8 @@ class LoadController extends Controller
                 'loads.suggestedPrice',
                 'loads.deleted_at',
                 'loads.mobileNumberForCoordination',
+                'loads.origin_city_id',
+                'loads.destination_city_id',
             )
             ->orderBy('loads.id', 'desc')
             ->skip(0)
