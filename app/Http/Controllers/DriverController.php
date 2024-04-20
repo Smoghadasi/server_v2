@@ -52,7 +52,7 @@ class DriverController extends Controller
             if (!$showSearchResult)
                 $drivers = Driver::orderBy('id', 'desc')->paginate(50);
             return view('admin.driver.adminDrivers', compact('drivers', 'showSearchResult', 'fleets'));
-        }else{
+        } else {
             return response()->view("errors.404");
         }
     }
@@ -513,21 +513,13 @@ class DriverController extends Controller
         // خاور و نیسان
         if ($fleet_id == '82' || $fleet_id == '83' || $fleet_id == '84' || $fleet_id == '85' || $fleet_id == '86' || $fleet_id == '87') {
             $driver->freeCalls = 2;
-        }
-
-        elseif ($fleet_id == '42' || $fleet_id == '43' || $fleet_id == '45' || $fleet_id == '46' || $fleet_id == '47' || $fleet_id == '48') {
+        } elseif ($fleet_id == '42' || $fleet_id == '43' || $fleet_id == '45' || $fleet_id == '46' || $fleet_id == '47' || $fleet_id == '48') {
             $driver->freeCalls = 7;
-        }
-
-        elseif ($fleet_id == '55' || $fleet_id == '56' || $fleet_id == '57' || $fleet_id == '58' || $fleet_id == '49' || $fleet_id == '50' || $fleet_id == '51' || $fleet_id == '52' || $fleet_id == '53') {
+        } elseif ($fleet_id == '55' || $fleet_id == '56' || $fleet_id == '57' || $fleet_id == '58' || $fleet_id == '49' || $fleet_id == '50' || $fleet_id == '51' || $fleet_id == '52' || $fleet_id == '53') {
             $driver->freeCalls = 10;
-        }
-
-        elseif ($fleet_id == '54' || $fleet_id == '66' ) {
+        } elseif ($fleet_id == '54' || $fleet_id == '66') {
             $driver->freeCalls = 15;
-        }
-
-        else{
+        } else {
             $driver->freeCalls = DRIVER_FREE_CALLS;
         }
 
@@ -985,51 +977,56 @@ class DriverController extends Controller
     // تمدید اعتبار رانندگان
     public function creditDriverExtending(Request $request, Driver $driver)
     {
-        if ($driver->freeCallTotal > 10 || $driver->freeCallTotal + $request->freeCalls > 10) {
-            return back()->with('danger', 'خطا! تماس رایگان داده شده بیشتر از 10 تا است');
-        }
-        if ($this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, $request->month, $request->freeCalls, $driver->freeAcceptLoads)) {
-            $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
-            $oneMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+30 day', time())), '/');
-            $threeMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+90 day', time())), '/');
-            $sixMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+180 day', time())), '/');
+        if ($request->month == 0) {
+            if ($driver->freeCallTotal > 10 || $driver->freeCallTotal + $request->freeCalls > 10) {
+                return back()->with('danger', 'خطا! تماس رایگان داده شده بیشتر از 10 تا است');
+            }
+        } else {
+            if ($this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, $request->month, $request->freeCalls, $driver->freeAcceptLoads)) {
+                $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+                $oneMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+30 day', time())), '/');
+                $threeMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+90 day', time())), '/');
+                $sixMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+180 day', time())), '/');
 
-            if ($request->month > 0) {
-                $free_subscription = new FreeSubscription();
-                $free_subscription->type = AUTH_VALIDITY;
-                $free_subscription->value = $request->month;
-                $free_subscription->driver_id = $driver->id;
-                $free_subscription->operator_id = Auth::id();
-                $free_subscription->save();
-                $sms = new Driver();
+                if ($request->month > 0) {
+                    $free_subscription = new FreeSubscription();
+                    $free_subscription->type = AUTH_VALIDITY;
+                    $free_subscription->value = $request->month;
+                    $free_subscription->driver_id = $driver->id;
+                    $free_subscription->operator_id = Auth::id();
+                    $free_subscription->save();
+                    $sms = new Driver();
 
-                if ($request->month == 1)
-                    $sms->freeSubscription($driver->mobileNumber, $persian_date, $oneMonth);
-                if ($request->month == 3)
-                    $sms->freeSubscription($driver->mobileNumber, $persian_date, $threeMonth);
-                if ($request->month == 6)
-                    $sms->freeSubscription($driver->mobileNumber, $persian_date, $sixMonth);
+                    if ($request->month == 1)
+                        $sms->freeSubscription($driver->mobileNumber, $persian_date, $oneMonth);
+                    if ($request->month == 3)
+                        $sms->freeSubscription($driver->mobileNumber, $persian_date, $threeMonth);
+                    if ($request->month == 6)
+                        $sms->freeSubscription($driver->mobileNumber, $persian_date, $sixMonth);
+                }
+                if ($request->freeCalls > 0) {
+                    $free_subscription = new FreeSubscription();
+                    $free_subscription->type = AUTH_CALLS;
+                    $free_subscription->value = $request->freeCalls;
+                    $free_subscription->driver_id = $driver->id;
+                    $free_subscription->operator_id = Auth::id();
+                    $free_subscription->save();
+                    $driver->freeCallTotal += $request->freeCalls;
+                    $driver->save();
+                }
+                if ($request->freeAcceptLoads > 0) {
+                    $free_subscription = new FreeSubscription();
+                    $free_subscription->type = AUTH_CARGO;
+                    $free_subscription->value = $request->freeCalls;
+                    $free_subscription->driver_id = $driver->id;
+                    $free_subscription->operator_id = Auth::id();
+                    $free_subscription->save();
+                }
+                return redirect('admin/drivers')->with('success', 'تمدید اعتبار راننده انجام شد.');
             }
-            if ($request->freeCalls > 0) {
-                $free_subscription = new FreeSubscription();
-                $free_subscription->type = AUTH_CALLS;
-                $free_subscription->value = $request->freeCalls;
-                $free_subscription->driver_id = $driver->id;
-                $free_subscription->operator_id = Auth::id();
-                $free_subscription->save();
-                $driver->freeCallTotal += $request->freeCalls;
-                $driver->save();
-            }
-            if ($request->freeAcceptLoads > 0) {
-                $free_subscription = new FreeSubscription();
-                $free_subscription->type = AUTH_CARGO;
-                $free_subscription->value = $request->freeCalls;
-                $free_subscription->driver_id = $driver->id;
-                $free_subscription->operator_id = Auth::id();
-                $free_subscription->save();
-            }
-            return redirect('admin/drivers')->with('success', 'تمدید اعتبار راننده انجام شد.');
         }
+
+
 
         return redirect('admin/drivers')->with('danger', 'خطا در تمدید اعتبار راننده!');
     }
@@ -1377,8 +1374,8 @@ class DriverController extends Controller
             ->orderby('updateDateTime', 'asc')
             ->paginate(20);
         $driverCount = Driver::whereIn('authLevel', [DRIVER_AUTH_SILVER_PENDING, DRIVER_AUTH_GOLD_PENDING])
-        ->orderby('updateDateTime', 'asc')
-        ->count();
+            ->orderby('updateDateTime', 'asc')
+            ->count();
 
         return view('admin.driversAuthenticationByOperator', compact(['drivers', 'driverCount']));
     }
