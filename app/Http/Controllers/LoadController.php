@@ -996,6 +996,7 @@ class LoadController extends Controller
             ->join('province_cities as destinationCity', 'loads.destination_city_id', 'destinationCity.id')
             ->join('load_statuses', 'load_statuses.status', 'loads.status')
             ->whereIn('loads.id', $driverLoads)
+            ->withTrashed()
             ->select(
                 'loads.id',
                 'loads.status',
