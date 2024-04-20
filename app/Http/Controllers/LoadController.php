@@ -1017,6 +1017,7 @@ class LoadController extends Controller
                 'loads.origin_city_id',
                 'loads.destination_city_id',
                 'loads.dateTime',
+                'loads.user_id',
             )
             ->orderBy('loads.id', 'desc')
             ->skip(0)
