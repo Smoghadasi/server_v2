@@ -1012,6 +1012,7 @@ class LoadController extends Controller
                 'loads.time',
                 'loads.priceBased',
                 'loads.suggestedPrice',
+                'loads.deleted_at',
             )
             ->orderBy('loads.id', 'desc')
             ->skip(0)
