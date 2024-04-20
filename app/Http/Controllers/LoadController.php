@@ -1013,6 +1013,7 @@ class LoadController extends Controller
                 'loads.priceBased',
                 'loads.suggestedPrice',
                 'loads.deleted_at',
+                'loads.mobileNumberForCoordination',
             )
             ->orderBy('loads.id', 'desc')
             ->skip(0)
