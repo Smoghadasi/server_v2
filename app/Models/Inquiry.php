@@ -9,7 +9,8 @@ class Inquiry extends Model
 {
     protected $appends = [
         'isAccepted',
-        'isAnyOneSelectedDriver'
+        'isAnyOneSelectedDriver',
+        'avarageRateDriver'
     ];
     /**
      * Get the user that owns the Inquiry
@@ -37,5 +38,9 @@ class Inquiry extends Model
         } else {
             return false;
         }
+    }
+    public function getAvarageRateDriverAttribute()
+    {
+        return Score::where('type', 'Owner')->where('driver_id', $this->driver_id)->avg('value');
     }
 }
