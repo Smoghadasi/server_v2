@@ -72,13 +72,11 @@ class Load extends Model
 
     public function getNumOfRateDriverAttribute()
     {
-        $driverLoad = DriverLoad::where('type', 'Driver')
-            ->where('owner_id', $this->user_id)
-            ->first();
+        $driverLoad = DriverLoad::where('owner_id', $this->user_id)->first();
             if ($driverLoad === null) {
                 return null;
             }else{
-                return $driverLoad;
+                return $driverLoad->value;
             }
 
     }
