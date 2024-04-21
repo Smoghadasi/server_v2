@@ -11,7 +11,7 @@ class Inquiry extends Model
         'isAccepted',
         'isAnyOneSelectedDriver',
         'avarageRateDriver',
-        'ownerScore'
+        // 'ownerScore'
     ];
     /**
      * Get the user that owns the Inquiry
