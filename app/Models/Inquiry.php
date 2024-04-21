@@ -7,7 +7,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Inquiry extends Model
 {
-    protected $appends = ['isAccepted'];
+    protected $appends = [
+        'isAccepted',
+        'isAnyOneSelectedDriver'
+    ];
     /**
      * Get the user that owns the Inquiry
      *
@@ -21,6 +24,15 @@ class Inquiry extends Model
     public function getIsAcceptedAttribute()
     {
         if (DriverLoad::where('load_id', $this->load_id)->where('driver_id', $this->driver_id)->count() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function getIsAnyOneSelectedDriverAttribute()
+    {
+        if (DriverLoad::where('load_id', $this->load_id)->count() > 0) {
             return true;
         } else {
             return false;
