@@ -19,7 +19,8 @@ class Load extends Model
         'originCity',
         'destinationCity',
         'distanceCity',
-        'ownerAuthenticated'
+        'ownerAuthenticated',
+        'numOfRateDriver'
     ];
 
     public function diver()
@@ -74,7 +75,12 @@ class Load extends Model
         $driverLoad = DriverLoad::where('type', 'Driver')
             ->where('owner_id', $this->user_id)
             ->first();
-        return $driverLoad->value;
+            if ($driverLoad != null) {
+                return $driverLoad->value;
+            }else{
+                return false;
+            }
+
     }
     public function getNumOfDriverCallsAttribute()
     {
