@@ -19,8 +19,7 @@ class Load extends Model
         'originCity',
         'destinationCity',
         'distanceCity',
-        'ownerAuthenticated',
-        'numOfRateDriver'
+        'ownerAuthenticated'
     ];
 
     public function diver()
