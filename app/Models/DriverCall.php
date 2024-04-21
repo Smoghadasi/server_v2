@@ -10,7 +10,8 @@ class DriverCall extends Model
     protected $appends = [
         'isAccepted',
         'isAnyOneSelectedDriver',
-        'avarageRateDriver'
+        'avarageRateDriver',
+        'ownerScore'
     ];
     /**
      * Get the user that owns the DriverCall
@@ -52,5 +53,16 @@ class DriverCall extends Model
     public function getAvarageRateDriverAttribute()
     {
         return Score::where('type', 'Owner')->where('driver_id', $this->driver_id)->avg('value');
+    }
+
+    public function getOwnerScoreAttribute()
+    {
+        $load = Load::where('id', $this->load_id)->withTrashed()->first();
+        $score = Score::where('type', 'Owner')->where('driver_id', $this->driver_id)->where('owner_id', $load->user_id)->first();
+        if ($score === null) {
+            return null;
+        } else {
+            return $score->value;
+        }
     }
 }
