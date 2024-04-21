@@ -46,7 +46,7 @@ class Inquiry extends Model
     }
     public function getOwnerScoreAttribute()
     {
-        return $load = Load::find($this->load_id);
+        return $load = Load::find($this->load_id)->withTrashed();
         $score = Score::where('type', 'Owner')->where('driver_id', $this->driver_id)->where('owner_id', $load->id)->first();
         if ($score === null) {
             return null;
