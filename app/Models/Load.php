@@ -75,12 +75,11 @@ class Load extends Model
         $driverLoad = Score::where('type', 'Driver')
             ->where('owner_id', $this->user_id)
             ->first();
-            if ($driverLoad === null) {
-                return null;
-            }else{
-                return $driverLoad->value;
-            }
-
+        if ($driverLoad === null) {
+            return null;
+        } else {
+            return $driverLoad->value;
+        }
     }
     public function getNumOfDriverCallsAttribute()
     {
