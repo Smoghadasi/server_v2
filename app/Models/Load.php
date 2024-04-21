@@ -67,6 +67,15 @@ class Load extends Model
     {
         return Inquiry::where('load_id', $this->id)->count();
     }
+
+
+    public function getNumOfRateDriverAttribute()
+    {
+        $driverLoad = DriverLoad::where('type', 'Driver')
+            ->where('owner_id', $this->user_id)
+            ->first();
+        return $driverLoad->value;
+    }
     public function getNumOfDriverCallsAttribute()
     {
         return DriverCall::where('load_id', $this->id)->count();
