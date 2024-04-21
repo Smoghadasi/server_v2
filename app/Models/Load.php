@@ -20,7 +20,8 @@ class Load extends Model
         'destinationCity',
         'distanceCity',
         'ownerAuthenticated',
-        'numOfRateDriver'
+        'numOfRateDriver',
+        'avarageRateOwner',
     ];
 
     public function diver()
@@ -152,6 +153,11 @@ class Load extends Model
         } catch (Exception $exception) {
             //throw $th;
         }
+    }
+
+    public function getAvarageRateOwnerAttribute()
+    {
+        return Score::where('type', 'Driver')->where('owner_id', $this->user_id)->avg('value');
     }
 
     //    public function getDriverVisitCountAttribute(): int
