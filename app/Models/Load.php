@@ -20,7 +20,7 @@ class Load extends Model
         'destinationCity',
         'distanceCity',
         'ownerAuthenticated',
-        // 'numOfRateDriver'
+        'numOfRateDriver'
     ];
 
     public function diver()
@@ -75,10 +75,10 @@ class Load extends Model
         $driverLoad = DriverLoad::where('type', 'Driver')
             ->where('owner_id', $this->user_id)
             ->first();
-            if ($driverLoad != null) {
-                return $driverLoad->value;
+            if ($driverLoad === null) {
+                return null;
             }else{
-                return false;
+                return $driverLoad;
             }
 
     }
