@@ -4411,40 +4411,45 @@ class LoadController extends Controller
 
     public function score(Request $request)
     {
-        $userOwner = Score::where('owner_id', '=', $request->owner_id)
-            ->where('driver_id', '=', $request->driver_id)
-            ->where('type', '=', 'Owner')
-            ->first();
+        if ($request->type == 'Owner') {
+            $userOwner = Score::where('owner_id', '=', $request->owner_id)
+                ->where('driver_id', '=', $request->driver_id)
+                ->where('type', '=', 'Owner')
+                ->first();
 
-        if ($userOwner === null) {
-            $score = new Score();
-            $score->owner_id = $request->owner_id;
-            $score->driver_id = $request->driver_id;
-            $score->value = $request->value;
-            $score->description = $request->description;
-            $score->type = $request->type;
-            $score->save();
+            if ($userOwner === null && $request->type == 'Owner') {
+                $score = new Score();
+                $score->owner_id = $request->owner_id;
+                $score->driver_id = $request->driver_id;
+                $score->value = $request->value;
+                $score->description = $request->description;
+                $score->type = $request->type;
+                $score->save();
+            } else {
+                $userOwner->value = $request->value;
+                $userOwner->save();
+            }
         } else {
-            $userOwner->value = $request->value;
-            $userOwner->save();
+            $userDriver = Score::where('owner_id', '=', $request->owner_id)
+                ->where('driver_id', '=', $request->driver_id)
+                ->where('type', '=', 'Driver')
+                ->first();
+            if ($userDriver === null) {
+                $scoreDriver = new Score();
+                $scoreDriver->owner_id = $request->owner_id;
+                $scoreDriver->driver_id = $request->driver_id;
+                $scoreDriver->value = $request->value;
+                $scoreDriver->description = $request->description;
+                $scoreDriver->type = $request->type;
+                $scoreDriver->save();
+            } else {
+                $userDriver->value = $request->value;
+                $userDriver->save();
+            }
         }
 
-        $userDriver = Score::where('owner_id', '=', $request->owner_id)
-            ->where('driver_id', '=', $request->driver_id)
-            ->where('type', '=', 'Driver')
-            ->first();
-        if ($userDriver === null) {
-            $score = new Score();
-            $score->owner_id = $request->owner_id;
-            $score->driver_id = $request->driver_id;
-            $score->value = $request->value;
-            $score->description = $request->description;
-            $score->type = $request->type;
-            $score->save();
-        } else {
-            $userDriver->value = $request->value;
-            $userDriver->save();
-        }
+
+
 
         return response()->json('OK', 200);
     }
