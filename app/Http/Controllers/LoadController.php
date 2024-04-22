@@ -4411,14 +4411,41 @@ class LoadController extends Controller
 
     public function score(Request $request)
     {
-        $score = new Score();
-        $score->owner_id = $request->owner_id;
-        $score->driver_id = $request->driver_id;
-        $score->value = $request->value;
-        $score->description = $request->description;
-        $score->type = $request->type;
-        $score->save();
+        $userOwner = Score::where('owner_id', '=', $request->owner_id)
+            ->where('driver_id', '=', $request->driver_id)
+            ->where('type', '=', 'Owner')
+            ->first();
 
-        return response()->json($score, 200);
+        if ($userOwner === null) {
+            $score = new Score();
+            $score->owner_id = $request->owner_id;
+            $score->driver_id = $request->driver_id;
+            $score->value = $request->value;
+            $score->description = $request->description;
+            $score->type = $request->type;
+            $score->save();
+        } else {
+            $userOwner->value = $request->value;
+            $userOwner->save();
+        }
+
+        $userDriver = Score::where('owner_id', '=', $request->owner_id)
+            ->where('driver_id', '=', $request->driver_id)
+            ->where('type', '=', 'Driver')
+            ->first();
+        if ($userDriver === null) {
+            $score = new Score();
+            $score->owner_id = $request->owner_id;
+            $score->driver_id = $request->driver_id;
+            $score->value = $request->value;
+            $score->description = $request->description;
+            $score->type = $request->type;
+            $score->save();
+        } else {
+            $userDriver->value = $request->value;
+            $userDriver->save();
+        }
+
+        return response()->json('OK', 200);
     }
 }
