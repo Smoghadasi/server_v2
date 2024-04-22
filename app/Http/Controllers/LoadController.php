@@ -2194,6 +2194,7 @@ class LoadController extends Controller
     public function getNewLoadForDriver(Driver $driver, $lastLoadId = 0)
     {
         $driver->ip = request()->ip();
+        $driver->version = 65;
         $driver->save();
         if (BlockedIp::where('ip', request()->ip())->where('userType', ROLE_DRIVER)->count() > 0) {
             return [
@@ -2275,12 +2276,12 @@ class LoadController extends Controller
 
             if (count($loads))
                 return [
-                    'counts' => count($loads),
+                    // 'counts' => count($loads),
                     'result' => SUCCESS,
                     'loads' => $loads,
-                    'currentTime' => time(),
+                    // 'currentTime' => time(),
                     // 'fleet_id' => $driver->fleet_id,
-                    'data' => ['driverStatus' => true],
+                    'transactionCount' => $driver->transactionCount,
                 ];
         } catch (\Exception $exception) {
             Log::emergency("******************************** requestNewLoadsForDriversV2 ******************************");
