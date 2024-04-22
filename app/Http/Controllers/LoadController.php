@@ -2282,6 +2282,7 @@ class LoadController extends Controller
                     // 'currentTime' => time(),
                     // 'fleet_id' => $driver->fleet_id,
                     'transactionCount' => $driver->transactionCount,
+                    'Tel' => TELL,
                 ];
         } catch (\Exception $exception) {
             Log::emergency("******************************** requestNewLoadsForDriversV2 ******************************");
