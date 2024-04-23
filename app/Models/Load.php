@@ -89,7 +89,7 @@ class Load extends Model
 
     public function getNumOfSelectedDriversAttribute()
     {
-        return 0;
+        // return 0;
         return DriverLoad::where('load_id', $this->id)->count();
     }
 

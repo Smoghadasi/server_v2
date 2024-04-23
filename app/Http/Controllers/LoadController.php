@@ -1738,25 +1738,51 @@ class LoadController extends Controller
     {
         try {
 
-            if (DriverLoad::where([['load_id', $request->load_id], ['driver_id', $request->driver_id]])->count()) {
+            if (DriverLoad::where([['load_id', $request->load_id], ['driver_id', $request->driver_id]])->count())
                 return [
                     'result' => UN_SUCCESS,
                     'message' => 'این راننده قبلا برای این بار ثبت شده است'
                 ];
+
+
+            if ($request->driver_id == 0) {
+                Load::where('id', $request->load_id)
+                    ->update(['status' => 5]);
+                return [
+                    'result' => SUCCESS
+                ];
             }
 
+            $load = Load::where([
+                ['id', $request->load_id],
+            ])->first();
 
             $driver = Driver::find($request->driver_id);
 
-            $driverLoad = new DriverLoad();
-            $driverLoad->driver_id = $request->driver_id;
-            $driverLoad->load_id = $request->load_id;
-            $driverLoad->fleet_id = $driver->fleet_id;
-            $driverLoad->save();
+            $driverLoadCount = DriverLoad::where('load_id', $request->load_id)
+                ->where('fleet_id', $driver->fleet_id)
+                ->count();
+            $driverFleetsCount = FleetLoad::where('fleet_id', $driver->fleet_id)->first();
 
-            Load::where('id', $request->load_id)->update(['status' => 5]);
+            if ($driverFleetsCount->numOfFleets > $driverLoadCount) {
+                $driverLoad = new DriverLoad();
+                $driverLoad->driver_id = $request->driver_id;
+                $driverLoad->load_id = $request->load_id;
+                $driverLoad->fleet_id = $driver->fleet_id;
+                $driverLoad->save();
 
-            // // ارسال نوتیفیکیشن استعلام بار برای رانندگان
+                if ($load->numOfRequestedDrivers <= $load->numOfSelectedDrivers)
+                    Load::where('id', $request->load_id)
+                        ->update([
+                            'status' => 5
+                        ]);
+
+                return response()->json('راننده انتخاب شد', 200);
+            } else {
+                return response()->json('خطا! راننده با ناوگان مورد نظر تکمیل شده', 418);
+            }
+
+            // ارسال نوتیفیکیشن استعلام بار برای رانندگان
             // $data = [
             //     'title' => 'انتخاب راننده',
             //     'body' => 'شما به عنوان راننده این بار انتخاب شدید',
@@ -1766,19 +1792,11 @@ class LoadController extends Controller
 
             // $this->sendNotification($driver->FCM_token, $data, API_ACCESS_KEY_DRIVER);
 
-            return [
-                'result' => SUCCESS,
-            ];
         } catch (\Exception $exception) {
 
             Log::emergency($exception->getMessage());
         }
-
-        return [
-            'result' => UN_SUCCESS,
-            'data' => null,
-            'message' => 'درخواست شما ثبت نشد! لطفا دوباره تلاش کنید'
-        ];
+        return response()->json('درخواست شما ثبت نشد! لطفا دوباره تلاش کنید', 404);
     }
 
     // تحویل بار
