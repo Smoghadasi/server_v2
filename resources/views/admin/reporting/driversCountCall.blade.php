@@ -37,6 +37,7 @@
                         <tr>
                             <th>#</th>
                             <th>راننده</th>
+                            <th>ناوگان</th>
                             <th>تلفن</th>
                             <th>تعداد</th>
                             {{--                        <th>تاریخ تماس</th> --}}
@@ -49,6 +50,7 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $basedCall->driver->name . ' ' . $basedCall->driver->lastName ?? '-' }}</td>
+                                <td>{{ $basedCall->driver->fleetTitle ?? '-' }}</td>
                                 <td>{{ $basedCall->driver->mobileNumber ?? '-' }}</td>
                                 <td>{{ $basedCall->countOfCalls }}</td>
                                 {{--                            <td>{{ $basedCall->persian_date }}</td> --}}
