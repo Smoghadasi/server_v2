@@ -1739,11 +1739,8 @@ class LoadController extends Controller
         try {
 
             if (DriverLoad::where([['load_id', $request->load_id], ['driver_id', $request->driver_id]])->count())
-                return [
-                    'result' => UN_SUCCESS,
-                    'message' => 'این راننده قبلا برای این بار ثبت شده است'
-                ];
 
+                return response()->json('این راننده قبلا برای این بار ثبت شده است', 409);
 
             if ($request->driver_id == 0) {
                 Load::where('id', $request->load_id)

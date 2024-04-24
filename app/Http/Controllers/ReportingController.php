@@ -309,15 +309,16 @@ class ReportingController extends Controller
     }
     public function driversCountCall($basedCalls = [], $showSearchResult = false)
     {
+        $fromDate = gregorianDateToPersian(date('Y/m/d', time()), '/');
+        $toDate = $fromDate;
         if (!$showSearchResult) {
             $basedCalls = DriverCallCount::with('driver')->groupBy('driver_id')
                 ->select('driver_id', 'persian_date', 'created_date', DB::raw('sum(calls) as countOfCalls'))
-                //            ->orderByDesc('persian_date')
                 ->orderByDesc('countOfCalls')
+                ->where('persian_date', $fromDate)
                 ->paginate(20);
         }
-        $fromDate = gregorianDateToPersian(date('Y/m/d', time()), '/');
-        $toDate = $fromDate;
+
 
         return view('admin.reporting.driversCountCall', compact('basedCalls', 'fromDate', 'toDate'));
     }

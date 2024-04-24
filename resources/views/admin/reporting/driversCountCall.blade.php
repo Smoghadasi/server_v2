@@ -3,11 +3,11 @@
 @section('content')
     <div class="card">
         <h5 class="card-header">
-            گزارش رانندگان بر اساس بیشترین تماس
+            گزارش رانندگان بر اساس بیشترین تماس (امروز)
         </h5>
         <div class="card-body">
 
-            <form class="my-4" method="post" action="{{ route('search.driverCall.count') }}">
+            {{-- <form class="my-4" method="post" action="{{ route('search.driverCall.count') }}">
                 @csrf
                 <div class="row">
                     <div class="col-md-3">
@@ -16,7 +16,7 @@
                     </div>
                     <div class="col-md-3">
                         <label>تا تاریخ : </label>
-                        <input class="form-control" type="text" name="toDate" value="{{ $toDate }}">
+                        <input class="form-control" type="text" name="toDate" value="">
                     </div>
 
                     <div class="col-md-3">
@@ -29,7 +29,7 @@
                     </div>
                 </div>
 
-            </form>
+            </form> --}}
 
             <div class="mt-2">
                 <table class="table table-bordered">
