@@ -11,7 +11,11 @@ class Owner extends Model
     use HasFactory;
 
     protected $guarded = [];
-    protected $appends = ['numOfLoads', 'moreDayLoad'];
+    protected $appends = [
+        'numOfLoads',
+        'moreDayLoad',
+        'ratingOwner'
+    ];
 
     public function operatorMessages()
     {
@@ -51,6 +55,7 @@ class Owner extends Model
         return $rand;
     }
 
+    // از آخرین بار تا به امروز
     public function getMoreDayLoadAttribute()
     {
         $lastLoad = Load::where('userType', ROLE_OWNER)
@@ -61,5 +66,10 @@ class Owner extends Model
         if ($lastLoad != null) {
             return $lastLoad->created_at->diff($now)->format("%a") ;
         }
+    }
+
+    public function getRatingOwnerAttribute()
+    {
+        return Score::where('type', 'Driver')->where('owner_id', $this->id)->avg('value');
     }
 }

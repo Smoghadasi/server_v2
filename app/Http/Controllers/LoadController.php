@@ -1384,22 +1384,22 @@ class LoadController extends Controller
                 $loadInfo['packingTypePic'] = "";
             }
 
-            $fleetLoads = FleetLoad::join('fleets', 'fleet_loads.fleet_id', 'fleets.id')
-                ->where('load_id', $id)
-                ->select('fleets.*', 'fleet_loads.id as fleet_load_id', 'fleet_loads.numOfFleets', 'fleet_loads.userType', 'fleet_loads.suggestedPrice', 'fleet_loads.load_id', 'fleet_loads.fleet_id')
-                ->get();
+            // $fleetLoads = FleetLoad::join('fleets', 'fleet_loads.fleet_id', 'fleets.id')
+            //     ->where('load_id', $id)
+            //     ->select('fleets.*', 'fleet_loads.id as fleet_load_id', 'fleet_loads.numOfFleets', 'fleet_loads.userType', 'fleet_loads.suggestedPrice', 'fleet_loads.load_id', 'fleet_loads.fleet_id')
+            //     ->get();
 
-            $remainingTimeStatus = 'noStart';
-            $inquiry = Inquiry::where('load_id', $id)
-                ->orderBy('id', 'asc')
-                ->first();
+            // $remainingTimeStatus = 'noStart';
+            // $inquiry = Inquiry::where('load_id', $id)
+            //     ->orderBy('id', 'asc')
+            //     ->first();
 
-            if ($inquiry) {
-                if ((TNDER_TIME - DateController::getSecondFromCreateRowToPresent($inquiry->created_at)) > 0)
-                    $remainingTimeStatus = 'start';
-                else
-                    $remainingTimeStatus = 'finish';
-            }
+            // if ($inquiry) {
+            //     if ((TNDER_TIME - DateController::getSecondFromCreateRowToPresent($inquiry->created_at)) > 0)
+            //         $remainingTimeStatus = 'start';
+            //     else
+            //         $remainingTimeStatus = 'finish';
+            // }
             //        else {
             //            $tenderStart = new TenderStart();
             //            $tenderStart->load_id = $id;
@@ -1434,16 +1434,16 @@ class LoadController extends Controller
 
             if ($loadInfo) {
 
-                $driver = Load::join('drivers', 'drivers.id', '=', 'loads.driver_id')
-                    ->where('loads.id', $id)
-                    ->select('drivers.name', 'drivers.lastName')
-                    ->first();
+                // $driver = Load::join('drivers', 'drivers.id', '=', 'loads.driver_id')
+                //     ->where('loads.id', $id)
+                //     ->select('drivers.name', 'drivers.lastName')
+                //     ->first();
 
                 $path = [
-                    'from' => AddressController::geCityName($loadInfo->origin_city_id),
-                    'to' => AddressController::geCityName($loadInfo->destination_city_id),
-                    'stateFrom' => AddressController::geStateNameFromCityId($loadInfo->origin_city_id),
-                    'stateTo' => AddressController::geStateNameFromCityId($loadInfo->destination_city_id),
+                    // 'from' => AddressController::geCityName($loadInfo->origin_city_id),
+                    // 'to' => AddressController::geCityName($loadInfo->destination_city_id),
+                    // 'stateFrom' => AddressController::geStateNameFromCityId($loadInfo->origin_city_id),
+                    // 'stateTo' => AddressController::geStateNameFromCityId($loadInfo->destination_city_id),
                     'fromLatLong' => AddressController::getLatLong($loadInfo->origin_city_id),
                     'toLatLong' => AddressController::getLatLong($loadInfo->destination_city_id),
                 ];
@@ -1460,39 +1460,42 @@ class LoadController extends Controller
                 else
                     $loadInfo->loadMode = 'درون شهری';
 
-                $selectDriverCost = 25000;
-                if ($loadInfo->price <= 2000000) {
-                    $selectDriverCost = 25000;
-                } else if ($loadInfo->price > 2000000 && $loadInfo->price <= 4000000) {
-                    $selectDriverCost = 35000;
-                } else if ($loadInfo->price > 4000000) {
-                    $selectDriverCost = 45000;
-                }
+                // $selectDriverCost = 25000;
+                // if ($loadInfo->price <= 2000000) {
+                //     $selectDriverCost = 25000;
+                // } else if ($loadInfo->price > 2000000 && $loadInfo->price <= 4000000) {
+                //     $selectDriverCost = 35000;
+                // } else if ($loadInfo->price > 4000000) {
+                //     $selectDriverCost = 45000;
+                // }
 
-                $bearing = Bearing::where('id', $loadInfo->bearing_id)->first();
+                $owner = Owner::where('id', $loadInfo->user_id)
+                    ->where('userType', ROLE_OWNER)
+                    ->select(['id', 'name', 'lastName', 'mobileNumber'])
+                    ->first();
 
-                try {
-                    if ($loadInfo->operator_id > 0 || $loadInfo->userType == ROLE_CARGo_OWNER || $loadInfo->userType == "customer")
-                        if (isset($bearing->mobileNumber))
-                            $bearing->mobileNumber = $loadInfo->mobileNumberForCoordination;
-                        else
-                            $bearing['mobileNumber'] = $loadInfo->mobileNumberForCoordination;
-                } catch (\Exception $exception) {
-                    $bearing = $exception->getMessage();
-                }
+                // try {
+                //     if ($loadInfo->operator_id > 0 || $loadInfo->userType == ROLE_CARGo_OWNER || $loadInfo->userType == "customer")
+                //         if (isset($owner->mobileNumber))
+                //             $owner->mobileNumber = $loadInfo->mobileNumberForCoordination;
+                //         else
+                //             $owner['mobileNumber'] = $loadInfo->mobileNumberForCoordination;
+                // } catch (\Exception $exception) {
+                //     $owner = $exception->getMessage();
+                // }
 
 
                 return [
                     'result' => SUCCESS,
                     'loadInfo' => $loadInfo,
-                    'fleet' => FleetController::getFleetName($loadInfo->fleet_id),
+                    // 'fleet' => FleetController::getFleetName($loadInfo->fleet_id),
                     'path' => $path,
-                    'driver' => $driver,
-                    'bearing' => $bearing,
-                    'selectDriverCost' => $selectDriverCost,
-                    'remainingTimeStatus' => $remainingTimeStatus,
-                    'fleetLoads' => $fleetLoads,
-                    'dateOfCargoDeclaration' => DateOfCargoDeclaration::where('load_id', $loadInfo->id)->get()
+                    // 'driver' => $driver,
+                    'owner' => $owner,
+                    // 'selectDriverCost' => $selectDriverCost,
+                    // 'remainingTimeStatus' => $remainingTimeStatus,
+                    // 'fleetLoads' => $fleetLoads,
+                    // 'dateOfCargoDeclaration' => DateOfCargoDeclaration::where('load_id', $loadInfo->id)->get()
                 ];
             }
         } catch (Exception $exception) {
