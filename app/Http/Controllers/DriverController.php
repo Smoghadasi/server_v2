@@ -797,10 +797,10 @@ class DriverController extends Controller
     public function checkDriverStatusForCalling(Driver $driver, $phoneNumber = '0', $load_id = 0, $latitude = 0, $longitude = 0)
     {
         try {
-            $load = Load::where('id', '=', $load_id)->first();
-            if ($load === null) {
-                return ['result' => 2];
-            }
+            // $load = Load::where('id', '=', $load_id)->first();
+            // if ($load === null) {
+            //     return ['result' => 2];
+            // }
 
             if ($driver->activeDate > date("Y-m-d H:i:s", time()) || $driver->freeCalls > 0) {
 
