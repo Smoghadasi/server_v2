@@ -312,7 +312,8 @@ class ReportingController extends Controller
         $fromDate = gregorianDateToPersian(date('Y/m/d', time()), '/');
         $toDate = $fromDate;
         if (!$showSearchResult) {
-            $basedCalls = DriverCallCount::with('driver')->groupBy('driver_id')
+            $basedCalls = DriverCallCount::with('driver')
+                ->groupBy('driver_id')
                 ->select('driver_id', 'persian_date', 'created_date', DB::raw('sum(calls) as countOfCalls'))
                 ->orderByDesc('countOfCalls')
                 ->where('persian_date', $fromDate)
