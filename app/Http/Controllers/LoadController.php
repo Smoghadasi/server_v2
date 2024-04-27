@@ -1743,7 +1743,10 @@ class LoadController extends Controller
 
             if (DriverLoad::where([['load_id', $request->load_id], ['driver_id', $request->driver_id]])->count())
 
-                return response()->json('این راننده قبلا برای این بار ثبت شده است', 409);
+                return [
+                    'result' => 0,
+                    'message' => 'این راننده قبلا برای این بار ثبت شده است'
+                ];
 
             // if ($request->driver_id == 0) {
             //     Load::where('id', $request->load_id)
@@ -1777,10 +1780,15 @@ class LoadController extends Controller
                 //         ->update([
                 //             'status' => 5
                 //         ]);
-
-                return response()->json('راننده انتخاب شد', 200);
+                return [
+                    'result' => 1,
+                    'message' => 'راننده انتخاب شد'
+                ];
             } else {
-                return response()->json('خطا! راننده با ناوگان مورد نظر تکمیل شده', 403);
+                return [
+                    'result' => 0,
+                    'message' => 'راننده با ناوگان مورد نظر تکمیل شده'
+                ];
             }
 
             // ارسال نوتیفیکیشن استعلام بار برای رانندگان
