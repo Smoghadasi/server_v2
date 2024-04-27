@@ -1745,13 +1745,13 @@ class LoadController extends Controller
 
                 return response()->json('این راننده قبلا برای این بار ثبت شده است', 409);
 
-            if ($request->driver_id == 0) {
-                Load::where('id', $request->load_id)
-                    ->update(['status' => 5]);
-                return [
-                    'result' => SUCCESS
-                ];
-            }
+            // if ($request->driver_id == 0) {
+            //     Load::where('id', $request->load_id)
+            //         ->update(['status' => 5]);
+            //     return [
+            //         'result' => SUCCESS
+            //     ];
+            // }
 
             $load = Load::where([
                 ['id', $request->load_id],
@@ -1771,11 +1771,11 @@ class LoadController extends Controller
                 $driverLoad->fleet_id = $driver->fleet_id;
                 $driverLoad->save();
 
-                if ($load->numOfRequestedDrivers <= $load->numOfSelectedDrivers)
-                    Load::where('id', $request->load_id)
-                        ->update([
-                            'status' => 5
-                        ]);
+                // if ($load->numOfRequestedDrivers <= $load->numOfSelectedDrivers)
+                //     Load::where('id', $request->load_id)
+                //         ->update([
+                //             'status' => 5
+                //         ]);
 
                 return response()->json('راننده انتخاب شد', 200);
             } else {
@@ -4285,6 +4285,15 @@ class LoadController extends Controller
         $load->time = time();
         $load->urgent = 1;
         $load->save();
+        foreach ($load->fleetList as $item) {
+
+            $fleetLoad = new FleetLoad();
+            $fleetLoad->load_id = $load->id;
+            $fleetLoad->fleet_id = $item['fleet_id'];
+            $fleetLoad->numOfFleets = $item['numOfFleets'];
+            $fleetLoad->userType = $load->userType;
+            $fleetLoad->save();
+        }
         return response()->json(['result' => true], 200);
     }
 
