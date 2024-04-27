@@ -1762,7 +1762,8 @@ class LoadController extends Controller
             $driverLoadCount = DriverLoad::where('load_id', $request->load_id)
                 ->where('fleet_id', $driver->fleet_id)
                 ->count();
-            $driverFleetsCount = FleetLoad::where('fleet_id', $driver->fleet_id)->first();
+
+            $driverFleetsCount = FleetLoad::where('fleet_id', $driver->fleet_id)->where('load_id', $request->load_id)->first();
 
             if ($driverFleetsCount->numOfFleets > $driverLoadCount) {
                 $driverLoad = new DriverLoad();
@@ -1779,7 +1780,7 @@ class LoadController extends Controller
 
                 return response()->json('راننده انتخاب شد', 200);
             } else {
-                return response()->json('خطا! راننده با ناوگان مورد نظر تکمیل شده', 418);
+                return response()->json('خطا! راننده با ناوگان مورد نظر تکمیل شده', 403);
             }
 
             // ارسال نوتیفیکیشن استعلام بار برای رانندگان
