@@ -1753,9 +1753,9 @@ class LoadController extends Controller
             //     ];
             // }
 
-            $load = Load::where([
-                ['id', $request->load_id],
-            ])->first();
+            // $load = Load::where([
+            //     ['id', $request->load_id],
+            // ])->first();
 
             $driver = Driver::find($request->driver_id);
 
