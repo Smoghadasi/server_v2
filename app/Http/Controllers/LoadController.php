@@ -28,6 +28,7 @@ use App\Models\PackingType;
 use App\Models\ProvinceCity;
 use App\Models\Score;
 use App\Models\Tender;
+use App\Models\TenderStart;
 use App\Models\User;
 use App\Models\UserActivityReport;
 use Illuminate\Http\Request;
@@ -1384,10 +1385,10 @@ class LoadController extends Controller
                 $loadInfo['packingTypePic'] = "";
             }
 
-            // $fleetLoads = FleetLoad::join('fleets', 'fleet_loads.fleet_id', 'fleets.id')
-            //     ->where('load_id', $id)
-            //     ->select('fleets.*', 'fleet_loads.id as fleet_load_id', 'fleet_loads.numOfFleets', 'fleet_loads.userType', 'fleet_loads.suggestedPrice', 'fleet_loads.load_id', 'fleet_loads.fleet_id')
-            //     ->get();
+            $fleetLoads = FleetLoad::join('fleets', 'fleet_loads.fleet_id', 'fleets.id')
+                ->where('load_id', $id)
+                ->select('fleets.*', 'fleet_loads.id as fleet_load_id', 'fleet_loads.numOfFleets', 'fleet_loads.userType', 'fleet_loads.suggestedPrice', 'fleet_loads.load_id', 'fleet_loads.fleet_id')
+                ->get();
 
             // $remainingTimeStatus = 'noStart';
             // $inquiry = Inquiry::where('load_id', $id)
@@ -1494,8 +1495,169 @@ class LoadController extends Controller
                     'owner' => $owner,
                     // 'selectDriverCost' => $selectDriverCost,
                     // 'remainingTimeStatus' => $remainingTimeStatus,
-                    // 'fleetLoads' => $fleetLoads,
+                    'fleetLoads' => $fleetLoads,
                     // 'dateOfCargoDeclaration' => DateOfCargoDeclaration::where('load_id', $loadInfo->id)->get()
+                ];
+            }
+        } catch (Exception $exception) {
+
+            Log::emergency("************************************ Load info ******************************************");
+            Log::emergency($exception->getMessage());
+            Log::emergency("************************************ Load info ******************************************");
+            return [
+                'result' => UN_SUCCESS,
+                'message' => 'خطا! دوباره تلاش کنید'
+            ];
+        }
+
+        return [
+            'result' => UN_SUCCESS,
+            'message' => 'چنین باری وجود ندارد'
+        ];
+    }
+
+    // درخواست اطلاعات بار
+    public function requestLoadInfoWeb($id, $userType = '')
+    {
+        try {
+            $loadInfo = Load::join('load_statuses', 'load_statuses.status', 'loads.status')
+                ->where('loads.id', $id)
+                ->withTrashed()
+                ->select(
+                    'loads.*',
+                    'load_statuses.title as statusTitle',
+                    'load_statuses.info as statusInfo'
+                )
+                ->first();
+
+            if (!isset($loadInfo->id))
+                return [
+                    'result' => UN_SUCCESS,
+                    'message' => 'چنین باری وجود ندارد'
+                ];
+
+
+            $packingType = PackingType::find($loadInfo->packing_type_id);
+            if (isset($packingType->id)) {
+                $loadInfo['packingTypeTitle'] = $packingType->title;
+                $loadInfo['packingTypePic'] = $packingType->pic;
+            } else {
+                $loadInfo['packingTypeTitle'] = "انتخاب نشده";
+                $loadInfo['packingTypePic'] = "";
+            }
+
+            $fleetLoads = FleetLoad::join('fleets', 'fleet_loads.fleet_id', 'fleets.id')
+                ->where('load_id', $id)
+                ->select('fleets.*', 'fleet_loads.id as fleet_load_id', 'fleet_loads.numOfFleets', 'fleet_loads.userType', 'fleet_loads.suggestedPrice', 'fleet_loads.load_id', 'fleet_loads.fleet_id')
+                ->get();
+
+            $remainingTimeStatus = 'noStart';
+            $inquiry = Inquiry::where('load_id', $id)
+                ->orderBy('id', 'asc')
+                ->first();
+
+            if ($inquiry) {
+                if ((TNDER_TIME - DateController::getSecondFromCreateRowToPresent($inquiry->created_at)) > 0)
+                    $remainingTimeStatus = 'start';
+                else
+                    $remainingTimeStatus = 'finish';
+            }
+                   else {
+                       $tenderStart = new TenderStart();
+                       $tenderStart->load_id = $id;
+                       $tenderStart->tender_start = date("Y-m-d H:i:s");
+                       $tenderStart->type = 'inquiry';
+                       $tenderStart->save();
+                   }
+            if ($loadInfo->status < 4 && $userType != 'admin') {
+                           $loadInfo = Load::join('load_statuses', 'load_statuses.status', 'loads.status')
+                               ->where('loads.id', $id)
+                               ->select('title', 'weight', 'width', 'length', 'height', 'loadingAddress', 'dischargeAddress', 'senderMobileNumber', 'receiverMobileNumber', 'loadingDate', 'insuranceAmount', 'suggestedPrice', 'tenderTimeDuration', 'driver_id', 'emergencyPhone', 'dischargeTime', 'fleet_id', 'load_type_id', 'packing_type_id', 'loadPic', 'loadMode', 'price', 'description', 'bearing_id', 'status', 'load_statuses.title as statusTitle')
+                               ->first();
+
+                $loadInfo = Load::join('load_statuses', 'load_statuses.status', 'loads.status')
+                    ->where('loads.id', $id)
+                    ->select(
+                        'loads.*',
+                        'load_statuses.title as statusTitle',
+                        'load_statuses.info as statusInfo'
+                    )
+                    ->first();
+
+                $packingType = PackingType::find($loadInfo->packing_type_id);
+                if (isset($packingType->id)) {
+                    $loadInfo['packingTypeTitle'] = $packingType->title;
+                    $loadInfo['packingTypePic'] = $packingType->pic;
+                } else {
+                    $loadInfo['packingTypeTitle'] = "انتخاب نشده";
+                    $loadInfo['packingTypePic'] = "";
+                }
+            }
+
+            if ($loadInfo) {
+
+                $driver = Load::join('drivers', 'drivers.id', '=', 'loads.driver_id')
+                    ->where('loads.id', $id)
+                    ->select('drivers.name', 'drivers.lastName')
+                    ->first();
+
+                $path = [
+                    'from' => AddressController::geCityName($loadInfo->origin_city_id),
+                    'to' => AddressController::geCityName($loadInfo->destination_city_id),
+                    'stateFrom' => AddressController::geStateNameFromCityId($loadInfo->origin_city_id),
+                    'stateTo' => AddressController::geStateNameFromCityId($loadInfo->destination_city_id),
+                    'fromLatLong' => AddressController::getLatLong($loadInfo->origin_city_id),
+                    'toLatLong' => AddressController::getLatLong($loadInfo->destination_city_id),
+                ];
+
+                if ($loadInfo->dischargeTime == 'night')
+                    $loadInfo->dischargeTime = 'تخلیه در شب';
+                else if ($loadInfo->dischargeTime == 'day')
+                    $loadInfo->dischargeTime = 'تخلیه در روز';
+                else
+                    $loadInfo->dischargeTime = 'انتخاب نشده';
+
+                if ($loadInfo->loadMode == 'outerCity')
+                    $loadInfo->loadMode = 'برون شهری';
+                else
+                    $loadInfo->loadMode = 'درون شهری';
+
+                $selectDriverCost = 25000;
+                if ($loadInfo->price <= 2000000) {
+                    $selectDriverCost = 25000;
+                } else if ($loadInfo->price > 2000000 && $loadInfo->price <= 4000000) {
+                    $selectDriverCost = 35000;
+                } else if ($loadInfo->price > 4000000) {
+                    $selectDriverCost = 45000;
+                }
+
+                $owner = Owner::where('id', $loadInfo->user_id)
+                    ->where('userType', ROLE_OWNER)
+                    ->select(['id', 'name', 'lastName', 'mobileNumber'])
+                    ->first();
+
+                try {
+                    if ($loadInfo->operator_id > 0 || $loadInfo->userType == ROLE_CARGo_OWNER || $loadInfo->userType == "customer")
+                        if (isset($owner->mobileNumber))
+                            $owner->mobileNumber = $loadInfo->mobileNumberForCoordination;
+                        else
+                            $owner['mobileNumber'] = $loadInfo->mobileNumberForCoordination;
+                } catch (\Exception $exception) {
+                    $owner = $exception->getMessage();
+                }
+
+
+                return [
+                    'result' => SUCCESS,
+                    'loadInfo' => $loadInfo,
+                    'fleet' => FleetController::getFleetName($loadInfo->fleet_id),
+                    'path' => $path,
+                    'driver' => $driver,
+                    'owner' => $owner,
+                    'selectDriverCost' => $selectDriverCost,
+                    'remainingTimeStatus' => $remainingTimeStatus,
+                    'fleetLoads' => $fleetLoads,
+                    'dateOfCargoDeclaration' => DateOfCargoDeclaration::where('load_id', $loadInfo->id)->get()
                 ];
             }
         } catch (Exception $exception) {
@@ -1595,7 +1757,7 @@ class LoadController extends Controller
         //     return view('users.alert', compact('message', 'alert'));
         // }
 
-        $loadInfo = $this->requestLoadInfo($id, 'admin');
+        $loadInfo = $this->requestLoadInfoWeb($id, 'admin');
         $load = Load::where('id', $id)->withTrashed()->first();
         if (!isset($load)) {
             $message = 'چنین باری وجود ندارد';
