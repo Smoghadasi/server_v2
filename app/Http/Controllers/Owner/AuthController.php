@@ -116,7 +116,33 @@ class AuthController extends Controller
     {
         $input = $request->all();
         $ownerAuth->fill($input)->save();
+
+        if ($request->file('sanaImage'))
+            $ownerAuth->sanaImage = $this->storePicOfOwner($request->file('sanaImage'), "sanaImage", $ownerAuth);
+
+        if ($request->file('nationalCardImage'))
+            $ownerAuth->nationalCardImage = $this->storePicOfOwner($request->file('nationalCardImage'), "nationalCardImage", $ownerAuth);
+
+        if ($request->file('nationalFaceImage'))
+            $ownerAuth->nationalFaceImage = $this->storePicOfOwner($request->file('nationalFaceImage'), "nationalFaceImage", $ownerAuth);
+
+        $ownerAuth->save();
+
         return back()->with("success", "با موفقیت ویرایش شد");
+    }
+
+    // ذخیره عکس کابر
+    private function storePicOfOwner($picture, $type, $owner)
+    {
+        $picName = $type . '_' . time() . $owner->id . ".jpg";
+        if (strlen($picture)) {
+            $fileType = $picture->guessClientExtension();
+            if ($picture->isValid() && ($fileType == 'jpg' || $fileType == 'jpeg' || $fileType == 'gif' || $fileType == 'png' || $fileType == 'bmp')) {
+                $picName = $type . '_' . time() . $owner->id . "." . $fileType;
+                $picture->move('images/owners/', $picName);
+            }
+        }
+        return 'images/owners/' . $picName;
     }
 
     /**

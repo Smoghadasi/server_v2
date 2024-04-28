@@ -8,7 +8,7 @@
                     بررسی صاحبان بار {{ $ownerAuth->isOwner == 1 ? '(صاحب بار)' : '(باربری)' }}
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('ownerAuth.update', $ownerAuth) }}" method="post">
+                    <form action="{{ route('ownerAuth.update', $ownerAuth) }}" method="post" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div class="mb-3 row">
@@ -88,8 +88,10 @@
                                 </div>
                             </div>
                         @else
-                            <div class="mb-3 row">
-                                <label for="sanaImage" class="col-md-2 col-form-label">تصویر ثنا</label>
+                        <div class="mb-3 row">
+                            <label for="sanaImage" class="col-md-2 col-form-label">تصویر ثنا</label>
+                                <input type="file" class="form-control" name="sanaImage"/>
+
                                 <div class="col-md-10">
                                     <a href="{{ asset($ownerAuth->sanaImage) }}">
                                         <img width="250" class="img-fluid" src="{{ asset($ownerAuth->sanaImage) }}" alt="">
@@ -99,6 +101,8 @@
                         @endif
                         <div class="mb-3 row">
                             <label for="nationalCardImage" class="col-md-2 col-form-label">تصویر کارت ملی</label>
+                            <input type="file" class="form-control" name="nationalCardImage"/>
+
                             <div class="col-md-10">
                                 <a href="{{ asset($ownerAuth->nationalCardImage) }}">
                                     <img width="250" class="img-fluid" src="{{ asset($ownerAuth->nationalCardImage) }}" alt="">
@@ -107,6 +111,8 @@
                         </div>
                         <div class="mb-3 row">
                             <label for="nationalFaceImage" class="col-md-2 col-form-label">تصویر کارت ملی کنار چهره</label>
+                            <input type="file" class="form-control" name="nationalFaceImage"/>
+
                             <div class="col-md-10">
                                 <a href="{{ asset($ownerAuth->nationalFaceImage) }}">
                                     <img width="250" class="img-fluid" src="{{ asset($ownerAuth->nationalFaceImage) }}" alt="">
