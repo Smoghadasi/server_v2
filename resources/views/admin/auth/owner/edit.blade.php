@@ -49,6 +49,15 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="mb-3 row">
+                                <label for="isAccepted" class="col-md-2 col-form-label">وضعیت تایید</label>
+                                <div class="col-md-10">
+                                    <select class="form-select" name="isAccepted" id="isAccepted">
+                                        <option @if($ownerAuth->isAccepted == 0) selected @endif value="0">تایید نشده</option>
+                                        <option @if($ownerAuth->isAccepted == 1) selected @endif value="1">تایید شده</option>
+                                    </select>
+                                </div>
+                            </div>
                         @endif
                         <div class="mb-3 row">
                             <label for="postalCode" class="col-md-2 col-form-label">آدرس</label>

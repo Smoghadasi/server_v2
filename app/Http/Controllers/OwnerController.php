@@ -130,4 +130,11 @@ class OwnerController extends Controller
             'loadsToday'
         ));
     }
+
+    public function removeProfile(Owner $owner)
+    {
+        $owner->profileImage = null;
+        $owner->save();
+        return back()->with("danger", "پروفایل حذف شد");
+    }
 }

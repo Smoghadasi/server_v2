@@ -70,6 +70,11 @@ class Owner extends Model
 
     public function getRatingOwnerAttribute()
     {
-        return round(Score::where('type', 'Driver')->where('owner_id', $this->id)->avg('value'),1);
+        return $score = Score::where('type', 'Driver')->where('owner_id', $this->id)->avg('value');
+        if ($score === null) {
+            return null;
+        }else{
+            return round($score,1);
+        }
     }
 }

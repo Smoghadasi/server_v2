@@ -254,6 +254,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // لیست صاحبان بار
         Route::resource('owner', OwnerController::class)->middleware("operator");
 
+        Route::delete('removeProfile/{owner}', [OwnerController::class, 'removeProfile'])->name('owner.removeProfile');
+
         // تغییر وضعیت صاحبان بار
         Route::get('changeOwnerStatus/{owner}', [OwnerController::class, 'changeOwnerStatus'])->middleware('admin')->name('owner.change.status');
 
