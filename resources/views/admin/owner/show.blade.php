@@ -20,6 +20,30 @@
                             تعیین نشده
                     @endswitch
                 </div>
+                 <!-- Account -->
+                 <div class="card-body">
+                    <div class="d-flex align-items-start align-items-sm-center gap-4">
+                      <img
+                        src="{{ $owner->profileImage !== null ? asset($owner->profileImage) : asset('img/notFound.jpg') }}"
+                        alt="user-avatar"
+                        class="d-block rounded"
+                        height="100"
+                        width="100"
+                        id="uploadedAvatar"
+                      />
+                      <div class="button-wrapper">
+                        <form action="{{ route('owner.removeProfile', $owner->id) }}" method="POST">
+                            @method('delete')
+                            @csrf
+                            <button type="submit" class="btn btn-outline-secondary account-image-reset mb-4">
+                                <i class="bx bx-reset d-block d-sm-none"></i>
+                                <span class="d-none d-sm-block">حذف</span>
+                              </button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                  <hr class="my-0" />
                 <div class="card-body">
                     <div class="row">
                         <div class="mb-3 col-md-6">
@@ -71,6 +95,14 @@
                                     value="{{ $owner->status == 1 ? 'فعال' : 'غیر فعال' }}" id="status">
                             </div>
                         </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="isAccepted" class="col-form-label">وضعیت تایید</label>
+                            <div class="col-md-12">
+                                <input class="form-control" type="text" name="isAccepted" disabled
+                                    value="{{ $owner->isAccepted == 1 ? 'تایید نشده' : 'تایید شده' }}" id="isAccepted">
+                            </div>
+                        </div>
+
                         @if ($owner->isOwner == 2)
                             <div class="mb-3 col-md-6">
                                 <label for="companyName" class="col-form-label">نام شرکت</label>
