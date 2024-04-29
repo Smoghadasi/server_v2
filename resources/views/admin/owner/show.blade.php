@@ -99,7 +99,7 @@
                             <label for="isAccepted" class="col-form-label">وضعیت تایید</label>
                             <div class="col-md-12">
                                 <input class="form-control" type="text" name="isAccepted" disabled
-                                    value="{{ $owner->isAccepted == 1 ? 'تایید نشده' : 'تایید شده' }}" id="isAccepted">
+                                    value="{{ $owner->isAccepted == 1 ? 'تایید شده' : 'تایید نشده' }}" id="isAccepted">
                             </div>
                         </div>
 
