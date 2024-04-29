@@ -162,13 +162,13 @@ class OwnerController extends Controller
         }
     }
 
-    // درخواست اطلاعات باربری
+    // درخواست اطلاعات صاحب بار
     public function profile(string $id)
     {
         try {
-            $owner = Owner::with('operatorMessages')->where('id', $id)->first();
-            $owner->version = '2';
-            $owner->save();
+            $owner = Owner::with('operatorMessages')
+                ->where('id', $id)
+                ->first();
             return [
                 'result' => SUCCESS,
                 'data' => $owner
