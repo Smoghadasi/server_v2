@@ -985,7 +985,7 @@ class DriverController extends Controller
         if ($request->month == 0) {
             if ($driver->freeCallTotal > 10 || $driver->freeCallTotal + $request->freeCalls > 10) {
                 return back()->with('danger', 'خطا! تماس رایگان داده شده بیشتر از 10 تا است');
-            }else{
+            } else {
                 if ($this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, $request->month, $request->freeCalls, $driver->freeAcceptLoads)) {
                     $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
                     $oneMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+30 day', time())), '/');
@@ -1002,11 +1002,23 @@ class DriverController extends Controller
                         $sms = new Driver();
 
                         if ($request->month == 1)
-                            $sms->freeSubscription($driver->mobileNumber, $persian_date, $oneMonth);
+                            if (SMS_PANEL == 'SMSIR') {
+                                $sms->freeSubscriptionSmsIr($driver->mobileNumber, $persian_date, $oneMonth);
+                            } else {
+                                $sms->freeSubscription($driver->mobileNumber, $persian_date, $oneMonth);
+                            }
                         if ($request->month == 3)
-                            $sms->freeSubscription($driver->mobileNumber, $persian_date, $threeMonth);
+                            if (SMS_PANEL == 'SMSIR') {
+                                $sms->freeSubscriptionSmsIr($driver->mobileNumber, $persian_date, $threeMonth);
+                            } else {
+                                $sms->freeSubscription($driver->mobileNumber, $persian_date, $threeMonth);
+                            }
                         if ($request->month == 6)
-                            $sms->freeSubscription($driver->mobileNumber, $persian_date, $sixMonth);
+                            if (SMS_PANEL == 'SMSIR') {
+                                $sms->freeSubscriptionSmsIr($driver->mobileNumber, $persian_date, $sixMonth);
+                            } else {
+                                $sms->freeSubscription($driver->mobileNumber, $persian_date, $sixMonth);
+                            }
                     }
                     if ($request->freeCalls > 0) {
                         $free_subscription = new FreeSubscription();

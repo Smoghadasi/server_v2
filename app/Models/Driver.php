@@ -123,4 +123,46 @@ class Driver extends Authenticatable
         $date = array('date' => $persian_date, 'expireDate' => $free_date);
         return $client->sendPatternSms($fromNum, $toNum, $user, $pass, $pattern_code, $date);
     }
+
+    public function freeSubscriptionSmsIr($sms, $persian_date, $free_date)
+    {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.sms.ir/v1/send/verify',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS =>
+            '{' . '
+                "mobile": ' .
+                '"' . $sms . '",
+                "templateId": 392467,
+                "parameters": [
+                  {
+                    "name": "DATE",
+                    "value":' . ' " ' . $persian_date . '"' . '
+                  },
+                  {
+                    "name": "DATE",
+                    "value":' . ' " ' . $free_date . '"' . '
+                  }
+                ]
+              }',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json',
+                'Accept: text/plain',
+                'x-api-key: QlDsnB6uLz3glijWOP02YcXiBAEjf06Hw5WOcRWovUGVESpJIPMkwRdcPRbEPPMj'
+            ),
+        ));
+
+        curl_exec($curl);
+        curl_close($curl);
+
+        return true;
+    }
 }

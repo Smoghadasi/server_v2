@@ -52,8 +52,6 @@ class SMSController extends Controller
 
     public static function sendSMSWithPatternSmsir($to, $code)
     {
-
-
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
