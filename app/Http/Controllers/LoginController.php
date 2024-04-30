@@ -61,11 +61,22 @@ class LoginController extends Controller
                 ];
             }
 
-            if ($this->createAndSendActivationCode($mobileNumber) != 1) {
-                return [
-                    'result' => UN_SUCCESS,
-                    'message' => 'خطا در ارسال پیامک'
-                ];
+            if (SMS_PANEL == 'SMSIR') {
+                if ($this->createAndSendActivationCodeSmsir($mobileNumber) != 1) {
+                    return [
+                        'result' => UN_SUCCESS,
+                        'message' => 'خطا در ارسال پیامک'
+                    ];
+                }
+                return response()->json(['result' => SUCCESS]);
+            } else {
+                if ($this->createAndSendActivationCode($mobileNumber) != 1) {
+                    return [
+                        'result' => UN_SUCCESS,
+                        'message' => 'خطا در ارسال پیامک'
+                    ];
+                }
+                return response()->json(['result' => SUCCESS]);
             }
             return response()->json(['result' => SUCCESS]);
         }
