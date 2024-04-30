@@ -23,13 +23,23 @@ class LoginController extends Controller
 
         if (strlen($mobileNumber) == 11) {
 
-            if ($this->createAndSendActivationCode($mobileNumber) != 1) {
-                return [
-                    'result' => UN_SUCCESS,
-                    'message' => 'خطا در ارسال پیامک'
-                ];
+            if (SMS_PANEL == 'SMSIR') {
+                if ($this->createAndSendActivationCodeSmsir($mobileNumber) != 1) {
+                    return [
+                        'result' => UN_SUCCESS,
+                        'message' => 'خطا در ارسال پیامک'
+                    ];
+                }
+                return response()->json(['result' => SUCCESS]);
+            } else {
+                if ($this->createAndSendActivationCode($mobileNumber) != 1) {
+                    return [
+                        'result' => UN_SUCCESS,
+                        'message' => 'خطا در ارسال پیامک'
+                    ];
+                }
+                return response()->json(['result' => SUCCESS]);
             }
-            return response()->json(['result' => SUCCESS]);
         }
 
         return [
@@ -64,6 +74,28 @@ class LoginController extends Controller
             'result' => UN_SUCCESS,
             'message' => 'شماره ارسال شده صحیح نمی باشد'
         ];
+    }
+
+
+    // ایجاد و ارسال کد فعال سازی فراز اس ام اس
+    private function createAndSendActivationCodeSmsir($mobileNumber)
+    {
+
+        ActivationCode::where('mobileNumber', '=', $mobileNumber)->delete();
+
+        $code = rand(10000, 99999);
+
+        $activationCode = new ActivationCode();
+        $activationCode->mobileNumber = $mobileNumber;
+        $activationCode->code = $code;
+        $activationCode->save();
+
+
+        // $input_data = array(
+        //     'verification_code' => $code
+        // );
+        SMSController::sendSMSWithPatternSmsir($mobileNumber, $code);
+        return true;
     }
 
     // اعتبار سنجی کد فعال سازی
@@ -246,7 +278,9 @@ class LoginController extends Controller
         ];
     }
 
-    // ایجاد و ارسال کد فعال سازی
+
+
+    // ایجاد و ارسال کد فعال سازی فراز اس ام اس
     private function createAndSendActivationCode($mobileNumber)
     {
 
