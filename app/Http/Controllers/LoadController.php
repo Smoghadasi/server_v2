@@ -2382,45 +2382,45 @@ class LoadController extends Controller
     // دریافت لیست بارها برای راننده به صورت صفحه بندی شده
     public function getNewLoadForDriver(Driver $driver, $lastLoadId = 0)
     {
-        $driver->ip = request()->ip();
+        // $driver->ip = request()->ip();
         $driver->version = 65;
         $driver->save();
-        if (BlockedIp::where('ip', request()->ip())->where('userType', ROLE_DRIVER)->count() > 0) {
-            return [
-                'result' => UN_SUCCESS,
-                'data' => ['driverStatus' => false],
-                'message' => 'حساب کاربری شما غیر فعال می باشد! لطفا جهت فعال سازی با شماره تلفن ' . TELL . ' تماس برقرار کنید.'
-            ];
-        }
+        // if (BlockedIp::where('ip', request()->ip())->where('userType', ROLE_DRIVER)->count() > 0) {
+        //     return [
+        //         'result' => UN_SUCCESS,
+        //         'data' => ['driverStatus' => false],
+        //         'message' => 'حساب کاربری شما غیر فعال می باشد! لطفا جهت فعال سازی با شماره تلفن ' . TELL . ' تماس برقرار کنید.'
+        //     ];
+        // }
 
 
-        if ($driver->status == DE_ACTIVE)
-            return [
-                'result' => UN_SUCCESS,
-                'data' => ['driverStatus' => false],
-                'message' => 'حساب کاربری شما غیر فعال می باشد! لطفا جهت فعال سازی با شماره تلفن ' . TELL . ' تماس برقرار کنید.'
-            ];
+        // if ($driver->status == DE_ACTIVE)
+        //     return [
+        //         'result' => UN_SUCCESS,
+        //         'data' => ['driverStatus' => false],
+        //         'message' => 'حساب کاربری شما غیر فعال می باشد! لطفا جهت فعال سازی با شماره تلفن ' . TELL . ' تماس برقرار کنید.'
+        //     ];
+
+        // try {
+        //     DriverActivity::firstOrCreate([
+        //         'driver_id' => $driver->id,
+        //         'persianDate' => DateController::createPersianDate()
+        //     ]);
+        // } catch (\Exception $exception) {
+        //     Log::emergency("**************************************************************");
+        //     Log::emergency($exception->getMessage());
+        //     Log::emergency("**************************************************************");
+        // }
 
         try {
-            DriverActivity::firstOrCreate([
-                'driver_id' => $driver->id,
-                'persianDate' => DateController::createPersianDate()
-            ]);
-        } catch (\Exception $exception) {
-            Log::emergency("**************************************************************");
-            Log::emergency($exception->getMessage());
-            Log::emergency("**************************************************************");
-        }
 
-        try {
-
-            $page = 15;
+            $page = 5;
 
             $conditions = [];
             if ($lastLoadId > 0) {
                 $conditions[] = ['id', '<', $lastLoadId];
                 $conditions[] = ['urgent', 0];
-                $page = 30;
+                $page = 10;
             }
             $conditions[] = ['status', ON_SELECT_DRIVER];
             $conditions[] = ['created_at', '>', \date('Y-m-d h:i:s', strtotime('-1 day', time()))];
@@ -2435,7 +2435,7 @@ class LoadController extends Controller
                     'priceBased',
                     'mobileNumberForCoordination',
                     'urgent',
-                    'status',
+                    // 'status',
                     'time',
                     'fromCity',
                     'toCity',
@@ -2456,9 +2456,7 @@ class LoadController extends Controller
                 )
                 ->skip(0)
                 ->take($page)
-                ->with(['driverCall' => function ($query) use ($driver) {
-                    $query->where('driver_id', $driver->id);
-                }])
+
                 ->orderBy('urgent', 'desc')
                 ->orderBy('id', 'desc')
                 ->get();
