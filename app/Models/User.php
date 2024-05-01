@@ -147,6 +147,7 @@ class User extends Authenticatable
         return [];
     }
 
+    // سامانه پیامکی FarazSMS
     public function mobileSms($sms)
     {
         $client = new SoapClient("http://ippanel.com/class/sms/wsdlservice/server.php?wsdl");
@@ -158,6 +159,45 @@ class User extends Authenticatable
         $rand = rand(10000, 99999);
         $input_data = array("verification_code" => $rand);
         $client->sendPatternSms($fromNum, $toNum, $user, $pass, $pattern_code, $input_data);
+        return $rand;
+    }
+
+    // سامانه پیامکی SMS.ir
+    public function mobileSmsIr($sms)
+    {
+        $curl = curl_init();
+        $rand = rand(10000, 99999);
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.sms.ir/v1/send/verify',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS =>
+            '{' . '
+                "mobile": ' .
+                '"' . $sms . '",
+                "templateId": 841108,
+                "parameters": [
+                  {
+                    "name": "Code",
+                    "value":' . ' " ' . $rand . '"' . '
+                  }
+                ]
+              }',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json',
+                'Accept: text/plain',
+                'x-api-key: QlDsnB6uLz3glijWOP02YcXiBAEjf06Hw5WOcRWovUGVESpJIPMkwRdcPRbEPPMj'
+            ),
+        ));
+
+        curl_exec($curl);
+        curl_close($curl);
+
         return $rand;
     }
 }

@@ -25,7 +25,12 @@ class AuthController extends Controller
                 return response()->json(['code' => 422, 'success' => 'شماره موبایل ثبت نشده است لطفا با پشتیبانی تماس بگیرید.']);
             }
             $sms = new User();
-            $rnd = $sms->mobileSms($account->mobileNumber);
+            if (SMS_PANEL == 'SMSIR') {
+                $rnd = $sms->mobileSmsIr($account->mobileNumber);
+            }else{
+                $rnd = $sms->mobileSms($account->mobileNumber);
+            }
+
 
             return response()->json([
                 'code' => 200,
