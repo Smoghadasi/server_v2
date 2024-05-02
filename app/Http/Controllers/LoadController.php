@@ -1472,7 +1472,7 @@ class LoadController extends Controller
 
                 $owner = Owner::where('id', $loadInfo->user_id)
                     ->where('userType', ROLE_OWNER)
-                    ->select(['id', 'name', 'lastName', 'mobileNumber'])
+                    ->select(['id', 'name', 'lastName', 'mobileNumber', 'isAccepted'])
                     ->first();
 
                 // try {
