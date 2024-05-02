@@ -2401,16 +2401,6 @@ class LoadController extends Controller
         //         'message' => 'حساب کاربری شما غیر فعال می باشد! لطفا جهت فعال سازی با شماره تلفن ' . TELL . ' تماس برقرار کنید.'
         //     ];
 
-        // try {
-        //     DriverActivity::firstOrCreate([
-        //         'driver_id' => $driver->id,
-        //         'persianDate' => DateController::createPersianDate()
-        //     ]);
-        // } catch (\Exception $exception) {
-        //     Log::emergency("**************************************************************");
-        //     Log::emergency($exception->getMessage());
-        //     Log::emergency("**************************************************************");
-        // }
 
         try {
 
@@ -2420,7 +2410,17 @@ class LoadController extends Controller
             if ($lastLoadId > 0) {
                 $conditions[] = ['id', '<', $lastLoadId];
                 $conditions[] = ['urgent', 0];
-                $page = 10;
+                $page = 15;
+                try {
+                    DriverActivity::firstOrCreate([
+                        'driver_id' => $driver->id,
+                        'persianDate' => DateController::createPersianDate()
+                    ]);
+                } catch (\Exception $exception) {
+                    Log::emergency("**************************************************************");
+                    Log::emergency($exception->getMessage());
+                    Log::emergency("**************************************************************");
+                }
             }
             $conditions[] = ['status', ON_SELECT_DRIVER];
             $conditions[] = ['created_at', '>', \date('Y-m-d h:i:s', strtotime('-1 day', time()))];
@@ -4104,17 +4104,17 @@ class LoadController extends Controller
             $loads = Load::join('fleet_loads', 'fleet_loads.load_id', 'loads.id')
                 ->select(
                     'loads.id',
-                    'loads.weight',
-                    'loads.numOfTrucks',
-                    'loads.loadingHour',
-                    'loads.loadingMinute',
-                    'loads.proposedPriceForDriver',
+                    // 'loads.weight',
+                    // 'loads.numOfTrucks',
+                    // 'loads.loadingHour',
+                    // 'loads.loadingMinute',
+                    // 'loads.proposedPriceForDriver',
                     'loads.suggestedPrice',
                     'loads.title',
                     'loads.priceBased',
                     'loads.userType',
                     'loads.urgent',
-                    'loads.status',
+                    // 'loads.status',
                     'loads.mobileNumberForCoordination',
                     'loads.origin_city_id',
                     'loads.destination_city_id',
