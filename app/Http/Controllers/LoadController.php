@@ -2452,7 +2452,7 @@ class LoadController extends Controller
                     // 'loadingHour',
                     // 'loadingMinute',
                     // 'proposedPriceForDriver',
-                    // 'userType',
+                    'userType',
                 )
                 ->skip(0)
                 ->take($page)
