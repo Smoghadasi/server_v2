@@ -4447,11 +4447,17 @@ class LoadController extends Controller
             ->orderBy('id', 'desc')
             ->take(25)
             ->get();
-
-        return [
-            'result' => SUCCESS,
-            'loads' => $loads
-        ];
+        if($loads->isEmpty()){
+            return [
+                'result' => UN_SUCCESS,
+                'loads' => null
+            ];
+        }else{
+            return [
+                'result' => SUCCESS,
+                'loads' => $loads
+            ];
+        }
 
         // return $this->searchTheNearestCargo($request, $driver, $city, 200);
     }
