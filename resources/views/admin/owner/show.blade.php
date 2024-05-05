@@ -102,6 +102,13 @@
                                     value="{{ $owner->isAccepted == 1 ? 'تایید شده' : 'تایید نشده' }}" id="isAccepted">
                             </div>
                         </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="ratingOwner" class="col-form-label">امتیاز</label>
+                            <div class="col-md-12">
+                                <input class="form-control" type="text" name="ratingOwner" disabled
+                                    value="{{ $owner->ratingOwner == null ? 'بدون امتیاز' : $owner->ratingOwner }}" id="ratingOwner">
+                            </div>
+                        </div>
 
                         @if ($owner->isOwner == 2)
                             <div class="mb-3 col-md-6">
@@ -121,32 +128,42 @@
                             <div class="mb-3 col-md-6">
                                 <label for="activityLicense" class="col-form-label">عکس پروانه فعالیت</label>
                                 <div class="col-md-10">
-                                    <img class="img-fluid"
-                                        src="{{ $owner->activityLicense !== null ? asset($owner->activityLicense) : asset('img/notFound.jpg') }}">
+                                    <a href="{{ $owner->activityLicense !== null ? asset($owner->activityLicense) : asset('img/notFound.jpg') }}" target="_blank">
+                                        <img class="img-fluid" width="500"
+                                            src="{{ $owner->activityLicense !== null ? asset($owner->activityLicense) : asset('img/notFound.jpg') }}">
+                                    </a>
                                 </div>
                             </div>
                         @else
                             <div class="mb-3 col-md-6">
                                 <label for="sanaImage" class="col-form-label">تصویر ثنا</label>
                                 <div class="col-md-10">
-                                    <img class="img-fluid"
-                                        src="{{ $owner->sanaImage !== null ? asset($owner->sanaImage) : asset('img/notFound.jpg') }}">
+                                    <a href="{{ $owner->sanaImage !== null ? asset($owner->sanaImage) : asset('img/notFound.jpg') }}" target="_blank">
+                                        <img class="img-fluid" width="500"
+                                            src="{{ $owner->sanaImage !== null ? asset($owner->sanaImage) : asset('img/notFound.jpg') }}">
+                                    </a>
+
                                 </div>
                             </div>
                         @endif
                         <div class="mb-3 col-md-6">
                             <label for="nationalCardImage" class="col-form-label">تصویر کارت ملی</label>
                             <div class="col-md-10">
-                                <img class="img-fluid"
+                                <a href="{{ $owner->nationalCardImage !== null ? asset($owner->nationalCardImage) : asset('img/notFound.jpg') }}" target="_blank">
+                                    <img class="img-fluid" width="500"
                                     src="{{ $owner->nationalCardImage !== null ? asset($owner->nationalCardImage) : asset('img/notFound.jpg') }}">
+
+                                </a>
                             </div>
                         </div>
                         <div class="mb-3 col-md-6">
                             <label for="nationalFaceImage" class="col-form-label">تصویر کارت ملی کنار
                                 چهره</label>
                             <div class="col-md-10">
-                                <img class="img-fluid"
-                                    src="{{ $owner->nationalFaceImage !== null ? asset($owner->nationalFaceImage) : asset('img/notFound.jpg') }}">
+                                <a href="{{ $owner->nationalFaceImage !== null ? asset($owner->nationalFaceImage) : asset('img/notFound.jpg') }}" target="_blank">
+                                    <img class="img-fluid" width="500"
+                                        src="{{ $owner->nationalFaceImage !== null ? asset($owner->nationalFaceImage) : asset('img/notFound.jpg') }}">
+                                </a>
                             </div>
                         </div>
 

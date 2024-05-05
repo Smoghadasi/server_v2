@@ -56,8 +56,10 @@
                                         <span class="badge bg-danger">غیر فعال</span>
                                     @endif
                                     @if ($owner->moreDayLoad >= 3)
-
                                         <span class="badge bg-primary">3+</span>
+                                    @endif
+                                    @if ($owner->isAccepted == 1)
+                                        <i class="menu-icon tf-icons bx bx-check-shield"></i>
                                     @endif
                                 </td>
                                 <td>
