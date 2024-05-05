@@ -1561,19 +1561,18 @@ class LoadController extends Controller
                     $remainingTimeStatus = 'start';
                 else
                     $remainingTimeStatus = 'finish';
+            } else {
+                $tenderStart = new TenderStart();
+                $tenderStart->load_id = $id;
+                $tenderStart->tender_start = date("Y-m-d H:i:s");
+                $tenderStart->type = 'inquiry';
+                $tenderStart->save();
             }
-                   else {
-                       $tenderStart = new TenderStart();
-                       $tenderStart->load_id = $id;
-                       $tenderStart->tender_start = date("Y-m-d H:i:s");
-                       $tenderStart->type = 'inquiry';
-                       $tenderStart->save();
-                   }
             if ($loadInfo->status < 4 && $userType != 'admin') {
-                           $loadInfo = Load::join('load_statuses', 'load_statuses.status', 'loads.status')
-                               ->where('loads.id', $id)
-                               ->select('title', 'weight', 'width', 'length', 'height', 'loadingAddress', 'dischargeAddress', 'senderMobileNumber', 'receiverMobileNumber', 'loadingDate', 'insuranceAmount', 'suggestedPrice', 'tenderTimeDuration', 'driver_id', 'emergencyPhone', 'dischargeTime', 'fleet_id', 'load_type_id', 'packing_type_id', 'loadPic', 'loadMode', 'price', 'description', 'bearing_id', 'status', 'load_statuses.title as statusTitle')
-                               ->first();
+                $loadInfo = Load::join('load_statuses', 'load_statuses.status', 'loads.status')
+                    ->where('loads.id', $id)
+                    ->select('title', 'weight', 'width', 'length', 'height', 'loadingAddress', 'dischargeAddress', 'senderMobileNumber', 'receiverMobileNumber', 'loadingDate', 'insuranceAmount', 'suggestedPrice', 'tenderTimeDuration', 'driver_id', 'emergencyPhone', 'dischargeTime', 'fleet_id', 'load_type_id', 'packing_type_id', 'loadPic', 'loadMode', 'price', 'description', 'bearing_id', 'status', 'load_statuses.title as statusTitle')
+                    ->first();
 
                 $loadInfo = Load::join('load_statuses', 'load_statuses.status', 'loads.status')
                     ->where('loads.id', $id)
@@ -4421,11 +4420,40 @@ class LoadController extends Controller
     }
 
     // بارهای موجود در مقصد
-    public function LoadsInDestinationCity(Request $request, Driver $driver, ProvinceCity $city)
+    public function LoadsInDestinationCity(Driver $driver, ProvinceCity $city)
     {
-        // $request = new Request();
+        $conditions[] = ['fleet_loads.fleet_id', $driver->fleet_id];
+        $conditions[] = ['loads.status', ON_SELECT_DRIVER];
+        $conditions[] = ['loads.origin_city_id', $city];
+        $conditions[] = ['loads.created_at', '>', \date('Y-m-d h:i:s', strtotime('-1 day', time()))];
+        $conditions[] = ['loads.driverCallCounter', '>', 0];
+        $loads = Load::join('fleet_loads', 'fleet_loads.load_id', 'loads.id')
+            ->select(
+                'loads.id',
+                'loads.suggestedPrice',
+                'loads.title',
+                'loads.priceBased',
+                'loads.userType',
+                'loads.urgent',
+                'loads.mobileNumberForCoordination',
+                'loads.origin_city_id',
+                'loads.destination_city_id',
+                'loads.time',
+                'loads.fromCity',
+                'loads.toCity',
+                'loads.fleets'
+            )
+            ->where($conditions)
+            ->orderBy('id', 'desc')
+            ->take(25)
+            ->get();
 
-        return $this->searchTheNearestCargo($request, $driver, $city, 200);
+        return [
+            'result' => SUCCESS,
+            'loads' => $loads
+        ];
+
+        // return $this->searchTheNearestCargo($request, $driver, $city, 200);
     }
 
     // حذف بار
@@ -4454,15 +4482,17 @@ class LoadController extends Controller
         $load->time = time();
         $load->urgent = 1;
         $load->save();
-        foreach ($load->fleetList as $item) {
+        $fleetLoads = FleetLoad::where('load_id', $load)->get();
 
+        foreach ($fleetLoads as $item) {
             $fleetLoad = new FleetLoad();
-            $fleetLoad->load_id = $load->id;
-            $fleetLoad->fleet_id = $item['fleet_id'];
-            $fleetLoad->numOfFleets = $item['numOfFleets'];
-            $fleetLoad->userType = $load->userType;
+            $fleetLoad->load_id = $load;
+            $fleetLoad->fleet_id = $item->fleet_id;
+            $fleetLoad->numOfFleets = $item->numOfFleets;
+            $fleetLoad->userType = $item->userType;
             $fleetLoad->save();
         }
+
         return response()->json(['result' => true], 200);
     }
 
