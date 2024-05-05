@@ -1186,7 +1186,8 @@ class DriverController extends Controller
                 // 'fleets' => Fleet::select('id', 'title', 'parent_id', 'pic')->get(),
                 'authStatus' => $driver->authLevel,
                 'driverAuthStatusTitles' => DRIVER_AUTH_STATUS_TITLE,
-                'address' => $driver->address
+                'address' => $driver->address,
+                'ratingDriver' => $driver->ratingDriver
             ]
         ]);
     }
