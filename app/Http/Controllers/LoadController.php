@@ -4420,7 +4420,7 @@ class LoadController extends Controller
     }
 
     // بارهای موجود در مقصد
-    public function LoadsInDestinationCity(Driver $driver, ProvinceCity $city)
+    public function LoadsInDestinationCity(Request $request, Driver $driver, ProvinceCity $city)
     {
         $conditions[] = ['fleet_loads.fleet_id', $driver->fleet_id];
         $conditions[] = ['loads.status', ON_SELECT_DRIVER];
