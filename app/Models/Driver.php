@@ -15,7 +15,8 @@ class Driver extends Authenticatable
         'countOfCalls',
         'operatorMessage',
         'blockedIp',
-        'transactionCount'
+        'transactionCount',
+        'ratingDriver'
     ];
     public function city()
     {
@@ -164,5 +165,15 @@ class Driver extends Authenticatable
         curl_close($curl);
 
         return true;
+    }
+
+    public function getRatingDriverAttribute()
+    {
+        return $score = Score::where('type', 'Owner')->where('driver_id', $this->id)->avg('value');
+        if ($score === null) {
+            return null;
+        }else{
+            return round($score,1);
+        }
     }
 }
