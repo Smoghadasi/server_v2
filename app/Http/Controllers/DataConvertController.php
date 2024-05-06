@@ -230,6 +230,13 @@ class DataConvertController extends Controller
         return $cities;
     }
 
+    // دریافت لیست شهرها
+    private function getProvincesList()
+    {
+        $provinces = ProvinceCity::where('parent_id', '=', 0)->get();
+        return $provinces;
+    }
+
     // دریافت لیست کلمات مهم در شناسایی رابطه ها
     private function getExtraWords()
     {
@@ -247,11 +254,11 @@ class DataConvertController extends Controller
         $originalText = $cargo->cargo;
         $fleetsList = $this->getFleetsList();
         $citiesList = $this->getCitiesList();
+        $provincesList = $this->getProvincesList();
         $extraWords = $this->getExtraWords();
         $originWords = $this->getOriginWords();
         $equivalentWords = $this->getEquivalentWords();
-        $cleanedText = $this->getCleanedText($cargo->cargo, $fleetsList, $citiesList, $equivalentWords, $originWords, $extraWords, $prefixFreightConditions, $postfixFreightConditions);
-
+        $cleanedText = $this->getCleanedText($cargo->cargo, $fleetsList, $citiesList, $equivalentWords, $originWords, $extraWords, $prefixFreightConditions, $postfixFreightConditions, $provincesList);
         $cargoList = [];
         $currentOrigin = -1;
         $originPrefixWord = false;
@@ -266,7 +273,7 @@ class DataConvertController extends Controller
 
         $phoneNumbers = [];
         $phoneNumber = '';
-        //        return $cleanedText;
+
 
         foreach ($cleanedText as $key => $item)
             if (preg_match("/^[0]{1}\d{10}$/", $item))
@@ -275,48 +282,9 @@ class DataConvertController extends Controller
                     'key' => $key
                 ];
 
-        //        foreach ($phoneNumbers as $item)
-        //            if (strlen($phoneNumber) == 0 && preg_match("/^[0]{1}[9]{1}\d{9}$/", $item['phoneNumber'])) {
-        //                $phoneNumber = $item['phoneNumber'];
-        //                break;
-        //            }
-        //
-        //        if (strlen($phoneNumber) == 0 && isset($phoneNumbers[0]['phoneNumber']))
-        //            $phoneNumber = $phoneNumbers[0]['phoneNumber'];
 
         $freight = 0;
         $priceType = '';
-
-        //        foreach ($cleanedText as $key => $item) {
-        //            if ($item == '[صافی]' || $item == '[صاف]' || $item == '[هرتن]' || $item == '[کرایه]' || $item == '[قیمت]')
-        //                if (isset($cleanedText[$key + 1]))
-        //                    if (is_numeric($cleanedText[$key - 1]))
-        //                        $freight = $cleanedText[$key + 1];
-        //
-        //            if ($freight == 0)
-        //                if ($item == '[صافی]' || $item == '[صاف]' || $item == '[هرتن]' || $item == '[کرایه]' || $item == '[م]' || $item == '[میلیون]')
-        //                    if (isset($cleanedText[$key - 1]))
-        //                        if (is_numeric($cleanedText[$key - 1]))
-        //                            $freight = $cleanedText[$key - 1];
-        //
-        //            if ($freight > 0)
-        //                break;
-        //
-        //        }
-        //
-        //        if ($freight == 0)
-        //            $priceType = 'توافقی';
-        //        else {
-        //            if ($item == '[صافی]' || $item == '[صاف]')
-        //                $priceType = 'بصورت صافی';
-        //            else if ($item == '[هرتن]')
-        //                $priceType = 'به ازای هرتن';
-        //            else
-        //                $priceType = 'صافی';
-        //
-        //            $freight = $freight < 1000 ? $freight * 1000000 : $freight;
-        //
-        //        }
 
 
         foreach ($cleanedText as $key => $item) {
@@ -343,12 +311,15 @@ class DataConvertController extends Controller
 
             if (in_array($item, $citiesList) == true) {
                 $cityName = $item;
+                $origin = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $cityName)));
+                $provinceName = ProvinceCity::where('name', $origin)->where('parent_id', '!=', 0)->get();
             }
 
             if ($originPrefixWord && strlen($cityName) && $isOrigin) {
                 $currentOrigin = $key;
                 //                $cargoList[$currentOrigin]['originName'] = $cityName;
                 $originName = $cityName;
+                $originProvince = $provinceName;
                 $origins[] = $cityName;
                 $destinations = [];
                 $cityName = '';
@@ -379,21 +350,36 @@ class DataConvertController extends Controller
                 if (isset($cleanedText[$key + 1]) && !in_array($cleanedText[$key + 1], ['[به]'])) {
                     $destinations[$currentOrigin][] = $item;
                     if ($currentOrigin > -1) {
-                        $cargoList[] = [
-                            'origin' => $originName,
-                            'destination' => $item,
-                            'fleets' => $fleets,
-                            'mobileNumber' => $cargoPhoneNumber,
-                            'freight' => 0,
-                            'priceType' => 'توافقی'
-                        ];
+                        $desc = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $item)));
+                        $descProvinces = ProvinceCity::where('name', $desc)->where('parent_id', '!=', 0)->get();
+                        if (isset($originProvince)) {
+                            $cargoList[] = [
+                                'origin' => $originName,
+                                'originProvince' => $originProvince,
+                                'destination' => $item,
+                                'descProvinces' => $descProvinces,
+                                'fleets' => $fleets,
+                                'mobileNumber' => $cargoPhoneNumber,
+                                'freight' => 0,
+                                'priceType' => 'توافقی'
+                            ];
+                        }else{
+                            $cargoList[] = [
+                                'origin' => $originName,
+                                'destination' => $item,
+                                'descProvinces' => $descProvinces,
+                                'fleets' => $fleets,
+                                'mobileNumber' => $cargoPhoneNumber,
+                                'freight' => 0,
+                                'priceType' => 'توافقی'
+                            ];
+                        }
                     }
                 }
             }
         }
 
         $countOfCargos = CargoConvertList::where('operator_id', 0)->count();
-
 
         $users = UserController::getOnlineAndOfflineUsers();
 
@@ -512,7 +498,7 @@ class DataConvertController extends Controller
     // ذخیره دسته ای بارها
     public function storeMultiCargo(Request $request, CargoConvertList $cargo)
     {
-
+        // return $request;
         try {
 
             if (UserActivityReport::where([
@@ -532,7 +518,9 @@ class DataConvertController extends Controller
 
         foreach ($request->key as $key) {
             $origin = "origin_" . $key;
+            $originState = "originState_" . $key;
             $destination = "destination_" . $key;
+            $destinationState = "destinationState_" . $key;
             $mobileNumber = "mobileNumber_" . $key;
             $fleets = "fleets_" . $key;
             $freight = "freight_" . $key;
@@ -541,7 +529,16 @@ class DataConvertController extends Controller
             try {
 
                 foreach ($request->$fleets as $fleet) {
-                    $this->storeCargo($request->$origin, $request->$destination, $request->$mobileNumber, $fleet, $request->$freight, $request->$priceType, $request->$title, $counter);
+                    $this->storeCargo($request->$origin,
+                    $request->$originState,
+                    $request->$destination,
+                    $request->$destinationState,
+                    $request->$mobileNumber,
+                    $fleet,
+                    $request->$freight,
+                    $request->$priceType,
+                    $request->$title,
+                    $counter);
                 }
             } catch (\Exception $exception) {
                 Log::emergency("storeMultiCargo : " . $exception->getMessage());
@@ -554,7 +551,7 @@ class DataConvertController extends Controller
     }
 
     // ذخیره بار
-    public function storeCargo($origin, $destination, $mobileNumber, $fleet, $freight, $priceType, $title, &$counter)
+    public function storeCargo($origin, $originState, $destination, $destinationState, $mobileNumber, $fleet, $freight, $priceType, $title, &$counter)
     {
         if (!strlen(trim($origin)) || $origin == null || $origin == 'null' || !strlen(trim($destination)) || $destination == null || $destination == 'null' || !strlen($fleet) || !strlen($mobileNumber))
             return;
@@ -632,9 +629,17 @@ class DataConvertController extends Controller
             $destination = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $destination)));
 
 
-            $load->origin_city_id = $this->getCityId($origin);
-            $load->destination_city_id = $this->getCityId($destination);
+            $originCity = ProvinceCity::where('name', 'like', '%' . $origin)
+                ->where('parent_id', $originState)
+                ->first();
 
+            $destinationCity = ProvinceCity::where('name', 'like', '%' . $destination)
+                ->where('parent_id', $destinationState)
+                ->first();
+
+
+            $load->origin_city_id = $originCity->id;
+            $load->destination_city_id = $destinationCity->id;
 
             $load->fromCity = $this->getCityName($load->origin_city_id);
             $load->toCity = $this->getCityName($load->destination_city_id);
