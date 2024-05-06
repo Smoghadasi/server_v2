@@ -512,7 +512,7 @@ class DriverController extends Controller
         $driver->freeAcceptLoads = DRIVER_FREE_ACCEPT_LOAD;
         // خاور و نیسان
         if ($fleet_id == '82' || $fleet_id == '83' || $fleet_id == '84' || $fleet_id == '85' || $fleet_id == '86' || $fleet_id == '87') {
-            $driver->freeCalls = 2;
+            $driver->freeCalls = 4;
         } elseif ($fleet_id == '42' || $fleet_id == '43' || $fleet_id == '45' || $fleet_id == '46' || $fleet_id == '47' || $fleet_id == '48') {
             $driver->freeCalls = 7;
         } elseif ($fleet_id == '55' || $fleet_id == '56' || $fleet_id == '57' || $fleet_id == '58' || $fleet_id == '49' || $fleet_id == '50' || $fleet_id == '51' || $fleet_id == '52' || $fleet_id == '53') {
