@@ -4476,6 +4476,15 @@ class LoadController extends Controller
     public function repeatOwnerLoad(string $load)
     {
         $task = Load::withTrashed()->find($load);
+        if (BlockPhoneNumber::where('phoneNumber', $task->senderMobileNumber)->count()) {
+            $message[1] = 'شماره تلفن وارد شده در لیست ممنوعه می باشد، و امکان ثبت بار با شماره تلفن ' . $senderMobileNumber .
+                ' امکان پذیر نمی باشد. لطفا برای دلیل آن با ایران ترابر تماس بگیرید';
+            return [
+                'result' => UN_SUCCESS,
+                'message' => $message
+            ];
+        }
+
         $load = $task->replicate();
         $load->created_at = now();
         $load->loadingDate = gregorianDateToPersian(date('Y-m-d', time()), '-');
