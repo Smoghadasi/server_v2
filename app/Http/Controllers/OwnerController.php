@@ -54,6 +54,20 @@ class OwnerController extends Controller
         //
     }
 
+    public function generateSKU()
+    {
+      $number = mt_rand(10000, 99999);
+      if($this->checkSKU($number)){
+        return $this->generateSKU();
+      }
+      return (string)$number;
+    }
+
+    public function checkSKU($number)
+    {
+      return Owner::where('sku', $number)->exists();
+    }
+
     /**
      * Display the specified resource.
      *
@@ -62,6 +76,10 @@ class OwnerController extends Controller
      */
     public function show(Owner $owner)
     {
+        if ($owner->isAccepted == 1 && $owner->sku == null) {
+            $owner->sku = $this->generateSKU();
+            $owner->save();
+        }
         return view('admin.owner.show', compact('owner'));
     }
 

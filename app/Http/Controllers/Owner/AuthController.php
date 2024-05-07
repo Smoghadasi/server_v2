@@ -105,6 +105,20 @@ class AuthController extends Controller
         return view('admin.auth.owner.edit', compact('ownerAuth'));
     }
 
+    public function generateSKU()
+    {
+      $number = mt_rand(10000, 99999);
+      if($this->checkSKU($number)){
+        return $this->generateSKU();
+      }
+      return (string)$number;
+    }
+
+    public function checkSKU($number)
+    {
+      return Owner::where('sku', $number)->exists();
+    }
+
     /**
      * Update the specified resource in storage.
      *
@@ -114,6 +128,11 @@ class AuthController extends Controller
      */
     public function update(Request $request, Owner $ownerAuth)
     {
+        if ($ownerAuth->isAccepted == 0 && $request->isAccepted == 1) {
+            $ownerAuth->sku = $this->generateSKU();
+            $ownerAuth->save();
+        }
+
         $input = $request->all();
         $ownerAuth->fill($input)->save();
 

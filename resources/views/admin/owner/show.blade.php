@@ -109,6 +109,13 @@
                                     value="{{ $owner->ratingOwner == null ? 'بدون امتیاز' : $owner->ratingOwner }}" id="ratingOwner">
                             </div>
                         </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="sku" class="col-form-label">شناسه</label>
+                            <div class="col-md-12">
+                                <input class="form-control" type="text" name="sku" disabled
+                                    value="{{ $owner->sku == null ? '-' : $owner->sku }}" id="sku">
+                            </div>
+                        </div>
 
                         @if ($owner->isOwner == 2)
                             <div class="mb-3 col-md-6">
