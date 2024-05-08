@@ -40,6 +40,43 @@ class Owner extends Model
         $client->sendPatternSms($fromNum, $toNum, $user, $pass, $pattern_code, $input_data);
         return $rand;
     }
+    public function acceptCustomerSmsIr($mobile)
+    {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.sms.ir/v1/send/verify',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS =>
+            '{' . '
+                "mobile": ' .
+                '"' . $mobile . '",
+                "templateId": 322376,
+                "parameters": [
+                  {
+                    "name": "TELL",
+                    "value":' . ' " ' . TELL . '"' . '
+                  }
+                ]
+              }',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json',
+                'Accept: text/plain',
+                'x-api-key: QlDsnB6uLz3glijWOP02YcXiBAEjf06Hw5WOcRWovUGVESpJIPMkwRdcPRbEPPMj'
+            ),
+        ));
+
+        curl_exec($curl);
+        curl_close($curl);
+
+        return true;
+    }
 
     public function rejectCustomerSms($mobile)
     {
@@ -53,6 +90,44 @@ class Owner extends Model
         $input_data = array("tell" => TELL);
         $client->sendPatternSms($fromNum, $toNum, $user, $pass, $pattern_code, $input_data);
         return $rand;
+    }
+
+    public function rejectCustomerSmsIr($mobile)
+    {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.sms.ir/v1/send/verify',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS =>
+            '{' . '
+                "mobile": ' .
+                '"' . $mobile . '",
+                "templateId": 277063,
+                "parameters": [
+                  {
+                    "name": "TELL",
+                    "value":' . ' " ' . TELL . '"' . '
+                  }
+                ]
+              }',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json',
+                'Accept: text/plain',
+                'x-api-key: QlDsnB6uLz3glijWOP02YcXiBAEjf06Hw5WOcRWovUGVESpJIPMkwRdcPRbEPPMj'
+            ),
+        ));
+
+        curl_exec($curl);
+        curl_close($curl);
+
+        return true;
     }
 
     // از آخرین بار تا به امروز

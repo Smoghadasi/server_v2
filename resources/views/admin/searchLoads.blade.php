@@ -72,6 +72,17 @@
                     @if (isset($message))
                         <div class="alert alert-info text-right">{{ $message }}</div>
                     @endif
+                    @if (isset($firstDateLoad))
+                    <div class="row alert alert-info text-right">
+                        <div class="col-2">
+                            تاریخ اولین بار
+                        </div>
+                        <div class="col-2" style="text-align: right">
+                            {{ $firstDateLoad->loadingDate }}
+                        </div>
+                    </div>
+
+                    @endif
                 </form>
                 <form action="{{ route('load.delete.all') }}" method="post" class="form-inline">
                     @csrf
@@ -195,8 +206,6 @@
                         <input type="submit" name="submit" class="btn btn-danger" value="حذف دسته جمعی">
                     </div>
                 </form>
-
-{{--                    <button type="submit" class="btn btn-danger mb-2">حذف دسته ای بارهای انتخاب شده</button>--}}
             </div>
 
         </div>

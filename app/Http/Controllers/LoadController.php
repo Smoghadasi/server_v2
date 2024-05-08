@@ -903,6 +903,65 @@ class LoadController extends Controller
                 Log::emergency($exception);
                 Log::emergency("---------------------------------------------------------");
             }
+
+            try {
+                $backup = new LoadBackup();
+                $backup->id = $load->id;
+                $backup->title = $load->title;
+                $backup->weight = $load->weight;
+                $backup->width = $load->width;
+                $backup->length = $load->length;
+                $backup->height = $load->height;
+                $backup->loadingAddress = $load->loadingAddress;
+                $backup->dischargeAddress = $load->dischargeAddress;
+                $backup->senderMobileNumber = $load->senderMobileNumber;
+                $backup->receiverMobileNumber = $load->receiverMobileNumber;
+                $backup->insuranceAmount = $load->insuranceAmount;
+                $backup->suggestedPrice = $load->suggestedPrice;
+                $backup->marketing_price = $load->marketing_price;
+                $backup->emergencyPhone = $load->emergencyPhone;
+                $backup->dischargeTime = $load->dischargeTime;
+                $backup->fleet_id = $load->fleet_id;
+                $backup->load_type_id = $load->load_type_id;
+                $backup->tenderTimeDuration = $load->tenderTimeDuration;
+                $backup->packing_type_id = $load->packing_type_id;
+                $backup->loadPic = $load->loadPic;
+                $backup->user_id = $load->user_id;
+                $backup->loadMode = $load->loadMode;
+                $backup->loadingHour = $load->loadingHour;
+                $backup->loadingMinute = $load->loadingMinute;
+                $backup->numOfTrucks = $load->numOfTrucks;
+                $backup->origin_city_id = $load->origin_city_id;
+                $backup->destination_city_id = $load->destination_city_id;
+                $backup->fromCity = $load->fromCity;
+                $backup->toCity = $load->toCity;
+                $backup->loadingDate = $load->loadingDate;
+                $backup->time = $load->time;
+                $backup->latitude = $load->latitude;
+                $backup->longitude = $load->longitude;
+                $backup->weightPerTruck = $load->weightPerTruck;
+                $backup->bulk = $load->bulk;
+                $backup->dangerousProducts = $load->dangerousProducts;
+                $backup->origin_state_id = $load->origin_state_id;
+                $backup->description = $load->description;
+                $backup->priceBased = $load->priceBased;
+                $backup->bearing_id = $load->bearing_id;
+                $backup->proposedPriceForDriver = $load->proposedPriceForDriver;
+                $backup->operator_id = $load->operator_id;
+                $backup->userType = $load->userType;
+                $backup->origin_longitude = $load->origin_longitude;
+                $backup->destination_longitude = $load->destination_longitude;
+                $backup->mobileNumberForCoordination = $load->mobileNumberForCoordination;
+                $backup->storeFor = $load->storeFor;
+                $backup->status = $load->status;
+                $backup->fleets = $load->fleets;
+                $backup->deliveryTime = $load->deliveryTime;
+                $backup->save();
+            } catch (\Exception $e) {
+                Log::emergency("========================= Load Backup ==================================");
+                Log::emergency($e->getMessage());
+                Log::emergency("==============================================================");
+            }
         }
         if (isset($load->id)) {
             return [
@@ -4447,12 +4506,12 @@ class LoadController extends Controller
             ->orderBy('id', 'desc')
             ->take(25)
             ->get();
-        if($loads->isEmpty()){
+        if ($loads->isEmpty()) {
             return [
                 'result' => UN_SUCCESS,
                 'loads' => null
             ];
-        }else{
+        } else {
             return [
                 'result' => SUCCESS,
                 'loads' => $loads
@@ -4497,6 +4556,64 @@ class LoadController extends Controller
         $load->time = time();
         $load->urgent = 1;
         $load->save();
+        try {
+            $backup = new LoadBackup();
+            $backup->id = $load->id;
+            $backup->title = $load->title;
+            $backup->weight = $load->weight;
+            $backup->width = $load->width;
+            $backup->length = $load->length;
+            $backup->height = $load->height;
+            $backup->loadingAddress = $load->loadingAddress;
+            $backup->dischargeAddress = $load->dischargeAddress;
+            $backup->senderMobileNumber = $load->senderMobileNumber;
+            $backup->receiverMobileNumber = $load->receiverMobileNumber;
+            $backup->insuranceAmount = $load->insuranceAmount;
+            $backup->suggestedPrice = $load->suggestedPrice;
+            $backup->marketing_price = $load->marketing_price;
+            $backup->emergencyPhone = $load->emergencyPhone;
+            $backup->dischargeTime = $load->dischargeTime;
+            $backup->fleet_id = $load->fleet_id;
+            $backup->load_type_id = $load->load_type_id;
+            $backup->tenderTimeDuration = $load->tenderTimeDuration;
+            $backup->packing_type_id = $load->packing_type_id;
+            $backup->loadPic = $load->loadPic;
+            $backup->user_id = $load->user_id;
+            $backup->loadMode = $load->loadMode;
+            $backup->loadingHour = $load->loadingHour;
+            $backup->loadingMinute = $load->loadingMinute;
+            $backup->numOfTrucks = $load->numOfTrucks;
+            $backup->origin_city_id = $load->origin_city_id;
+            $backup->destination_city_id = $load->destination_city_id;
+            $backup->fromCity = $load->fromCity;
+            $backup->toCity = $load->toCity;
+            $backup->loadingDate = $load->loadingDate;
+            $backup->time = $load->time;
+            $backup->latitude = $load->latitude;
+            $backup->longitude = $load->longitude;
+            $backup->weightPerTruck = $load->weightPerTruck;
+            $backup->bulk = $load->bulk;
+            $backup->dangerousProducts = $load->dangerousProducts;
+            $backup->origin_state_id = $load->origin_state_id;
+            $backup->description = $load->description;
+            $backup->priceBased = $load->priceBased;
+            $backup->bearing_id = $load->bearing_id;
+            $backup->proposedPriceForDriver = $load->proposedPriceForDriver;
+            $backup->operator_id = $load->operator_id;
+            $backup->userType = $load->userType;
+            $backup->origin_longitude = $load->origin_longitude;
+            $backup->destination_longitude = $load->destination_longitude;
+            $backup->mobileNumberForCoordination = $load->mobileNumberForCoordination;
+            $backup->storeFor = $load->storeFor;
+            $backup->status = $load->status;
+            $backup->fleets = $load->fleets;
+            $backup->deliveryTime = $load->deliveryTime;
+            $backup->save();
+        } catch (\Exception $e) {
+            Log::emergency("========================= Load Backup ==================================");
+            Log::emergency($e->getMessage());
+            Log::emergency("==============================================================");
+        }
         $fleetLoads = FleetLoad::where('load_id', $load)->get();
 
         foreach ($fleetLoads as $item) {
@@ -4624,11 +4741,21 @@ class LoadController extends Controller
             $condition[] = ['mobileNumberForCoordination', $request->mobileNumber];
 
         $loads = Load::where($condition)->withTrashed()->get();
+        $firstDateLoad = LoadBackup::where('mobileNumberForCoordination', $request->mobileNumber)
+            ->orderBy('created_at', 'ASC')->first();
         $cities = ProvinceCity::where('parent_id', '!=', 0)->get();
         $fleets = Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
         $operators = User::where([['role', 'operator'], ['status', 1]])->get();
         $countLoads = LoadBackup::where('mobileNumberForCoordination', $request->mobileNumber)->count();
-        return view('admin.searchLoads', compact('loads', 'cities', 'fleets', 'operators', 'countLoads'));
+        return view('admin.searchLoads',
+            compact(
+                'loads',
+                'cities',
+                'fleets',
+                'operators',
+                'countLoads',
+                'firstDateLoad')
+        );
     }
 
     public function deleteAll(Request $request)
