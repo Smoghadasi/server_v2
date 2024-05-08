@@ -310,10 +310,13 @@ class DriverController extends Controller
         Driver::where('id', $request->driver_id)
             ->update(['fleet_id' => $request->fleet_id]);
 
-        $driver = Driver::find($request->driver_id);
+        $driver = Driver::find($request->driver_id)->select('fleet_id', 'fleetTitle');
 
         return [
-            'result' => $driver
+            'data' => [
+                'fleet_id' => $driver->fleet_id,
+                'fleetTitle' => $driver->fleetTitle,
+            ]
         ];
     }
 
