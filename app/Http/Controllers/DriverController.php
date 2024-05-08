@@ -311,7 +311,7 @@ class DriverController extends Controller
             ->update(['fleet_id' => $request->fleet_id]);
 
         $driver = Driver::where('id', $request->driver_id)
-            // ->select('fleet_id', 'fleetTitle')
+            ->select('id', 'fleet_id')
             ->first();
 
         return [
