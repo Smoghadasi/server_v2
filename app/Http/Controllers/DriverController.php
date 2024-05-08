@@ -310,11 +310,11 @@ class DriverController extends Controller
         $driver_id = $request->driver_id;
         $fleet_id = $request->fleet_id;
 
-        Driver::where('id', $driver_id)
+        $driver = Driver::where('id', $driver_id)
             ->update(['fleet_id' => $fleet_id]);
 
         return [
-            'result' => SUCCESS
+            'result' => $driver
         ];
     }
 
