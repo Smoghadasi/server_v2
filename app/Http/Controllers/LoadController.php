@@ -1050,22 +1050,22 @@ class LoadController extends Controller
     {
 
         $driverLoads = DriverLoad::where('driver_id', $driver_id)->pluck('load_id');
-        $driver = Driver::find($driver_id);
+        // $driver = Driver::find($driver_id);
 
         $loads = Load::join('province_cities as originCity', 'loads.origin_city_id', 'originCity.id')
             ->join('province_cities as destinationCity', 'loads.destination_city_id', 'destinationCity.id')
-            ->join('load_statuses', 'load_statuses.status', 'loads.status')
+            // ->join('load_statuses', 'load_statuses.status', 'loads.status')
             ->whereIn('loads.id', $driverLoads)
             ->withTrashed()
             ->select(
                 'loads.id',
                 'loads.status',
                 'loads.loadingDate',
-                'load_statuses.title as statusTitle',
+                // 'load_statuses.title as statusTitle',
                 'loads.title',
                 'originCity.name as from',
                 'destinationCity.name as to',
-                'loads.urgent',
+                // 'loads.urgent',
                 'loads.fromCity',
                 'loads.toCity',
                 'loads.fleets',
@@ -1077,7 +1077,7 @@ class LoadController extends Controller
                 'loads.origin_city_id',
                 'loads.destination_city_id',
                 'loads.dateTime',
-                'loads.user_id',
+                'loads.user_id'
             )
             ->orderBy('loads.id', 'desc')
             ->skip(0)
