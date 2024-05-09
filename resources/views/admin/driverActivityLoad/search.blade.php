@@ -8,7 +8,7 @@
                     فعالیت رانندگان بر اساس زمان (امروز)
                 </div>
                 <div class="col" style="text-align: left;">
-                    <a href="#" class="alert p-1 alert-primary">مجموع تعداد تماس امروز: {{ $driversActivitiesCallDatesCount }}</a>
+                    <a href="#" class="alert p-1 alert-primary">مجموع تعداد تماس امروز:</a>
                 </div>
             </div>
         </h5>
