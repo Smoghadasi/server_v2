@@ -40,7 +40,7 @@
                         @foreach ($driversActivitiesCallDates as $key => $driversActivitiesCallDate)
                             <tr>
                                 <td>
-                                    {{ ($driversActivitiesCallDates->currentPage() - 1) * $driversActivitiesCallDates->perPage() + ($key + 1) }}
+                                    {{-- {{ ($driversActivitiesCallDates->currentPage() - 1) * $driversActivitiesCallDates->perPage() + ($key + 1) }} --}}
                                 </td>
                                 <td>{{ $driversActivitiesCallDate->driver->name . ' ' . $driversActivitiesCallDate->driver->lastName . ' ( ' . $driversActivitiesCallDate->driver->mobileNumber . ' ) ' }}</td>
                                 <td>{{ $driversActivitiesCallDate->driver->fleetTitle}}</td>
