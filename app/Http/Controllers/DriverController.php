@@ -931,9 +931,9 @@ class DriverController extends Controller
             ->where('callingDate', now()->format('Y-m-d'))
             ->where('phoneNumber', $request->phoneNumber)
             ->orderByDesc('created_at')
-            ->paginate(20);
+            ->get();
         if (count($driversActivitiesCallDates))
-            return $this->driversActivitiesCallDate($driversActivitiesCallDates, true);
+            return view('admin.driverActivityLoad.search', compact('driversActivitiesCallDates'));
     }
 
     public function driversActivities(Request $request, $date = null)
