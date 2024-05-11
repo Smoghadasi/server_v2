@@ -1,6 +1,15 @@
 @extends('layouts.auth')
 
 @section('content')
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <form id="formid" class="form-horizontal m-t-20" method="POST" action="{{ route('authorize.login') }}"
         aria-label="{{ __('ورود') }}">
         @csrf
@@ -28,7 +37,7 @@
                     @endif
                 </div>
             </div>
-            <div class="form-group ">
+            <div class="form-group">
                 <div class="col-xs-12">
                     <div class="checkbox checkbox-custom">
                         <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
@@ -39,6 +48,8 @@
 
                 </div>
             </div>
+            {!! NoCaptcha::display() !!}
+
         </div>
 
         <div class="form-group">

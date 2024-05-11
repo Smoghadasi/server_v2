@@ -89,6 +89,7 @@
     <script src="{{ asset('js/bootstrap-notify.min.js') }}"></script>
     @include('partials.flash')
     @yield('script')
+    {!! NoCaptcha::renderJs() !!}
 </body>
 
 </html>

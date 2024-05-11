@@ -11,9 +11,11 @@ class AuthorizeController extends Controller
 {
     public function loginPost(Request $request)
     {
+        // return $request->all();
         $request->validate([
             'email' => 'required',
-            'password' => 'required'
+            'password' => 'required',
+            'g-recaptcha-response' => 'required|captcha'
         ]);
 
         $credentials = $request->only('email', 'password');
