@@ -1404,6 +1404,7 @@ class DriverController extends Controller
             $driver->latitude = $request->latitude;
             $driver->longitude = $request->longitude;
             $city = ProvinceCity::where('parent_id', '!=', 0)->where('name', $request->city)->first();
+            $driver->province_id = $city->parent_id;
             $driver->city_id = $city->id;
             $driver->save();
             return response()->json('اطلاعات جدید ذخیره شد', 200);
