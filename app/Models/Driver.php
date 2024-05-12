@@ -25,7 +25,7 @@ class Driver extends Authenticatable
 
     public function cityOwner()
     {
-        return $this->belongsTo(ProvinceCity::class);
+        return $this->belongsTo(ProvinceCity::class, 'city_id');
     }
 
     //    public function loads()
