@@ -18,6 +18,7 @@ use App\Models\FleetRatioToDriverActivityReport;
 use App\Models\Load;
 use App\Models\LoadBackup;
 use App\Models\Owner;
+use App\Models\ProvinceCity;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\UserActivityReport;
@@ -331,8 +332,34 @@ class ReportingController extends Controller
             ->having('count', '>', 1)
             ->orderByDesc('count')
             ->paginate(15);
+        $provinceCities = ProvinceCity::where('parent_id', '!=', 0 )->get();
+        return view('admin.reporting.usersByCity', compact('users', 'provinceCities'));
+    }
+    public function searchUsersByCity(Request $request)
+    {
+        if ($request->city_id == 0) {
+            return redirect()->route('reporting.usersByCity');
+        }
+        $users = Driver::with('cityOwner')->select('city_id', DB::raw('count(`city_id`) as count'))
+            ->groupBy('city_id')
+            ->having('count', '>', 1)
+            ->orderByDesc('count')
+            ->where('city_id', $request->city_id)
+            ->paginate(15);
+        $provinceCities = ProvinceCity::where('parent_id', '!=', 0 )->get();
+        if($users->isEmpty()){
+            return redirect()->route('reporting.usersByCity')->with('danger', 'شهر مورد نظر یافت نشد');
+        }
+        return view('admin.reporting.usersByCity', compact('users', 'provinceCities'));
+    }
+    public function usersByCustomCities(ProvinceCity $provinceCity, $drivers = [], $showSearchResult = false )
+    {
+        if (!$showSearchResult)
+            $drivers = Driver::where('city_id', $provinceCity->id)->paginate(10);
 
-        return view('admin.reporting.usersByCity', compact('users'));
+        $fleets = Fleet::all();
+
+        return view('admin.driver.city', compact(['drivers', 'provinceCity', 'fleets']));
     }
 
     public function searchDriversCountCall(Request $request)

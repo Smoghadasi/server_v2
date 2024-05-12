@@ -727,6 +727,12 @@ class DriverController extends Controller
         if (isset($request->mobileNumber) && strlen($request->mobileNumber))
             $condition[] = ['mobileNumber', 'like', '%' . $request->mobileNumber . '%'];
 
+        if (isset($request->fleet_id) && strlen($request->fleet_id))
+            $condition[] = ['fleet_id', 'like', '%' . $request->fleet_id . '%'];
+
+        if (isset($request->city_id) && strlen($request->city_id))
+            $condition[] = ['city_id', 'like', '%' . $request->city_id . '%'];
+
         if (isset($request->version) && strlen($request->version))
             $condition[] = ['version', 'like', '%' . $request->version . '%'];
 

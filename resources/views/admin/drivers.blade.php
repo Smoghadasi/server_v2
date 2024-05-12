@@ -64,8 +64,6 @@
                             <button class="btn btn-info" type="submit">جستجو</button>
                         </div>
                     </div>
-
-
                 </div>
             </form>
 

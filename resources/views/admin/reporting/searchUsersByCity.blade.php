@@ -16,7 +16,7 @@
                                 <div class="form-group">
                                     <label>نوع شهر :</label>
                                     <select class="form-select" name="city_id">
-                                        <option value="0">همه</option>
+                                        <option disabled selected>انتخاب شهر</option>
                                         @foreach ($provinceCities as $provinceCity)
                                             <option value="{{ $provinceCity->id }}">{{ $provinceCity->name }}</option>
                                         @endforeach

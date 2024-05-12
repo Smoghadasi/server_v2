@@ -726,6 +726,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::post('searchFreeSubscription', [FreeSubscriptionController::class, 'search'])->name('search.free.subscription')->middleware('operator');
 
         Route::get('usersByCity', [ReportingController::class, 'usersByCity'])->middleware('operator')->name('reporting.usersByCity');
+        Route::post('searchUsersByCity', [ReportingController::class, 'searchUsersByCity'])->middleware('operator')->name('reporting.searchUsersByCity');
+        Route::get('usersByCity/{provinceCity}', [ReportingController::class, 'usersByCustomCities'])->middleware('operator')->name('reporting.usersByCustomCities');
 
         // نتیجه تماس ها
         Route::get('contactingWithDriverResult/{driver}', [OperatorContactingController::class, 'contactingWithDriverResult'])->middleware('operator')->name('contactingWithDriverResult');
