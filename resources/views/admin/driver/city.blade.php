@@ -8,11 +8,6 @@
             {{ $provinceCity->name }} - ({{ $provinceCity->state }})
         </h5>
         <div class="card-body">
-            <div class="col-lg-12 alert alert-info">
-                تعداد یافته ها :
-                {{ count($drivers) }}
-                راننده
-            </div>
             <form action="{{ url('admin/searchDrivers') }}" method="post">
                 @csrf
                 <div class="col-lg-12 border rounded mt-2 mb-2 p-2">
