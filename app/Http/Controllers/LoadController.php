@@ -902,14 +902,15 @@ class LoadController extends Controller
                 }
 
                 try {
+                    $fleet = FleetLoad::where('load_id', $load->id)->first();
                     $drivers = Driver::where('city_id', '=', $load->origin_city_id)
-                    ->where('fleet_id', 'LIKE', '%' . $load->fleets . '%')
-                    ->where('id', '45172')
-                    ->get();
-                if ($drivers != null) {
+                        ->where('fleet_id', $fleet->fleet_id)
+                        ->where('id', '45172')
+                        ->get();
+                if (isset($drivers)) {
                     Log::emergency("send 1");
 
-                    foreach ($drivers as $key => $driver) {
+                    foreach ($drivers as $driver) {
                         Log::emergency("send 2");
                         if (SMS_PANEL == 'SMSIR') {
                             Log::emergency("send 3");
