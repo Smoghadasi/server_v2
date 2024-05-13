@@ -907,8 +907,12 @@ class LoadController extends Controller
                     ->where('id', '45172')
                     ->get();
                 if ($drivers != null) {
+                    Log::emergency("send 1");
+
                     foreach ($drivers as $key => $driver) {
+                        Log::emergency("send 2");
                         if (SMS_PANEL == 'SMSIR') {
+                            Log::emergency("send 3");
                             $driver->subscriptionLoadSmsIr($driver->mobileNumber, $driver->name, $load->fromCity, $load->toCity );
                         }else{
                             $driver->subscriptionLoadSmsIr($driver->mobileNumber, $driver->name, $load->fromCity, $load->toCity );
