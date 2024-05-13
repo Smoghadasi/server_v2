@@ -901,7 +901,8 @@ class LoadController extends Controller
                     DB::commit();
                 }
 
-                $drivers = Driver::where('city_id', '=', $load->origin_city_id)
+                try {
+                    $drivers = Driver::where('city_id', '=', $load->origin_city_id)
                     ->where('fleet_id', 'LIKE', '%' . $load->fleets . '%')
                     ->where('id', '45172')
                     ->get();
@@ -914,6 +915,12 @@ class LoadController extends Controller
                         }
                     }
                 }
+                } catch (\Exception $exception) {
+                    Log::emergency("******************************** send sms load by driver ******************************");
+                    Log::emergency($exception->getMessage());
+                    Log::emergency("*******************************************************************************************");
+                }
+
             } catch (\Exception $exception) {
                 DB::rollBack();
                 Log::emergency("----------------------ثبت بار جدید-----------------------");
