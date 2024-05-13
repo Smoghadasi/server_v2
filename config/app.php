@@ -176,7 +176,8 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\FortifyServiceProvider::class,
         App\Providers\JetstreamServiceProvider::class,
-        Anhskohbo\NoCaptcha\NoCaptchaServiceProvider::class,
+        // Anhskohbo\NoCaptcha\NoCaptchaServiceProvider::class,
+        Mews\Captcha\CaptchaServiceProvider::class,
     ],
 
     /*
@@ -231,7 +232,8 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        'NoCaptcha' => Anhskohbo\NoCaptcha\Facades\NoCaptcha::class,
+        // 'NoCaptcha' => Anhskohbo\NoCaptcha\Facades\NoCaptcha::class,
+        'Captcha' => Mews\Captcha\Facades\Captcha::class,
         // 'Gateway' => \Larabookir\Gateway\Gateway::class, // <-- add this line at the end of aliases array
 
     ],

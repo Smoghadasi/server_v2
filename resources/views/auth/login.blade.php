@@ -37,18 +37,20 @@
                     @endif
                 </div>
             </div>
-            <div class="form-group">
-                <div class="col-xs-12">
-                    <div class="checkbox checkbox-custom">
-                        <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-                        <label for="remember">
-                            مرا به خاطر بسپار
-                        </label>
-                    </div>
 
+            <div class="form-group ">
+                <div class="col-xs-12">
+                    <input class="form-control{{ $errors->has('captcha') ? ' is-invalid' : '' }}" type="text" name="captcha"
+                        value="{{ old('captcha') }}" required="" placeholder="کد تایید">
+                    @if ($errors->has('captcha'))
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $errors->first('captcha') }}</strong>
+                        </span>
+                    @endif
+                    <img src="{{ captcha_src('math') }}" alt="">
                 </div>
             </div>
-            {!! NoCaptcha::display() !!}
+            {{-- {!! NoCaptcha::display() !!} --}}
 
         </div>
 
@@ -67,11 +69,11 @@
 
         <div class="form-group text-center m-t-30">
             <div class="col-xs-12">
-                <button id="submit" class="btn btn-custom btn-bordred btn-block waves-effect waves-light"
+                <button id="login_submit" class="btn btn-custom btn-bordred btn-block waves-effect waves-light"
                     type="button">ادامه</button>
                 <button id="submit_2" class="btn btn-custom btn-bordred btn-block waves-effect waves-light"
                     type="button">ثبت</button>
-                <button id="login_submit" type="submit"
+                <button id="" type="submit"
                     class="btn btn-custom btn-bordred btn-block waves-effect waves-light">ورود به
                     سیستم</button>
             </div>

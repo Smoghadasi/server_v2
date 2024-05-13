@@ -3,19 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthorizeController extends Controller
 {
     public function loginPost(Request $request)
     {
-        // return $request->all();
+        // return $request;
         $request->validate([
             'email' => 'required',
             'password' => 'required',
-            'g-recaptcha-response' => 'required|captcha'
+            'captcha' => 'required|captcha'
         ]);
 
         $credentials = $request->only('email', 'password');

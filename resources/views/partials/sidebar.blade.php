@@ -145,11 +145,13 @@
                         </a>
                     </li>
                 @endif
-                <li class="menu-item">
-                    <a class="menu-link" href="{{ route('reporting.usersByCity') }}">
-                        <span>استفاده کنندگان به تفکیک شهرستان</span>
-                    </a>
-                </li>
+                {{-- @if(in_array('usersByCity',auth()->user()->userAccess)) --}}
+                    <li class="menu-item">
+                        <a class="menu-link" href="{{ route('reporting.usersByCity') }}">
+                            <span>استفاده کنندگان به تفکیک شهرستان</span>
+                        </a>
+                    </li>
+                {{-- @endif --}}
                 @if(in_array('freeSubscription',auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('freeSubscription.index') }}">
