@@ -904,7 +904,7 @@ class LoadController extends Controller
                 try {
                     $fleet = FleetLoad::where('load_id', $load->id)->first();
                     $cityFrom = ProvinceCity::where('id', $load->origin_city_id)->first();
-                    $cityTo = ProvinceCity::where('id', $load->origin_city_id)->first();
+                    $cityTo = ProvinceCity::where('id', $load->destination_city_id)->first();
 
                     $drivers = Driver::where('city_id', '=', $load->origin_city_id)
                         ->where('fleet_id', $fleet->fleet_id)
