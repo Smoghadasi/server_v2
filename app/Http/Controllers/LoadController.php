@@ -903,6 +903,9 @@ class LoadController extends Controller
 
                 try {
                     $fleet = FleetLoad::where('load_id', $load->id)->first();
+                    $cityFrom = ProvinceCity::where('id', $load->origin_city_id)->first();
+                    $cityTo = ProvinceCity::where('id', $load->origin_city_id)->first();
+
                     $drivers = Driver::where('city_id', '=', $load->origin_city_id)
                         ->where('fleet_id', $fleet->fleet_id)
                         ->where('id', '45172')
@@ -912,12 +915,7 @@ class LoadController extends Controller
 
                     foreach ($drivers as $driver) {
                         Log::emergency("send 2");
-                        if (SMS_PANEL == 'SMSIR') {
-                            Log::emergency("send 3");
-                            $driver->subscriptionLoadSmsIr($driver->mobileNumber, $driver->name, $load->fromCity, $load->toCity );
-                        }else{
-                            $driver->subscriptionLoadSmsIr($driver->mobileNumber, $driver->name, $load->fromCity, $load->toCity );
-                        }
+                            $driver->subscriptionLoadSmsIr($driver->mobileNumber, $driver->name, $cityFrom->name . ($cityFrom->state), $cityTo->name . ($cityTo->state) );
                     }
                 }
                 } catch (\Exception $exception) {
