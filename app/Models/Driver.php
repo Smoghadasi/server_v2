@@ -176,4 +176,50 @@ class Driver extends Authenticatable
             return round($score,1);
         }
     }
+    //
+    public function subscriptionLoadSmsIr($mobile, $driver, $from, $to)
+    {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.sms.ir/v1/send/verify',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS =>
+            '{' . '
+                "mobile": ' .
+                '"' . $mobile . '",
+                "templateId": 753360,
+                "parameters": [
+                  {
+                    "name": "DRIVER",
+                    "value":' . ' " ' . $driver . '"' . '
+                  },
+                  {
+                    "name": "FROM",
+                    "value":' . ' " ' . $from . '"' . '
+                  },
+                  {
+                    "name": "TO",
+                    "value":' . ' " ' . $to . '"' . '
+                  }
+                ]
+              }',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json',
+                'Accept: text/plain',
+                'x-api-key: QlDsnB6uLz3glijWOP02YcXiBAEjf06Hw5WOcRWovUGVESpJIPMkwRdcPRbEPPMj'
+            ),
+        ));
+
+        curl_exec($curl);
+        curl_close($curl);
+
+        return true;
+    }
 }

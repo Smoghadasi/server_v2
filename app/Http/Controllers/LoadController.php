@@ -812,6 +812,9 @@ class LoadController extends Controller
 
                 $load->save();
 
+
+
+
                 if (isset($request->dateOfCargoDeclaration)) {
 
                     $dateOfCargoDeclarations = explode(",", str_replace(" ", "", str_replace("[", "", str_replace("]", "", $request->dateOfCargoDeclaration))));
@@ -896,6 +899,20 @@ class LoadController extends Controller
                         Log::emergency("---------------------------------------------------------");
                     }
                     DB::commit();
+                }
+
+                $drivers = Driver::where('city_id', '=', $load->origin_city_id)
+                    ->where('fleet_id', 'LIKE', '%' . $load->fleets . '%')
+                    ->where('id', '45172')
+                    ->get();
+                if ($drivers != null) {
+                    foreach ($drivers as $key => $driver) {
+                        if (SMS_PANEL == 'SMSIR') {
+                            $driver->subscriptionLoadSmsIr($driver->mobileNumber, $driver->name, $load->fromCity, $load->toCity );
+                        }else{
+                            $driver->subscriptionLoadSmsIr($driver->mobileNumber, $driver->name, $load->fromCity, $load->toCity );
+                        }
+                    }
                 }
             } catch (\Exception $exception) {
                 DB::rollBack();
@@ -4747,14 +4764,16 @@ class LoadController extends Controller
         $fleets = Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
         $operators = User::where([['role', 'operator'], ['status', 1]])->get();
         $countLoads = LoadBackup::where('mobileNumberForCoordination', $request->mobileNumber)->count();
-        return view('admin.searchLoads',
+        return view(
+            'admin.searchLoads',
             compact(
                 'loads',
                 'cities',
                 'fleets',
                 'operators',
                 'countLoads',
-                'firstDateLoad')
+                'firstDateLoad'
+            )
         );
     }
 
