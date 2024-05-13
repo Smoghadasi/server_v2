@@ -908,22 +908,21 @@ class LoadController extends Controller
 
                     $drivers = Driver::where('city_id', '=', $load->origin_city_id)
                         ->where('fleet_id', $fleet->fleet_id)
-                        ->where('id', '45172')
                         ->get();
-                if (isset($drivers)) {
-                    Log::emergency("send 1");
-
-                    foreach ($drivers as $driver) {
-                        Log::emergency("send 2");
-                            $driver->subscriptionLoadSmsIr($driver->mobileNumber, $driver->name, $cityFrom->name . ' (' . $cityFrom->state . ') ', $cityTo->name . ' (' . $cityTo->state . ') ' );
+                    if (isset($drivers)) {
+                        foreach ($drivers as $driver) {
+                            $driver->subscriptionLoadSmsIr(
+                                $driver->mobileNumber,
+                                $driver->name,
+                                $cityFrom->name . $cityTo->name
+                            );
+                        }
                     }
-                }
                 } catch (\Exception $exception) {
                     Log::emergency("******************************** send sms load by driver ******************************");
                     Log::emergency($exception->getMessage());
                     Log::emergency("*******************************************************************************************");
                 }
-
             } catch (\Exception $exception) {
                 DB::rollBack();
                 Log::emergency("----------------------ثبت بار جدید-----------------------");
