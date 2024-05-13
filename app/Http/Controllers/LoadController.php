@@ -915,7 +915,7 @@ class LoadController extends Controller
 
                     foreach ($drivers as $driver) {
                         Log::emergency("send 2");
-                            $driver->subscriptionLoadSmsIr($driver->mobileNumber, $driver->name, $cityFrom->name . ($cityFrom->state), $cityTo->name . ($cityTo->state) );
+                            $driver->subscriptionLoadSmsIr($driver->mobileNumber, $driver->name, $cityFrom->name . ' (' . $cityFrom->state . ') ', $cityTo->name . ' (' . $cityTo->state . ') ' );
                     }
                 }
                 } catch (\Exception $exception) {
