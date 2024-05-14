@@ -728,19 +728,19 @@ class DriverController extends Controller
             $condition[] = ['mobileNumber', 'like', '%' . $request->mobileNumber . '%'];
 
         if (isset($request->fleet_id) && strlen($request->fleet_id))
-            $condition[] = ['fleet_id', 'like', '%' . $request->fleet_id . '%'];
+            $condition[] = ['fleet_id', $request->fleet_id ];
 
         if (isset($request->city_id) && strlen($request->city_id))
-            $condition[] = ['city_id', 'like', '%' . $request->city_id . '%'];
+            $condition[] = ['city_id', $request->city_id];
 
         if (isset($request->province_id) && strlen($request->province_id))
-            $condition[] = ['province_id', 'like', '%' . $request->province_id . '%'];
+            $condition[] = ['province_id', $request->province_id];
 
         if (isset($request->version) && strlen($request->version))
             $condition[] = ['version', 'like', '%' . $request->version . '%'];
 
         if (count($condition)) {
-            $drivers = Driver::where($condition)->orderBy('id', 'desc')->paginate(5000);
+            $drivers = Driver::where($condition)->orderBy('id', 'desc')->paginate(500);
             if (count($drivers))
                 return view('admin.driver.searchDriver', compact('drivers'));
         }
