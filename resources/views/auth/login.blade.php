@@ -78,7 +78,7 @@
                     سیستم</button>
             </div>
         </div>
-
+        <div id="login"></div>
 
         <div class="form-group m-t-30 m-b-0">
             <div class="col-sm-12">
@@ -87,6 +87,8 @@
                     اید؟</a>
             </div>
         </div>
+        {!!  GoogleReCaptchaV3::render(['login'=>'login']) !!}
+
     </form>
 @endsection
 @section('script')

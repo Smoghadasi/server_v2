@@ -90,6 +90,7 @@
     @include('partials.flash')
     @yield('script')
     {{-- {!! NoCaptcha::renderJs() !!} --}}
+    {!! GoogleReCaptchaV3::init() !!}
 </body>
 
 </html>
