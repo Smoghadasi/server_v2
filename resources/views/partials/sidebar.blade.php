@@ -131,7 +131,7 @@
             </ul>
         </li>
 
-        <li class="menu-item">
+        <li class="menu-item {{ request()->is('admin/usersByCity*') ? 'active open' : '' }} {{ request()->is('admin/usersByProvince*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-bar-chart"></i>
                 <div data-i18n="Layouts">گزارش ها</div>
@@ -146,7 +146,7 @@
                     </li>
                 @endif
 
-                <li class="menu-item active open">
+                <li class="menu-item {{ request()->is('admin/usersByCity*') ? 'active open' : '' }} {{ request()->is('admin/usersByProvince*') ? 'active open' : '' }}">
                     <a href="javascript:void(0);" class="menu-link menu-toggle">
                         {{-- <i class="menu-icon tf-icons bx bx-bar-chart"></i> --}}
                         <div data-i18n="Layouts">استفاده کنندگان</div>
@@ -155,6 +155,11 @@
                         <li class="menu-item">
                             <a class="menu-link" href="{{ route('reporting.usersByCity') }}">
                                 <span>تفکیک شهرستان</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a class="menu-link" href="{{ route('reporting.usersByProvince') }}">
+                                <span>تفکیک استان</span>
                             </a>
                         </li>
                     </ul>

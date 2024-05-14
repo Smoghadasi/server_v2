@@ -28,6 +28,11 @@ class Driver extends Authenticatable
         return $this->belongsTo(ProvinceCity::class, 'city_id');
     }
 
+    public function provinceOwner()
+    {
+        return $this->belongsTo(ProvinceCity::class, 'province_id');
+    }
+
     //    public function loads()
     //    {
     //        return $this->belongsTo(Load::class);

@@ -362,6 +362,46 @@ class ReportingController extends Controller
         return view('admin.driver.city', compact(['drivers', 'provinceCity', 'fleets']));
     }
 
+    public function usersByProvince()
+    {
+        $users = Driver::with('provinceOwner')->select('province_id', DB::raw('count(`province_id`) as count'))
+            ->groupBy('province_id')
+            ->having('count', '>', 1)
+            ->orderByDesc('count')
+            ->paginate(15);
+        $provinceCities = ProvinceCity::where('parent_id', '=', 0 )->get();
+        return view('admin.reporting.usersByProvince', compact('users', 'provinceCities'));
+    }
+
+    public function usersByCustomProvinces(ProvinceCity $provinceCity, $drivers = [], $showSearchResult = false )
+    {
+        if (!$showSearchResult)
+            $drivers = Driver::where('province_id', $provinceCity->id)->paginate(10);
+
+        $fleets = Fleet::all();
+
+        return view('admin.driver.province', compact(['drivers', 'provinceCity', 'fleets']));
+    }
+
+    public function searchUsersByProvince(Request $request)
+    {
+        if ($request->province_id == 0)
+            return redirect()->route('reporting.usersByProvince');
+
+        $users = Driver::with('provinceOwner')->select('province_id', DB::raw('count(`province_id`) as count'))
+            ->groupBy('province_id')
+            ->having('count', '>', 1)
+            ->orderByDesc('count')
+            ->where('province_id', $request->province_id)
+            ->paginate(15);
+        $provinceCities = ProvinceCity::where('parent_id', '=', 0 )->get();
+
+        if($users->isEmpty())
+            return redirect()->route('reporting.usersByProvince')->with('danger', 'شهر مورد نظر یافت نشد');
+
+        return view('admin.reporting.usersByProvince', compact('users', 'provinceCities'));
+    }
+
     public function searchDriversCountCall(Request $request)
     {
         $basedCalls = DriverCallCount::with('driver')

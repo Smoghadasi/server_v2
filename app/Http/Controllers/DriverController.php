@@ -733,6 +733,9 @@ class DriverController extends Controller
         if (isset($request->city_id) && strlen($request->city_id))
             $condition[] = ['city_id', 'like', '%' . $request->city_id . '%'];
 
+        if (isset($request->province_id) && strlen($request->province_id))
+            $condition[] = ['province_id', 'like', '%' . $request->province_id . '%'];
+
         if (isset($request->version) && strlen($request->version))
             $condition[] = ['version', 'like', '%' . $request->version . '%'];
 
