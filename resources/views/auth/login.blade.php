@@ -10,8 +10,7 @@
             </ul>
         </div>
     @endif
-    <form id="formid" class="form-horizontal m-t-20" method="POST" action="{{ route('authorize.login') }}"
-        aria-label="{{ __('ورود') }}">
+    <form id="formid" class="form-horizontal m-t-20" method="POST" action="#" aria-label="{{ __('ورود') }}">
         @csrf
         <div class="input">
             <div class="form-group ">
@@ -40,8 +39,8 @@
 
             <div class="form-group ">
                 <div class="col-xs-12">
-                    <input class="form-control{{ $errors->has('captcha') ? ' is-invalid' : '' }}" type="text" name="captcha"
-                        value="{{ old('captcha') }}" required="" placeholder="کد تایید">
+                    <input class="form-control{{ $errors->has('captcha') ? ' is-invalid' : '' }}" type="text"
+                        name="captcha" id="captcha" required="" placeholder="کد تایید">
                     @if ($errors->has('captcha'))
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $errors->first('captcha') }}</strong>
@@ -73,9 +72,7 @@
                     type="button">ادامه</button>
                 <button id="submit_2" class="btn btn-custom btn-bordred btn-block waves-effect waves-light"
                     type="button">ثبت</button>
-                <button id="login_submit" type="submit"
-                    class="btn btn-custom btn-bordred btn-block waves-effect waves-light">ورود به
-                    سیستم</button>
+
             </div>
         </div>
         <div id="login"></div>
@@ -87,7 +84,7 @@
                     اید؟</a>
             </div>
         </div>
-        {!!  GoogleReCaptchaV3::render(['login'=>'login']) !!}
+        {!! GoogleReCaptchaV3::render(['login' => 'login']) !!}
 
     </form>
 @endsection
@@ -108,7 +105,6 @@
             });
             $(".timer").hide();
             $("#submit_2").hide();
-            $("#login_submit").hide();
 
             const counterdown = () => {
 
@@ -149,36 +145,38 @@
                     return sec;
                 }
             }
-            var sms = 0;
-
+            var mobile = 0;
             $('#submit').click(function(e) {
                 e.preventDefault();
                 var email = $("input[name=email]").val();
                 var password = $("input[name=password]").val();
+                var captcha = $("input[name=captcha]").val();
                 $("#submit").attr("disabled", true);
-
-
                 $.ajax({
                     type: 'POST',
                     url: "{{ route('check.user') }}",
                     data: {
                         email: email,
                         password: password,
+                        captcha: captcha,
                     },
                     success: function(data) {
-                        if (data.code == 422) {
-                            $("#submit").attr("disabled", false);
-                            alert(data.success);
-                        } else {
-                            if (data.code == 200) {
-                                // console.log(data);
-                                counterdown();
-                                sms = data.sms;
-                            } else {
-                                $("#submit").attr("disabled", false);
-                                alert(data.success)
-                            }
+                        if (data.status == 422) {
+                            alert(data.response);
+                            location.reload();
                         }
+                        if (data.status == 403) {
+                            alert(data.response);
+                            location.reload();
+                        }
+                        if (data.status == 200) {
+                            mobile = data.response;
+                            counterdown();
+                        }
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert('لطفا ورود را به درستی وارد کنید');
+                        location.reload();
                     }
                 });
 
@@ -187,15 +185,25 @@
             $('#submit_2').click(function(e) {
                 e.preventDefault();
                 var code = $("input[name=code]").val();
-
-                if (sms == code) {
-                    $("#login_submit").show();
-                    $(".login_submit").hide();
-                    $(".timer").hide();
-                    $("#submit_2").hide();
-                } else {
-                    alert('کد ارسال شده اشتباه است')
-                }
+                var password = $("input[name=password]").val();
+                $("#submit").attr("disabled", true);
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ route('checkActivationCode') }}",
+                    data: {
+                        code: code,
+                        mobileNumber: mobile,
+                        password: password
+                    },
+                    success: function(data) {
+                        if (data.status == 400) {
+                            alert(data.response);
+                        }
+                        if (data.status == 200) {
+                            window.location.href = "/dashboard";
+                        }
+                    }
+                });
             });
 
 

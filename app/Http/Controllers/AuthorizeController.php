@@ -11,7 +11,6 @@ class AuthorizeController extends Controller
 {
     public function loginPost(Request $request)
     {
-        // return $request;
         $request->validate([
             'email' => 'required',
             'password' => 'required',
@@ -19,42 +18,10 @@ class AuthorizeController extends Controller
         ]);
 
         $credentials = $request->only('email', 'password');
-        $user = User::where('email', $request->email)->first();
-        if ($user != null) {
-            if ($user->lockDate < now()) {
-                // return $user;
-                if (Auth::attempt($credentials)) {
-                    $user->numOfRequest = null;
-                    $user->lockDate = null;
-                    $user->save();
-                    return redirect('/dashboard');
-                } else {
-                    $user->numOfRequest += 1;
-                    if ($user->numOfRequest == 1) {
-                        $user->lockDate = Carbon::parse($user->lockDate)->addMinutes(5);
-                    } elseif ($user->numOfRequest == 2) {
-                        $user->lockDate = Carbon::parse($user->lockDate)->addMinutes(20);
-                    } elseif ($user->numOfRequest >= 3) {
-                        $user->lockDate = Carbon::parse($user->lockDate)->addMinutes(60);
-                    }
-                    $user->save();
-                    return redirect(route('login'))->with('danger', 'شما تا تاریخ' . $user->lockDate . ' مسدود شده اید. ');
-                }
-            } else {
-                $user->numOfRequest += 1;
-                if ($user->numOfRequest == 1) {
-                    $user->lockDate = Carbon::parse($user->lockDate)->addMinutes(5);
-                } elseif ($user->numOfRequest == 2) {
-                    $user->lockDate = Carbon::parse($user->lockDate)->addMinutes(20);
-                } elseif ($user->numOfRequest >= 3) {
-                    $user->lockDate = Carbon::parse($user->lockDate)->addMinutes(60);
-                }
-                $user->save();
-                return redirect(route('login'))->with('danger', 'شما تا تاریخ' . $user->lockDate . ' مسدود شده اید. ');
-            }
-            // Auth::logout();
+        if (Auth::attempt($credentials)) {
+            return redirect('/dashboard');
         } else {
-            return redirect(route('login'))->with('danger', 'نام کاربری یا عبور اشتباه است ');
+            return redirect(route('login'))->with('danger', 'نام کاربری یا رمز عبور اشتباه است');
         }
     }
 }

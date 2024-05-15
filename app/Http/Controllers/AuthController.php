@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivationCode;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -14,31 +16,65 @@ class AuthController extends Controller
         $request->validate([
             'email' => 'required',
             'password' => 'required',
+            'captcha' => 'required|captcha'
         ]);
-
-        // $credentials = $request->only('email', 'password');
         $user = User::where('email', $request->email)->first();
-
-        if ($user) {
-            $account = User::where('email', $request->email)->select('mobileNumber')->first();
-            if ($account->mobileNumber == null || $account->mobileNumber == "") {
-                return response()->json(['code' => 422, 'success' => 'شماره موبایل ثبت نشده است لطفا با پشتیبانی تماس بگیرید.']);
+        if ($user && Hash::check($request->password, $user->password)) {
+            if ($user->lockDate < now()) {
+                $mobileNumber = ParameterController::convertNumbers($user->mobileNumber);
+                $sms = new User();
+                if (SMS_PANEL == 'SMSIR') {
+                    $rnd = $sms->mobileSmsIr($mobileNumber);
+                } else {
+                    $rnd = $sms->mobileSms($mobileNumber);
+                }
+                ActivationCode::where('mobileNumber', $mobileNumber)->delete();
+                $activationCode = new ActivationCode();
+                $activationCode->mobileNumber = $mobileNumber;
+                $activationCode->code = $rnd;
+                $activationCode->save();
+                $user->numOfRequest = null;
+                $user->lockDate = null;
+                $user->save();
+                return response()->json([
+                    'status' => 200,
+                    'response' => $mobileNumber
+                ]);
+            } else {
+                $user->numOfRequest += 1;
+                if ($user->numOfRequest == 1) {
+                    $user->lockDate = Carbon::parse($user->lockDate)->addMinutes(5);
+                } elseif ($user->numOfRequest == 2) {
+                    $user->lockDate = Carbon::parse($user->lockDate)->addMinutes(20);
+                } elseif ($user->numOfRequest >= 3) {
+                    $user->lockDate = Carbon::parse($user->lockDate)->addMinutes(60);
+                }
+                $user->save();
+                return response()->json([
+                    'status' => 403,
+                    'response' => 'شما تا تاریخ ' . $user->lockDate . ' مسدود شده اید. '
+                ]);
             }
-            $sms = new User();
-            if (SMS_PANEL == 'SMSIR') {
-                $rnd = $sms->mobileSmsIr($account->mobileNumber);
-            }else{
-                $rnd = $sms->mobileSms($account->mobileNumber);
-            }
-
-
-            return response()->json([
-                'code' => 200,
-                'sms' => $rnd,
-                'response' => 'با موفقیت ارسال شد'
-            ]);
         } else {
-            return response()->json(['code' => 400, 'success' => 'کاربر مورد نظر یافت نشد.']);
+            if ($user) {
+                $user->numOfRequest += 1;
+                if ($user->numOfRequest == 1) {
+                    $user->lockDate = Carbon::parse($user->lockDate)->addMinutes(5);
+                } elseif ($user->numOfRequest == 2) {
+                    $user->lockDate = Carbon::parse($user->lockDate)->addMinutes(20);
+                } elseif ($user->numOfRequest >= 3) {
+                    $user->lockDate = Carbon::parse($user->lockDate)->addMinutes(60);
+                }
+                $user->save();
+                return response()->json([
+                    'status' => 403,
+                    'response' => 'شما تا تاریخ' . $user->lockDate . ' مسدود شده اید. '
+                ]);
+            }
+            return response()->json([
+                'status' => 422,
+                'response' => 'نام کاربری و رمز عبور اشتباه است'
+            ]);
         }
     }
 
@@ -61,6 +97,27 @@ class AuthController extends Controller
             ]);
         } else {
             return response()->json(['code' => 400, 'success' => 'کاربر مورد نظر یافت نشد.']);
+        }
+    }
+    // درخواست کد فعال سازی برای احراز هویت
+    public function checkActivationCode(Request $request)
+    {
+        $mobileNumber = ParameterController::convertNumbers($request->mobileNumber);
+
+        if (strlen($mobileNumber) == 11) {
+            if (ActivationCode::where('mobileNumber', '=', $mobileNumber)->where('code', $request->code)->count() > 0) {
+                $credentials = $request->only('mobileNumber','password');
+                Auth::attempt($credentials);
+                return response()->json([
+                    'status' => 200,
+                    'response' => 'با موفقیت ورود به سیستم انجام شد'
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 400,
+                    'response' => 'کد ارسال شده اشتباه است'
+                ]);
+            }
         }
     }
 

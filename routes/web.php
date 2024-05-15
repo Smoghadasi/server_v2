@@ -70,6 +70,8 @@ Route::post('check-user', [AuthController::class, 'checkUser'])->name('check.use
 
 Route::post('loginUser', [AuthorizeController::class, 'loginPost'])->name('authorize.login');
 
+Route::post('checkActivationCode', [AuthController::class, 'checkActivationCode'])->name('checkActivationCode');
+
 Route::get('/conf', function () {
     Artisan::call('cache:clear');
     Artisan::call('view:clear');

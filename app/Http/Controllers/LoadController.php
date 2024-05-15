@@ -906,9 +906,15 @@ class LoadController extends Controller
                     $cityFrom = ProvinceCity::where('id', $load->origin_city_id)->first();
                     $cityTo = ProvinceCity::where('id', $load->destination_city_id)->first();
 
-                    $drivers = Driver::where('city_id', '=', $load->origin_city_id)
+                    // ارسال پیام برای شهرستان
+                    $drivers = Driver::where('city_id', $cityFrom->id)
                         ->where('fleet_id', $fleet->fleet_id)
                         ->get();
+
+                    // // ارسال پیام برای استان
+                    // $drivers = Driver::where('province_id', $cityFrom->parent_id)
+                    //     ->where('fleet_id', $fleet->fleet_id)
+                    //     ->get();
 
                     if (isset($drivers)) {
                         foreach ($drivers as $driver) {
