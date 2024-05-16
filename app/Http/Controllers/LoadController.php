@@ -920,6 +920,8 @@ class LoadController extends Controller
 
                     if (isset($drivers)) {
                         foreach ($drivers as $driver) {
+                            $driver->sendMessage = 1;
+                            $driver->save();
                             $sms = new Driver();
                             $sms->subscriptionLoadSmsIr(
                                 $driver->mobileNumber,
@@ -941,6 +943,8 @@ class LoadController extends Controller
                             ->get();
                         if (isset($drivers)) {
                             foreach ($drivers as $driver) {
+                                $driver->sendMessage = 1;
+                                $driver->save();
                                 $sms = new Driver();
                                 $sms->subscriptionLoadSmsIr(
                                     $driver->mobileNumber,
