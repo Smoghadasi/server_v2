@@ -918,7 +918,7 @@ class LoadController extends Controller
                         ->take(40)
                         ->get();
 
-                    if (isset($drivers)) {
+                    if (count($drivers) != 0) {
                         foreach ($drivers as $driver) {
                             $driver->sendMessage = 1;
                             $driver->save();
@@ -941,7 +941,7 @@ class LoadController extends Controller
                             ->where('sendMessage', 0)
                             ->take(40)
                             ->get();
-                        if (isset($drivers)) {
+                        if (count($drivers) != 0) {
                             foreach ($drivers as $driver) {
                                 $driver->sendMessage = 1;
                                 $driver->save();
