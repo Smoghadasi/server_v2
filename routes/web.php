@@ -16,6 +16,7 @@ use App\Http\Controllers\DriverController;
 use App\Http\Controllers\FleetController as AdminFleetController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoadController;
+use App\Http\Controllers\LoginHistoryController;
 use App\Http\Controllers\MarketerController;
 use App\Http\Controllers\OperatorContactingController;
 use App\Http\Controllers\Owner\AuthController as OwnerAuthController;
@@ -92,6 +93,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         return redirect('/dashboard');
     });
 
+
     // Auth::routes(['register' => false]);
 
     Route::get('/home', function () {
@@ -112,6 +114,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     // مسیریابی های اپراتور های سیستم
     Route::group(['prefix' => 'admin', 'operator'], function () {
 
+        Route::get('history', [LoginHistoryController::class, 'index'])->name('login.history');
 
         // صفر کردن دیتا ها
         Route::get('zeroData', [DriverController::class, 'zeroData'])->middleware('operator')->name('driver.zeroData');

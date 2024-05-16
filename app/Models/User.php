@@ -200,4 +200,9 @@ class User extends Authenticatable
 
         return $rand;
     }
+
+    public function loginHistory()
+    {
+        return $this->hasMany(LoginHistory::class);
+    }
 }

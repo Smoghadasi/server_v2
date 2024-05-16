@@ -9,19 +9,28 @@ use App\Models\Customer;
 use App\Models\Driver;
 use App\Models\Fleet;
 use App\Models\Load;
+use App\Models\LoginHistory;
 use App\Models\OperatorCargoListAccess;
 use App\Models\Role;
 use App\Models\User;
 use Composer\Util\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use phpseclib\Crypt\Hash;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
     // خروج از بخش کاربری
     public function logout()
     {
+        LoginHistory::create(
+            [
+                'user_id' => Auth::user()->id,
+                'ip_address' => request()->ip(),
+                'status' => 1,
+                'action' => 0,
+            ]
+        );
         Auth::logout();
         return redirect(url('/'));
     }
@@ -163,7 +172,7 @@ class UserController extends Controller
     //
     public function restPassword(Request $request, User $user)
     {
-        $user->password = bcrypt($request->password);
+        $user->password = Hash::make($request->password);
         $user->save();
         return back()->with('success', 'رمز جدید ثبت شد');
     }

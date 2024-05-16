@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ActivationCode;
+use App\Models\LoginHistory;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -71,6 +72,14 @@ class AuthController extends Controller
                     'response' => 'شما تا تاریخ' . $user->lockDate . ' مسدود شده اید. '
                 ]);
             }
+            LoginHistory::create(
+                [
+                    'ip_address' => request()->ip(),
+                    'status' => 0,
+                    'action' => 1,
+                    'unsuccess' => $request->email,
+                ]
+            );
             return response()->json([
                 'status' => 422,
                 'response' => 'نام کاربری و رمز عبور اشتباه است'
@@ -107,7 +116,16 @@ class AuthController extends Controller
         if (strlen($mobileNumber) == 11) {
             if (ActivationCode::where('mobileNumber', '=', $mobileNumber)->where('code', $request->code)->count() > 0) {
                 $credentials = $request->only('mobileNumber','password');
+
                 Auth::attempt($credentials);
+                LoginHistory::create(
+                    [
+                        'user_id' => auth()->user()->id,
+                        'ip_address' => request()->ip(),
+                        'status' => 1,
+                        'action' => 1
+                    ]
+                );
                 return response()->json([
                     'status' => 200,
                     'response' => 'با موفقیت ورود به سیستم انجام شد'
