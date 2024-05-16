@@ -667,8 +667,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         Route::get('finalApprovalAndStoreCargo', [DataConvertController::class, 'finalApprovalAndStoreCargo'])->middleware('operator');
 
-        Route::get('cargoConvertLists', [DataConvertController::class, 'cargoConvertLists'])->middleware('operator')->name('delete.duplicate');
-
         Route::get('removeCargoFromCargoList/{cargo}', [DataConvertController::class, 'removeCargoFromCargoList'])->middleware('operator');
 
 

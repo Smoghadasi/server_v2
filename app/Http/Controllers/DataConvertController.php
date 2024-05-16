@@ -89,33 +89,6 @@ class DataConvertController extends Controller
         return back()->with('success', 'ویرایش شد');
     }
 
-    public function cargoConvertLists()
-    {
-        $duplicates = DB::table('cargo_convert_lists')
-            ->select('cargo', DB::raw('COUNT(*) as `count`'))
-            ->groupBy('cargo')
-            ->havingRaw('COUNT(*) > 1')
-            ->get();
-        $duplicated = DB::table('cargo_convert_lists')
-            ->select('cargo', DB::raw('count(`cargo`) as occurences'))
-            ->groupBy('cargo')
-            ->having('occurences', '>', 1)
-            ->get();
-
-        $duplicatedMessages = DB::table('cargo_convert_lists')
-            ->select('message_id', DB::raw('count(`message_id`) as occurences'))
-            ->groupBy('message_id')
-            ->having('occurences', '>', 1)
-            ->get();
-
-        foreach ($duplicated as $duplicate) {
-            CargoConvertList::where('cargo', $duplicate->cargo)->delete();
-        }
-        foreach ($duplicatedMessages as $duplicatedMessage) {
-            CargoConvertList::where('message_id', $duplicatedMessage->message_id)->delete();
-        }
-        return back()->with('success', 'بار تکراری حذف شد');
-    }
     public function finalApprovalAndStoreCargo()
     {
 
