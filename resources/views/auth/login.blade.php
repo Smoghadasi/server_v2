@@ -186,7 +186,7 @@
                 e.preventDefault();
                 var code = $("input[name=code]").val();
                 var password = $("input[name=password]").val();
-                $("#submit").attr("disabled", true);
+                $("#submit_2").attr("disabled", true);
                 $.ajax({
                     type: 'POST',
                     url: "{{ route('checkActivationCode') }}",
@@ -197,9 +197,11 @@
                     },
                     success: function(data) {
                         if (data.status == 400) {
+                            $("#submit_2").attr("disabled", false);
                             alert(data.response);
                         }
                         if (data.status == 200) {
+                            $("#submit_2").attr("disabled", false);
                             window.location.href = "/dashboard";
                         }
                     }
