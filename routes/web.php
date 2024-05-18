@@ -279,6 +279,16 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // بار های ثبت شده صاحبان بار
         Route::get('loadOwner', [LoadController::class, 'loadOwner'])->middleware('operator')->name('admin.load.owner');
 
+        // جستجو بر اساس درخواست کنندگان بار
+        Route::get('searchLoadInquiry/{load_id}', [LoadController::class, 'searchLoadInquiry'])
+            ->middleware('operator')
+            ->name('load.searchLoadInquiry');
+
+        // جستجو بر اساس تماس رانندگان
+        Route::get('searchLoadDriverCall/{load_id}', [LoadController::class, 'searchLoadDriverCall'])
+            ->middleware('operator')
+            ->name('load.searchLoadDriverCall');
+
         // (امروز)بار های ثبت شده صاحبان بار
         Route::get('loadOwnerToday', [LoadController::class, 'loadOwnerToday'])->middleware('operator')->name('loadToday.owner');
 

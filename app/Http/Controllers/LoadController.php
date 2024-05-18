@@ -2278,6 +2278,30 @@ class LoadController extends Controller
             ->count();
         return view('admin.load.owner', compact('loads', 'loadsCount', 'loadsToday'));
     }
+
+
+    public function searchLoadInquiry(string $load_id)
+    {
+        $drivers = Driver::whereHas('inquiries', function ($q) use ($load_id) {
+            $q->where('load_id', $load_id);
+        })->paginate(100);
+        if (count($drivers))
+            return view('admin.driver.searchDriver', compact('drivers'));
+
+        return back()->with('danger', 'راننده ای پیدا نشد!');
+    }
+    public function searchLoadDriverCall(string $load_id)
+    {
+        $drivers = Driver::whereHas('driverCalls', function ($q) use ($load_id) {
+            $q->where('load_id', $load_id);
+        })->paginate(100);
+
+        if (count($drivers))
+            return view('admin.driver.searchDriver', compact('drivers'));
+
+        return back()->with('danger', 'راننده ای پیدا نشد!');
+    }
+
     // بار های ثبت شده توسط صاحبین بار (امروز)
     public function loadOwnerToday()
     {

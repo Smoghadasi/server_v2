@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use SoapClient;
 
@@ -81,6 +82,11 @@ class Driver extends Authenticatable
         return DriverCall::where('driver_id', $this->id)->count();
     }
 
+    public function driverCalls(): HasMany
+    {
+        return $this->hasMany(DriverCall::class);
+    }
+
     public function getOperatorMessageAttribute()
     {
         try {
@@ -116,6 +122,11 @@ class Driver extends Authenticatable
             return true;
 
         return false;
+    }
+
+    public function inquiries(): HasMany
+    {
+        return $this->hasMany(Inquiry::class);
     }
 
     public function freeSubscription($sms, $persian_date, $free_date)

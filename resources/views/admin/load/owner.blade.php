@@ -87,8 +87,17 @@
                             <td>{{ $load->toCity }}</td>
                             <td>
                                 <span class="badge bg-primary">بازدید : {{ $load->driverVisitCount }}</span>
-                                <span class="badge bg-danger">درخواست: {{ $load->numOfInquiryDrivers }}</span>
-                                <span class="badge bg-success">تماس: {{ $load->numOfDriverCalls }}</span>
+                                <span>
+                                    <a class="badge bg-danger" href="{{ route('load.searchLoadInquiry', $load->id) }}">
+                                        درخواست: {{ $load->numOfInquiryDrivers }}
+                                    </a>
+
+                                </span>
+                                <span>
+                                    <a class="badge bg-success" href="{{ route('load.searchLoadDriverCall', $load->id) }}">
+                                        تماس: {{ $load->numOfDriverCalls }}
+                                    </a>
+                                </span>
                             </td>
 
                             <td>{{ $load->date }} {{ $load->dateTime }}</td>
