@@ -307,6 +307,13 @@
 
                                                 <div class="form-group">
                                                     <label>
+                                                        <input type="checkbox" name="setting"
+                                                            @if (in_array('setting', $user->userAccess)) checked @endif>
+                                                        تنظیمات سامانه
+                                                    </label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>
                                                         <input type="checkbox" name="finalApprovalAndStoreCargo"
                                                             @if (in_array('finalApprovalAndStoreCargo', $user->userAccess)) checked @endif>
                                                         تایید و ثبت دسته ای بار
@@ -535,6 +542,13 @@
                                                         <input type="checkbox" name="driversContactCall"
                                                             @if (in_array('driversContactCall', $user->userAccess)) checked @endif>
                                                         گزارش بر اساس تماس
+                                                    </label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>
+                                                        <input type="checkbox" name="usersByCity"
+                                                            @if (in_array('usersByCity', $user->userAccess)) checked @endif>
+                                                        گزارش استفاده کننده رانندگان
                                                     </label>
                                                 </div>
                                                 <ul id="myUL">

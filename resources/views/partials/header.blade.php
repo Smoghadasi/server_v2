@@ -63,11 +63,10 @@
                             <i class="bx bx-user me-2"></i>
                             <span class="align-middle">پروفایل من</span>
                         </a>
-                        {{--                                </li> --}}
                         <li>
-                            <a class="dropdown-item" href="{{ route('login.history') }}">
-                                <i class="bx bx-history me-2"></i>
-                                <span class="align-middle">تاریخچه</span>
+                            <a class="dropdown-item" href="#">
+                                <i class="bx bx-cog me-2"></i>
+                                <span class="align-middle">تنظیمات</span>
                             </a>
                         </li>
                     </li>

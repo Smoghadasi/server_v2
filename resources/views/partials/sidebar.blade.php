@@ -145,25 +145,26 @@
                         </a>
                     </li>
                 @endif
-
-                <li class="menu-item {{ request()->is('admin/usersByCity*') ? 'active open' : '' }} {{ request()->is('admin/usersByProvince*') ? 'active open' : '' }}">
-                    <a href="javascript:void(0);" class="menu-link menu-toggle">
-                        {{-- <i class="menu-icon tf-icons bx bx-bar-chart"></i> --}}
-                        <div data-i18n="Layouts">استفاده کنندگان</div>
-                    </a>
-                    <ul class="menu-sub">
-                        <li class="menu-item">
-                            <a class="menu-link" href="{{ route('reporting.usersByCity') }}">
-                                <span>تفکیک شهرستان</span>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a class="menu-link" href="{{ route('reporting.usersByProvince') }}">
-                                <span>تفکیک استان</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+                @if(in_array('usersByCity',auth()->user()->userAccess))
+                    <li class="menu-item {{ request()->is('admin/usersByCity*') ? 'active open' : '' }} {{ request()->is('admin/usersByProvince*') ? 'active open' : '' }}">
+                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                            {{-- <i class="menu-icon tf-icons bx bx-bar-chart"></i> --}}
+                            <div data-i18n="Layouts">استفاده کنندگان</div>
+                        </a>
+                        <ul class="menu-sub">
+                            <li class="menu-item">
+                                <a class="menu-link" href="{{ route('reporting.usersByCity') }}">
+                                    <span>تفکیک شهرستان</span>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a class="menu-link" href="{{ route('reporting.usersByProvince') }}">
+                                    <span>تفکیک استان</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                @endif
                 @if(in_array('freeSubscription',auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('freeSubscription.index') }}">
@@ -466,5 +467,13 @@
                 @endif
             </ul>
         </li>
+        @if(in_array('setting',auth()->user()->userAccess))
+            <li class="menu-item">
+                <a href="{{ route('setting.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-cog"></i>
+                    <div data-i18n="Analytics">تنظیمات</div>
+                </a>
+            </li>
+        @endif
     </ul>
 </aside>

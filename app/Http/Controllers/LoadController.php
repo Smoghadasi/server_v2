@@ -27,6 +27,7 @@ use App\Models\Owner;
 use App\Models\PackingType;
 use App\Models\ProvinceCity;
 use App\Models\Score;
+use App\Models\Setting;
 use App\Models\Tender;
 use App\Models\TenderStart;
 use App\Models\User;
@@ -2605,6 +2606,7 @@ class LoadController extends Controller
                 ->orderBy('urgent', 'desc')
                 ->orderBy('id', 'desc')
                 ->get();
+            $setting = Setting::first();
 
             if (count($loads))
                 return [
@@ -2614,7 +2616,7 @@ class LoadController extends Controller
                     // 'currentTime' => time(),
                     // 'fleet_id' => $driver->fleet_id,
                     'transactionCount' => $driver->transactionCount,
-                    'Tel' => TELL,
+                    'Tel' => $setting->tel,
                 ];
         } catch (\Exception $exception) {
             Log::emergency("******************************** requestNewLoadsForDriversV2 ******************************");

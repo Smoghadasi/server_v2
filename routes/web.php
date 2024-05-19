@@ -29,6 +29,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReportingController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\SettingController;
 // use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SOSController;
 use App\Http\Controllers\TenderController;
@@ -567,6 +568,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         /***************************************************************************************************/
         Route::get('profile', [UserController::class, 'adminProfile'])->middleware('operator')->name('user.edit');
+
+        Route::resource('setting', SettingController::class);
 
         Route::post('restPassword/{user}', [UserController::class, 'restPassword'])->middleware('operator')->name('user.resetPass');
 
