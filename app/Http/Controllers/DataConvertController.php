@@ -1619,7 +1619,7 @@ class DataConvertController extends Controller
     public function rejectedCargoFromCargoList()
     {
         $cargoList = CargoConvertList::where('rejected', 1)->orderBy('id', 'desc')->paginate(20);
-        return view('admin.rejectedCargoFromCargoList', compact('cargoList'));
+        return view('admin.rejectCargo.index', compact('cargoList'));
     }
 
     // لیست بارهای رد شده
@@ -1628,9 +1628,11 @@ class DataConvertController extends Controller
         $cargoList = CargoConvertList::where('rejected', 1)
             ->where('cargo', 'LIKE', '%' . $request->cargo . '%')
             ->orderBy('id', 'desc')
-            ->paginate(20);
+            ->with('operator')
+            ->get();
+        // return $cargoList;
         if (count($cargoList) > 0)
-            return view('admin.rejectedCargoFromCargoList', compact('cargoList'));
+            return view('admin.rejectCargo.search', compact('cargoList'));
         else
             return back()->with('danger', 'با مورد نظر یافت نشد');
     }
