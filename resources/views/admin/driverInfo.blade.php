@@ -112,11 +112,11 @@
                         فعال شود</a>
                 @endif
             @endif
-            @if (auth()->user()->role == ROLE_ADMIN)
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+            @if (auth()->user()->role == ROLE_ADMIN || Auth::id() == 29)
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
                     data-bs-target="#removeDriver_{{ $driver->id }}">حذف
                 </button>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
                     data-bs-target="#removeActiveDate_{{ $driver->id }}">حذف اشتراک
                 </button>
             @endif
@@ -158,7 +158,6 @@
             @endif
             <div id="creditDriverExtending_{{ $driver->id }}" class="modal fade" role="dialog">
                 <div class="modal-dialog">
-
                     <!-- Modal content-->
                     <form action="{{ url('admin/creditDriverExtending') }}/{{ $driver->id }}" method="post"
                         class="modal-content">
