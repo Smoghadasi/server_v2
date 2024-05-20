@@ -996,7 +996,7 @@ class DriverController extends Controller
     public function creditDriverExtending(Request $request, Driver $driver)
     {
         if ($request->month == 0) {
-            if ($driver->freeCallTotal > 10 || $driver->freeCallTotal + $request->freeCalls > 10) {
+            if ($driver->freeCallTotal > 10 || $driver->freeCallTotal + $request->freeCalls > 10 && Auth::id() != 29) {
                 return back()->with('danger', 'خطا! تماس رایگان داده شده بیشتر از 10 تا است');
             } else {
                 if ($this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, $request->month, $request->freeCalls, $driver->freeAcceptLoads)) {
