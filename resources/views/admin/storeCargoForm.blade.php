@@ -102,8 +102,8 @@
                             </label>
 
                             <label class="col-lg-12">شماره تلفن :
-                                <input type="text" class="form-control" name="mobileNumber_{{ $key }}"
-                                    value="{{ $item['mobileNumber'] }}">
+                                <input type="number" class="form-control" name="mobileNumber_{{ $key }}"
+                                    value="{{ $item['mobileNumber'] }}" required oninvalid="this.setCustomValidity('شماره تلفن اجباری')">
                             </label>
 
                             <div class="col-lg-12 row">
