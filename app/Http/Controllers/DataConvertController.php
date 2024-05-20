@@ -1622,6 +1622,19 @@ class DataConvertController extends Controller
         return view('admin.rejectedCargoFromCargoList', compact('cargoList'));
     }
 
+    // لیست بارهای رد شده
+    public function searchRejectCargo(Request $request)
+    {
+        $cargoList = CargoConvertList::where('rejected', 1)
+            ->where('cargo', 'LIKE', '%' . $request->cargo . '%')
+            ->orderBy('id', 'desc')
+            ->paginate(20);
+        if (count($cargoList) > 0)
+            return view('admin.rejectedCargoFromCargoList', compact('cargoList'));
+        else
+            return back()->with('danger', 'با مورد نظر یافت نشد');
+    }
+
     public function allRejectedCargoCount()
     {
         $cargoList = CargoConvertList::with('operator')

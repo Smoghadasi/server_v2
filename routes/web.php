@@ -710,6 +710,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // لیست بارهای رد شده
         Route::get('rejectedCargoFromCargoList', [DataConvertController::class, 'rejectedCargoFromCargoList']);
 
+        Route::get('searchRejectCargo', [DataConvertController::class, 'searchRejectCargo'])->name('searchRejectCargo');
+
         Route::get('allRejectedCargoCount', [DataConvertController::class, 'allRejectedCargoCount'])->name('allRejectedCargoCount');
         Route::get('rejectCargoCount', [DataConvertController::class, 'rejectCargoCount'])->name('rejectCargoCount');
 

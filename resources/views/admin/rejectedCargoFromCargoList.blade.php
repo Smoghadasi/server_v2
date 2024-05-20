@@ -10,7 +10,19 @@
                         رد شده توسط اپراتور ها</a></small>
             @endif
         </div>
-        <div class="table-responsive">
+        <div class="card-body">
+            <form method="get" action="{{ route('searchRejectCargo') }}">
+                <div class="form-group">
+                    <div class="col-md-12 row">
+                        <div class="col-md-3">
+                            <input type="text" placeholder="بار مورد نظر..." class="form-control col-md-4"
+                                name="cargo" id="cargo" />
+                        </div>
+                    </div>
+                    <button class="btn btn-primary m-2">جستجو</button>
+                </div>
+            </form>
+            <div class="table-responsive">
             <table class="table">
                 <tr>
                     <th>بار</th>
@@ -36,6 +48,8 @@
                 {{ $cargoList }}
             </div>
         </div>
+        </div>
+
     </div>
 
 
