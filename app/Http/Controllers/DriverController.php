@@ -999,7 +999,63 @@ class DriverController extends Controller
         $setting = Setting::first();
 
         if ($request->month == 0) {
-            if ($driver->freeCallTotal > 10 || $driver->freeCallTotal + $request->freeCalls > 10 && Auth::id() != 29) {
+            if (Auth::user()->role != 'admin' || Auth::id() != 26) {
+                if ($this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, $request->month, $request->freeCalls, $driver->freeAcceptLoads)) {
+                    $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+                    $oneMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+30 day', time())), '/');
+                    $threeMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+90 day', time())), '/');
+                    $sixMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+180 day', time())), '/');
+
+                    if ($request->month > 0) {
+                        $free_subscription = new FreeSubscription();
+                        $free_subscription->type = AUTH_VALIDITY;
+                        $free_subscription->value = $request->month;
+                        $free_subscription->driver_id = $driver->id;
+                        $free_subscription->operator_id = Auth::id();
+                        $free_subscription->save();
+                        $sms = new Driver();
+
+                        if ($request->month == 1)
+                            if ($setting->sms_panel == 'SMSIR') {
+                                $sms->freeSubscriptionSmsIr($driver->mobileNumber, $persian_date, $oneMonth);
+                            } else {
+                                $sms->freeSubscription($driver->mobileNumber, $persian_date, $oneMonth);
+                            }
+                        if ($request->month == 3)
+                            if ($setting->sms_panel == 'SMSIR') {
+                                $sms->freeSubscriptionSmsIr($driver->mobileNumber, $persian_date, $threeMonth);
+                            } else {
+                                $sms->freeSubscription($driver->mobileNumber, $persian_date, $threeMonth);
+                            }
+                        if ($request->month == 6)
+                            if ($setting->sms_panel == 'SMSIR') {
+                                $sms->freeSubscriptionSmsIr($driver->mobileNumber, $persian_date, $sixMonth);
+                            } else {
+                                $sms->freeSubscription($driver->mobileNumber, $persian_date, $sixMonth);
+                            }
+                    }
+                    if ($request->freeCalls > 0) {
+                        $free_subscription = new FreeSubscription();
+                        $free_subscription->type = AUTH_CALLS;
+                        $free_subscription->value = $request->freeCalls;
+                        $free_subscription->driver_id = $driver->id;
+                        $free_subscription->operator_id = Auth::id();
+                        $free_subscription->save();
+                        $driver->freeCallTotal += $request->freeCalls;
+                        $driver->save();
+                    }
+                    if ($request->freeAcceptLoads > 0) {
+                        $free_subscription = new FreeSubscription();
+                        $free_subscription->type = AUTH_CARGO;
+                        $free_subscription->value = $request->freeCalls;
+                        $free_subscription->driver_id = $driver->id;
+                        $free_subscription->operator_id = Auth::id();
+                        $free_subscription->save();
+                    }
+                    return redirect('admin/drivers')->with('success', 'تمدید اعتبار راننده انجام شد.');
+                }
+            }
+            elseif ($driver->freeCallTotal > 10 || $driver->freeCallTotal + $request->freeCalls > 10) {
                 return back()->with('danger', 'خطا! تماس رایگان داده شده بیشتر از 10 تا است');
             } else {
                 if ($this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, $request->month, $request->freeCalls, $driver->freeAcceptLoads)) {
@@ -1116,9 +1172,6 @@ class DriverController extends Controller
                 return redirect('admin/drivers')->with('success', 'تمدید اعتبار راننده انجام شد.');
             }
         }
-
-
-
         return redirect('admin/drivers')->with('danger', 'خطا در تمدید اعتبار راننده!');
     }
 
