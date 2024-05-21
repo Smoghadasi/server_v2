@@ -336,7 +336,7 @@ class DataConvertController extends Controller
                                 'freight' => 0,
                                 'priceType' => 'توافقی'
                             ];
-                        }else{
+                        } else {
                             $cargoList[] = [
                                 'origin' => $originName,
                                 'destination' => $item,
@@ -502,16 +502,18 @@ class DataConvertController extends Controller
             try {
 
                 foreach ($request->$fleets as $fleet) {
-                    $this->storeCargo($request->$origin,
-                    $request->$originState,
-                    $request->$destination,
-                    $request->$destinationState,
-                    $request->$mobileNumber,
-                    $fleet,
-                    $request->$freight,
-                    $request->$priceType,
-                    $request->$title,
-                    $counter);
+                    $this->storeCargo(
+                        $request->$origin,
+                        $request->$originState,
+                        $request->$destination,
+                        $request->$destinationState,
+                        $request->$mobileNumber,
+                        $fleet,
+                        $request->$freight,
+                        $request->$priceType,
+                        $request->$title,
+                        $counter
+                    );
                 }
             } catch (\Exception $exception) {
                 Log::emergency("storeMultiCargo : " . $exception->getMessage());
@@ -580,7 +582,6 @@ class DataConvertController extends Controller
                     $load->userType = ROLE_OWNER;
                     $load->operator_id = 0;
                     $load->isBot = 1;
-
                 } else {
                     $load->user_id = auth()->id();
                     $load->userType = ROLE_OPERATOR;
@@ -613,15 +614,15 @@ class DataConvertController extends Controller
 
             // Log::emergency($origin);
             // Log::emergency($originState);
-            if(isset($originCity->id)){
+            if (isset($originCity->id)) {
                 $load->origin_city_id = $originCity->id;
-            }else{
+            } else {
                 $load->origin_city_id = $this->getCityId($origin);
             }
 
-            if(isset($destinationCity->id)){
+            if (isset($destinationCity->id)) {
                 $load->destination_city_id = $destinationCity->id;
-            }else{
+            } else {
                 $load->origin_city_id = $this->getCityId($destination);
             }
             $load->fromCity = $this->getCityName($load->origin_city_id);
@@ -658,11 +659,7 @@ class DataConvertController extends Controller
             $load->date = gregorianDateToPersian(date('Y/m/d', time()), '/');
             $load->dateTime = now()->format('H:i:s');
 
-            $loadDuplicate = Load::whereIn('userType', ['customer', 'owner', 'transportation_company'])
-                ->where('mobileNumberForCoordination', $load->mobileNumberForCoordination)
-                ->where('origin_city_id', $load->origin_city_id)
-                ->where('destination_city_id', $load->destination_city_id)
-                ->first();
+
 
             // $loadDuplicateHour = Load::where('userType', 'operator')
             //     ->where('mobileNumberForCoordination', $load->mobileNumberForCoordination)
@@ -671,35 +668,40 @@ class DataConvertController extends Controller
             //     ->where('cargoPattern', 'LIKE', '%' . $fleet . '%')
             //     ->first();
 
+            $fleet = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $fleet)));
 
-            if (!$loadDuplicate) {
+            $fleet_id = Fleet::where('title', $fleet)->first();
+            if (!isset($fleet_id->id)) {
+                $fleet_id = Fleet::where('title', str_replace('ك', 'ک', $fleet))->first();
+            }
+            if (!isset($fleet_id->id)) {
+                $fleet_id = Fleet::where('title', str_replace('ي', 'ی', $fleet))->first();
+            }
+            if (!isset($fleet_id->id)) {
+                $fleet_id = Fleet::where('title', str_replace('ي', 'ی', str_replace('ك', 'ک', $fleet)))->first();
+            }
+            if (!isset($fleet_id->id)) {
+                $fleet_id = Fleet::where('title', str_replace('ک', 'ك', $fleet))->first();
+            }
+            if (!isset($fleet_id->id)) {
+                $fleet_id = Fleet::where('title', str_replace('ی', 'ي', $fleet))->first();
+            }
+            if (!isset($fleet_id->id)) {
+                $fleet_id = Fleet::where('title', str_replace('ی', 'ي', str_replace('ک', 'ك', $fleet)))->first();
+            }
+
+            $loadDuplicate = Load::where('userType', 'owner')
+                ->where('mobileNumberForCoordination', $load->mobileNumberForCoordination)
+                ->where('origin_city_id', $load->origin_city_id)
+                ->where('destination_city_id', $load->destination_city_id)
+                ->where('fleets', 'Like', '%fleet_id":' . $fleet_id . ',%')
+                ->first();
+
+            if ($loadDuplicate === null) {
                 $load->save();
             }
 
             if (isset($load->id)) {
-
-
-                $fleet = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $fleet)));
-
-                $fleet_id = Fleet::where('title', $fleet)->first();
-                if (!isset($fleet_id->id)) {
-                    $fleet_id = Fleet::where('title', str_replace('ك', 'ک', $fleet))->first();
-                }
-                if (!isset($fleet_id->id)) {
-                    $fleet_id = Fleet::where('title', str_replace('ي', 'ی', $fleet))->first();
-                }
-                if (!isset($fleet_id->id)) {
-                    $fleet_id = Fleet::where('title', str_replace('ي', 'ی', str_replace('ك', 'ک', $fleet)))->first();
-                }
-                if (!isset($fleet_id->id)) {
-                    $fleet_id = Fleet::where('title', str_replace('ک', 'ك', $fleet))->first();
-                }
-                if (!isset($fleet_id->id)) {
-                    $fleet_id = Fleet::where('title', str_replace('ی', 'ي', $fleet))->first();
-                }
-                if (!isset($fleet_id->id)) {
-                    $fleet_id = Fleet::where('title', str_replace('ی', 'ي', str_replace('ک', 'ك', $fleet)))->first();
-                }
 
 
                 if (isset($fleet_id->id)) {
