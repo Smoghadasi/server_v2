@@ -916,7 +916,7 @@ class LoadController extends Controller
                     $drivers = Driver::where('province_id', $cityFrom->parent_id)
                         ->where('fleet_id', $fleet->fleet_id)
                         ->where('sendMessage', 0)
-                        ->take(40)
+                        ->take(30)
                         ->get();
 
                     if (count($drivers) != 0) {
