@@ -663,6 +663,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // گزارش پرداخت ها
         Route::get('paymentReport/{userType}/{status}', [ReportingController::class, 'paymentReport'])->middleware('operator');
 
+        Route::post('paymentReport/view-pdf', [ReportingController::class, 'viewPDF'])->name('view-pdf');
+
         Route::get('unSuccessPeyment', [ReportingController::class, 'unSuccessPeyment'])->middleware('operator')->name('unSuccessPeyment.driver');
 
         // گزارش بیشترین پرداخت رانندگان

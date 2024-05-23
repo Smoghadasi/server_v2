@@ -22,6 +22,7 @@ use App\Models\ProvinceCity;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\UserActivityReport;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -332,7 +333,7 @@ class ReportingController extends Controller
             ->having('count', '>', 1)
             ->orderByDesc('count')
             ->paginate(15);
-        $provinceCities = ProvinceCity::where('parent_id', '!=', 0 )->get();
+        $provinceCities = ProvinceCity::where('parent_id', '!=', 0)->get();
         return view('admin.reporting.usersByCity', compact('users', 'provinceCities'));
     }
     public function searchUsersByCity(Request $request)
@@ -346,13 +347,13 @@ class ReportingController extends Controller
             ->orderByDesc('count')
             ->where('city_id', $request->city_id)
             ->paginate(15);
-        $provinceCities = ProvinceCity::where('parent_id', '!=', 0 )->get();
-        if($users->isEmpty()){
+        $provinceCities = ProvinceCity::where('parent_id', '!=', 0)->get();
+        if ($users->isEmpty()) {
             return redirect()->route('reporting.usersByCity')->with('danger', 'شهر مورد نظر یافت نشد');
         }
         return view('admin.reporting.usersByCity', compact('users', 'provinceCities'));
     }
-    public function usersByCustomCities(ProvinceCity $provinceCity, $drivers = [], $showSearchResult = false )
+    public function usersByCustomCities(ProvinceCity $provinceCity, $drivers = [], $showSearchResult = false)
     {
         if (!$showSearchResult)
             $drivers = Driver::where('city_id', $provinceCity->id)->paginate(10);
@@ -369,11 +370,11 @@ class ReportingController extends Controller
             ->having('count', '>', 1)
             ->orderByDesc('count')
             ->paginate(15);
-        $provinceCities = ProvinceCity::where('parent_id', '=', 0 )->get();
+        $provinceCities = ProvinceCity::where('parent_id', '=', 0)->get();
         return view('admin.reporting.usersByProvince', compact('users', 'provinceCities'));
     }
 
-    public function usersByCustomProvinces(ProvinceCity $provinceCity, $drivers = [], $showSearchResult = false )
+    public function usersByCustomProvinces(ProvinceCity $provinceCity, $drivers = [], $showSearchResult = false)
     {
         if (!$showSearchResult)
             $drivers = Driver::where('province_id', $provinceCity->id)->paginate(10);
@@ -394,9 +395,9 @@ class ReportingController extends Controller
             ->orderByDesc('count')
             ->where('province_id', $request->province_id)
             ->paginate(15);
-        $provinceCities = ProvinceCity::where('parent_id', '=', 0 )->get();
+        $provinceCities = ProvinceCity::where('parent_id', '=', 0)->get();
 
-        if($users->isEmpty())
+        if ($users->isEmpty())
             return redirect()->route('reporting.usersByProvince')->with('danger', 'شهر مورد نظر یافت نشد');
 
         return view('admin.reporting.usersByProvince', compact('users', 'provinceCities'));
@@ -1127,6 +1128,21 @@ class ReportingController extends Controller
 
 
         return view('admin.reporting.paymentReport', compact('transactions', 'counter'));
+    }
+
+    public function viewPDF(Request $request)
+    {
+        $today = date('Y-m-d', time()) . ' 00:00:00';
+        $fromDate = persianDateToGregorian(str_replace('/', '-', $request->from), '-') . ' 00:00:00';
+        $toDate = persianDateToGregorian(str_replace('/', '-', $request->to), '-') . ' 00:00:00';
+
+        $transactions = Transaction::where('status', '>', 0)->whereBetween('created_at', [$fromDate, $toDate])->orderByDesc('id')->get();
+
+        $pdf = Pdf::loadView('admin.reportToPdf.payments', array('transactions' =>  $transactions))->setPaper('a4', 'portrait');
+
+        $rnd = rand(10, 10000);
+
+        return $pdf->download('transactions' . $rnd . '.pdf');
     }
 
     public function unSuccessPeyment()

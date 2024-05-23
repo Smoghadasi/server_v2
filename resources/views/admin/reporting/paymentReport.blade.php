@@ -5,6 +5,50 @@
     <div class="card">
         <h5 class="card-header">
             گزارش پرداخت کاربران
+
+            <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                data-bs-target="#addService"> + گزارش گیری
+            </button>
+            <div id="addService" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <form method="post" enctype="multipart/form-data" action="{{ route('view-pdf') }}" class="modal-content">
+                        @csrf
+                        <div class="modal-header">
+                            <h4 class="modal-title">گزارش گیری</h4>
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="form-group">
+                                <label class="form-label">از :</label>
+                                <input
+                                  type="text"
+                                  name="from"
+                                  class="form-control"
+                                  placeholder="YY / MM / DD"
+                                />
+                            </div>
+                            <div class="form-group mt-2">
+                                <label class="form-label">تا :</label>
+                                <input
+                                  type="text"
+                                  name="to"
+                                  class="form-control"
+                                  placeholder="YY / MM / DD"
+                                />
+                            </div>
+
+                        </div>
+                        <div class="modal-footer text-left">
+                            <button type="submit" class="btn btn-primary">
+                                PDF
+                            </button>
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                                انصراف
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </h5>
         <div class="card-body">
 
