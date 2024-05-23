@@ -1136,7 +1136,11 @@ class ReportingController extends Controller
         $fromDate = persianDateToGregorian(str_replace('/', '-', $request->from), '-') . ' 00:00:00';
         $toDate = persianDateToGregorian(str_replace('/', '-', $request->to), '-') . ' 00:00:00';
 
-        $transactions = Transaction::where('status', '>', 0)->whereBetween('created_at', [$fromDate, $toDate])->orderByDesc('id')->get();
+        $transactions = Transaction::where('status', '>', 0)
+            ->whereBetween('created_at', [$fromDate, $toDate])
+            ->orderByDesc('id')
+            ->select('id', 'created_at', 'amount', 'paymentDate')
+            ->get();
 
         $pdf = Pdf::loadView('admin.reportToPdf.payments', array('transactions' =>  $transactions))->setPaper('a4', 'portrait');
 
