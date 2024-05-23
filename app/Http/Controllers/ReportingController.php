@@ -1140,7 +1140,8 @@ class ReportingController extends Controller
             ->whereBetween('created_at', [$fromDate, $toDate])
             ->orderByDesc('id')
             ->select('id', 'created_at', 'amount')
-            ->get();
+            ->get() // now we're working with a collection
+            ->chunk(300);
 
         $pdf = Pdf::loadView('admin.reportToPdf.payments', array('transactions' =>  $transactions))->setPaper('a4', 'portrait');
 
