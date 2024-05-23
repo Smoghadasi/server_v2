@@ -196,10 +196,10 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
 
         // فرم افزودن اپراتور جدید
-        Route::get('addNewOperatorForm', [UserController::class, 'addNewOperatorForm'])->middleware('admin');
+        Route::get('addNewOperatorForm', [UserController::class, 'addNewOperatorForm'])->middleware('operator');
 
         // افزودن اپراتور جدید
-        Route::post('addNewOperator', [RegisterController::class, 'addNewOperator'])->middleware('admin');
+        Route::post('addNewOperator', [RegisterController::class, 'addNewOperator'])->middleware('operator');
 
         // اطلاعات اپراتور
         Route::get('operatorInfo/{user_id}', [UserController::class, 'operatorInfo'])->middleware('admin');;
