@@ -1139,7 +1139,7 @@ class ReportingController extends Controller
         $transactions = Transaction::where('status', '>', 0)
             ->whereBetween('created_at', [$fromDate, $toDate])
             ->orderByDesc('id')
-            ->select('id', 'created_at', 'amount', 'paymentDate')
+            ->select('id', 'created_at', 'amount')
             ->get();
 
         $pdf = Pdf::loadView('admin.reportToPdf.payments', array('transactions' =>  $transactions))->setPaper('a4', 'portrait');
