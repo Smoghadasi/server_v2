@@ -2528,24 +2528,15 @@ class LoadController extends Controller
     // دریافت لیست بارها برای راننده به صورت صفحه بندی شده
     public function getNewLoadForDriver(Driver $driver, $lastLoadId = 0)
     {
-        // $driver->ip = request()->ip();
         $driver->version = 65;
         $driver->save();
-        // if (BlockedIp::where('ip', request()->ip())->where('userType', ROLE_DRIVER)->count() > 0) {
-        //     return [
-        //         'result' => UN_SUCCESS,
-        //         'data' => ['driverStatus' => false],
-        //         'message' => 'حساب کاربری شما غیر فعال می باشد! لطفا جهت فعال سازی با شماره تلفن ' . TELL . ' تماس برقرار کنید.'
-        //     ];
-        // }
 
-
-        // if ($driver->status == DE_ACTIVE)
-        //     return [
-        //         'result' => UN_SUCCESS,
-        //         'data' => ['driverStatus' => false],
-        //         'message' => 'حساب کاربری شما غیر فعال می باشد! لطفا جهت فعال سازی با شماره تلفن ' . TELL . ' تماس برقرار کنید.'
-        //     ];
+        if ($driver->status == DE_ACTIVE || BlockedIp::where('ip', request()->ip())->where('userType', ROLE_DRIVER)->count() > 0)
+            return [
+                'result' => UN_SUCCESS,
+                'data' => ['driverStatus' => false],
+                'message' => 'حساب کاربری شما غیر فعال می باشد! لطفا جهت فعال سازی با شماره تلفن ' . TELL . ' تماس برقرار کنید.'
+            ];
 
 
         try {
