@@ -884,6 +884,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // درخواست راننده
         Route::get('requestDriver/{load_id}', [DriverController::class, 'requestDriverForm'])->middleware('userStatus');
 
+        Route::get('cargoConvertLists', [DataConvertController::class, 'cargoConvertLists'])->middleware('operator')->name('delete.duplicate');
+
 
         Route::post('requestDriver', [LoadController::class, 'requestDriver'])->middleware('userStatus');
 

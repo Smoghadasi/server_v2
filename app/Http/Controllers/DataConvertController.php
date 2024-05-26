@@ -1212,6 +1212,32 @@ class DataConvertController extends Controller
         ];
     }
 
+
+
+    public function cargoConvertLists()
+    {
+
+        $duplicated = DB::table('cargo_convert_lists')
+            ->select('cargo', DB::raw('count(`cargo`) as occurences'))
+            ->groupBy('cargo')
+            ->having('occurences', '>', 1)
+            ->get();
+
+        $duplicatedMessages = DB::table('cargo_convert_lists')
+            ->select('message_id', DB::raw('count(`message_id`) as occurences'))
+            ->groupBy('message_id')
+            ->having('occurences', '>', 1)
+            ->get();
+
+        foreach ($duplicated as $duplicate) {
+            CargoConvertList::where('cargo', $duplicate->cargo)->delete();
+        }
+        foreach ($duplicatedMessages as $duplicatedMessage) {
+            CargoConvertList::where('message_id', $duplicatedMessage->message_id)->delete();
+        }
+        return back()->with('success', 'بار تکراری حذف شد');
+    }
+
     // دریافت وزن
     private function getWeight($text)
     {

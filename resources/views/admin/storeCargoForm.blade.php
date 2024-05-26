@@ -9,6 +9,14 @@
             -
             تعداد بار در صف : {{ $countOfCargos }}
         </h5>
+        @if (auth()->user()->id == 25)
+            <div class="m-3">
+                <a class="btn btn-warning btn-sm" href="{{ route('delete.duplicate') }}">
+                    <i class="fas fa-angle-right"></i>
+                    حذف بار های تکراری
+                </a>
+            </div>
+        @endif
 
         <div class="card-body row">
 
