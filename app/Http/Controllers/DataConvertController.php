@@ -471,7 +471,6 @@ class DataConvertController extends Controller
     // ذخیره دسته ای بارها
     public function storeMultiCargo(Request $request, CargoConvertList $cargo)
     {
-        // return $request;
         try {
 
             if (UserActivityReport::where([
@@ -495,6 +494,7 @@ class DataConvertController extends Controller
             $destination = "destination_" . $key;
             $destinationState = "destinationState_" . $key;
             $mobileNumber = "mobileNumber_" . $key;
+            $description = "description_" . $key;
             $fleets = "fleets_" . $key;
             $freight = "freight_" . $key;
             $priceType = "priceType_" . $key;
@@ -508,6 +508,7 @@ class DataConvertController extends Controller
                         $request->$destination,
                         $request->$destinationState,
                         $request->$mobileNumber,
+                        $request->$description,
                         $fleet,
                         $request->$freight,
                         $request->$priceType,
@@ -526,7 +527,7 @@ class DataConvertController extends Controller
     }
 
     // ذخیره بار
-    public function storeCargo($origin, $originState, $destination, $destinationState, $mobileNumber, $fleet, $freight, $priceType, $title, &$counter)
+    public function storeCargo($origin, $originState, $destination, $destinationState, $mobileNumber, $description, $fleet, $freight, $priceType, $title, &$counter)
     {
         if (!strlen(trim($origin)) || $origin == null || $origin == 'null' || !strlen(trim($destination)) || $destination == null || $destination == 'null' || !strlen($fleet) || !strlen($mobileNumber))
             return;
@@ -646,7 +647,7 @@ class DataConvertController extends Controller
             $load->dangerousProducts = false;
 
             $load->origin_state_id = AddressController::geStateIdFromCityId($load->origin_city_id);
-            $load->description = '';
+            $load->description = $description ?? '';
 
             $load->priceBased = $priceType;
             $load->proposedPriceForDriver = $freight;

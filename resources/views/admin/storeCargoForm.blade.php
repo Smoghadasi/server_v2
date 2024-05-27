@@ -72,7 +72,7 @@
                         <div class="form-group row text-right alert alert-light border border-dark" style="color: #000000">
                             <input type="hidden" name="key[]" value="{{ $key }}">
 
-                            <label class="col-lg-12">عنوان :
+                            <label class="col-lg-12 mb-2">عنوان :
                                 <input type="text" class="form-control" name="title_{{ $key }}"
                                     placeholder="بدون عنوان">
                             </label>
@@ -80,7 +80,7 @@
                                 <input type="hidden" class="form-control" name="origin_{{ $key }}"
                                 value="{{ $item['origin'] }}">
 
-                                <label class="col-lg-6">مبدا :
+                                <label class="col-lg-6 mb-2">مبدا :
                                     <select class="form-select" name="originState_{{ $key }}" id="">
                                         @foreach ($item['originProvince'] as $province)
                                             <option value="{{ $province->parent_id }}">
@@ -90,7 +90,7 @@
                                     </select>
                                 </label>
                             @else
-                                <label class="col-lg-6">مبدا :
+                                <label class="col-lg-6 mb-2">مبدا :
                                     <input type="text" class="form-control" name="origin_{{ $key }}"
                                         value="{{ $item['origin'] }}">
                                 </label>
@@ -99,7 +99,7 @@
                             <input type="hidden" class="form-control" name="destination_{{ $key }}"
                                     value="{{ $item['destination'] }}">
 
-                            <label class="col-lg-6">مقصد :
+                            <label class="col-lg-6 mb-2">مقصد :
                                 <select class="form-select" name="destinationState_{{ $key }}" id="">
                                     @foreach ($item['descProvinces'] as $province)
                                         <option value="{{ $province->parent_id }}">
@@ -109,12 +109,12 @@
                                 </select>
                             </label>
 
-                            <label class="col-lg-12">شماره تلفن :
+                            <label class="col-lg-12 mb-2">شماره تلفن :
                                 <input type="number" class="form-control @if($item['mobileNumber'] == null) is-invalid @else is-valid @endif" name="mobileNumber_{{ $key }}"
                                     value="{{ $item['mobileNumber'] }}">
                             </label>
 
-                            <div class="col-lg-12 row">
+                            <div class="col-lg-12 row mb-2">
 
                                 <label class="col-lg-6">قیمت :
                                     <input type="text" class="form-control"
@@ -144,12 +144,15 @@
                                 </label>
                             </div>
 
-                            <label class="col-lg-12 row">
+                            <label class="col-lg-12 row mb-2">
                                 <lable class="col-lg-12">ناوگان :</lable>
                                 @foreach ($item['fleets'] as $fleet)
                                     <input type="text" class="form-control col-lg-4" name="fleets_{{ $key }}[]"
                                         value="{{ $fleet }}">
                                 @endforeach
+                            </label>
+                            <label class="col-lg-12 row">توضیحات :
+                                <textarea class="form-control" name="description_{{ $key }}" rows="4"></textarea>
                             </label>
                         </div>
                     @endforeach
