@@ -1132,13 +1132,13 @@ class ReportingController extends Controller
 
     public function viewPDF(Request $request)
     {
-        $today = date('Y-m-d', time()) . ' 00:00:00';
+        // $today = date('Y-m-d', time()) . ' 00:00:00';
         $fromDate = persianDateToGregorian(str_replace('/', '-', $request->from), '-') . ' 00:00:00';
         $toDate = persianDateToGregorian(str_replace('/', '-', $request->to), '-') . ' 00:00:00';
 
         $transactions = Transaction::where('status', '>', 0)
             ->whereBetween('created_at', [$fromDate, $toDate])
-            ->orderByDesc('id')
+            ->orderBy('created_at', 'asc')
             ->select('id', 'created_at', 'amount')
             ->get();
 
