@@ -1877,10 +1877,11 @@ class LoadController extends Controller
                     'owner' => $owner,
                 ];
         } catch (\Exception $exception) {
-            return [
-                'result' => UN_SUCCESS,
-                'message' => $exception
-            ];
+            return response()->json('بار مورد نظر یافت نشد', 404);
+            // return [
+            //     'result' => UN_SUCCESS,
+            //     'message' => $exception
+            // ];
         }
     }
 
