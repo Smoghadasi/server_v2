@@ -1837,18 +1837,34 @@ class LoadController extends Controller
                     'dischargeAddress',
                     'loadingAddress',
                     'loadingDate',
-                    'deliveryTime',
-                    'bulk',
                     'dangerousProducts',
                     'width',
                     'length',
                     'height',
                     'insuranceAmount',
                     'origin_city_id',
-                    'destination_city_id'
-                )
-                ->first();
-            return response()->json($loadInfo, 200);
+                    'destination_city_id',
+                    'mobileNumberForCoordination',
+                    'priceBased',
+                    'suggestedPrice',
+                )->first();
+
+                if ($loadInfo) {
+                    $path = [
+                        'fromLatLong' => AddressController::getLatLong($loadInfo->origin_city_id),
+                        'toLatLong' => AddressController::getLatLong($loadInfo->destination_city_id),
+                    ];
+                    $owner = Owner::where('id', $loadInfo->user_id)
+                        ->where('userType', ROLE_OWNER)
+                        ->select(['id', 'name', 'lastName', 'mobileNumber', 'isAccepted'])
+                        ->first();
+                }
+                return [
+                    'result' => SUCCESS,
+                    'loadInfo' => $loadInfo,
+                    'path' => $path,
+                    'owner' => $owner,
+                ];
         } catch (\Exception $exception) {
         }
     }
