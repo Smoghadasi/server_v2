@@ -1852,6 +1852,7 @@ class LoadController extends Controller
                     'title',
                     'description',
                     'fromCity',
+                    'userType',
                     'toCity',
                     'origin_city_id',
                     'destination_city_id',
