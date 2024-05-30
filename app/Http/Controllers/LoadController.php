@@ -1877,6 +1877,10 @@ class LoadController extends Controller
                     'owner' => $owner,
                 ];
         } catch (\Exception $exception) {
+            return [
+                'result' => UN_SUCCESS,
+                'message' => $exception
+            ];
         }
     }
 
