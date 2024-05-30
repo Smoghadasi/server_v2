@@ -1831,6 +1831,10 @@ class LoadController extends Controller
     public function loadDetail($load_id)
     {
         try {
+            $loadInfo = Load::findOrFail($load_id);
+            $loadInfo->driverVisitCount++;
+            $loadInfo->save();
+
             $loadInfo = Load::where('id', $load_id)
                 ->select(
                     'weightPerTruck',
