@@ -1846,6 +1846,7 @@ class LoadController extends Controller
                     'length',
                     'height',
                     'insuranceAmount',
+                    'fleets',
                     'fromCity',
                     'toCity',
                     'origin_city_id',
