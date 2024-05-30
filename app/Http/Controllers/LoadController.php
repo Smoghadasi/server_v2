@@ -1846,7 +1846,6 @@ class LoadController extends Controller
                     'length',
                     'height',
                     'insuranceAmount',
-                    'statusAcceptCargo',
                     'destinationLatitude',
                     'fleets',
                     'user_id',
