@@ -500,7 +500,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('getLoadInfo/{load_id}/{driver_id}', [LoadController::class, 'getLoadInfoForDriver']);
 
         // دریافت جزئیات بار برای راننده
-        Route::get('loadDetail/{load_id}', [LoadController::class, 'loadDetail']);
+        Route::get('loadDetail/{load_id}/{driver_id}', [LoadController::class, 'loadDetail']);
 
 
         Route::group(['prefix' => 'v2'], function () {

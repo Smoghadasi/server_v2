@@ -1828,8 +1828,13 @@ class LoadController extends Controller
     }
 
     // دریافت اطلاعات بار برای راننده
-    public function loadDetail($load_id)
+    public function loadDetail($load_id, $driver_id)
     {
+        try {
+            $result = Inquiry::where([['load_id', $load_id], ['driver_id', $driver_id]])->count();
+        } catch (\Exception $exception) {
+            $result = 0;
+        }
         try {
             $loadInfo = Load::findOrFail($load_id);
             $loadInfo->driverVisitCount++;
@@ -1861,22 +1866,23 @@ class LoadController extends Controller
                     'suggestedPrice',
                 )->first();
 
-                if ($loadInfo) {
-                    $path = [
-                        'fromLatLong' => AddressController::getLatLong($loadInfo->origin_city_id),
-                        'toLatLong' => AddressController::getLatLong($loadInfo->destination_city_id),
-                    ];
-                    $owner = Owner::where('id', $loadInfo->user_id)
-                        ->where('userType', ROLE_OWNER)
-                        ->select(['id', 'name', 'lastName', 'mobileNumber', 'isAccepted'])
-                        ->first();
-                }
-                return [
-                    'result' => SUCCESS,
-                    'loadInfo' => $loadInfo,
-                    'path' => $path,
-                    'owner' => $owner,
+            if ($loadInfo) {
+                $path = [
+                    'fromLatLong' => AddressController::getLatLong($loadInfo->origin_city_id),
+                    'toLatLong' => AddressController::getLatLong($loadInfo->destination_city_id),
                 ];
+                $owner = Owner::where('id', $loadInfo->user_id)
+                    ->where('userType', ROLE_OWNER)
+                    ->select(['id', 'name', 'lastName', 'mobileNumber', 'isAccepted'])
+                    ->first();
+            }
+            return [
+                'result' => SUCCESS,
+                'loadInfo' => $loadInfo,
+                'path' => $path,
+                'owner' => $owner,
+                'result' => $result
+            ];
         } catch (\Exception $exception) {
             return response()->json('بار مورد نظر یافت نشد', 404);
             // return [
