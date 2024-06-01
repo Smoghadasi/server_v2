@@ -5,14 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Bearing;
 use App\Models\Driver;
 use App\Models\DriverActivity;
+use App\Models\Owner;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Log;
+use Illuminate\Support\Facades\Log;
 
 class NotificationController extends Controller
 {
-
-
     private static function getApiAccessKey($userType)
     {
         if ($userType == 'bearing')
@@ -86,22 +85,20 @@ class NotificationController extends Controller
     public function changeNotificationFunction(Request $request)
     {
         $userType = $request->userType;
-        $function = $request->function;
+        $notification = $request->notification;
 
-        if ($function == 'enable' || $function == 'disable') {
-            if ($userType == 'driver') {
-                Driver::where('id', $request->driver_id)
-                    ->update(['notification' => $function]);
-                return [
-                    'result' => SUCCESS
-                ];
-            } else if ($userType == 'bearing') {
-                Bearing::where('id', $request->bearing_id)
-                    ->update(['notification' => $function]);
-                return [
-                    'result' => SUCCESS
-                ];
-            }
+        if ($userType == 'driver') {
+            Driver::where('id', $request->driver_id)
+                ->update(['notification' => $notification]);
+            return [
+                'result' => SUCCESS
+            ];
+        } else if ($userType == 'owner') {
+            Owner::where('id', $request->owner_id)
+                ->update(['notification' => $notification]);
+            return [
+                'result' => SUCCESS
+            ];
         }
 
         return [

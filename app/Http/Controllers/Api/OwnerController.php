@@ -177,4 +177,12 @@ class OwnerController extends Controller
             return $exception->getMessage();
         }
     }
+
+    // ذخیره توکن FCM
+    public function saveMyFireBaseToken(Owner $owner, Request $request)
+    {
+        $owner->FCM_token = $request->FCM_token;
+        $owner->save();
+        return response()->json(true, 200);
+    }
 }

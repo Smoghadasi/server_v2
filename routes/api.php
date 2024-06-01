@@ -624,6 +624,12 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         // انتخاب راننده برای بار توسط صاحب بار
         Route::post('selectDriverForLoadByOwner', [LoadController::class, 'selectDriverForLoadByOwner']);
+
+        // فعال یا غیرفعال نوتیفیکیشن
+        Route::put('changeNotificationFunction', [NotificationController::class, 'changeNotificationFunction']);
+
+        // ذخیره توکن فایر ببس
+        Route::patch('saveMyFireBaseToken/{owner}', [OwnerController::class, 'saveMyFireBaseToken']);
     });
 });
 
