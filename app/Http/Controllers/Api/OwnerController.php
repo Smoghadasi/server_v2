@@ -16,7 +16,7 @@ class OwnerController extends Controller
         $fields = $request->validate([
             'name' => 'required|string',
             'lastName' => 'required|string',
-            'mobileNumber' => 'required|string',
+            'mobileNumber' => 'required|string|unique:owners,mobileNumber',
             'nationalCode' => 'required|string',
         ]);
 
