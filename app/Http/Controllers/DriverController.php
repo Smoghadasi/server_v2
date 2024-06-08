@@ -582,12 +582,11 @@ class DriverController extends Controller
     }
 
     // ذخیره توکن FCM
-    public function saveMyFireBaseToken(Request $request)
+    public function saveMyFireBaseToken(Request $request, Driver $driver)
     {
-        $driver_id = $request->driver_id;
-        $token = $request->token;
-
-        Driver::where('id', $driver_id)->update(['FCM_token' => $token]);
+        $driver->update([
+            'FCM_token' => $request->token
+        ]);
         return ['result' => SUCCESS];
     }
 

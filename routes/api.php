@@ -395,7 +395,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     // ذخیره توکن فایر ببس
     Route::post('bearing/saveMyFireBaseToken', [BearingController::class, 'saveMyFireBaseToken']);
     Route::post('customer/saveMyFireBaseToken', [CustomerController::class, 'saveMyFireBaseToken']);
-    Route::put('driver/saveMyFireBaseToken', [DriverController::class, 'saveMyFireBaseToken']);
+    Route::put('driver/saveMyFireBaseToken/{driver}', [DriverController::class, 'saveMyFireBaseToken']);
 
 
     Route::group(['prefix' => 'customer'], function () {
