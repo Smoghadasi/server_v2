@@ -630,6 +630,10 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         // ذخیره توکن فایر ببس
         Route::patch('saveMyFireBaseToken/{owner}', [OwnerController::class, 'saveMyFireBaseToken']);
+
+        // درخواست نوتیفیکیشن صاحبان بار
+        Route::post('sendCustomNotificationOwner', [NotificationController::class, 'sendCustomNotificationOwner']);
+
     });
 });
 
