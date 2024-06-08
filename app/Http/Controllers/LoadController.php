@@ -2644,7 +2644,7 @@ class LoadController extends Controller
                     'result' => SUCCESS,
                     'loads' => $loads,
                     // 'currentTime' => time(),
-                    // 'fleet_id' => $driver->fleet_id,
+                    'token' => $driver->FCM_token,
                     'transactionCount' => $driver->transactionCount,
                     'Tel' => $setting->tel,
                 ];
