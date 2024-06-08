@@ -582,7 +582,7 @@ class DriverController extends Controller
     }
 
     // ذخیره توکن FCM
-    public function saveMyFireBaseToken(Request $request, Driver $driver)
+    public function saveMyFireBaseToken(Driver $driver, Request $request)
     {
         $driver->FCM_token = $request->token;
         $driver->save();
@@ -1052,8 +1052,7 @@ class DriverController extends Controller
                     }
                     return redirect('admin/drivers')->with('success', 'تمدید اعتبار راننده انجام شد.');
                 }
-            }
-            elseif ($driver->freeCallTotal > 5 || $driver->freeCallTotal + $request->freeCalls > 5) {
+            } elseif ($driver->freeCallTotal > 5 || $driver->freeCallTotal + $request->freeCalls > 5) {
                 return back()->with('danger', 'خطا! تماس رایگان داده شده بیشتر از 5 تا است');
             } else {
                 if ($this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, $request->month, $request->freeCalls, $driver->freeAcceptLoads)) {
