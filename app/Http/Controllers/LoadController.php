@@ -972,7 +972,7 @@ class LoadController extends Controller
                         ->where('version', '>', 58)
                         ->pluck('FCM_token');
                     $title = 'ایران ترابر رانندگان';
-                    $body = 'اعلام بار' . $fleet->fleet->title . ':' . ' از ' . $cityFrom->name . ' به ' . $cityTo->name;
+                    $body = ' بار ' . $fleet->fleet->title . ':' . ' از ' . $cityFrom->name . ' به ' . $cityTo->name;
                     foreach ($ownerFCM_tokens as $ownerFCM_token) {
                         $this->sendNotification($ownerFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
                     }
