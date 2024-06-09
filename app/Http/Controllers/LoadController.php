@@ -961,6 +961,23 @@ class LoadController extends Controller
                     Log::emergency($exception->getMessage());
                     Log::emergency("*******************************************************************************************");
                 }
+                try {
+                    $ownerFCM_tokens = Driver::whereNotNull('FCM_token')
+                        ->where('province_id', $cityFrom->parent_id)
+                        ->where('fleet_id', $fleet->fleet_id)
+                        ->where('version' > 58)
+                        ->pluck('FCM_token');
+                    $title = 'ایران ترابر رانندگان';
+                    $body = 'از ' . $cityFrom->name . ' به ' . $cityTo->name;
+                    foreach ($ownerFCM_tokens as $ownerFCM_token) {
+                        $this->sendNotification($ownerFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
+                    }
+                } catch (\Exception $exception) {
+                    Log::emergency("----------------------مشکل از نوتیف-----------------------");
+                    Log::emergency($exception);
+                    Log::emergency("---------------------------------------------------------");
+
+                }
             } catch (\Exception $exception) {
                 DB::rollBack();
                 Log::emergency("----------------------ثبت بار جدید-----------------------");
@@ -3135,45 +3152,34 @@ class LoadController extends Controller
 
     }
 
-    // ارسال نوتیفیکیشن
-    public function sendNotification($FCM_token, $data, $API_ACCESS_KEY, $array = false)
+    private function sendNotification($FCM_token, $title, $body, $API_ACCESS_KEY)
     {
-        $url = 'https://fcm.googleapis.com/fcm/send';
+        $url = 'https://fcm.googleapis.com/v1/projects/zarin-tarabar/messages:send';
         $notification = [
-            'body' => $data['body'],
-            'sound' => true,
+            "message" => [
+                "token" => $FCM_token,
+                "notification" => [
+                    "title" => $title,
+                    "body" => $body
+                ],
+            ],
         ];
-
-        if ($array)
-            $fields = array(
-                'registration_ids' => $FCM_token,
-                'notification' => $notification,
-                'data' => $data
-            );
-        else
-            $fields = array(
-                'to' => $FCM_token,
-                'notification' => $notification,
-                'data' => $data
-            );
-
-        $headers = array(
-            'Authorization: key=' . $API_ACCESS_KEY,
-            'Content-Type: application/json'
-        );
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Authorization: Bearer ' . $API_ACCESS_KEY,
+            'Content-Type: application/json'
+        ]);
         $result = curl_exec($ch);
+        if ($result === FALSE) {
+            echo curl_error($ch);
+        }
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($notification));
+        curl_exec($ch);
         curl_close($ch);
-
-        return $result;
     }
 
     // Pay for displaying the load information
