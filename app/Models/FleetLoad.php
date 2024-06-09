@@ -25,7 +25,9 @@ class FleetLoad extends Model
         } catch (\Exception $exception) {
         }
         return '';
-
+    }
+    public function fleet(){
+        return $this->belongsTo(Fleet::class);
     }
 
 //    public function load()

@@ -962,7 +962,7 @@ class LoadController extends Controller
                     Log::emergency("*******************************************************************************************");
                 }
                 try {
-                    $fleet = FleetLoad::where('load_id', $load->id)->first();
+                    $fleet = FleetLoad::with('fleet')->where('load_id', $load->id)->first();
                     $cityFrom = ProvinceCity::where('id', $load->origin_city_id)->first();
                     $cityTo = ProvinceCity::where('id', $load->destination_city_id)->first();
 
@@ -972,7 +972,7 @@ class LoadController extends Controller
                         ->where('version', '>', 58)
                         ->pluck('FCM_token');
                     $title = 'ایران ترابر رانندگان';
-                    $body = 'از ' . $cityFrom->name . ' به ' . $cityTo->name;;
+                    $body = 'اعلام بار' . $fleet->fleet->title . ':' . ' از ' . $cityFrom->name . ' به ' . $cityTo->name;
                     foreach ($ownerFCM_tokens as $ownerFCM_token) {
                         $this->sendNotification($ownerFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
                     }
@@ -980,7 +980,6 @@ class LoadController extends Controller
                     Log::emergency("----------------------مشکل از نوتیف-----------------------");
                     Log::emergency($exception);
                     Log::emergency("---------------------------------------------------------");
-
                 }
             } catch (\Exception $exception) {
                 DB::rollBack();
