@@ -969,10 +969,10 @@ class LoadController extends Controller
                     $ownerFCM_tokens = Driver::whereNotNull('FCM_token')
                         ->where('province_id', $cityFrom->parent_id)
                         ->where('fleet_id', $fleet->fleet_id)
-                        ->where('version' > 58)
+                        ->where('version', '>', 58)
                         ->pluck('FCM_token');
                     $title = 'ایران ترابر رانندگان';
-                    $body = 'drgdrg';
+                    $body = 'از ' . $cityFrom->name . ' به ' . $cityTo->name;;
                     foreach ($ownerFCM_tokens as $ownerFCM_token) {
                         $this->sendNotification($ownerFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
                     }
