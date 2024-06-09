@@ -962,6 +962,10 @@ class LoadController extends Controller
                     Log::emergency("*******************************************************************************************");
                 }
                 try {
+                    $fleet = FleetLoad::where('load_id', $load->id)->first();
+                    $cityFrom = ProvinceCity::where('id', $load->origin_city_id)->first();
+                    $cityTo = ProvinceCity::where('id', $load->destination_city_id)->first();
+
                     $ownerFCM_tokens = Driver::whereNotNull('FCM_token')
                         ->where('province_id', $cityFrom->parent_id)
                         ->where('fleet_id', $fleet->fleet_id)
