@@ -962,19 +962,16 @@ class LoadController extends Controller
                     Log::emergency("*******************************************************************************************");
                 }
                 try {
-                    $fleet = FleetLoad::with('fleet')->where('load_id', $load->id)->first();
-                    $cityFrom = ProvinceCity::where('id', $load->origin_city_id)->first();
-                    $cityTo = ProvinceCity::where('id', $load->destination_city_id)->first();
 
-                    $ownerFCM_tokens = Driver::whereNotNull('FCM_token')
+                    $driverFCM_tokens = Driver::whereNotNull('FCM_token')
                         ->where('province_id', $cityFrom->parent_id)
                         ->where('fleet_id', $fleet->fleet_id)
                         ->where('version', '>', 58)
                         ->pluck('FCM_token');
                     $title = 'ایران ترابر رانندگان';
                     $body = ' بار ' . $fleet->fleet->title . ':' . ' از ' . $cityFrom->name . ' به ' . $cityTo->name;
-                    foreach ($ownerFCM_tokens as $ownerFCM_token) {
-                        $this->sendNotification($ownerFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
+                    foreach ($driverFCM_tokens as $driverFCM_token) {
+                        $this->sendNotification($driverFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
                     }
                 } catch (\Exception $exception) {
                     Log::emergency("----------------------مشکل از نوتیف-----------------------");
