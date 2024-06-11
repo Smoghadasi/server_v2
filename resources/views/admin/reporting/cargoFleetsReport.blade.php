@@ -18,7 +18,7 @@
 
                             <div class="col-md-3">
                                 <select class="form-control col-md-4" name="fleet_id" id="fleet_id">
-                                    <option value="0">نوع ناوگان</option>
+                                    <option disabled selected>نوع ناوگان</option>
                                     @foreach ($fleets as $fleet)
                                         <option value="{{ $fleet->id }}">
                                             {{ \App\Http\Controllers\FleetController::getFleetName($fleet->parent_id) }}
@@ -28,10 +28,16 @@
                                     @endforeach
                                 </select>
                             </div>
-
-
-
-
+                            <div class="col-md-3">
+                                <input class="form-control" type="text" id="fromDate" name="fromDate"
+                                    placeholder="از تاریخ" autocomplete="off" />
+                                <span id="span1"></span>
+                            </div>
+                            <div class="col-md-3">
+                                <input class="form-control" type="text" name="toDate" id="fromDate"
+                                    placeholder="تا تاریخ"  autocomplete="off"/>
+                                <span id="span2"></span>
+                            </div>
                         </div>
                         <button class="btn btn-primary m-2">جستجو</button>
                     </div>
@@ -69,4 +75,12 @@
 
         </div>
     </div>
+@endsection
+@section('script')
+    <script src="{{ asset('js/persianDatepicker.min.js') }}"></script>
+
+    <script type="text/javascript">
+       $("#fromDate, #span1").persianDatepicker();
+       $("#toDate, #span2").persianDatepicker();
+    </script>
 @endsection

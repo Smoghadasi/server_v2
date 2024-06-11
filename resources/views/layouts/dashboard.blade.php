@@ -48,6 +48,7 @@
     <link rel="stylesheet" href="{{ asset('assets-sneat/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}"/>
 
     <link rel="stylesheet" href="{{ asset('assets-sneat/vendor/libs/apex-charts/apex-charts.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('css/persianDatepicker-default.css') }}"/>
 
     <!-- Page CSS -->
 

@@ -1250,15 +1250,27 @@ class ReportingController extends Controller
     public function searchCargoFleets(Request $request)
     {
         try {
-            $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
-            $fleet_id = $request->fleet_id;
+            // $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+            // $fleet_id = $request->fleet_id;
+            // $cargoReports = CargoReportByFleet::with('fleet')
+            //     ->where('fleet_id', $request->fleet_id)
+            //     ->orderByDesc('date')
+            //     ->take(50)
+            //     ->get();
+
+            $fromDate = persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00';
+            $toDate = persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:00';
             $cargoReports = CargoReportByFleet::with('fleet')
-                ->where('fleet_id', $request->fleet_id)
-                ->orderByDesc('date')
-                ->take(50)
+                ->groupBy('fleet_id')
+                ->select('fleet_id', 'date', DB::raw('sum(count) as count'))
+                ->orderByDesc('count')
+                ->whereBetween('created_at', [$fromDate, $toDate])
+                ->when($request->fleet_id !== null, function ($query) use ($request) {
+                    return $query->where('fleet_id', $request->fleet_id);
+                })
                 ->get();
-            $fleets = Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
-            return view('admin.reporting.cargoFleetsReport', compact('cargoReports', 'fleets', 'fleet_id'));
+            // $fleets = Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
+            return view('admin.reporting.searchCargoFleetsReport', compact('cargoReports'));
         } catch (\Exception $exception) {
             Log::emergency("---------------------------------- cargoFleetsReport ---------------------------------");
             Log::emergency($exception->getMessage());
