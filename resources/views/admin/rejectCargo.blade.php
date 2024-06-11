@@ -5,7 +5,7 @@
     <div class="card">
         <div class="card-header d-flex align-items-center justify-content-between">
             <h5 class="mb-0">تاریخ : {{ $persian_date }}</h5>
-            <small class="text-muted float-end"><a class="btn btn-primary" href="{{ route('allRejectedCargoCount') }}">تمام روز ها</a></small>
+            {{-- <small class="text-muted float-end"><a class="btn btn-primary" href="{{ route('allRejectedCargoCount') }}">تمام روز ها</a></small> --}}
         </div>
         <div class="table-responsive">
             <table class="table">

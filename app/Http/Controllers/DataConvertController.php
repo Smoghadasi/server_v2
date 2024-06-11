@@ -1679,7 +1679,7 @@ class DataConvertController extends Controller
     public function rejectCargoCount()
     {
         $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
-        $rejects = RejectCargoOperator::where('persian_date', $persian_date)->get();
+        $rejects = RejectCargoOperator::where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')->get();
         return view('admin.rejectCargo', compact('rejects', 'persian_date'));
     }
 
