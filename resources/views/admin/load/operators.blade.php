@@ -6,7 +6,7 @@
         <h5 class="card-header">
             <div class="row justify-content-between">
                 <div class="col-4">
-                    لیست بار صاحبان بار ({{ $loadsCount }})
+                    بار های صاحبان بار اپراتور ({{ $loadsCount }})
                 </div>
                 <div class="col-4" style="text-align: left">
                     @if (Auth::user()->role == 'admin')

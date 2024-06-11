@@ -280,6 +280,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // بار های ثبت شده صاحبان بار
         Route::get('loadOwner', [LoadController::class, 'loadOwner'])->middleware('operator')->name('admin.load.owner');
 
+        // بار های ثبت شده صاحبان بار (تلگرام)
+        Route::get('loadOperators', [LoadController::class, 'loadOperators'])->middleware('operator')->name('admin.load.operator');
+
         // جستجو بر اساس درخواست کنندگان بار
         Route::get('searchLoadInquiry/{load_id}', [LoadController::class, 'searchLoadInquiry'])
             ->middleware('operator')

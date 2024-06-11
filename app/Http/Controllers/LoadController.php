@@ -2323,17 +2323,42 @@ class LoadController extends Controller
             ->with('owner')
             ->withTrashed()
             ->where('userType', ROLE_OWNER)
+            ->where('isBot', 0)
             ->paginate(20);
         $loadsCount = Load::orderByDesc('created_at')
             ->where('userType', ROLE_OWNER)
+            ->where('isBot', 0)
             ->withTrashed()
             ->count();
 
         $loadsToday = Load::where('userType', ROLE_OWNER)
             ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
             ->withTrashed()
+            ->where('isBot', 0)
             ->count();
         return view('admin.load.owner', compact('loads', 'loadsCount', 'loadsToday'));
+    }
+
+    public function loadOperators()
+    {
+        $loads = Load::orderByDesc('created_at')
+            ->with('owner')
+            ->withTrashed()
+            ->where('userType', ROLE_OWNER)
+            ->where('isBot', 1)
+            ->paginate(20);
+        $loadsCount = Load::orderByDesc('created_at')
+            ->where('userType', ROLE_OWNER)
+            ->where('isBot', 1)
+            ->withTrashed()
+            ->count();
+
+        $loadsToday = Load::where('userType', ROLE_OWNER)
+            ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
+            ->withTrashed()
+            ->where('isBot', 1)
+            ->count();
+        return view('admin.load.operators', compact('loads', 'loadsCount', 'loadsToday'));
     }
 
 

@@ -276,7 +276,7 @@
                 </ul>
             </li>
         @endif
-        <li class="menu-item">
+        <li class="menu-item {{ request()->is('admin/loadOwner*') ? 'active open' : '' }} {{ request()->is('admin/loadOperators*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-check-shield"></i>
                 <div data-i18n="pais">صاحبان بار</div>
@@ -284,18 +284,32 @@
 
             <ul class="menu-sub">
                 {{-- @if(in_array('operatorsWorkingHoursActivityReport',auth()->user()->userAccess)) --}}
-                    <li class="menu-item">
-                        <a class="menu-link" href="{{ route('admin.load.owner') }}">
-                            <div data-i18n="Without menu">بار های ثبت شده</div>
-                        </a>
-                    </li>
                     @if(auth()->user()->role == 'admin' || auth()->user()->id == 29)
-                        <li class="menu-item">
-                            <a class="menu-link" href="{{ route('owner.index') }}">
-                                <div data-i18n="Without menu">لیست صاحبان بار</div>
-                            </a>
-                        </li>
+                            <li class="menu-item">
+                                <a class="menu-link" href="{{ route('owner.index') }}">
+                                    <div data-i18n="Without menu">لیست صاحبان بار</div>
+                                </a>
+                            </li>
                     @endif
+                    <li class="menu-item {{ request()->is('admin/loadOwner*') ? 'active open' : '' }} {{ request()->is('admin/loadOperators*') ? 'active open' : '' }}">
+                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                            {{-- <i class="menu-icon tf-icons bx bx-bar-chart"></i> --}}
+                            <div data-i18n="Layouts">بار های ثبت شده</div>
+                        </a>
+                        <ul class="menu-sub">
+                            <li class="menu-item">
+                                <a class="menu-link" href="{{ route('admin.load.operator') }}">
+                                    <span>اپراتور</span>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a class="menu-link" href="{{ route('admin.load.owner') }}">
+                                    <span>صاحب بار</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
                 {{-- @endif --}}
             </ul>
         </li>
