@@ -61,14 +61,20 @@
                         <div class="row row-cols-4">
                             <div class="col">
                                 <div class="form-group">
-                                    <label>شماره تلفن :</label>
+                                    <label>شماره تلفن</label>
                                     <input type="text" name="mobileNumber" class="form-control">
                                 </div>
                             </div>
                             <div class="col">
                                 <div class="form-group">
-                                    <label>کدملی :</label>
+                                    <label>کدملی</label>
                                     <input type="text" name="nationalCode" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label>نام نام خانوادگی</label>
+                                    <input type="text" name="name" class="form-control">
                                 </div>
                             </div>
                         </div>

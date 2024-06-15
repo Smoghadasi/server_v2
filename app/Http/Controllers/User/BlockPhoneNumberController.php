@@ -109,6 +109,9 @@ class BlockPhoneNumberController extends Controller
         if (isset($request->nationalCode) && strlen($request->nationalCode))
             $condition[] = ['nationalCode', 'like', '%' . $request->nationalCode . '%'];
 
+        if (isset($request->name) && strlen($request->name))
+            $condition[] = ['name', 'like', '%' . $request->name . '%'];
+
         $blockedPhoneNumbers = BlockPhoneNumber::orderByDesc('created_at')
             ->where($condition)
             ->paginate(20);
