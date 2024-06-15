@@ -46,6 +46,7 @@ class BlockPhoneNumberController extends Controller
 
         $blockedPhoneNumber = new BlockPhoneNumber();
         $blockedPhoneNumber->phoneNumber = $request->phoneNumber;
+        $blockedPhoneNumber->nationalCode = $request->nationalCode;
         $blockedPhoneNumber->name = $request->name;
         $blockedPhoneNumber->description = $request->description;
         $blockedPhoneNumber->save();
@@ -101,8 +102,15 @@ class BlockPhoneNumberController extends Controller
 
     public function searchBlockedPhoneNumber(Request $request)
     {
+        $condition = [];
+        if (isset($request->mobileNumber) && strlen($request->mobileNumber))
+            $condition[] = ['phoneNumber', 'like', '%' . $request->mobileNumber . '%'];
+
+        if (isset($request->nationalCode) && strlen($request->nationalCode))
+            $condition[] = ['nationalCode', 'like', '%' . $request->nationalCode . '%'];
+
         $blockedPhoneNumbers = BlockPhoneNumber::orderByDesc('created_at')
-            ->where('phoneNumber', 'like', '%' . $request->mobileNumber . '%')
+            ->where($condition)
             ->paginate(20);
 
         if (count($blockedPhoneNumbers))

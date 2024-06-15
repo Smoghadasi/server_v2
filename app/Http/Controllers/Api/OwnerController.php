@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\BlockPhoneNumber;
 use App\Models\Owner;
 use Hash;
 use Illuminate\Http\Request;
@@ -19,6 +20,9 @@ class OwnerController extends Controller
             'mobileNumber' => 'required|string|unique:owners,mobileNumber',
             'nationalCode' => 'required|string',
         ]);
+        if (BlockPhoneNumber::where('phoneNumber', $request->mobileNumber)->orWhere('nationalCode', $request->nationalCode)->count()) {
+            return response()->json('شما بلاک شده اید', 403);
+        }
 
         $user = Owner::create([
             'name' => $fields['name'],

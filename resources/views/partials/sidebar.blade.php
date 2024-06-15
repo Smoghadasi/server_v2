@@ -336,7 +336,7 @@
 
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('blockedPhoneNumber.index') }}">
-                            <span>شماره تلفن های مسدود</span>
+                            <span>مسدودی ها</span>
                         </a>
                     </li>
 

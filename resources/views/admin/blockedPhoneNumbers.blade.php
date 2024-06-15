@@ -3,14 +3,22 @@
 @section('content')
 
     <div class="card">
+
         <h5 class="card-header">
-            شماره تلفن های لیست ممنوعه
+            <div class="row justify-content-between">
+                <div class="col">
+                    شماره تلفن های لیست ممنوعه
+                </div>
+                <div class="col" style="text-align: left;">
+                    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal"
+                        data-bs-target="#blockPhoneNumberForm">
+                        اضافه کردن
+                    </button>
+                </div>
+            </div>
         </h5>
         <div class="card-body">
 
-            <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#blockPhoneNumberForm">
-                وارد کردن شماره تلفن به لیست ممنوعه
-            </button>
             <div id="blockPhoneNumberForm" class="modal fade" role="dialog">
                 <div class="modal-dialog">
 
@@ -23,15 +31,17 @@
                         <div class="modal-body text-right">
 
                             <div class="form-group col-lg-12">
-                                <input class="m-1 form-control" name="phoneNumber" type="tel"
-                                    placeholder="شماره مورد نظر را وارد نمایید">
+                                <input class="m-1 form-control" name="phoneNumber" type="text" placeholder="شماره تلفن">
+                            </div>
+                            <div class="form-group col-lg-12">
+                                <input class="m-1 form-control" name="nationalCode" type="text" placeholder="کد ملی">
                             </div>
                             <div class="form-group col-lg-12">
                                 <input class="m-1 form-control" name="name" type="text"
-                                    placeholder="نام و نام خانوادگی صاحب شماره تلفن">
+                                    placeholder="نام و نام خانوادگی">
                             </div>
                             <div class="form-group col-lg-12">
-                                <textarea class=" m-1 form-control" name="description" placeholder="توضیحات : علت ممنوع بودن"></textarea>
+                                <textarea class=" m-1 form-control" name="description" placeholder="توضیحات"></textarea>
                             </div>
                         </div>
                         <div class="modal-footer text-left">
@@ -55,6 +65,12 @@
                                     <input type="text" name="mobileNumber" class="form-control">
                                 </div>
                             </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label>کدملی :</label>
+                                    <input type="text" name="nationalCode" class="form-control">
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group my-4">
                             <button class="btn btn-info" type="submit">جستجو</button>
@@ -68,6 +84,7 @@
                     <tr>
                         <th>#</th>
                         <th>شماره</th>
+                        <th>کد ملی</th>
                         <th>نام و نام خانوادگی</th>
                         <th>توضیحات</th>
                         <th>تاریخ</th>
@@ -80,7 +97,10 @@
                         <tr>
                             <td>{{ $i++ }}</td>
                             <td>
-                                {{ $blockedPhoneNumber->phoneNumber }}
+                                {{ $blockedPhoneNumber->phoneNumber ?? '-' }}
+                            </td>
+                            <td>
+                                {{ $blockedPhoneNumber->nationalCode ?? '-' }}
                             </td>
                             <td>
                                 {{ $blockedPhoneNumber->name ?? '-' }}
