@@ -37,8 +37,8 @@ $('#city_id').select2({
 });
 
 
-document.getElementById("searchCity").style.display = "none";
-document.getElementById("searchState").style.display = "none";
+// document.getElementById("searchCity").style.display = "none";
+// document.getElementById("searchState").style.display = "none";
 
 
 function showOrHideElement(showElementId, hideElementId) {

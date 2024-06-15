@@ -106,12 +106,8 @@ class Load extends Model
 
     public function getOwnerAuthenticatedAttribute()
     {
-        if (Owner::where('mobileNumber', $this->mobileNumberForCoordination)->count() > 0) {
-            if (Load::where('id', $this->id)->count() >= 10) {
-                return true;
-            } else {
-                return false;
-            }
+        if (Owner::where('mobileNumber', $this->mobileNumberForCoordination)->where('isAccepted', 1)->count() > 0) {
+            return true;
         } else {
             return false;
         }
