@@ -29,7 +29,7 @@
     برای ادامه اپلیکیشن را باز کنید
     <p></p>
     <button type="button"
-    onclick="window.open('', '_self', ''); window.close();">بازگشت به اپلیکیشن</button>
+        onclick="window.close();">بازگشت به اپلیکیشن</button>
 </div>
 
 </body>
