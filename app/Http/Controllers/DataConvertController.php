@@ -691,8 +691,7 @@ class DataConvertController extends Controller
                 $fleet_id = Fleet::where('title', str_replace('ی', 'ي', str_replace('ک', 'ك', $fleet)))->first();
             }
 
-            $loadDuplicate = Load::where('userType', 'owner')
-                ->where('mobileNumberForCoordination', $load->mobileNumberForCoordination)
+            $loadDuplicate = Load::where('mobileNumberForCoordination', $load->mobileNumberForCoordination)
                 ->where('origin_city_id', $load->origin_city_id)
                 ->where('destination_city_id', $load->destination_city_id)
                 ->where('fleets', 'Like', '%fleet_id":' . $fleet_id . ',%')
@@ -703,6 +702,7 @@ class DataConvertController extends Controller
             }
 
             if (isset($load->id)) {
+                $counter++;
 
 
                 if (isset($fleet_id->id)) {
@@ -754,7 +754,6 @@ class DataConvertController extends Controller
                 }
             }
 
-            $counter++;
 
             DB::commit();
         } catch (\Exception $exception) {
