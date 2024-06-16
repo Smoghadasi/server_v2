@@ -28,8 +28,7 @@
     <p></p>
     برای ادامه اپلیکیشن را باز کنید
     <p></p>
-    <a class="btn btn-primary mt-2"
-       href=""onclick="window.open('', '_self', ''); window.close();">بازگشت به اپلیکیشن</a>
+    <a class="btn btn-primary mt-2" onclick="window.open('', '_self', ''); window.close();">بازگشت به اپلیکیشن</a>
 </div>
 
 </body>
