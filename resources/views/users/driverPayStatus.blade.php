@@ -29,8 +29,7 @@
     برای ادامه اپلیکیشن را باز کنید
     <p></p>
     <a class="btn btn-primary mt-2"
-       href="intent:#Intent;action=com.iran_tarabar.driver;category=android.intent.category.DEFAULT;category=android.intent.category.BROWSABLE;S.msg_from_browser=Launched%20from%20Browser;end">بازگشت
-        به اپلیکیشن</a>
+       href=""onclick="window.open('', '_self', ''); window.close();">بازگشت به اپلیکیشن</a>
 </div>
 
 </body>
