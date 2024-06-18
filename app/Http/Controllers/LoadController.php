@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Event\PostCargoSmsEvent;
 use App\Http\Requests\NewLoadRequest;
+use App\Jobs\SendSmsJob;
 use App\Models\Bearing;
 use App\Models\BlockedIp;
 use App\Models\CityDistanceCalculate;
@@ -901,61 +903,9 @@ class LoadController extends Controller
                     }
                     DB::commit();
                 }
-
+               // ارسال پیام برای استان
                 try {
-                    $fleet = FleetLoad::where('load_id', $load->id)->first();
-                    $cityFrom = ProvinceCity::where('id', $load->origin_city_id)->first();
-                    $cityTo = ProvinceCity::where('id', $load->destination_city_id)->first();
-
-                    // // ارسال پیام برای شهرستان
-                    // $drivers = Driver::where('city_id', $cityFrom->id)
-                    //     ->where('fleet_id', $fleet->fleet_id)
-                    //     ->get();
-
-                    // ارسال پیام برای استان
-                    $drivers = Driver::where('province_id', $cityFrom->parent_id)
-                        ->where('fleet_id', $fleet->fleet_id)
-                        ->where('sendMessage', 0)
-                        ->take(15)
-                        ->get();
-
-                    if (count($drivers) != 0) {
-                        foreach ($drivers as $driver) {
-                            $driver->sendMessage = 1;
-                            $driver->save();
-                            $sms = new Driver();
-                            $sms->subscriptionLoadSmsIr(
-                                $driver->mobileNumber,
-                                $driver->name,
-                                $cityFrom->name,
-                                $cityTo->name
-                            );
-                        }
-                    } else {
-                        Driver::where('province_id', $cityFrom->parent_id)
-                            ->where('fleet_id', $fleet->fleet_id)
-                            ->where('sendMessage', 1)
-                            ->update(['sendMessage' => 0]);
-
-                        $drivers = Driver::where('province_id', $cityFrom->parent_id)
-                            ->where('fleet_id', $fleet->fleet_id)
-                            ->where('sendMessage', 0)
-                            ->take(40)
-                            ->get();
-                        if (count($drivers) != 0) {
-                            foreach ($drivers as $driver) {
-                                $driver->sendMessage = 1;
-                                $driver->save();
-                                $sms = new Driver();
-                                $sms->subscriptionLoadSmsIr(
-                                    $driver->mobileNumber,
-                                    $driver->name,
-                                    $cityFrom->name,
-                                    $cityTo->name
-                                );
-                            }
-                        }
-                    }
+                    SendSmsJob::dispatchAfterResponse($load);
                 } catch (\Exception $exception) {
                     Log::emergency("******************************** send sms load by driver ******************************");
                     Log::emergency($exception->getMessage());
