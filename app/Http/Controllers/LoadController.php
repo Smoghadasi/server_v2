@@ -961,23 +961,23 @@ class LoadController extends Controller
                     Log::emergency($exception->getMessage());
                     Log::emergency("*******************************************************************************************");
                 }
-                try {
+                // try {
 
-                    $driverFCM_tokens = Driver::whereNotNull('FCM_token')
-                        ->where('province_id', $cityFrom->parent_id)
-                        ->where('fleet_id', $fleet->fleet_id)
-                        ->where('version', '>', 58)
-                        ->pluck('FCM_token');
-                    $title = 'ایران ترابر رانندگان';
-                    $body = ' بار ' . $fleet->fleet->title . ':' . ' از ' . $cityFrom->name . ' به ' . $cityTo->name;
-                    foreach ($driverFCM_tokens as $driverFCM_token) {
-                        $this->sendNotification($driverFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
-                    }
-                } catch (\Exception $exception) {
-                    Log::emergency("----------------------مشکل از نوتیف-----------------------");
-                    Log::emergency($exception);
-                    Log::emergency("---------------------------------------------------------");
-                }
+                //     $driverFCM_tokens = Driver::whereNotNull('FCM_token')
+                //         ->where('province_id', $cityFrom->parent_id)
+                //         ->where('fleet_id', $fleet->fleet_id)
+                //         ->where('version', '>', 58)
+                //         ->pluck('FCM_token');
+                //     $title = 'ایران ترابر رانندگان';
+                //     $body = ' بار ' . $fleet->fleet->title . ':' . ' از ' . $cityFrom->name . ' به ' . $cityTo->name;
+                //     foreach ($driverFCM_tokens as $driverFCM_token) {
+                //         $this->sendNotification($driverFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
+                //     }
+                // } catch (\Exception $exception) {
+                //     Log::emergency("----------------------مشکل از نوتیف-----------------------");
+                //     Log::emergency($exception);
+                //     Log::emergency("---------------------------------------------------------");
+                // }
             } catch (\Exception $exception) {
                 DB::rollBack();
                 Log::emergency("----------------------ثبت بار جدید-----------------------");
@@ -4353,27 +4353,26 @@ class LoadController extends Controller
                     * sin(radians(`latitude`))))";
 
             $loads = Load::join('fleet_loads', 'fleet_loads.load_id', 'loads.id')
-            ->select(
-                'loads.id',
-                'loads.suggestedPrice',
-                'loads.title',
-                'loads.priceBased',
-                'loads.userType',
-                'loads.urgent',
-                'loads.mobileNumberForCoordination',
-                'loads.origin_city_id',
-                'loads.destination_city_id',
-                'loads.time',
-                'loads.fromCity',
-                'loads.toCity',
-                'loads.fleets'
-            )
-                ->where($conditions)
-                ->selectRaw("{$haversine} AS distance")
-                ->whereRaw("{$haversine} < ?", $radius)
-                ->orderBy('distance', 'asc')
-                ->take($rows)
-                ->get();
+                ->select(
+                    'loads.id',
+                    'loads.suggestedPrice',
+                    'loads.title',
+                    'loads.priceBased',
+                    'loads.userType',
+                    'loads.urgent',
+                    'loads.mobileNumberForCoordination',
+                    'loads.origin_city_id',
+                    'loads.destination_city_id',
+                    'loads.time',
+                    'loads.fromCity',
+                    'loads.toCity',
+                    'loads.fleets')
+                    ->where($conditions)
+                    ->selectRaw("{$haversine} AS distance")
+                    ->whereRaw("{$haversine} < ?", $radius)
+                    ->orderBy('distance', 'asc')
+                    ->take($rows)
+                    ->get();
 
             return [
                 'result' => SUCCESS,
