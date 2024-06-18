@@ -4331,8 +4331,8 @@ class LoadController extends Controller
             $fleet_id = $driver->fleet_id;
 
             // اگر جستجو براساس فیلتر بود
-            if (isset($request->filter) && $request->filter)
-                $fleet_id = $request->fleet_id;
+            // if (isset($request->filter) && $request->filter)
+            //     $fleet_id = $request->fleet_id;
 
             $conditions[] = ['fleet_loads.fleet_id', $fleet_id];
             $conditions[] = ['loads.status', ON_SELECT_DRIVER];
@@ -4345,37 +4345,33 @@ class LoadController extends Controller
                     $conditions[] = ['loads.id', '<', $request->lastLoadId];
                 }
             }
+            $haversine = "(6371 * acos(cos(radians(" . $latitude . "))
+                    * cos(radians(`latitude`))
+                    * cos(radians(`longitude`)
+                    - radians(" . $longitude . "))
+                    + sin(radians(" . $latitude . "))
+                    * sin(radians(`latitude`))))";
 
             $loads = Load::join('fleet_loads', 'fleet_loads.load_id', 'loads.id')
-                ->select(
-                    'loads.id',
-                    // 'loads.weight',
-                    // 'loads.numOfTrucks',
-                    // 'loads.loadingHour',
-                    // 'loads.loadingMinute',
-                    // 'loads.proposedPriceForDriver',
-                    'loads.suggestedPrice',
-                    'loads.title',
-                    'loads.priceBased',
-                    'loads.userType',
-                    'loads.urgent',
-                    // 'loads.status',
-                    'loads.mobileNumberForCoordination',
-                    'loads.origin_city_id',
-                    'loads.destination_city_id',
-                    'loads.time',
-                    'loads.fromCity',
-                    'loads.toCity',
-                    'loads.fleets',
-                    DB::raw("6371 * acos(cos(radians(" . $latitude . "))
-                        * cos(radians(latitude))
-                        * cos(radians(longitude) - radians(" . $longitude . "))
-                        + sin(radians(" . $latitude . "))
-                        * sin(radians(latitude))) AS distance")
-                )
+            ->select(
+                'loads.id',
+                'loads.suggestedPrice',
+                'loads.title',
+                'loads.priceBased',
+                'loads.userType',
+                'loads.urgent',
+                'loads.mobileNumberForCoordination',
+                'loads.origin_city_id',
+                'loads.destination_city_id',
+                'loads.time',
+                'loads.fromCity',
+                'loads.toCity',
+                'loads.fleets'
+            )
                 ->where($conditions)
-                ->orderBy('distance')
-                ->orderBy('id', 'desc')
+                ->selectRaw("{$haversine} AS distance")
+                ->whereRaw("{$haversine} < ?", $radius)
+                ->orderBy('distance', 'asc')
                 ->take($rows)
                 ->get();
 
