@@ -2612,7 +2612,7 @@ class LoadController extends Controller
         $driver->version = 65;
         $driver->save();
 
-        if ($driver->status == DE_ACTIVE || BlockedIp::where('ip', request()->ip())->where('userType', ROLE_DRIVER)->count() > 0)
+        if ($driver->status == DE_ACTIVE)
             return [
                 'result' => UN_SUCCESS,
                 'data' => ['driverStatus' => false],
