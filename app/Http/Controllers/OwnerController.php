@@ -19,6 +19,11 @@ class OwnerController extends Controller
             ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
             ->withTrashed()
             ->count();
+        $loadsTodayOwner = Load::where('userType', ROLE_OWNER)
+            ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
+            ->where('isBot', 0)
+            ->withTrashed()
+            ->count();
         $ownerPenddingCounts = Owner::where('isAuth', 2)->count();
         $ownerRejectCounts = Owner::where('isAuth', 0)->count();
         $ownerAcceptCounts = Owner::where('isAuth', 1)->count();
@@ -29,7 +34,8 @@ class OwnerController extends Controller
             'ownerPenddingCounts',
             'ownerRejectCounts',
             'ownerAcceptCounts',
-            'loadsToday'
+            'loadsToday',
+            'loadsTodayOwner'
         ]));
     }
 

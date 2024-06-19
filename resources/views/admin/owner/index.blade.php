@@ -13,7 +13,8 @@
                         <a href="{{ route('owner.accept') }}" class="alert p-1 alert-success">تایید شده : {{ $ownerAcceptCounts }}</a>
                     </div>
                     <div class="col" style="text-align: left;">
-                        <a href="{{ route('loadToday.owner') }}" class="alert p-1 alert-primary">تعداد بار های ثبت شده امروز: {{ $loadsToday }}</a>
+                        <a href="{{ route('loadToday.owner') }}" class="alert p-1 alert-primary">تعداد بار های ثبت شده امروز (کل): {{ $loadsToday }}</a>
+                        <a href="{{ route('loadToday.owner') }}" class="alert p-1 alert-dark">تعداد بار های ثبت شده امروز (صاحب بار): {{ $loadsTodayOwner }}</a>
                     </div>
                 </div>
             </div>
