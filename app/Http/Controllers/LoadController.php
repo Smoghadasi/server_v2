@@ -9,6 +9,7 @@ use App\Models\Bearing;
 use App\Models\BlockedIp;
 use App\Models\CityDistanceCalculate;
 use App\Models\BlockPhoneNumber;
+use App\Models\CargoReportByFleet;
 use App\Models\City;
 use App\Models\Customer;
 use App\Models\DateOfCargoDeclaration;
@@ -834,28 +835,28 @@ class LoadController extends Controller
 
                 if (isset($load->id) && isset($request->fleetList)) {
 
-                    if ($request->userType == ROLE_TRANSPORTATION_COMPANY) {
-                        try {
-                            $tender = new Tender();
-                            $tender->load_id = $load->id;
-                            $tender->bearing_id = $request->user_id;
-                            $tender->suggestedPrice = $request->suggestedPrice;
-                            $tender->status = 0;
-                            $tender->save();
-                        } catch (\Exception $e) {
-                            Log::emergency($e->getMessage());
-                        }
-                    } else if ($request->userType == "customer") {
-                        try {
-                            $customer = Customer::find($request->user_id);
-                            if (isset($customer->freeLoads)) {
-                                $customer->freeLoads--;
-                                $customer->save();
-                            }
-                        } catch (\Exception $e) {
-                            Log::emergency("Error Save Load for customer: " . $e->getMessage());
-                        }
-                    }
+                    // if ($request->userType == ROLE_TRANSPORTATION_COMPANY) {
+                    //     try {
+                    //         $tender = new Tender();
+                    //         $tender->load_id = $load->id;
+                    //         $tender->bearing_id = $request->user_id;
+                    //         $tender->suggestedPrice = $request->suggestedPrice;
+                    //         $tender->status = 0;
+                    //         $tender->save();
+                    //     } catch (\Exception $e) {
+                    //         Log::emergency($e->getMessage());
+                    //     }
+                    // } else if ($request->userType == "customer") {
+                    //     try {
+                    //         $customer = Customer::find($request->user_id);
+                    //         if (isset($customer->freeLoads)) {
+                    //             $customer->freeLoads--;
+                    //             $customer->save();
+                    //         }
+                    //     } catch (\Exception $e) {
+                    //         Log::emergency("Error Save Load for customer: " . $e->getMessage());
+                    //     }
+                    // }
 
                     foreach ($request->fleetList as $item) {
 
@@ -864,13 +865,31 @@ class LoadController extends Controller
                         $fleetLoad->fleet_id = $item['fleet_id'];
                         $fleetLoad->numOfFleets = $item['numOfFleets'];
                         $fleetLoad->userType = $load->userType;
-                        if ($request->userType == ROLE_TRANSPORTATION_COMPANY) {
-                            $load->proposedPriceForDriver = $request->suggestedPrice;
-                            $transportationCompany = Bearing::find($request->user_id);
-                            $transportationCompany->countOfLoadsAfterValidityDate -= 1;
-                            $transportationCompany->save();
-                        }
                         $fleetLoad->save();
+
+                        try {
+                            $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+                            // Log::emergency("Error cargo report by 1371: ");
+
+                            $cargoReport = CargoReportByFleet::where('fleet_id', $fleetLoad->fleet_id)
+                                ->where('date', $persian_date)
+                                ->first();
+
+                            if (isset($cargoReport->id)) {
+                                $cargoReport->count_owner += 1;
+                                $cargoReport->save();
+                            } else {
+                                $cargoReportNew = new CargoReportByFleet;
+                                $cargoReportNew->fleet_id = $fleetLoad->fleet_id;
+                                $cargoReportNew->count_owner = 1;
+                                $cargoReportNew->date = $persian_date;
+                                $cargoReportNew->save();
+                                // Log::emergency("Error cargo report by 1387: " . $cargoReportNew);
+
+                            }
+                        } catch (Exception $e) {
+                            Log::emergency("Error cargo report by fleets: " . $e->getMessage());
+                        }
                     }
 
                     try {
