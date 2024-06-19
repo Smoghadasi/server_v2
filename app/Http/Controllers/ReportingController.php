@@ -1262,7 +1262,7 @@ class ReportingController extends Controller
             $toDate = persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:00';
             $cargoReports = CargoReportByFleet::with('fleet')
                 ->groupBy('fleet_id')
-                ->select('fleet_id', 'date', DB::raw('sum(count) as count'))
+                ->select('fleet_id', 'date', 'count_owner' , DB::raw('sum(count) as count'))
                 ->orderByDesc('count')
                 ->whereBetween('created_at', [$fromDate, $toDate])
                 ->when($request->fleet_id !== null, function ($query) use ($request) {

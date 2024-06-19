@@ -50,7 +50,9 @@
                         <tr>
                             <th>#</th>
                             <th>ناوگان</th>
-                            <th>تعداد</th>
+                            <th>تعداد اپراتور</th>
+                            <th>تعداد صاحب بار</th>
+                            <th>مجموعه</th>
                             <th>تاریخ</th>
                         </tr>
                     </thead>
@@ -61,6 +63,8 @@
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $cargoReport->fleet->title ?? '-' }}</td>
                                 <td>{{ $cargoReport->count }}</td>
+                                <td>{{ $cargoReport->count_owner }}</td>
+                                <td>{{ $cargoReport->count + $cargoReport->count_owner }}</td>
                                 <td>{{ $cargoReport->date }}</td>
                             </tr>
                         @endforeach

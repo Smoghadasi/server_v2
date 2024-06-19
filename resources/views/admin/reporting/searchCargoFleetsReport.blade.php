@@ -13,6 +13,8 @@
                             <th>#</th>
                             <th>ناوگان</th>
                             <th>تعداد</th>
+                            <th>تعداد صاحبین بار</th>
+                            <th>مجموع</th>
                         </tr>
                     </thead>
 
@@ -22,6 +24,8 @@
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $cargoReport->fleet->title ?? '-' }}</td>
                                 <td>{{ $cargoReport->count }}</td>
+                                <td>{{ $cargoReport->count_owner }}</td>
+                                <td>{{ $cargoReport->count + $cargoReport->count_owner }}</td>
                             </tr>
                         @endforeach
                     </tbody>
