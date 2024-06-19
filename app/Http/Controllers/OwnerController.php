@@ -138,6 +138,8 @@ class OwnerController extends Controller
 
         $owners = Owner::where('nationalCode', 'LIKE', "%$request->searchWord%")
             ->orWhere('mobileNumber', 'LIKE', "%$request->searchWord%")
+            ->orWhere('name', 'LIKE', "%$request->searchWord%")
+            ->orWhere('lastName', 'LIKE', "%$request->searchWord%")
             ->orderby('id', 'desc')
             ->paginate(5);
         return view('admin.owner.index', compact(
