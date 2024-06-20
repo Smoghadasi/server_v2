@@ -1005,13 +1005,13 @@ class LoadController extends Controller
 
     public function sendNotifLoad(Load $load)
     {
-        // try {
-        //     // event(new PostCargoSmsEvent($load));
-        // } catch (\Exception $exception) {
-        //     Log::emergency("******************************** send sms load by driver ******************************");
-        //     Log::emergency($exception->getMessage());
-        //     Log::emergency("*******************************************************************************************");
-        // }
+        try {
+            event(new PostCargoSmsEvent($load));
+        } catch (\Exception $exception) {
+            Log::emergency("******************************** send sms load by driver ******************************");
+            Log::emergency($exception->getMessage());
+            Log::emergency("*******************************************************************************************");
+        }
 
         try {
             $fleet = FleetLoad::where('load_id', $load->id)->first();
