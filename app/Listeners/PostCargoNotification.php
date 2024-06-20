@@ -43,11 +43,11 @@ class PostCargoNotification
         $title = 'ایران ترابر رانندگان';
         $body = ' بار ' . $fleet->fleet->title . ':' . ' از ' . $cityFrom->name . ' به ' . $cityTo->name;
         foreach ($driverFCM_tokens as $driverFCM_token) {
-            $this->sendNotification($driverFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
+            $this->sendNotification($driverFCM_token, $title, $body);
         }
     }
 
-    public function sendNotification($FCM_token, $title, $body, $API_ACCESS_KEY)
+    private function sendNotification($FCM_token, $title, $body)
     {
         $serviceAccountPath = asset('assets/zarin-tarabar-firebase-adminsdk-9x6c3-699279e25d.json');
         $serviceAccount = json_decode(file_get_contents($serviceAccountPath), true);
