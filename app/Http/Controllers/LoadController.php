@@ -4696,7 +4696,7 @@ class LoadController extends Controller
     {
         $task = Load::withTrashed()->find($load);
         if (BlockPhoneNumber::where('phoneNumber', $task->senderMobileNumber)->count()) {
-            $message[1] = 'شماره تلفن وارد شده در لیست ممنوعه می باشد، و امکان ثبت بار با شماره تلفن ' . $senderMobileNumber .
+            $message[1] = 'شماره تلفن وارد شده در لیست ممنوعه می باشد، و امکان ثبت بار با شماره تلفن ' . $task->senderMobileNumber .
                 ' امکان پذیر نمی باشد. لطفا برای دلیل آن با ایران ترابر تماس بگیرید';
             return [
                 'result' => UN_SUCCESS,
@@ -4716,6 +4716,74 @@ class LoadController extends Controller
         $load->time = time();
         $load->urgent = 1;
         $load->save();
+        try {
+            if (isset($load->id)) {
+                $fleetLists = FleetLoad::where('load_id', $task->id)->get();
+
+                foreach ($fleetLists as $item) {
+
+                    $fleetLoad = new FleetLoad();
+                    $fleetLoad->load_id = $load->id;
+                    $fleetLoad->fleet_id = $item->fleet_id;
+                    $fleetLoad->numOfFleets = $item->numOfFleets;
+                    $fleetLoad->userType = $item->userType;
+                    $fleetLoad->save();
+
+                    try {
+                        $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+
+                        $cargoReport = CargoReportByFleet::where('fleet_id', $fleetLoad->fleet_id)
+                            ->where('date', $persian_date)
+                            ->first();
+
+                        if (isset($cargoReport->id)) {
+                            $cargoReport->count_owner += 1;
+                            $cargoReport->save();
+                        } else {
+                            $cargoReportNew = new CargoReportByFleet;
+                            $cargoReportNew->fleet_id = $fleetLoad->fleet_id;
+                            $cargoReportNew->count_owner = 1;
+                            $cargoReportNew->date = $persian_date;
+                            $cargoReportNew->save();
+
+                        }
+                    } catch (Exception $e) {
+                        Log::emergency("Error cargo report by fleets: " . $e->getMessage());
+                    }
+                }
+
+                try {
+
+                    $load->fleets = FleetLoad::join('fleets', 'fleets.id', 'fleet_loads.fleet_id')
+                        ->where('fleet_loads.load_id', $load->id)
+                        ->select('fleet_id', 'userType', 'suggestedPrice', 'numOfFleets', 'pic', 'title')
+                        ->get();
+
+                    $fleets = json_decode($load->fleets, true);
+                    $loadDuplicates = Load::where('userType', 'operator')
+                        ->where('mobileNumberForCoordination', $load->mobileNumberForCoordination)
+                        ->where('origin_city_id', $load->origin_city_id)
+                        ->where('destination_city_id', $load->destination_city_id)
+                        ->where('fleets', 'LIKE', '%' . $fleets[0]['fleet_id'] . '%')
+                        ->get();
+
+                    if (count($loadDuplicates) > 0) {
+                        foreach ($loadDuplicates as $loadDuplicate) {
+                            $loadDuplicate->delete();
+                        }
+                    }
+
+                    $load->save();
+                } catch (\Exception $exception) {
+                    Log::emergency("---------------------------------------------------------");
+                    Log::emergency($exception->getMessage());
+                    Log::emergency("---------------------------------------------------------");
+                }
+                DB::commit();
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
         try {
             $backup = new LoadBackup();
             $backup->id = $load->id;
@@ -4774,17 +4842,6 @@ class LoadController extends Controller
             Log::emergency($e->getMessage());
             Log::emergency("==============================================================");
         }
-        $fleetLoads = FleetLoad::where('load_id', $load)->get();
-
-        foreach ($fleetLoads as $item) {
-            $fleetLoad = new FleetLoad();
-            $fleetLoad->load_id = $load;
-            $fleetLoad->fleet_id = $item->fleet_id;
-            $fleetLoad->numOfFleets = $item->numOfFleets;
-            $fleetLoad->userType = $item->userType;
-            $fleetLoad->save();
-        }
-
         return response()->json([
             'result' => true,
             'load_id' => $load->id
