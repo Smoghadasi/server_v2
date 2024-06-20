@@ -20,6 +20,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         'App\Event\PostCargoSmsEvent' => [
             'App\Listeners\PostCargoSms'
+        ],
+        'App\Event\PostCargoNotificationEvent' => [
+            'App\Listeners\PostCargoNotification'
         ]
     ];
 

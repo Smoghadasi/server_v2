@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Event\PostCargoNotificationEvent;
 use App\Event\PostCargoSmsEvent;
 use App\Http\Requests\NewLoadRequest;
 use App\Jobs\SendSmsJob;
@@ -869,7 +870,6 @@ class LoadController extends Controller
 
                         try {
                             $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
-                            // Log::emergency("Error cargo report by 1371: ");
 
                             $cargoReport = CargoReportByFleet::where('fleet_id', $fleetLoad->fleet_id)
                                 ->where('date', $persian_date)
@@ -922,31 +922,6 @@ class LoadController extends Controller
                     }
                     DB::commit();
                 }
-               // ارسال پیام برای استان
-                try {
-                    SendSmsJob::dispatchAfterResponse($load);
-                } catch (\Exception $exception) {
-                    Log::emergency("******************************** send sms load by driver ******************************");
-                    Log::emergency($exception->getMessage());
-                    Log::emergency("*******************************************************************************************");
-                }
-                // try {
-
-                //     $driverFCM_tokens = Driver::whereNotNull('FCM_token')
-                //         ->where('province_id', $cityFrom->parent_id)
-                //         ->where('fleet_id', $fleet->fleet_id)
-                //         ->where('version', '>', 58)
-                //         ->pluck('FCM_token');
-                //     $title = 'ایران ترابر رانندگان';
-                //     $body = ' بار ' . $fleet->fleet->title . ':' . ' از ' . $cityFrom->name . ' به ' . $cityTo->name;
-                //     foreach ($driverFCM_tokens as $driverFCM_token) {
-                //         $this->sendNotification($driverFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
-                //     }
-                // } catch (\Exception $exception) {
-                //     Log::emergency("----------------------مشکل از نوتیف-----------------------");
-                //     Log::emergency($exception);
-                //     Log::emergency("---------------------------------------------------------");
-                // }
             } catch (\Exception $exception) {
                 DB::rollBack();
                 Log::emergency("----------------------ثبت بار جدید-----------------------");
@@ -1016,7 +991,7 @@ class LoadController extends Controller
         if (isset($load->id)) {
             return [
                 'result' => SUCCESS,
-                // 'load_id' => $load->id
+                'load_id' => $load->id
             ];
         }
 
@@ -1026,6 +1001,38 @@ class LoadController extends Controller
             'result' => UN_SUCCESS,
             'message' => $message
         ];
+    }
+
+    public function sendNotifLoad(Load $load)
+    {
+        // try {
+        //     // event(new PostCargoSmsEvent($load));
+        // } catch (\Exception $exception) {
+        //     Log::emergency("******************************** send sms load by driver ******************************");
+        //     Log::emergency($exception->getMessage());
+        //     Log::emergency("*******************************************************************************************");
+        // }
+
+        try {
+            $fleet = FleetLoad::where('load_id', $load->id)->first();
+            $cityFrom = ProvinceCity::where('id', $load->origin_city_id)->first();
+            $cityTo = ProvinceCity::where('id', $load->destination_city_id)->first();
+
+            $driverFCM_tokens = Driver::whereNotNull('FCM_token')
+                ->where('province_id', $cityFrom->parent_id)
+                ->where('fleet_id', $fleet->fleet_id)
+                ->where('version', '>', 58)
+                ->pluck('FCM_token');
+            $title = 'ایران ترابر رانندگان';
+            $body = ' بار ' . $fleet->fleet->title . ':' . ' از ' . $cityFrom->name . ' به ' . $cityTo->name;
+            foreach ($driverFCM_tokens as $driverFCM_token) {
+                $this->sendNotification($driverFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
+            }
+        } catch (\Exception $exception) {
+            Log::emergency("----------------------مشکل از نوتیف-----------------------");
+            Log::emergency($exception);
+            Log::emergency("---------------------------------------------------------");
+        }
     }
 
     // تبدیل اعداد فارسی به انگلیسی
@@ -3148,6 +3155,7 @@ class LoadController extends Controller
 
     private function sendNotification($FCM_token, $title, $body, $API_ACCESS_KEY)
     {
+
         $serviceAccountPath = asset('assets/zarin-tarabar-firebase-adminsdk-9x6c3-699279e25d.json');
         $serviceAccount = json_decode(file_get_contents($serviceAccountPath), true);
 
@@ -4335,13 +4343,14 @@ class LoadController extends Controller
                     'loads.time',
                     'loads.fromCity',
                     'loads.toCity',
-                    'loads.fleets')
-                    ->where($conditions)
-                    ->selectRaw("{$haversine} AS distance")
-                    ->whereRaw("{$haversine} < ?", $radius)
-                    ->orderBy('distance', 'asc')
-                    ->take($rows)
-                    ->get();
+                    'loads.fleets'
+                )
+                ->where($conditions)
+                ->selectRaw("{$haversine} AS distance")
+                ->whereRaw("{$haversine} < ?", $radius)
+                ->orderBy('distance', 'asc')
+                ->take($rows)
+                ->get();
 
             return [
                 'result' => SUCCESS,
