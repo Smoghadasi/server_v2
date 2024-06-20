@@ -62,16 +62,16 @@ class OwnerController extends Controller
 
     public function generateSKU()
     {
-      $number = mt_rand(10000, 99999);
-      if($this->checkSKU($number)){
-        return $this->generateSKU();
-      }
-      return (string)$number;
+        $number = mt_rand(10000, 99999);
+        if ($this->checkSKU($number)) {
+            return $this->generateSKU();
+        }
+        return (string)$number;
     }
 
     public function checkSKU($number)
     {
-      return Owner::where('sku', $number)->exists();
+        return Owner::where('sku', $number)->exists();
     }
 
     /**
@@ -138,6 +138,11 @@ class OwnerController extends Controller
             ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
             ->withTrashed()
             ->count();
+        $loadsTodayOwner = Load::where('userType', ROLE_OWNER)
+            ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
+            ->where('isBot', 0)
+            ->withTrashed()
+            ->count();
         $ownerPenddingCounts = Owner::where('isAuth', 2)->count();
         $ownerRejectCounts = Owner::where('isAuth', 0)->count();
         $ownerAcceptCounts = Owner::where('isAuth', 1)->count();
@@ -153,7 +158,8 @@ class OwnerController extends Controller
             'ownerPenddingCounts',
             'ownerRejectCounts',
             'ownerAcceptCounts',
-            'loadsToday'
+            'loadsToday',
+            'loadsTodayOwner'
         ));
     }
 
