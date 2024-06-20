@@ -1029,7 +1029,7 @@ class LoadController extends Controller
                 $this->sendNotification($driverFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
             }
         } catch (\Exception $exception) {
-            Log::emergency("----------------------مشکل از نوتیف-----------------------");
+            Log::emergency("----------------------send notification load by driver-----------------------");
             Log::emergency($exception);
             Log::emergency("---------------------------------------------------------");
         }
