@@ -4785,7 +4785,10 @@ class LoadController extends Controller
             $fleetLoad->save();
         }
 
-        return response()->json(['result' => true], 200);
+        return response()->json([
+            'result' => true,
+            'load_id' => $load->id
+        ], 200);
     }
 
 
