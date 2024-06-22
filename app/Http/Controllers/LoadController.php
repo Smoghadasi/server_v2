@@ -367,14 +367,7 @@ class LoadController extends Controller
 
                 $load->fromCity = $this->getCityName($request->origin_city_id);
                 $load->toCity = $this->getCityName($request->destination_city_id);
-                try {
-                    $city = City::find($request->origin_city_id);
-                    if (isset($city->id)) {
-                        $load->latitude = $city->latitude;
-                        $load->longitude = $city->longitude;
-                    }
-                } catch (\Exception $exception) {
-                }
+
             } else {
 
                 $originCity = $this->getCountyFromFullAddress($request->loadingAddress);
@@ -395,6 +388,14 @@ class LoadController extends Controller
 
                 $load->latitude = $load->originLatitude;
                 $load->longitude = $load->originLongitude;
+            }
+            try {
+                $city = ProvinceCity::find($request->origin_city_id);
+                if (isset($city->id)) {
+                    $load->latitude = $city->latitude;
+                    $load->longitude = $city->longitude;
+                }
+            } catch (\Exception $exception) {
             }
 
             $load->loadingDate = $request->loadingDate;
@@ -3704,7 +3705,7 @@ class LoadController extends Controller
                 $load->fromCity = $this->getCityName($request->origin_city_id);
                 $load->toCity = $this->getCityName($request->destination_city_id);
                 try {
-                    $city = City::find($request->origin_city_id);
+                    $city = ProvinceCity::find($request->origin_city_id);
                     if (isset($city->id)) {
                         $load->latitude = $city->latitude;
                         $load->longitude = $city->longitude;
@@ -4308,8 +4309,8 @@ class LoadController extends Controller
             $fleet_id = $driver->fleet_id;
 
             // اگر جستجو براساس فیلتر بود
-            if (isset($request->filter) && $request->filter)
-                $fleet_id = $request->fleet_id;
+            // if (isset($request->filter) && $request->filter)
+            //     $fleet_id = $request->fleet_id;
 
             $conditions[] = ['fleet_loads.fleet_id', $fleet_id];
             $conditions[] = ['loads.status', ON_SELECT_DRIVER];
@@ -4322,6 +4323,12 @@ class LoadController extends Controller
                     $conditions[] = ['loads.id', '<', $request->lastLoadId];
                 }
             }
+            $haversine = "(6371 * acos(cos(radians(" . $latitude . "))
+                    * cos(radians(`latitude`))
+                    * cos(radians(`longitude`)
+                    - radians(" . $longitude . "))
+                    + sin(radians(" . $latitude . "))
+                    * sin(radians(`latitude`))))";
 
             $loads = Load::join('fleet_loads', 'fleet_loads.load_id', 'loads.id')
                 ->select(
@@ -4337,16 +4344,12 @@ class LoadController extends Controller
                     'loads.time',
                     'loads.fromCity',
                     'loads.toCity',
-                    'loads.fleets',
-                    DB::raw("6371 * acos(cos(radians(" . $latitude . "))
-                        * cos(radians(latitude))
-                        * cos(radians(longitude) - radians(" . $longitude . "))
-                        + sin(radians(" . $latitude . "))
-                        * sin(radians(latitude))) AS distance")
+                    'loads.fleets'
                 )
                 ->where($conditions)
-                ->orderBy('distance')
-                ->orderBy('id', 'desc')
+                ->selectRaw("{$haversine} AS distance")
+                ->whereRaw("{$haversine} < ?", $radius)
+                ->orderBy('distance', 'asc')
                 ->take($rows)
                 ->get();
 
