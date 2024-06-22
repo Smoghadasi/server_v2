@@ -4012,7 +4012,8 @@ class LoadController extends Controller
                         'loads.time',
                         'loads.fleets'
                     )
-                    ->orderBy('loads.id', 'desc')
+                    ->orderBy('urgent', 'desc')
+                    ->orderBy('id', 'desc')
                     ->take($rows)
                     ->get();
             else if (count($selectedLoadingCitiesIds) && count($selectedDischargeCitiesIds) == 0)
@@ -4037,7 +4038,8 @@ class LoadController extends Controller
                         'loads.time',
                         'loads.fleets'
                     )
-                    ->orderBy('loads.id', 'desc')
+                    ->orderBy('urgent', 'desc')
+                    ->orderBy('id', 'desc')
                     ->take($rows)
                     ->get();
             else if (count($selectedLoadingCitiesIds) == 0 && count($selectedDischargeCitiesIds))
@@ -4062,7 +4064,8 @@ class LoadController extends Controller
                         'loads.toCity',
                         'loads.fleets'
                     )
-                    ->orderBy('loads.id', 'desc')
+                    ->orderBy('urgent', 'desc')
+                    ->orderBy('id', 'desc')
                     ->take($rows)
                     ->get();
             else
@@ -4086,7 +4089,8 @@ class LoadController extends Controller
                         'loads.toCity',
                         'loads.fleets'
                     )
-                    ->orderBy('loads.id', 'desc')
+                    ->orderBy('urgent', 'desc')
+                    ->orderBy('id', 'desc')
                     ->take($rows)
                     ->get();
 
