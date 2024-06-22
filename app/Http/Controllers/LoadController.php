@@ -4308,8 +4308,8 @@ class LoadController extends Controller
             $fleet_id = $driver->fleet_id;
 
             // اگر جستجو براساس فیلتر بود
-            // if (isset($request->filter) && $request->filter)
-            //     $fleet_id = $request->fleet_id;
+            if (isset($request->filter) && $request->filter)
+                $fleet_id = $request->fleet_id;
 
             $conditions[] = ['fleet_loads.fleet_id', $fleet_id];
             $conditions[] = ['loads.status', ON_SELECT_DRIVER];
@@ -4322,12 +4322,6 @@ class LoadController extends Controller
                     $conditions[] = ['loads.id', '<', $request->lastLoadId];
                 }
             }
-            $haversine = "(6371 * acos(cos(radians(" . $latitude . "))
-                    * cos(radians(`latitude`))
-                    * cos(radians(`longitude`)
-                    - radians(" . $longitude . "))
-                    + sin(radians(" . $latitude . "))
-                    * sin(radians(`latitude`))))";
 
             $loads = Load::join('fleet_loads', 'fleet_loads.load_id', 'loads.id')
                 ->select(
@@ -4343,12 +4337,16 @@ class LoadController extends Controller
                     'loads.time',
                     'loads.fromCity',
                     'loads.toCity',
-                    'loads.fleets'
+                    'loads.fleets',
+                    DB::raw("6371 * acos(cos(radians(" . $latitude . "))
+                        * cos(radians(latitude))
+                        * cos(radians(longitude) - radians(" . $longitude . "))
+                        + sin(radians(" . $latitude . "))
+                        * sin(radians(latitude))) AS distance")
                 )
                 ->where($conditions)
-                ->selectRaw("{$haversine} AS distance")
-                ->whereRaw("{$haversine} < ?", $radius)
-                ->orderBy('distance', 'asc')
+                ->orderBy('distance')
+                ->orderBy('id', 'desc')
                 ->take($rows)
                 ->get();
 
