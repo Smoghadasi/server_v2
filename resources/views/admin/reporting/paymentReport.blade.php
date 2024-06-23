@@ -74,6 +74,7 @@
                         <th>مبلغ پرداخت شده</th>
                         <th>تاریخ پرداخت</th>
                         <th>وضعیت</th>
+                        <th>عملیات</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -105,6 +106,18 @@
                                     <span class="badge bg-label-success text-nowrap">پرداخت شده</span>
                                 @else
                                     <span class="badge bg-label-secondary text-nowrap">بدون وضعیت</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if($transaction->status == 0)
+                                    <a class="btn btn-primary btn-sm" href="{{ route('driver.detail', $transaction->user_id) }}">
+                                        تمدید اعتبار
+                                    </a>
+                                @elseif($transaction->status == 100 || $transaction->status == 101)
+                                <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="دسترسی فقط پرداخت ناموفق">
+                                    <button class="btn btn-primary btn-sm" style="pointer-events: none;" type="button" disabled>تمدید اعتبار</button>
+                                  </span>
+
                                 @endif
                             </td>
                         </tr>
