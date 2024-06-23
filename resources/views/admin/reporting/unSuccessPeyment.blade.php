@@ -22,6 +22,7 @@
                         <th>مبلغ پرداخت شده</th>
                         <th>تاریخ پرداخت</th>
                         <th>وضعیت</th>
+                        <th>عملیات</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -53,6 +54,11 @@
                                 @else
                                     <span class="badge bg-label-secondary text-nowrap">بدون وضعیت</span>
                                 @endif
+                            </td>
+                            <td>
+                                <a class="btn btn-primary btn-sm" href="{{ route('driver.detail', $transaction->user_id) }}">
+                                    تمدید اعتبار
+                                </a>
                             </td>
                         </tr>
                     @endforeach
