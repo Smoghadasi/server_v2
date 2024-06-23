@@ -2586,7 +2586,9 @@ class LoadController extends Controller
     // دریافت لیست بارها برای راننده به صورت صفحه بندی شده
     public function getNewLoadForDriver(Driver $driver, $lastLoadId = 0)
     {
-        $driver->version = 65;
+        if ($driver->version != 67) {
+            $driver->version = 65;
+        }
         $driver->save();
 
         if ($driver->status == DE_ACTIVE)
