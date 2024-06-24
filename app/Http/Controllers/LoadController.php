@@ -367,7 +367,6 @@ class LoadController extends Controller
 
                 $load->fromCity = $this->getCityName($request->origin_city_id);
                 $load->toCity = $this->getCityName($request->destination_city_id);
-
             } else {
 
                 $originCity = $this->getCountyFromFullAddress($request->loadingAddress);
@@ -2716,6 +2715,28 @@ class LoadController extends Controller
             ['load_id', $request->load_id],
         ])->count();
 
+
+        $load = Load::findOrFail($request->load_id);
+        $driver = Driver::findOrFail($request->driver_id);
+        $owner = Owner::where('mobileNumber', $load->mobileNumberForCoordination)->whereNotNull('FCM_token')->first();
+
+        $cityFrom = ProvinceCity::where('id', $load->origin_city_id)->first();
+        $cityTo = ProvinceCity::where('id', $load->destination_city_id)->first();
+
+        if ($owner) {
+            try {
+                $title = 'ایران ترابر صاحبان بار';
+                $body = $driver->name . ' ' . $driver->lastName . ' با شماره تماس ' . $driver->mobileNumber . ' درخواست حمل بار شما از مبدا ' . $cityFrom->name . ' به ' . $cityTo->name . ' را دارد.';
+
+                $this->sendNotification($owner->FCM_token, $title, $body);
+            } catch (\Exception $exception) {
+                Log::emergency("----------------------send notif storeInquiryToLoad-----------------------");
+                Log::emergency($exception);
+                Log::emergency("---------------------------------------------------------");
+            }
+        }
+
+
         // اگر قبلا ثبت قیمت ثبت کرده بروز شود
         if ($inquiry > 0) {
             Inquiry::where([
@@ -3156,7 +3177,7 @@ class LoadController extends Controller
 
     }
 
-    private function sendNotification($FCM_token, $title, $body, $API_ACCESS_KEY)
+    private function sendNotification($FCM_token, $title, $body)
     {
 
         $serviceAccountPath = asset('assets/zarin-tarabar-firebase-adminsdk-9x6c3-699279e25d.json');
@@ -4752,7 +4773,6 @@ class LoadController extends Controller
                             $cargoReportNew->count_owner = 1;
                             $cargoReportNew->date = $persian_date;
                             $cargoReportNew->save();
-
                         }
                     } catch (Exception $e) {
                         Log::emergency("Error cargo report by fleets: " . $e->getMessage());
