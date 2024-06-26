@@ -4371,12 +4371,14 @@ class LoadController extends Controller
                     'loads.time',
                     'loads.fromCity',
                     'loads.toCity',
-                    'loads.fleets'
+                    'loads.fleets',
+                    'loads.created_at',
                 )
                 ->where($conditions)
                 ->selectRaw("{$haversine} AS distance")
                 ->whereRaw("{$haversine} < ?", $radius)
                 ->orderBy('distance', 'asc')
+                ->orderByDesc('created_at')
                 ->take($rows)
                 ->get();
 
