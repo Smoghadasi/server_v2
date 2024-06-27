@@ -169,4 +169,36 @@ class OwnerController extends Controller
         $owner->save();
         return back()->with("danger", "پروفایل حذف شد");
     }
+
+    public function ownersNissan()
+    {
+        $owners = Owner::whereHas('loads', function ($q) {
+            $q->whereIn('origin_city_id', [967, 570, 758, 522, 360, 45]);
+            $q->where('fleets', 'Like', '%fleet_id":' . 82 . ',%');
+            $q->where('userType', 'owner');
+        })
+        ->paginate();
+
+        $loadsToday = Load::where('userType', ROLE_OWNER)
+            ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
+            ->withTrashed()
+            ->count();
+        $loadsTodayOwner = Load::where('userType', ROLE_OWNER)
+            ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
+            ->where('isBot', 0)
+            ->withTrashed()
+            ->count();
+        $ownerPenddingCounts = Owner::where('isAuth', 2)->count();
+        $ownerRejectCounts = Owner::where('isAuth', 0)->count();
+        $ownerAcceptCounts = Owner::where('isAuth', 1)->count();
+
+        return view('admin.owner.index', compact([
+            'owners',
+            'ownerPenddingCounts',
+            'ownerRejectCounts',
+            'ownerAcceptCounts',
+            'loadsToday',
+            'loadsTodayOwner'
+        ]));
+    }
 }

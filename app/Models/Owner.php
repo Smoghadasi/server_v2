@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use SoapClient;
 
 class Owner extends Model
@@ -151,5 +152,11 @@ class Owner extends Model
         }else{
             return round($score,1);
         }
+    }
+
+
+    public function loads(): HasMany
+    {
+        return $this->hasMany(Load::class, 'user_id');
     }
 }
