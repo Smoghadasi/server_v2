@@ -704,7 +704,6 @@ class DataConvertController extends Controller
             if (isset($load->id)) {
                 $counter++;
 
-
                 if (isset($fleet_id->id)) {
                     $fleetLoad = new FleetLoad();
                     $fleetLoad->load_id = $load->id;
@@ -746,7 +745,9 @@ class DataConvertController extends Controller
                         ->select('fleet_id', 'userType', 'suggestedPrice', 'numOfFleets', 'pic', 'title')
                         ->get();
 
-                    $load->save();
+                    if ($loadDuplicate === null) {
+                        $load->save();
+                    }
                 } catch (\Exception $exception) {
                     Log::emergency("---------------------------------------------------------");
                     Log::emergency($exception->getMessage());
