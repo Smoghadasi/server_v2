@@ -607,6 +607,23 @@ class PayController extends Controller
                 $transaction->monthsOfThePackage = $monthsOfThePackage;
                 $transaction->save();
 
+                try {
+                    $driver = Driver::find($transaction->user_id);
+
+                    if (Transaction::where('user_id', $driver->id)
+                        ->where('userType', 'driver')
+                        ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
+                        ->count() == 3) {
+                        $sms = new Driver();
+                        $sms->unSuccessPayment($driver->mobileNumber);
+                    }
+                } catch (Exception $exception) {
+                    Log::emergency("-------------------------------- unSuccessPayment -----------------------------");
+                    Log::emergency($exception->getMessage());
+                    Log::emergency("------------------------------------------------------------------------------");
+
+                }
+
                 if (isset($transaction->id))
                     return redirect('https://www.zarinpal.com/pg/StartPay/' . $result->Authority);
             } catch (\Exception $exception) {
@@ -688,22 +705,6 @@ class PayController extends Controller
             }
         }
         $status = 0;
-        try {
-            $driver = Driver::find($transaction->user_id);
-
-            if (Transaction::where('user_id', $driver->id)
-                ->where('userType', 'driver')
-                ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
-                ->count() == 2) {
-                $sms = new Driver();
-                $sms->unSuccessPayment($driver->mobileNumber);
-            }
-        } catch (Exception $exception) {
-            Log::emergency("-------------------------------- unSuccessPayment -----------------------------");
-            Log::emergency($exception->getMessage());
-            Log::emergency("------------------------------------------------------------------------------");
-
-        }
         $message = $this->getStatusMessage($status);
         return view('users.driverPayStatus', compact('message', 'status'));
     }
