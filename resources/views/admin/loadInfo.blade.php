@@ -1,199 +1,157 @@
 @extends('layouts.dashboard')
 
 @section('content')
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-            اطلاعات بار
-        </li>
-    </ol>
-    <div class="text-right">
-        <p>
-            <a class="btn btn-primary" href="{{ url('admin/editLoadInfoForm') }}/{{ $load->id }}"> ویرایش اطلاعات بار</a>
-            <a class="btn btn-danger" href="{{ url('admin/removeLoadInfo') }}/{{ $load->id }}"> حذف اطلاعات بار</a>
-        </p>
-    </div>
+
     <div class="container">
+        <div class="my-2">
+            <a class="btn btn-primary" href="{{ url('admin/editLoadInfoForm') }}/{{ $load->id }}"> ویرایش اطلاعات بار</a>
+            @if ($load->userType == 'owner')
+                <a class="btn btn-success" href="{{ route('owner.show', $load->user_id) }}"> اطلاعات صاحب بار</a>
+            @endif
+            <a class="btn btn-danger" href="{{ url('admin/removeLoadInfo') }}/{{ $load->id }}"> حذف اطلاعات بار</a>
+        </div>
 
         <div class="text-right">
-            <div class="card mb-2">
-                <div class="table-responsive">
-                    <table class="table table-striped " cellspacing="0">
-                        <tbody>
-                            <tr>
-                                <td class="font-weight-bold">عنوان بار</td>
-                                <td>{{ $load->title }}</td>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card mb-2">
+                        <h5 class="card-header">
+                            <div class="row">
+                                <div class="col-6">
+                                    اطلاعات بار
+                                </div>
+                                <div class="col-6 text-end">
+                                    {{ $load->dateTime }} | {{ $load->loadingDate }}
+                                </div>
+                            </div>
+                        </h5>
 
-                                <td class="font-weight-bold">عرض</td>
-                                <td>{{ $load->width }} متر</td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold">طول</td>
-                                <td>{{ $load->length }} متر</td>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped" cellspacing="0">
+                                    <tbody>
+                                        <tr>
+                                            <td class="font-weight-bold">عنوان بار</td>
+                                            <td>{{ $load->title }}</td>
+                                            <td class="font-weight-bold">کرایه</td>
+                                            <td>
+                                                @if ($load->priceBased == 'توافقی')
+                                                    توافقی
+                                                @else
+                                                    {{ number_format($load->suggestedPrice) }} تومان
+                                                @endif
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-weight-bold">مبدا</td>
+                                            <td>
+                                                <a
+                                                    href="https://maps.google.com/maps?f=q&q={{ $load->originLatitude }},{{ $load->originLongitude }}">
+                                                    {{ $path['stateFrom'] }} - {{ $path['from'] }}
+                                                </a>
+                                            </td>
 
-                                <td class="font-weight-bold">ارتفاع</td>
-                                <td>{{ $load->height }} متر</td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold">وزن</td>
-                                <td>
-                                    @if ($load->weight == -1)
-                                        تناژ آزاد
-                                    @else
-                                        {{ $load->weight }} تن
-                                    @endif
-                                </td>
+                                            <td class="font-weight-bold">مقصد</td>
+                                            <td>
+                                                <a
+                                                    href="https://maps.google.com/maps?f=q&q={{ $load->destinationLatitude }},{{ $load->destinationLongitude }}">
+                                                    {{ $path['stateTo'] }} - {{ $path['to'] }}
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-weight-bold">ثبت توسط</td>
+                                            <td>{{ $load->userType == 'owner' ? 'صاحب بار' : 'اپراتور' }}</td>
 
-                                <td class="font-weight-bold">نام مشتری</td>
-                                <td>
-                                    @if ($load->userType == ROLE_TRANSPORTATION_COMPANY)
-                                        {{ \App\Http\Controllers\BearingController::getBearingTitle($load->user_id) }}
-                                    @else
-                                        {{ \App\Http\Controllers\CustomerController::getCustomerName($load->user_id) }}
-                                    @endif
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold">نام باربری</td>
-                                <td>{{ $load->bearing_id }}</td>
+                                            <td class="font-weight-bold">تعداد بازدید</td>
+                                            <td>{{ $load->driverCallCounter }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-weight-bold">تلفن جهت هماهنگی</td>
+                                            <td>{{ $load->mobileNumberForCoordination }}</td>
 
-                                <td class="font-weight-bold">تلفن ارسال کننده بار</td>
-                                <td>{{ $load->senderMobileNumber }}</td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold">تاریخ بارگیری</td>
-                                <td>{{ $load->loadingDate }}</td>
+                                            <td class="font-weight-bold">نوع</td>
+                                            <td>{{ $load->bulk == '0' ? 'غیر فله' : 'فله' }}</td>
 
-                                <td class="font-weight-bold">ساعت بارگیری</td>
-                                <td>
-                                    ساعت
-                                    @php
-                                        $pieces = explode(' ', $load->created_at);
-                                    @endphp
-                                    {{ $pieces[1] }} دقیقه
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold">میزان بیمه</td>
-                                <td>{{ number_format($load->insuranceAmount) }} تومان</td>
+                                        </tr>
+                                        <tr>
 
-                                <td class="font-weight-bold">قیمت پیشنهادی</td>
-                                <td>{{ number_format($load->suggestedPrice) }} تومان</td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold">زمان تخلیه</td>
-                                <td>{{ $load->dischargeTime }}</td>
+                                            <td class="font-weight-bold">محموله خطرناک</td>
+                                            <td>{{ $load->dangerousProducts == '0' ? 'خیر' : 'بله' }}</td>
+                                            <td class="font-weight-bold">حق بیمه</td>
+                                            <td>
+                                                {{ $load->insuranceAmount }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-weight-bold">مسافت</td>
+                                            <td>{{ $load->distanceCity }} کیلومتر</td>
 
-                                <td class="font-weight-bold">نوع بار (درون شهری یا برون شهری)</td>
-                                <td>
-                                    @if ($load->loadMode == 'innerCity')
-                                        درون شهری
-                                    @elseif($load->loadMode == 'outerCity')
-                                        برون شهری
-                                    @endif
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold">نوع بسته بندی</td>
-                                <td>{{ $load->packingTypeTitle }}</td>
-                                <td class="font-weight-bold">هزینه نهایی حمل بار</td>
-                                <td>{{ number_format($load->price) }} تومان</td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold">توضیحات</td>
-                                <td>{{ $load->description }}</td>
+                                            <td class="font-weight-bold">نوع بار (درون شهری یا برون شهری)</td>
+                                            <td>
+                                                {{ $load->loadMode }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-weight-bold">فوری</td>
+                                            <td>
+                                                @switch($load->urgent)
+                                                    @case(0)
+                                                        بله
+                                                    @break
 
-                                <td class="font-weight-bold">وضعیت</td>
-                                <td>
-                                    <div class="alert alert-primary" style="font-size: 12px; padding: 5px">
-                                        {{ \App\Http\Controllers\LoadController::getLoadStatusTitle($load->status) }}
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold">از شهر</td>
-                                <td>{{ $path['stateFrom'] }} - {{ $path['from'] }}</td>
-                                <td class="font-weight-bold">آدرس محل ارسال بار</td>
-                                <td>{{ $load->loadingAddress ?? '-' }}</td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold">به شهر</td>
-                                <td>{{ $path['stateTo'] }} - {{ $path['to'] }}</td>
-                                <td class="font-weight-bold">آدرس محل تخلیه بار</td>
-                                <td>{{ $load->dischargeAddress ?? '-' }}</td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold">تعداد بازدیدکننده</td>
-                                <td>{{ $load->driverVisitCount }}</td>
-                                <td class="font-weight-bold">تعداد درخواست</td>
-                                <td>{{ $load->numOfInquiryDrivers }}</td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold">تعداد تماس</td>
-                                <td>{{ $load->numOfDriverCalls }}</td>
-                                @if (Auth::user()->role == 'admin')
-                                    <td class="font-weight-bold">موقعیت جغرافیایی</td>
-                                    <td>
-                                        <a class="text-danger"
-                                            href="http://maps.google.com/maps?f=q&q={{ $load->originLatitude }},{{ $load->originLongitude }}">نقشه
-                                            مپ</a>
-                                    </td>
-                                @endif
-                            </tr>
-                        </tbody>
-                    </table>
+                                                    @case(1)
+                                                        خیر
+                                                    @break
+                                                @endswitch
+                                            </td>
+
+                                            <td class="font-weight-bold">تصویر بار</td>
+                                            <td>
+                                                {{ $load->loadPic == null ? 'ندارد' : 'دارد' }}
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td class="font-weight-bold">تعداد درخواست رانندگان</td>
+                                            <td>{{ $load->numOfInquiryDrivers }}</td>
+
+                                            <td class="font-weight-bold">ارسال برای</td>
+                                            <td>
+                                                {{ $load->storeFor == 'driver' ? 'رانندگان' : 'باربری' }}
+                                            </td>
+                                        </tr>
+                                        <tr class="text-center">
+                                            {{-- <td colspan="2" class="font-weight-bold">توضیحات</td> --}}
+                                            <td colspan="4">{{ $load->description }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+
             <div class="card mb-2">
-                <h5 class="card-header">لیست ناوگان انتخاب شده</h5>
+                <h5 class="card-header">لیست ناوگان</h5>
                 <div class="card-body">
-                    <table class="table">
+                    <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th>ردیف</th>
                                 <th>نوع ناوگان</th>
-                                <th>تعداد خودرو</th>
+                                <th>تعداد</th>
                             </tr>
                         </thead>
                         <tbody>
-
-                            @php
-                                $i = 1;
-                            @endphp
-
                             @foreach ($fleetLoads as $item)
                                 <tr>
-                                    <td>{{ $i++ }}</td>
                                     <td>{{ \App\Http\Controllers\FleetController::getFleetName($item->fleet_id) }}</td>
                                     <td>{{ $item->numOfFleets }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
-                </div>
-            </div>
-
-
-            <div class="card mb-2">
-
-                <h5 class="card-header">محدوده بارگیری و تخلیه</h5>
-                <div class="card-body">
-                    <div class="m-2 p-2 alert alert-success" style="font-size: 16px;">
-                        محدوده بارگیری :
-                        {{ $path['from'] }}
-                        -
-                        {{ $load->loadingRange }}
-                    </div>
-                    <div class="m-2 p-2 alert alert-success" style="font-size: 16px;">
-                        محدوده تخلیه :
-                        {{ $path['to'] }}
-                        -
-                        {{ $load->dischargeRange }}
-                    </div>
-                    @if ($load->status > 3 && $load->bearing_id == auth('bearing')->id())
-                        <div class="m-2 p-2 alert alert-success" style="font-size: 16px;">
-                            تلفن ارسال کننده بار :
-                            {{ $load->senderMobileNumber }}</div>
-                    @endif
                 </div>
             </div>
         </div>
