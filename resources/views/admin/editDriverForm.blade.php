@@ -165,7 +165,7 @@
                                             class="form-control text-center text-dark border-0 bg-warning"
                                             value="{{ $driver->vehicleLicensePlatePartD }}"
                                             placeholder="ایران"
-                                            name="vehicleLicensePlatePartD" type="number">
+                                            name="vehicleLicensePlatePartD" type="text">
                                     </div>
                                     <div class="col-md-2 border border-dark border-3 bg-warning">
                                         <input
