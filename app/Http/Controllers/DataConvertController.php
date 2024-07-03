@@ -690,11 +690,10 @@ class DataConvertController extends Controller
             if (!isset($fleet_id->id)) {
                 $fleet_id = Fleet::where('title', str_replace('ی', 'ي', str_replace('ک', 'ك', $fleet)))->first();
             }
-
             $loadDuplicate = Load::where('mobileNumberForCoordination', $load->mobileNumberForCoordination)
                 ->where('origin_city_id', $load->origin_city_id)
                 ->where('destination_city_id', $load->destination_city_id)
-                ->where('fleets', 'Like', '%fleet_id":' . $fleet_id . ',%')
+                ->where('fleets', 'Like', '%fleet_id":' . $fleet_id->id . ',%')
                 ->first();
 
             if ($loadDuplicate === null) {
