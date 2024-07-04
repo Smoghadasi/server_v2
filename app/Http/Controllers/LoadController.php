@@ -900,8 +900,7 @@ class LoadController extends Controller
                             ->get();
 
                         $fleets = json_decode($load->fleets, true);
-                        $loadDuplicates = Load::where('userType', 'operator')
-                            ->where('mobileNumberForCoordination', $load->mobileNumberForCoordination)
+                        $loadDuplicates = Load::where('mobileNumberForCoordination', $load->mobileNumberForCoordination)
                             ->where('origin_city_id', $request->origin_city_id)
                             ->where('destination_city_id', $request->destination_city_id)
                             ->where('fleets', 'LIKE', '%' . $fleets[0]['fleet_id'] . '%')
