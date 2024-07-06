@@ -62,9 +62,24 @@
                                         <tr>
                                             <td class="font-weight-bold">ثبت توسط</td>
                                             <td>{{ $load->userType == 'owner' ? 'صاحب بار' : 'اپراتور' }}</td>
+                                            <td class="font-weight-bold">تعداد</td>
+                                            <td>
+                                                <span class="badge bg-primary">بازدید :
+                                                    {{ $load->driverVisitCount }}</span>
+                                                <span>
+                                                    <a class="badge bg-danger"
+                                                        href="{{ route('load.searchLoadInquiry', $load->id) }}">
+                                                        درخواست: {{ $load->numOfInquiryDrivers }}
+                                                    </a>
 
-                                            <td class="font-weight-bold">تعداد بازدید</td>
-                                            <td>{{ $load->driverCallCounter }}</td>
+                                                </span>
+                                                <span>
+                                                    <a class="badge bg-success"
+                                                        href="{{ route('load.searchLoadDriverCall', $load->id) }}">
+                                                        تماس: {{ $load->numOfDriverCalls }}
+                                                    </a>
+                                                </span>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td class="font-weight-bold">تلفن جهت هماهنگی</td>
@@ -113,18 +128,15 @@
                                         </tr>
 
                                         <tr>
-                                            <td class="font-weight-bold">تعداد درخواست رانندگان</td>
-                                            <td>{{ $load->numOfInquiryDrivers }}</td>
+                                            <td class="font-weight-bold">توضیحات</td>
+                                            <td>{{ $load->description }}</td>
 
                                             <td class="font-weight-bold">ارسال برای</td>
                                             <td>
                                                 {{ $load->storeFor == 'driver' ? 'رانندگان' : 'باربری' }}
                                             </td>
                                         </tr>
-                                        <tr class="text-center">
-                                            {{-- <td colspan="2" class="font-weight-bold">توضیحات</td> --}}
-                                            <td colspan="4">{{ $load->description }}</td>
-                                        </tr>
+
                                     </tbody>
                                 </table>
                             </div>
