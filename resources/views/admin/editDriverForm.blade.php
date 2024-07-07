@@ -301,12 +301,12 @@
 
                         <button type="submit" class="btn btn-primary">بروز رسانی اطلاعات</button>
 
-                        @if ($driver->authLevel == DRIVER_AUTH_SILVER_PENDING || $driver->authLevel == DRIVER_AUTH_GOLD_PENDING)
+                        {{-- @if ($driver->authLevel == DRIVER_AUTH_SILVER_PENDING || $driver->authLevel == DRIVER_AUTH_GOLD_PENDING) --}}
                             <button type="button" class="btn btn-danger" data-bs-toggle="modal"
                                 data-bs-target="#acceptLevel_{{ $driver->id }}">
                                 تایید وضعیت
                             </button>
-                        @endif
+                        {{-- @endif --}}
 
                     </form>
                     <div id="acceptLevel_{{ $driver->id }}" class="modal fade"
