@@ -852,22 +852,22 @@ class DriverController extends Controller
         try {
             $load = Load::where('id', '=', $load_id)->first();
 
-            $owner = Owner::where('mobileNumber', $load->mobileNumberForCoordination)->whereNotNull('FCM_token')->first();
-            $cityFrom = ProvinceCity::findOrFail($load->origin_city_id);
-            $cityTo = ProvinceCity::findOrFail($load->destination_city_id);
+            // $owner = Owner::where('mobileNumber', $load->mobileNumberForCoordination)->whereNotNull('FCM_token')->first();
+            // $cityFrom = ProvinceCity::findOrFail($load->origin_city_id);
+            // $cityTo = ProvinceCity::findOrFail($load->destination_city_id);
 
-            if ($owner) {
-                try {
-                    $title = 'ایران ترابر صاحبان بار';
-                    $body = $driver->name . ' ' . $driver->lastName . ' راننده ' . '(' . $driver->fleetTitle . ')' . ' جهت حمل بار از ' . $cityFrom->name . ' به ' . $cityTo->name . ' با شما تماس گرفته است.';
+            // if ($owner) {
+            //     try {
+            //         $title = 'ایران ترابر صاحبان بار';
+            //         $body = $driver->name . ' ' . $driver->lastName . ' راننده ' . '(' . $driver->fleetTitle . ')' . ' جهت حمل بار از ' . $cityFrom->name . ' به ' . $cityTo->name . ' با شما تماس گرفته است.';
 
-                    $this->sendNotification($owner->FCM_token, $title, $body);
-                } catch (\Exception $exception) {
-                    Log::emergency("----------------------send notif storeInquiryToLoad-----------------------");
-                    Log::emergency($exception);
-                    Log::emergency("---------------------------------------------------------");
-                }
-            }
+            //         $this->sendNotification($owner->FCM_token, $title, $body);
+            //     } catch (\Exception $exception) {
+            //         Log::emergency("----------------------send notif storeInquiryToLoad-----------------------");
+            //         Log::emergency($exception);
+            //         Log::emergency("---------------------------------------------------------");
+            //     }
+            // }
 
             if ($load === null) {
                 return ['result' => 2];
