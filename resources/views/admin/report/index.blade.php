@@ -4,7 +4,7 @@
 
     <div class="card">
         <h5 class="card-header">
-            شکایات و انتقادات رانندگان
+            شکایات و انتقادات صاحب بار
         </h5>
         <div class="card-body">
 
@@ -17,6 +17,9 @@
                     <th>بار</th>
                     <th>نوع</th>
                     <th>متن پیام</th>
+                    <th>پاسخ ادمین</th>
+                    <th>تاریخ</th>
+                    <th>عملیات</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -37,6 +40,47 @@
                             @endswitch
                         </td>
                         <td>{{ $report->description }}</td>
+                        <td>{{ $report->adminMessage ?? '-' }}</td>
+                        @php
+                            $pieces = explode(' ', $report->created_at);
+                        @endphp
+                        <td>{{ gregorianDateToPersian($report->created_at, '-', true) . ' ( ' . $pieces[1] . ' ) ' }}
+
+                        <td>
+                            <button type="button" class="btn btn-primary btn-sm text-nowrap mb-3" data-bs-toggle="modal"
+                                data-bs-target="#adminMessageForm_{{ $report->id }}">
+                                پاسخ به صاحب بار
+                            </button>
+
+                            <div id="adminMessageForm_{{ $report->id }}" class="modal fade" role="dialog">
+                                <div class="modal-dialog">
+
+                                    <!-- Modal content-->
+                                    <form
+                                        action="{{ route('report.update', $report) }}"
+                                        method="post" class="modal-content">
+                                        @csrf
+                                        @method('put')
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">پاسخ</h4>
+                                        </div>
+                                        <div class="modal-body text-right">
+
+                                            <div class="form-group">
+                                                <label>متن پاسخ ادمین :</label>
+                                                <textarea class="form-control" name="adminMessage" id="adminMessage" placeholder="پاسخ ادمین"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer text-left">
+                                            <button type="submit" class="btn btn-primary mr-1">ثبت پاسخ</button>
+                                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                                                انصراف
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
                     </tr>
                 @endforeach
                 </tbody>

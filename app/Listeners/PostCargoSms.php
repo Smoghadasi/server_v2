@@ -38,6 +38,7 @@ class PostCargoSms implements ShouldQueue
         $drivers = Driver::where('province_id', $cityFrom->parent_id)
             ->where('fleet_id', $fleet->fleet_id)
             ->where('sendMessage', 0)
+            ->where('version', '<' , 67)
             ->take(15)
             ->get();
 
@@ -56,11 +57,13 @@ class PostCargoSms implements ShouldQueue
         } else {
             Driver::where('province_id', $cityFrom->parent_id)
                 ->where('fleet_id', $fleet->fleet_id)
+                ->where('version', '<' , 67)
                 ->where('sendMessage', 1)
                 ->update(['sendMessage' => 0]);
 
             $drivers = Driver::where('province_id', $cityFrom->parent_id)
                 ->where('fleet_id', $fleet->fleet_id)
+                ->where('version', '<' , 67)
                 ->where('sendMessage', 0)
                 ->take(40)
                 ->get();
@@ -75,6 +78,7 @@ class PostCargoSms implements ShouldQueue
                         $cityFrom->name,
                         $cityTo->name
                     );
+
                 }
             }
         }

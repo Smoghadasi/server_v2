@@ -1467,7 +1467,7 @@ class LoadController extends Controller
             $result = session()->get('result');
             return view('users/loadInfo', compact('load', 'path', 'drivers', 'id', 'tenders', 'result'));
         }
-        return view('users/loadInfo', compact('load', 'path', 'drivers', 'id', 'tenders', 'fleetLoads'));
+        return view('users.loadInfo', compact('load', 'path', 'drivers', 'id', 'tenders', 'fleetLoads'));
     }
 
     // درخواست اطلاعات بار
@@ -1899,6 +1899,19 @@ class LoadController extends Controller
         }
 
         return ['selectDriverCost' => $selectDriverCost];
+    }
+
+    public function sendNotifManuall(Load $load)
+    {
+        try {
+            event(new PostCargoSmsEvent($load));
+            return back()->with('success', 'با موفقیت ارسال شد');
+
+        } catch (\Exception $exception) {
+            Log::emergency("******************************** send Notification Manual ******************************");
+            Log::emergency($exception->getMessage());
+            Log::emergency("*******************************************************************************************");
+        }
     }
 
     // نمایش اطلاعات بار

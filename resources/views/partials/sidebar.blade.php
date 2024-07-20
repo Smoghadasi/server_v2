@@ -316,7 +316,7 @@
         @if(in_array('complaints',auth()->user()->userAccess))
 
 
-            <li class="menu-item">
+            <li class="menu-item {{ request()->is('admin/report*') ? 'active open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons bx bx-printer"></i>
                     <div data-i18n="pais">شکایات و انتقادات</div>
@@ -352,10 +352,28 @@
                         </a>
                     </li>
 
-                    <li class="menu-item">
-                        <a class="menu-link" href="{{ route('report.index') }}">
+                    {{-- <li class="menu-item">
+                        <a class="menu-link" href="{{ route('report.index', ['type' => 'owner']) }}">
                             <span>گزارش تخلف</span>
                         </a>
+                    </li> --}}
+                    <li class="menu-item {{ request()->is('admin/report*') ? 'active open' : '' }}">
+                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                            {{-- <i class="menu-icon tf-icons bx bx-bar-chart"></i> --}}
+                            <div data-i18n="Layouts">گزارش تخلف</div>
+                        </a>
+                        <ul class="menu-sub">
+                            <li class="menu-item">
+                                <a class="menu-link" href="{{ route('report.index', ['type' => 'owner']) }}">
+                                    <span>صاحب بار</span>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a class="menu-link" href="{{ route('report.index', ['type' => 'driver']) }}">
+                                    <span>راننده</span>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                     {{-- <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/complaintsTransportationCompanyList') }}">

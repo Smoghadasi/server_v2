@@ -501,6 +501,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // دریافت جزئیات بار برای راننده
         Route::get('loadDetail/{load_id}/{driver_id}', [LoadController::class, 'loadDetail']);
 
+        Route::post('report', [ApiReportController::class, 'store']);
+
 
         Route::group(['prefix' => 'v2'], function () {
             // درخواست لیست بارهای جدید (ورژن 2)

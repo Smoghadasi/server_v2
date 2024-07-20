@@ -376,6 +376,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // نمایش اطلاعات بار
         Route::get('loadInfo/{load_id}', [LoadController::class, 'loadInfo'])->middleware('operator')->name('loadInfo');
 
+        Route::get('sendNotifManuall/{load}', [LoadController::class, 'sendNotifManuall'])->middleware('operator')->name('sendNotifManuall');
+
         // فرم افزودن بار جدید
         Route::get('addNewLoadForm/{userType}', [LoadController::class, 'addNewLoadForm'])->middleware('operator');
 
@@ -765,8 +767,15 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('contactingWithDriverResult/{driver}', [OperatorContactingController::class, 'contactingWithDriverResult'])->middleware('operator')->name('contactingWithDriverResult');
 
 
-        Route::resource('report', ReportController::class)->middleware('operator');
+        // Route::resource('report', ReportController::class)->middleware('operator');
 
+        Route::get('report/{type}', [ReportController::class, 'index'])
+            ->name('report.index')
+            ->middleware('operator');
+
+        Route::put('report/{report}', [ReportController::class, 'update'])
+            ->name('report.update')
+            ->middleware('operator');
 
         // ذخیره نتیجه تماس با راننده
         Route::post('storeContactReportWithDriver', [OperatorContactingController::class, 'storeContactReportWithDriver'])->middleware('operator');

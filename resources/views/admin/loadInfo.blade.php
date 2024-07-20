@@ -9,6 +9,9 @@
                 <a class="btn btn-success" href="{{ route('owner.show', $load->user_id) }}"> اطلاعات صاحب بار</a>
             @endif
             <a class="btn btn-danger" href="{{ url('admin/removeLoadInfo') }}/{{ $load->id }}"> حذف اطلاعات بار</a>
+            @if (auth()->user()->role == 'admin' || Auth::id() == 29)
+                <a class="btn btn-dark" href="{{ route('sendNotifManuall', $load) }}"> ارسال پیامک برای رانندگان</a>
+            @endif
         </div>
 
         <div class="text-right">
