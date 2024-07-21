@@ -45,7 +45,11 @@
             <li class="menu-item">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons bx bx-user-check"></i>
-                    <div data-i18n="pais">احراز هویت</div>
+                    <div data-i18n="pais">احراز هویت
+                        @if (\App\Http\Controllers\DriverController::getNumOfAuthDriver() + \App\Http\Controllers\OwnerController::getNumOfAuthOwner() > 0)
+                            <span class="badge badge-center rounded-pill bg-label-warning">!</span>
+                        @endif
+                    </div>
                 </a>
                 <ul class="menu-sub">
                     @if(in_array('driversAuthentication',auth()->user()->userAccess))
