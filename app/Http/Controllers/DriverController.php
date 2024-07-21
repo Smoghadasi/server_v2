@@ -942,6 +942,9 @@ class DriverController extends Controller
                     $load->save();
                     $fleets = json_decode($load->fleets, true);
                     foreach ($fleets as $fleet) {
+                        if ($fleet['fleet_id'] == 86 && $load->driverCallCounter <= 0) {
+                            $load->delete();
+                        }
                         if ($fleet['fleet_id'] == 82 && $load->driverCallCounter <= 0) {
                             $load->delete();
                         }
