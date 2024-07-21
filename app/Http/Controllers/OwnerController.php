@@ -170,6 +170,12 @@ class OwnerController extends Controller
         return back()->with("danger", "پروفایل حذف شد");
     }
 
+    public static function getNumOfAuthOwner()
+    {
+        $ownerPenddingCounts = Owner::where('isAuth', 2)->count();
+        return $ownerPenddingCounts;
+    }
+
     public function ownersNissan()
     {
         $owners = Owner::whereHas('loads', function ($q) {

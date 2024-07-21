@@ -1582,6 +1582,14 @@ class DriverController extends Controller
         return view('admin.driversAuthenticationByOperator', compact(['drivers', 'driverCount']));
     }
 
+    public static function getNumOfAuthDriver()
+    {
+        $driverCount = Driver::whereIn('authLevel', [DRIVER_AUTH_SILVER_PENDING, DRIVER_AUTH_GOLD_PENDING])
+            ->orderby('updateDateTime', 'asc')
+            ->count();
+        return $driverCount;
+    }
+
     public function removeDriverFile($fileType, Driver $driver)
     {
         try {

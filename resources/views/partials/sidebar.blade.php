@@ -51,7 +51,11 @@
                     @if(in_array('driversAuthentication',auth()->user()->userAccess))
                         <li class="menu-item">
                             <a class="menu-link" href="{{ route('driver.auth.operator') }}">
-                                <div data-i18n="Without menu">رانندگان</div>
+                                <div data-i18n="Without menu">رانندگان
+                                    <span class="badge badge-center rounded-pill bg-danger">
+                                        <td>{{ \App\Http\Controllers\DriverController::getNumOfAuthDriver() }}</td>
+                                    </span>
+                                </div>
                             </a>
                         </li>
                     @endif
@@ -59,7 +63,11 @@
 
                         <li class="menu-item">
                             <a class="menu-link" href="{{ route('ownerAuth.index') }}">
-                                <div data-i18n="Without menu">صاحبان بار</div>
+                                <div data-i18n="Without menu">صاحبان بار
+                                    <span class="badge badge-center rounded-pill bg-danger">
+                                        <td>{{ \App\Http\Controllers\OwnerController::getNumOfAuthOwner() }}</td>
+                                    </span>
+                                </div>
                             </a>
                         </li>
                     @endif
