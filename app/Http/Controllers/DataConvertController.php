@@ -696,10 +696,8 @@ class DataConvertController extends Controller
                 ->where('destination_city_id', $load->destination_city_id)
                 ->where('fleets', 'Like', '%fleet_id":' . $fleet_id->id . ',%')
                 ->first();
-            if ($loadDuplicate) {
-                $loadDuplicate->delete();
-                $load->save();
-            } else {
+            if ($loadDuplicate == null) {
+                // $loadDuplicate->delete();
                 $load->save();
             }
 
@@ -740,21 +738,21 @@ class DataConvertController extends Controller
                     }
                 }
 
-                // try {
+                try {
 
-                //     $load->fleets = FleetLoad::join('fleets', 'fleets.id', 'fleet_loads.fleet_id')
-                //         ->where('fleet_loads.load_id', $load->id)
-                //         ->select('fleet_id', 'userType', 'suggestedPrice', 'numOfFleets', 'pic', 'title')
-                //         ->get();
+                    $load->fleets = FleetLoad::join('fleets', 'fleets.id', 'fleet_loads.fleet_id')
+                        ->where('fleet_loads.load_id', $load->id)
+                        ->select('fleet_id', 'userType', 'suggestedPrice', 'numOfFleets', 'pic', 'title')
+                        ->get();
 
-                //     if ($loadDuplicate === null) {
-                //         $load->save();
-                //     }
-                // } catch (\Exception $exception) {
-                //     Log::emergency("---------------------------------------------------------");
-                //     Log::emergency($exception->getMessage());
-                //     Log::emergency("---------------------------------------------------------");
-                // }
+                    if ($loadDuplicate === null) {
+                        $load->save();
+                    }
+                } catch (\Exception $exception) {
+                    Log::emergency("---------------------------------------------------------");
+                    Log::emergency($exception->getMessage());
+                    Log::emergency("---------------------------------------------------------");
+                }
             }
 
 
