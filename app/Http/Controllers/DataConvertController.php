@@ -691,12 +691,15 @@ class DataConvertController extends Controller
                 $fleet_id = Fleet::where('title', str_replace('ی', 'ي', str_replace('ک', 'ك', $fleet)))->first();
             }
             $loadDuplicate = Load::where('mobileNumberForCoordination', $load->mobileNumberForCoordination)
+                ->where('userType', 'operator')
                 ->where('origin_city_id', $load->origin_city_id)
                 ->where('destination_city_id', $load->destination_city_id)
                 ->where('fleets', 'Like', '%fleet_id":' . $fleet_id->id . ',%')
                 ->first();
-
-            if ($loadDuplicate === null) {
+            if ($loadDuplicate) {
+                $loadDuplicate->delete();
+                $load->save();
+            } else {
                 $load->save();
             }
 
@@ -737,21 +740,21 @@ class DataConvertController extends Controller
                     }
                 }
 
-                try {
+                // try {
 
-                    $load->fleets = FleetLoad::join('fleets', 'fleets.id', 'fleet_loads.fleet_id')
-                        ->where('fleet_loads.load_id', $load->id)
-                        ->select('fleet_id', 'userType', 'suggestedPrice', 'numOfFleets', 'pic', 'title')
-                        ->get();
+                //     $load->fleets = FleetLoad::join('fleets', 'fleets.id', 'fleet_loads.fleet_id')
+                //         ->where('fleet_loads.load_id', $load->id)
+                //         ->select('fleet_id', 'userType', 'suggestedPrice', 'numOfFleets', 'pic', 'title')
+                //         ->get();
 
-                    if ($loadDuplicate === null) {
-                        $load->save();
-                    }
-                } catch (\Exception $exception) {
-                    Log::emergency("---------------------------------------------------------");
-                    Log::emergency($exception->getMessage());
-                    Log::emergency("---------------------------------------------------------");
-                }
+                //     if ($loadDuplicate === null) {
+                //         $load->save();
+                //     }
+                // } catch (\Exception $exception) {
+                //     Log::emergency("---------------------------------------------------------");
+                //     Log::emergency($exception->getMessage());
+                //     Log::emergency("---------------------------------------------------------");
+                // }
             }
 
 
