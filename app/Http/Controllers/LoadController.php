@@ -1951,7 +1951,7 @@ class LoadController extends Controller
 
         $bearings = Bearing::select('id', 'title')->get();
 
-        return view('admin/loadInfo', compact('load', 'path', 'drivers', 'tenders', 'bearings', 'fleetLoads'));
+        return view('admin.loadInfo', compact('load', 'path', 'drivers', 'tenders', 'bearings', 'fleetLoads'));
     }
 
     public function requestLoadStatus($id)

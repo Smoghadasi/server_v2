@@ -131,13 +131,8 @@
                                         </tr>
 
                                         <tr>
-                                            <td class="font-weight-bold">توضیحات</td>
-                                            <td>{{ $load->description }}</td>
-
-                                            <td class="font-weight-bold">ارسال برای</td>
-                                            <td>
-                                                {{ $load->storeFor == 'driver' ? 'رانندگان' : 'باربری' }}
-                                            </td>
+                                            <td colspan="2" class="font-weight-bold">توضیحات</td>
+                                            <td colspan="2">{{ $load->description ?? '-' }}</td>
                                         </tr>
 
                                     </tbody>
