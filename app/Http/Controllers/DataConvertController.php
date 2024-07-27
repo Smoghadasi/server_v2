@@ -699,7 +699,7 @@ class DataConvertController extends Controller
             if ($loadDuplicate == null && $loadDuplicate->userType == 'operator') {
                 $loadDuplicate->delete();
                 $load->save();
-            }elseif ($loadDuplicate == null) {
+            }else {
                 $load->save();
             }
 
