@@ -159,4 +159,9 @@ class Owner extends Model
     {
         return $this->hasMany(Load::class, 'user_id');
     }
+
+    public function province()
+    {
+        return $this->belongsTo(ProvinceCity::class, 'province_id');
+    }
 }

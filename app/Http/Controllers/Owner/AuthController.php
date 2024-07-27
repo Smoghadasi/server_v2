@@ -5,10 +5,11 @@ namespace App\Http\Controllers\Owner;
 use App\Http\Controllers\Controller;
 use App\Models\OperatorOwnerAuthMessage;
 use App\Models\Owner;
-use Auth;
+use App\Models\ProvinceCity;
 use Exception;
 use Illuminate\Http\Request;
-use Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -102,7 +103,9 @@ class AuthController extends Controller
     public function edit(string $id)
     {
         $ownerAuth = Owner::with('operatorMessages')->where('id', $id)->first();
-        return view('admin.auth.owner.edit', compact('ownerAuth'));
+        $provinces = ProvinceCity::where('parent_id', '=', 0)->get();
+
+        return view('admin.auth.owner.edit', compact('ownerAuth', 'provinces'));
     }
 
     public function generateSKU()

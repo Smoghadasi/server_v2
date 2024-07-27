@@ -116,6 +116,20 @@
                                     value="{{ $owner->sku == null ? '-' : $owner->sku }}" id="sku">
                             </div>
                         </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="description" class="col-form-label">توضیحات </label>
+                            <div class="col-md-12">
+                                <input class="form-control" type="text" name="description" disabled
+                                    value="{{ $owner->description == null ? '-' : $owner->description }}" id="sku">
+                            </div>
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="province_id" class="col-form-label">استان</label>
+                            <div class="col-md-12">
+                                <input class="form-control" type="text" name="province_id" disabled
+                                    value="{{ $owner->province->name ?? '-' }}" id="sku">
+                            </div>
+                        </div>
 
                         @if ($owner->isOwner == 2)
                             <div class="mb-3 col-md-6">

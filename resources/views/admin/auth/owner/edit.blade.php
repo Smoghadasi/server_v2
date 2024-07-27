@@ -73,6 +73,25 @@
                                     value="{{ $ownerAuth->postalCode }}" id="postalCode">
                             </div>
                         </div>
+                        <div class="mb-3 row">
+                            <label for="province_id" class="col-md-2 col-form-label">استان</label>
+                            <div class="col-md-10">
+                                <select class="form-control col-md-4" name="province_id" id="origin_city_id">
+                                    <option disabled selected value="0">استان مورد نظر خود را انتخاب کنید</option>
+                                    @foreach ($provinces as $province)
+                                        <option @if($province->id == $ownerAuth->province_id) selected @endif value="{{ $province->id }}">
+                                            {{ $province->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="description" class="col-md-2 col-form-label">توضیحات مربوط به صاحب بار</label>
+                            <div class="col-md-10">
+                                <textarea class="form-control" name="description" rows="6">{{ $ownerAuth->description }}</textarea>
+                            </div>
+                        </div>
                         @if ($ownerAuth->isOwner == 2)
                             <div class="mb-3 row">
                                 <label for="companyName" class="col-md-2 col-form-label">نام شرکت</label>
