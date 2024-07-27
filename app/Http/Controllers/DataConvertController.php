@@ -691,13 +691,13 @@ class DataConvertController extends Controller
                 $fleet_id = Fleet::where('title', str_replace('ی', 'ي', str_replace('ک', 'ك', $fleet)))->first();
             }
             $loadDuplicate = Load::where('mobileNumberForCoordination', $load->mobileNumberForCoordination)
-                ->where('userType', 'operator')
+                // ->where('userType', 'operator')
                 ->where('origin_city_id', $load->origin_city_id)
                 ->where('destination_city_id', $load->destination_city_id)
                 ->where('fleets', 'Like', '%fleet_id":' . $fleet_id->id . ',%')
                 ->first();
-            if ($loadDuplicate == null) {
-                // $loadDuplicate->delete();
+            if ($loadDuplicate == null && $loadDuplicate->userType == 'operator') {
+                $loadDuplicate->delete();
                 $load->save();
             }
 
@@ -745,9 +745,7 @@ class DataConvertController extends Controller
                         ->select('fleet_id', 'userType', 'suggestedPrice', 'numOfFleets', 'pic', 'title')
                         ->get();
 
-                    if ($loadDuplicate === null) {
-                        $load->save();
-                    }
+                    $load->save();
                 } catch (\Exception $exception) {
                     Log::emergency("---------------------------------------------------------");
                     Log::emergency($exception->getMessage());
