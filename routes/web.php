@@ -819,138 +819,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::resource('services', ServiceController::class)->middleware('operator');
     });
 
-    // مسیریابی های مربوط به صاحبان بار، رانندگان ، باربری ها و بازارابها
-    Route::group(['prefix' => 'user'], function () {
-
-        Route::get('status', function () {
-            $message = 'کاربر گرامی لطفا تا برقراری تماس از طرف کارشناسان ما منتظر بمانید. باتشکر گروه پشتیبانی کیانسه';
-            $alert = 'alert-warning';
-
-            return view('users.alert', compact('message', 'alert'));
-        });
-
-        // نمایش بارها
-        Route::get('/', [UserController::class, 'displayUsersDashboard']);
-
-        Route::get('/myLoads', function () {
-            $bearing_id = \auth('bearing')->id();
-            $loads = Load::where('bearing_id', $bearing_id)
-                ->orderBy('id', 'desc')
-                ->get();
-            return view('users.loads', compact('bearing_id', 'loads'));
-        })->middleware('userStatus');
-
-        Route::get('newLoads', [LoadController::class, 'requestNewLoadsForBearingInWeb'])->middleware('userStatus');
-
-
-        // فرم ورود
-        Route::get('login', function () {
-            return view('auth.sendMobileNumberOfUserToLogin');
-        });
-
-        // ارسال شماره تلفن برای ورود (باربری، صاحب بار، راننده، بازاریاب)
-        Route::post('sendActivationCode', [LoginController::class, 'sendActivationCode']);
-
-        // ارسال کد فعلا سازی
-        Route::post('validateActivationCode', [LoginController::class, 'validateActivationCode']);
-
-        // فرم افزودن بار جدید
-        //    Route::get('addNewLoadForm', function () {
-        //        $cities = City::all();
-        //        $fleets = Fleet::where('parent_id', [>', 0)->orderby('parent_id', [asc'])->get();
-        //        $packingTypes = PackingType::get();
-        //        $message = [];
-        //        return view('users.addNewLoadForm', compact('message', [cities', [fleets', [packingTypes'));
-        //    })->middleware('userStatus');;
-        Route::get('addNewLoadForm/{storeFor?}', [LoadController::class, 'addNewLoadForm'])->middleware('userStatus');
-
-        Route::get('createNewLoadForm/{storeFor?}', [LoadController::class, 'createNewLoadForm'])->middleware('userStatus');
-
-        // ثبت بار در وب
-        Route::post('createNewLoad', [LoadController::class, 'createNewLoadInWeb'])->middleware('userStatus');
-
-
-        // نمایش اطلاعات بار
-        Route::get('loadInfo/{load_id}', [LoadController::class, 'loadInfoForUser'])->middleware('userStatus');
-
-        // کیف پول
-        Route::get('wallet', [UserController::class, 'wallet'])->middleware('userStatus');
-
-        // افزودن باربری جدید
-        Route::post('addNewBearing', [BearingController::class, 'addNewBearingOnWeb']);
-
-        // خروج
-        Route::get('logout', function () {
-            if (\auth('bearing')->check())
-                \auth('bearing')->logout();
-            if (\auth('customer')->check())
-                \auth('customer')->logout();
-            if (\auth('driver')->check())
-                \auth('driver')->logout();
-            if (\auth('marketer')->check())
-                \auth('marketer')->logout();
-
-            return redirect(url('user'));
-        });
-
-        // نمایش پروفایل باربری، راننده، مشتری و بازاریاب
-        Route::get('profile', [UserController::class, 'profile'])->middleware('userStatus');
-
-        // درخواست راننده
-        Route::get('requestDriver/{load_id}', [DriverController::class, 'requestDriverForm'])->middleware('userStatus');
-
-        Route::get('cargoConvertLists', [DataConvertController::class, 'cargoConvertLists'])->middleware('operator')->name('delete.duplicate');
-
-
-        Route::post('requestDriver', [LoadController::class, 'requestDriver'])->middleware('userStatus');
-
-
-        // ثبت نام مشتری
-        Route::post('registerCustomer', [RegisterController::class, 'registerCustomerInWeb']);
-
-        Route::get('registerCustomer', function () {
-            $mobileNumber = session()->get('mobileNumber');
-            return view('auth.registerCustomer', compact('mobileNumber'));
-        });
-
-        // ثبت نام باربری
-        Route::post('registerBearing', [RegisterController::class, 'registerBearingInWeb']);
-
-        Route::get('registerBearing', function () {
-            $mobileNumber = session()->get('mobileNumber');
-            $cities = City::select('id', ['name', 'state'])->get();
-            return view('auth.registerBearing', compact('mobileNumber', 'cities'));
-        });
-
-
-        // ثبت نام رننده
-        //    Route::post('registerBearing', [RegisterController::class, 'registerDriverInWeb');
-
-        Route::get('registerDriver', function () {
-            $mobileNumber = session()->get('mobileNumber');
-            return view('auth.registerDriver', compact('mobileNumber'));
-        });
-
-        /************************************************************************************************************/
-        // ثبت قیمت در مناقصه
-        Route::post('suggestionPrice', [TenderController::class, 'suggestionPriceInWeb'])->middleware('userStatus');
-
-        // انتخاب باربری برای بار توسط صاحب بار
-        Route::post('selectBearingForLoad', [LoadController::class, 'selectBearingForLoadInWeb'])->middleware('userStatus');
-
-        /******************************************************************************************************************/
-        // دریافت لیست بارهای مشتری
-        Route::get('getCustomerLoadsList', [LoadController::class, 'getCustomerLoadsList']);
-
-        /**************************************************************************************************************/
-        Route::get('userCriticismOrComplaints', [ComplaintController::class, 'userCriticismOrComplaints']);
-
-        // انتقاد یا شکایت صاحب بار
-        Route::post('storeComplaintCustomerInWeb', [ComplaintController::class, 'storeComplaintCustomerInWeb']);
-
-        Route::post('storeComplaintTransportationCompanyInWeb', [ComplaintController::class, 'storeComplaintTransportationCompanyInWeb']);
-    });
-
 
     /* ******************************************************************************
      * ******************************************************************************
@@ -959,6 +827,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
+    Route::get('cargoConvertLists', [DataConvertController::class, 'cargoConvertLists'])->middleware('operator')->name('delete.duplicate');
 
     Route::get('insertStates', function () {
         $para = new ParameterController();
