@@ -101,7 +101,7 @@
                     </tbody>
                 </table>
             </div>
-            {{ $driversInMonths }}
+            {{-- {{ $driversInMonths }} --}}
         </div>
     </div>
 
