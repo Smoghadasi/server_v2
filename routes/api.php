@@ -3,6 +3,7 @@
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\Api\OwnerController;
 use App\Http\Controllers\Api\ProvinceCityController;
+use App\Http\Controllers\Api\RadioController;
 use App\Http\Controllers\Api\ReportController as ApiReportController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
@@ -460,6 +461,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
 
     Route::group(['prefix' => 'driver'], function () {
+
+        Route::get('radio', [RadioController::class, 'index']);
 
         // بررسی ثبت درخواست حمل توسط راننده
         Route::get('checkDriverInquiry/{driver_id}/{load_id}', [LoadController::class, 'checkDriverInquiry']);
