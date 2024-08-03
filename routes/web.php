@@ -651,6 +651,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
             return redirect('admin/driversCountCall');
         });
 
+        Route::get('driversInMonth', [ReportingController::class, 'driversInMonth'])->name('report.driversInMonth');
+
         // گزارش فعالیت باربری ها
         Route::get('transportationCompaniesActivityReport', [ReportingController::class, 'transportationCompaniesActivityReport'])->middleware('operator');
 

@@ -159,6 +159,10 @@
                         </a>
                     </li>
                 @endif
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7e1e26c193a651f6b544910a61dbc57855b18c17
                 @if (in_array('usersByCity', auth()->user()->userAccess))
                     <li
                         class="menu-item {{ request()->is('admin/usersByCity*') ? 'active open' : '' }} {{ request()->is('admin/usersByProvince*') ? 'active open' : '' }}">
@@ -187,6 +191,16 @@
                         </a>
                     </li>
                 @endif
+<<<<<<< HEAD
+=======
+                @if (auth()->user()->role == 'admin' || auth()->user()->id == 29)
+                    <li class="menu-item">
+                        <a class="menu-link" href="{{ route('report.driversInMonth') }}">
+                            <span>فعالیت رانندگان غیر تکراری</span>
+                        </a>
+                    </li>
+                @endif
+>>>>>>> 7e1e26c193a651f6b544910a61dbc57855b18c17
                 @if (in_array('driverActivityReport', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/driverActivityReport') }}">
@@ -510,6 +524,7 @@
                 @endif
             </ul>
         </li>
+<<<<<<< HEAD
         {{-- @if (in_array('radio', auth()->user()->userAccess)) --}}
             <li class="menu-item">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -534,6 +549,8 @@
                 </ul>
             </li>
         {{-- @endif --}}
+=======
+>>>>>>> 7e1e26c193a651f6b544910a61dbc57855b18c17
         @if (in_array('setting', auth()->user()->userAccess))
             <li class="menu-item">
                 <a href="{{ route('setting.index') }}" class="menu-link">

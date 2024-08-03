@@ -10,6 +10,7 @@ use App\Models\ContactReportWithCargoOwnerResult;
 use App\Models\Customer;
 use App\Models\Driver;
 use App\Models\DriverActivity;
+use App\Models\DriverCall;
 use App\Models\DriverCallCount;
 use App\Models\DriverCallReport;
 use App\Models\Fleet;
@@ -23,6 +24,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Models\UserActivityReport;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -324,6 +326,30 @@ class ReportingController extends Controller
 
 
         return view('admin.reporting.driversCountCall', compact('basedCalls', 'fromDate', 'toDate'));
+    }
+
+    public function driversInMonth(Request $request)
+    {
+        $date = Carbon::today()->subDays(30);
+
+        $driverVersions = Driver::select('version', DB::raw('count(*) as total'))
+            ->groupBy('version')
+            ->orderBy('version', 'desc')
+            ->where('version', '<=', 58)
+            ->get();
+
+        $driversInMonths = DriverCall::with('driver')
+            ->groupBy('driver_id')
+            ->when($request->version !== null, function ($query) use ($request) {
+                return $query->whereHas('driver', function ($q) use ($request) {
+                    $q->where('version', $request->version);
+                });
+            })
+            ->select('driver_id', DB::raw('count(driver_id) as countOfCalls'))
+            ->where('created_at', '>=', $date)
+            ->get();
+
+        return view('admin.driversInMonth', compact('driversInMonths', 'driverVersions'));
     }
 
     public function usersByCity()
@@ -1262,7 +1288,7 @@ class ReportingController extends Controller
             $toDate = persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:00';
             $cargoReports = CargoReportByFleet::with('fleet')
                 ->groupBy('fleet_id')
-                ->select('fleet_id', 'date', 'count_owner' , DB::raw('sum(count) as count'))
+                ->select('fleet_id', 'date', 'count_owner', DB::raw('sum(count) as count'))
                 ->orderByDesc('count')
                 ->whereBetween('created_at', [$fromDate, $toDate])
                 ->when($request->fleet_id !== null, function ($query) use ($request) {
