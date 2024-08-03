@@ -25,6 +25,7 @@ use App\Http\Controllers\PackingTypeController;
 use App\Http\Controllers\ParameterController;
 use App\Http\Controllers\PayController;
 use App\Http\Controllers\ProvinceCityController;
+use App\Http\Controllers\RadioController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReportingController;
@@ -578,6 +579,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('profile', [UserController::class, 'adminProfile'])->middleware('operator')->name('user.edit');
 
         Route::resource('setting', SettingController::class);
+
+        Route::resource('radio', RadioController::class);
 
         Route::post('restPassword/{user}', [UserController::class, 'restPassword'])->middleware('operator')->name('user.resetPass');
 
