@@ -340,13 +340,14 @@ class ReportingController extends Controller
 
         $driversInMonths = DriverCall::with('driver')
             ->groupBy('driver_id')
+
+            ->select('driver_id', DB::raw('count(driver_id) as countOfCalls'))
+            ->where('version', 58)
             ->when($request->version !== null, function ($query) use ($request) {
                 return $query->whereHas('driver', function ($q) use ($request) {
                     $q->where('version', $request->version);
                 });
             })
-            ->select('driver_id', DB::raw('count(driver_id) as countOfCalls'))
-            ->where('created_at', '>=', $date)
             ->get();
 
         return view('admin.driversInMonth', compact('driversInMonths', 'driverVersions'));
