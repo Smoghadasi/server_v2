@@ -517,7 +517,7 @@
                                                     <label>
                                                         <input type="checkbox" name="radios"
                                                             @if (in_array('radios', $user->userAccess)) checked @endif>
-                                                        خدمات ها
+                                                        رسانه
                                                     </label>
                                                 </div>
                                                 <div class="form-group">
