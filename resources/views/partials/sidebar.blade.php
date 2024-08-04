@@ -517,21 +517,18 @@
                 @endif
             </ul>
         </li>
-        {{-- @if (in_array('radio', auth()->user()->userAccess)) --}}
+        @if (in_array('radio', auth()->user()->userAccess))
             <li class="menu-item">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons bx bxs-radio"></i>
                     <div data-i18n="Layouts">رسانه</div>
                 </a>
-
                 <ul class="menu-sub">
-                    @if (in_array('fleet', auth()->user()->userAccess) || auth()->user()->role == 'admin')
-                        <li class="menu-item">
-                            <a class="menu-link" href="#">
-                                <span>اسلایدر</span>
-                            </a>
-                        </li>
-                    @endif
+                    <li class="menu-item">
+                        <a class="menu-link" href="#">
+                            <span>اسلایدر</span>
+                        </a>
+                    </li>
 
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('radio.index') }}">
@@ -540,7 +537,7 @@
                     </li>
                 </ul>
             </li>
-        {{-- @endif --}}
+        @endif
         @if (in_array('setting', auth()->user()->userAccess))
             <li class="menu-item">
                 <a href="{{ route('setting.index') }}" class="menu-link">
