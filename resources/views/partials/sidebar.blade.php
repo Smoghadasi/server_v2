@@ -517,7 +517,7 @@
                 @endif
             </ul>
         </li>
-        @if (in_array('radio', auth()->user()->userAccess))
+        @if (in_array('radios', auth()->user()->userAccess))
             <li class="menu-item">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons bx bxs-radio"></i>
