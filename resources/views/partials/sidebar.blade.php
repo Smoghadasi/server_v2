@@ -187,7 +187,7 @@
                         </a>
                     </li>
                 @endif
-                @if (auth()->user()->role == 'admin' || auth()->user()->id == 29)
+                @if (in_array('driversInMonth', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('report.driversInMonth') }}">
                             <span>فعالیت رانندگان غیر تکراری</span>

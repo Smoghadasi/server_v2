@@ -558,6 +558,13 @@
                                                         گزارش استفاده کننده رانندگان
                                                     </label>
                                                 </div>
+                                                <div class="form-group">
+                                                    <label>
+                                                        <input type="checkbox" name="driversInMonth"
+                                                            @if (in_array('driversInMonth', $user->userAccess)) checked @endif>
+                                                        فعالیت رانندگان غیر تکراری
+                                                    </label>
+                                                </div>
                                                 <ul id="myUL">
                                                     <li><span class="caret">دسترسی به رانندگان</span>
                                                         <ul class="nested">
