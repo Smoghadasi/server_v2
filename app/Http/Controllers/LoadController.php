@@ -2849,7 +2849,7 @@ class LoadController extends Controller
     public function acceptCargo()
     {
         $cargoAccepts = Load::where('status', BEFORE_APPROVAL)
-            ->where('userType', 'customer')
+            ->whereIn('userType', ['customer', 'owner'])
             // ->select(['id', 'title', 'toCity', 'fromCity', 'mobileNumberForCoordination', 'created_at'])
             ->paginate(15);
         return view('admin.load.cargo_accept', compact('cargoAccepts'));

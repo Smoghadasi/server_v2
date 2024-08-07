@@ -753,6 +753,17 @@ class DataConvertController extends Controller
                     Log::emergency($exception->getMessage());
                     Log::emergency("---------------------------------------------------------");
                 }
+                if ($load->isBot == 1) {
+                    $firstLoad = LoadBackup::where('mobileNumberForCoordination', $load->mobileNumberForCoordination)
+                        ->where('origin_city_id', $load->origin_city_id)
+                        ->where('destination_city_id', $load->destination_city_id)
+                        ->where('fleets', 'Like', '%fleet_id":' . $fleet_id->id . ',%')
+                        ->first();
+                    if ($firstLoad == null) {
+                        $load->status = BEFORE_APPROVAL;
+                        $load->save();
+                    }
+                }
             }
 
 

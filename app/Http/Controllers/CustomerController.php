@@ -9,6 +9,7 @@ use App\Models\Customer;
 use App\Models\Fleet;
 use App\Models\Load;
 use App\Models\LoadType;
+use App\Models\Owner;
 use App\Models\PackingType;
 use HttpException;
 use Illuminate\Http\Request;
@@ -137,13 +138,10 @@ class CustomerController extends Controller
 
     public function acceptCustomer(string $id)
     {
-        $customer = Customer::findOrFail($id);
-        $customer->isPublish = 1;
-        $customer->save();
-        $sms = new Customer();
-        $sms->acceptCustomerSms($customer->mobileNumber);
+        $loads = Load::whereIn('userType', ['owner', 'customer'])
+            ->where('user_id', $id)
+            ->get();
 
-        $loads = Load::where('user_id', $id)->get();
         foreach ($loads as $load) {
             if ($load->status = -1) {
                 $load->status = 4;
@@ -155,14 +153,17 @@ class CustomerController extends Controller
 
     public function rejectCustomer(string $id)
     {
-        $customer = Customer::findOrFail($id);
+        $owner = Owner::findOrFail($id);
         $blockNumber = new BlockPhoneNumber();
-        $blockNumber->phoneNumber = $customer->mobileNumber;
-        $blockNumber->name = $customer->name . " " . $customer->lastName;
+        $blockNumber->phoneNumber = $owner->mobileNumber;
+        $blockNumber->name = $owner->name . " " . $owner->lastName;
         $blockNumber->description = "کلاهبرداری";
         $blockNumber->save();
-        Load::where('user_id', $id)->delete();
-        return back()->with("success", "صاحب بار رد شد");
+        Load::where('user_id', $id)
+            ->whereIn('userType', ['owner', 'customer'])
+            ->where('isBot', 1)
+            ->delete();
+        return back()->with("success", "بار رد شد");
     }
 
     // آپدیت اطلاعات صاحب بار
