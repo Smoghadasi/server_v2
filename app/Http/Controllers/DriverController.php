@@ -855,9 +855,9 @@ class DriverController extends Controller
                 return ['result' => 2];
             }
 
-            // if (FleetLoad::where('load_id', '=', $load_id)->where('fleet_id', 82)->doesntExist()) {
-            //     return ['result' => true];
-            // }
+            if (FleetLoad::where('load_id', '=', $load_id)->where('fleet_id', 82)->doesntExist()) {
+                return ['result' => true];
+            }
 
 
             if ($driver->activeDate > date("Y-m-d H:i:s", time()) || $driver->freeCalls > 0) {
