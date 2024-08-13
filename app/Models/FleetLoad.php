@@ -30,8 +30,8 @@ class FleetLoad extends Model
         return $this->belongsTo(Fleet::class);
     }
 
-//    public function load()
-//    {
-//        return $this->belongsTo(Load::class);
-//    }
+   public function cargo()
+   {
+       return $this->belongsTo(Load::class, 'load_id');
+   }
 }
