@@ -14,6 +14,7 @@ use App\Models\DriverCallCount;
 use App\Models\DriverCallReport;
 use App\Models\DriverDefaultPath;
 use App\Models\Fleet;
+use App\Models\FleetLoad;
 use App\Models\FreeSubscription;
 use App\Models\Load;
 use App\Models\OperatorDriverAuthMessage;
@@ -339,9 +340,7 @@ class DriverController extends Controller
     }
 
     // درخواست لیست بار جدید در نوتیفیکیشن
-    public function requestNewLoadsNotification($driver_id)
-    {
-    }
+    public function requestNewLoadsNotification($driver_id) {}
 
     // افزودن مسیر
     public function addPath(Request $request)
@@ -852,26 +851,14 @@ class DriverController extends Controller
         try {
             $load = Load::where('id', '=', $load_id)->first();
 
-            // $owner = Owner::where('mobileNumber', $load->mobileNumberForCoordination)->whereNotNull('FCM_token')->first();
-            // $cityFrom = ProvinceCity::findOrFail($load->origin_city_id);
-            // $cityTo = ProvinceCity::findOrFail($load->destination_city_id);
-
-            // if ($owner) {
-            //     try {
-            //         $title = 'ایران ترابر صاحبان بار';
-            //         $body = $driver->name . ' ' . $driver->lastName . ' راننده ' . '(' . $driver->fleetTitle . ')' . ' جهت حمل بار از ' . $cityFrom->name . ' به ' . $cityTo->name . ' با شما تماس گرفته است.';
-
-            //         $this->sendNotification($owner->FCM_token, $title, $body);
-            //     } catch (\Exception $exception) {
-            //         Log::emergency("----------------------send notif storeInquiryToLoad-----------------------");
-            //         Log::emergency($exception);
-            //         Log::emergency("---------------------------------------------------------");
-            //     }
-            // }
-
             if ($load === null) {
                 return ['result' => 2];
             }
+
+            if (FleetLoad::where('load_id', '=', $load_id)->where('fleet_id', 82)->doesntExist()) {
+                return ['result' => true];
+            }
+
 
             if ($driver->activeDate > date("Y-m-d H:i:s", time()) || $driver->freeCalls > 0) {
 
