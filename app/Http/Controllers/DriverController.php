@@ -953,6 +953,7 @@ class DriverController extends Controller
                 return ['result' => true];
             } elseif (FleetLoad::where('load_id', $load_id)->where('fleet_id', '!=', 82)->whereHas('cargo', function ($q) {
                 $q->where('userType', 'owner');
+                $q->where('isBot', 0);
             })->exists()) {
                 if (DriverCall::where('load_id', $load_id)->where('driver_id', $driver->id)->count() > 0) {
                     return ['result' => true];
