@@ -4,7 +4,7 @@
 
     <div class="card">
         <h5 class="card-header">
-            شکایات و انتقادات صاحب بار
+            گزارش تخلف
         </h5>
         <div class="card-body">
 
@@ -27,7 +27,13 @@
                     <tr>
                         <td>{{ (($reports->currentPage()-1) * $reports->perPage()) + ($key + 1) }}</td>
                         <td><a href="{{ route('driver.detail', $report->driver_id) }}">{{ $report->driver->name }} {{ $report->driver->lastName }}</a></td>
-                        <td><a href="{{ route('owner.show', $report->owner_id) }}">{{ $report->owner->name }} {{ $report->owner->lastName }}</a></td>
+                        <td>
+                            @if (asset($report->owner->name))
+                                <a href="{{ route('owner.show', $report->owner_id) }}">{{ $report->owner->name }} {{ $report->owner->lastName }}</a>
+                            @else
+                                -
+                            @endif
+                        </td>
                         <td><a href="{{ route('loadInfo', $report->load_id) }}">{{ $report->cargo->title }}</a></td>
                         <td>
                             @switch($report->type)
