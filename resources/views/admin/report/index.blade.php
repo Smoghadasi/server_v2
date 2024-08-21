@@ -28,10 +28,11 @@
                         <td>{{ (($reports->currentPage()-1) * $reports->perPage()) + ($key + 1) }}</td>
                         <td><a href="{{ route('driver.detail', $report->driver_id) }}">{{ $report->driver->name }} {{ $report->driver->lastName }}</a></td>
                         <td>
-                            @if (asset($report->owner->name))
-                                <a href="{{ route('owner.show', $report->owner_id) }}">{{ $report->owner->name }} {{ $report->owner->lastName }}</a>
-                            @else
+                            @if ($report->owner_id == null)
                                 -
+                            @else
+                            <a href="{{ route('owner.show', $report->owner_id) }}">{{ $report->owner->name }} {{ $report->owner->lastName }}</a>
+
                             @endif
                         </td>
                         <td><a href="{{ route('loadInfo', $report->load_id) }}">{{ $report->cargo->title }}</a></td>
