@@ -525,7 +525,7 @@
                 </a>
                 <ul class="menu-sub">
                     <li class="menu-item">
-                        <a class="menu-link" href="#">
+                        <a class="menu-link" href="{{ route('slider.index') }}">
                             <span>اسلایدر</span>
                         </a>
                     </li>
