@@ -31,6 +31,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReportingController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\SliderController;
 // use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SOSController;
 use App\Http\Controllers\TenderController;
@@ -590,6 +591,10 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         //  محاسبه شهرستان ها
         Route::resource('cityDistanceCalculate', CityDistanceController::class);
+
+        //  slider
+        Route::resource('slider', SliderController::class);
+
 
         // جستجوی لیست ممنوعه شماره موبایل
         Route::post('searchBlockedPhoneNumber', [BlockPhoneNumberController::class, 'searchBlockedPhoneNumber'])
