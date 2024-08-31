@@ -100,7 +100,7 @@
                 @if (in_array('ownersNissan', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('ownersNissan') }}">
-                            <div data-i18n="Without menu"> بارهای رد شده</div>
+                            <div data-i18n="Without menu"> صاحبان بار نیسان</div>
                         </a>
                     </li>
                 @endif
