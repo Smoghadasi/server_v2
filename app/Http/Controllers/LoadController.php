@@ -3241,12 +3241,12 @@ class LoadController extends Controller
                 "notification" => [
                     "title" => $title,
                     "body" => $body
-                ],
-                "webpush" => [
-                    "fcm_options" => [
-                        "link" => "https://cargo.iran-tarabar.com/780849"
-                    ]
                 ]
+                // "webpush" => [
+                //     "fcm_options" => [
+                //         "link" => "https://cargo.iran-tarabar.com/780849"
+                //     ]
+                // ]
             ],
         ];
 
