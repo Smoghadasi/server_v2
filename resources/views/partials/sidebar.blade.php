@@ -97,6 +97,13 @@
                         </a>
                     </li>
                 @endif
+                @if (in_array('ownersNissan', auth()->user()->userAccess))
+                    <li class="menu-item">
+                        <a class="menu-link" href="{{ route('ownersNissan') }}">
+                            <div data-i18n="Without menu"> بارهای رد شده</div>
+                        </a>
+                    </li>
+                @endif
                 @if (in_array('loadOwner', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('admin.loadBackup') }}">

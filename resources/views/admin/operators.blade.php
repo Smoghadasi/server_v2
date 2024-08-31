@@ -560,6 +560,13 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label>
+                                                        <input type="checkbox" name="ownersNissan"
+                                                            @if (in_array('ownersNissan', $user->userAccess)) checked @endif>
+                                                        صاحبان بار نیسان
+                                                    </label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>
                                                         <input type="checkbox" name="driversInMonth"
                                                             @if (in_array('driversInMonth', $user->userAccess)) checked @endif>
                                                         فعالیت رانندگان غیر تکراری
