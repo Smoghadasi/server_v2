@@ -3242,6 +3242,11 @@ class LoadController extends Controller
                     "title" => $title,
                     "body" => $body
                 ],
+                "webpush" => [
+                    "fcm_options" => [
+                        "link" => "https://cargo.iran-tarabar.com/780849"
+                    ]
+                ]
             ],
         ];
 
