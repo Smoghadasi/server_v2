@@ -13,6 +13,7 @@ use App\Models\DriverCall;
 use App\Models\DriverCallCount;
 use App\Models\DriverCallReport;
 use App\Models\DriverDefaultPath;
+use App\Models\DriverFleet;
 use App\Models\Fleet;
 use App\Models\FleetLoad;
 use App\Models\FreeSubscription;
@@ -1326,8 +1327,18 @@ class DriverController extends Controller
             else
                 $driver->activeDate = date('Y-m-d', $time + $month * 30 * 24 * 60 * 60);
 
+            $checkDriverFleet = DriverFleet::where('fleet_id', $driver->fleet_id)->where('driver_id', $driver->id)->first();
+            if ($checkDriverFleet === null) {
+                $driverFleet = new DriverFleet();
+                $driverFleet->fleet_id = $driver->fleet_id;
+                $driverFleet->driver_id = $driver->id;
+                $driverFleet->freeCall = $freeCalls;
+                $driverFleet->save();
+            } else {
+                $checkDriverFleet->freeCall += $freeCalls;
+                $checkDriverFleet->save();
+            }
             $driver->freeCalls = ($driver->freeCalls > 0 ? $driver->freeCalls : 0) + $freeCalls;
-            // $driver->freeAcceptLoads += $freeAcceptLoads;
             $driver->save();
 
             try {
