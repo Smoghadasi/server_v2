@@ -3638,16 +3638,15 @@ class LoadController extends Controller
     }
 
     // ویرایش اطلاعات بار در وب
-    public function editLoadInfoInWeb(Request $request, Load $load)
+    public function editLoadInfoInWeb(NewLoadRequest $request, Load $load)
     {
         return $this->editLoadInfo($request, $load);
         return redirect(url('admin/loadInfo/' . $request->id));
     }
 
     // ویرایش اطلاعات بار در اپ
-    public function editLoadInfo(NewLoadRequest $request, Load $load, $api = false)
+    public function editLoadInfo($request, Load $load, $api = false)
     {
-
         try {
 
             $senderMobileNumber = isset($request->mobileNumberForCoordination) ? $request->mobileNumberForCoordination : $request->senderMobileNumber;
@@ -3692,10 +3691,10 @@ class LoadController extends Controller
             if (!isset($request->tenderTimeDuration))
                 $request->tenderTimeDuration = 15;
 
-            if ($request->image != "noImage") {
-                $loadPic = "pictures/loads/" . sha1(time() . $request->user_id) . ".jpg";
-                file_put_contents($loadPic, base64_decode($request->pic));
-            }
+            // if ($request->image != "noImage") {
+            //     $loadPic = "pictures/loads/" . sha1(time() . $request->user_id) . ".jpg";
+            //     file_put_contents($loadPic, base64_decode($request->pic));
+            // }
 
             DB::beginTransaction();
 

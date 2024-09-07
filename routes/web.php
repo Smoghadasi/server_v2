@@ -393,7 +393,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('editLoadInfoForm/{load_id}', [LoadController::class, 'editLoadInfoForm'])->middleware('operator');
 
         // ویرایش اطلاعات بار
-        Route::post('editLoadInfo/{load}', [LoadController::class, 'editLoadInfoInWeb'])->middleware('operator');
+        Route::post('editLoadInfo/{load}', [LoadController::class, 'editLoadInfoInWeb'])->name('admin.editLoadInfo')->middleware('operator');
 
         // حذف اطلاعات بار
         Route::get('removeLoadInfo/{load_id}', [LoadController::class, 'removeLoadInfo'])->middleware('operator');
