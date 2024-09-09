@@ -70,8 +70,7 @@ class WarehouseController extends Controller
      */
     public function update(Request $request, Warehouse $warehouse)
     {
-        $warehouse->status = 1;
-        $warehouse->save();
+        $warehouse->delete();
         return redirect()->route('warehouse.index')->with('success', 'بار ثبت شد');
 
     }
