@@ -5,7 +5,7 @@
         <div class="col-lg-6" style="height: 100vh;overflow-y: auto;">
             <form method="POST" action="{{ route('warehouse.destroy', $warehouse) }}">
                 @csrf
-                @method('put')
+                @method('delete')
 
                 <div class="form-group row text-right alert alert-light border border-dark" style="color: #000000">
                     <input type="hidden" name="key[]" value="">
