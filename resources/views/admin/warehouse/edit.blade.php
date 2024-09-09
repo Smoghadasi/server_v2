@@ -3,7 +3,7 @@
 @section('content')
     <div class="card align-items-center">
         <div class="col-lg-6" style="height: 100vh;overflow-y: auto;">
-            <form method="POST" action="{{ route('warehouse.update', $warehouse) }}">
+            <form method="POST" action="{{ route('warehouse.destroy', $warehouse) }}">
                 @csrf
                 @method('put')
 

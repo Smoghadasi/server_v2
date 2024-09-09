@@ -70,8 +70,6 @@ class WarehouseController extends Controller
      */
     public function update(Request $request, Warehouse $warehouse)
     {
-        $warehouse->delete();
-        return redirect()->route('warehouse.index')->with('success', 'بار ثبت شد');
 
     }
 
@@ -81,8 +79,10 @@ class WarehouseController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Warehouse $warehouse)
     {
-        //
+        $warehouse->delete();
+        return redirect()->route('warehouse.index')->with('danger', 'بار حذف شد');
+
     }
 }
