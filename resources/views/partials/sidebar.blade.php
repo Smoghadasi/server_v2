@@ -90,6 +90,13 @@
             </a>
 
             <ul class="menu-sub">
+                @if (in_array('warehouse', auth()->user()->userAccess))
+                    <li class="menu-item">
+                        <a class="menu-link" href="{{ route('warehouse.index') }}">
+                            <div data-i18n="Without menu">انبار بار</div>
+                        </a>
+                    </li>
+                @endif
                 @if (in_array('rejectedCargoFromCargoList', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/rejectedCargoFromCargoList') }}">

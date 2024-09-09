@@ -508,6 +508,13 @@
 
                                                 <div class="form-group">
                                                     <label>
+                                                        <input type="checkbox" name="warehouse"
+                                                            @if (in_array('warehouse', $user->userAccess)) checked @endif>
+                                                        انبار بار
+                                                    </label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>
                                                         <input type="checkbox" name="services"
                                                             @if (in_array('services', $user->userAccess)) checked @endif>
                                                         خدمات ها

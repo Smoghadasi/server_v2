@@ -39,6 +39,7 @@ use App\Http\Controllers\User\BlockPhoneNumberController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VacationController;
 use App\Http\Controllers\VacationHourController;
+use App\Http\Controllers\WarehouseController;
 use App\Models\City;
 use App\Models\Load;
 use App\Models\State;
@@ -582,6 +583,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('profile', [UserController::class, 'adminProfile'])->middleware('operator')->name('user.edit');
 
         Route::resource('setting', SettingController::class);
+
+        Route::resource('warehouse', WarehouseController::class);
 
         Route::resource('radio', RadioController::class);
 
