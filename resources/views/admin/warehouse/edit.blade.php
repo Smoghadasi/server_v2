@@ -11,25 +11,25 @@
                     <input type="hidden" name="key[]" value="">
 
                     <label class="col-lg-12 mb-2">عنوان :
-                        <input type="text" class="form-control" name="title" placeholder="بدون عنوان">
+                        <input type="text" class="form-control" value="{{ $warehouse->cargo }}" name="title" placeholder="بدون عنوان">
                     </label>
                     <label class="col-lg-6 mb-2">مبدا :
-                        <input type="text" class="form-control">
+                        <input type="text" class="form-control" value="{{ $warehouse->origin }}">
                     </label>
 
 
                     <label class="col-lg-6 mb-2">مقصد :
-                        <input type="text" class="form-control">
+                        <input type="text" class="form-control" value="{{ $warehouse->destination }}">
                     </label>
 
                     <label class="col-lg-12 mb-2">شماره تلفن :
-                        <input type="text" class="form-control">
+                        <input type="text" class="form-control" value="{{ $warehouse->mobile_number }}">
                     </label>
 
                     <div class="col-lg-12 row mb-2">
 
                         <label class="col-lg-6">قیمت :
-                            <input type="text" class="form-control">
+                            <input type="text" class="form-control" value="{{ $warehouse->price }}">
                         </label>
                         <label class="col-lg-6">نوع قیمت :
                             <div class="col-lg-12">
@@ -54,10 +54,7 @@
 
                     <label class="col-lg-12 row mb-2">
                         <lable class="col-lg-12">ناوگان :</lable>
-                        <input type="text" class="form-control col-lg-4" name="fleets" value="">
-                    </label>
-                    <label class="col-lg-12 row">توضیحات :
-                        <textarea class="form-control" name="description" rows="4"></textarea>
+                        <input type="text" class="form-control col-lg-4" name="fleets" value="{{ $warehouse->fleet }}">
                     </label>
                     <label class="col-lg-6 row">دیتا :
                         <textarea class="form-control" name="data" rows="10">{{ $warehouse->data }}</textarea>
