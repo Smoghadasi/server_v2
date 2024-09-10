@@ -59,8 +59,11 @@
                     <label class="col-lg-12 row">توضیحات :
                         <textarea class="form-control" name="description" rows="4"></textarea>
                     </label>
-                    <label class="col-lg-12 row">دیتا :
-                        <textarea class="form-control" name="description" rows="10">{{ $warehouse->data }}</textarea>
+                    <label class="col-lg-6 row">دیتا :
+                        <textarea class="form-control" name="data" rows="10">{{ $warehouse->data }}</textarea>
+                    </label>
+                    <label class="col-lg-6 row">json :
+                        <textarea class="form-control" name="json" rows="10">{{ $warehouse->json }}</textarea>
                     </label>
                 </div>
 
