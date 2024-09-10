@@ -745,9 +745,9 @@ class DataConvertController extends Controller
                         ->select('fleet_id', 'userType', 'suggestedPrice', 'numOfFleets', 'pic', 'title')
                         ->get();
 
-                    if ($loadDuplicate === null) {
+                    // if ($loadDuplicate === null) {
                         $load->save();
-                    }
+                    // }
                 } catch (\Exception $exception) {
                     Log::emergency("---------------------------------------------------------");
                     Log::emergency($exception->getMessage());
