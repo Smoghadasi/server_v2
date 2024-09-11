@@ -87,21 +87,27 @@ class ComplaintController extends Controller
             ->orderByDesc('created_at')
             ->get();
         return response()->json($complaints, 200);
-
     }
 
     public function storeComplaintDriverAdminMessage(Request $request, ComplaintDriver $complaintDriver)
     {
-        $driverFCM_token = Driver::where('id', $complaintDriver->driver_id)
-            ->whereNotNull('FCM_token')
-            ->pluck('FCM_token');
-        $title = 'ایران ترابر';
-        $body = 'پاسخ تیکت ' . ' ( ' . $complaintDriver->trackingCode . ' ) ' . 'برای شما ارسال شد.';
 
         $complaintDriver->adminMessage = $request->adminMessage;
         $complaintDriver->save();
 
-        $this->sendNotification($driverFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
+        try {
+            $driverFCM_token = Driver::where('id', $complaintDriver->driver_id)
+                ->whereNotNull('FCM_token')
+                ->pluck('FCM_token');
+            $title = 'ایران ترابر';
+            $body = 'پاسخ تیکت ' . ' ( ' . $complaintDriver->trackingCode . ' ) ' . 'برای شما ارسال شد.';
+
+            $this->sendNotification($driverFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
+        } catch (\Exception $exception) {
+            Log::emergency("----------------------send notification complaintDriver-----------------------");
+            Log::emergency($exception);
+            Log::emergency("---------------------------------------------------------");
+        }
 
 
         return back()->with('success', 'پاسخ مورد نظر ثبت شد');
