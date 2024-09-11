@@ -231,7 +231,17 @@ class DataConvertController extends Controller
         $extraWords = $this->getExtraWords();
         $originWords = $this->getOriginWords();
         $equivalentWords = $this->getEquivalentWords();
-        $cleanedText = $this->getCleanedText($cargo->cargo, $fleetsList, $citiesList, $equivalentWords, $originWords, $extraWords, $prefixFreightConditions, $postfixFreightConditions, $provincesList);
+        $cleanedText = $this->getCleanedText(
+            $cargo->cargo,
+            $fleetsList,
+            $citiesList,
+            $equivalentWords,
+            $originWords,
+            $extraWords,
+            $prefixFreightConditions,
+            $postfixFreightConditions,
+            $provincesList
+        );
         $cargoList = [];
         $currentOrigin = -1;
         $originPrefixWord = false;
