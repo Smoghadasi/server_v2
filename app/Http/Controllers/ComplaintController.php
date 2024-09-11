@@ -96,13 +96,14 @@ class ComplaintController extends Controller
         $complaintDriver->save();
 
         try {
-            $driverFCM_token = Driver::where('id', $complaintDriver->driver_id)
+            $driverFCM_tokens = Driver::where('id', $complaintDriver->driver_id)
                 ->whereNotNull('FCM_token')
                 ->pluck('FCM_token');
             $title = 'ایران ترابر';
             $body = 'پاسخ تیکت ' . ' ( ' . $complaintDriver->trackingCode . ' ) ' . 'برای شما ارسال شد.';
-
-            $this->sendNotification($driverFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
+            foreach ($driverFCM_tokens as $driverFCM_token) {
+                $this->sendNotification($driverFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
+            }
         } catch (\Exception $exception) {
             Log::emergency("----------------------send notification complaintDriver-----------------------");
             Log::emergency($exception);
