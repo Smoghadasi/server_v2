@@ -3619,7 +3619,7 @@ class LoadController extends Controller
     // فرم نمایش اطلعات بار
     public function editLoadInfoForm($load_id)
     {
-        $cities = City::orderby('centerOfProvince', 'desc')->get();
+        $cities = ProvinceCity::where('parent_id', '!=', 0)->get();
         $fleets = Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
         $packingTypes = PackingType::get();
         $load = Load::where('id', $load_id)->first();
