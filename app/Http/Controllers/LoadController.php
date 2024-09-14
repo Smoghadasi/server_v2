@@ -1022,6 +1022,7 @@ class LoadController extends Controller
                     ->where('province_id', $cityFrom->parent_id)
                     ->where('fleet_id', $fleet->fleet_id)
                     ->where('version', '>', 58)
+                    ->where('notification', 'enable')
                     ->pluck('FCM_token');
                 $title = 'ایران ترابر رانندگان';
                 $body = ' بار ' . $fleet->fleet->title . ':' . ' از ' . $cityFrom->name . ' به ' . $cityTo->name;
