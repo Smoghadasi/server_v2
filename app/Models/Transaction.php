@@ -76,7 +76,7 @@ class Transaction extends Model
     public function getPaymentDateAttribute()
     {
         try {
-            $date = explode(' ', $this->created_at);
+            $date = explode(' ', $this->updated_at);
             return str_replace('-', '/', gregorianDateToPersian($date[0], '-')) . ' ' . $date[1];
         } catch (\Exception $exception) {
 
