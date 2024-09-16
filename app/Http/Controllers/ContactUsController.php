@@ -113,26 +113,29 @@ class ContactUsController extends Controller
     // تغییر وضعیت به خوانده شده
     public function changeMessageStatus(ContactUs $contactUs, Request $request)
     {
+
         $contactUs->status = true;
         $contactUs->result = strlen($request->result) ? $request->result : "نتیجه ای ثبت نشده!";
         $contactUs->save();
-
-        try {
-            if ($contactUs->role == 'driver') {
-                $driverFCM_tokens = Driver::where('mobileNumber', $contactUs->mobileNumber)
-                    ->whereNotNull('FCM_token')
-                    ->pluck('FCM_token');
-                $title = 'ایران ترابر';
-                $body = 'پاسخ تیکت ' . 'برای شما ارسال شد.';
-                foreach ($driverFCM_tokens as $driverFCM_token) {
-                    $this->sendNotification($driverFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
+        if ($request->notification == 'on') {
+            try {
+                if ($contactUs->role == 'driver') {
+                    $driverFCM_tokens = Driver::where('mobileNumber', $contactUs->mobileNumber)
+                        ->whereNotNull('FCM_token')
+                        ->pluck('FCM_token');
+                    $title = 'ایران ترابر';
+                    $body = 'پاسخ تیکت ' . 'برای شما ارسال شد.';
+                    foreach ($driverFCM_tokens as $driverFCM_token) {
+                        $this->sendNotification($driverFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
+                    }
                 }
+            } catch (\Exception $exception) {
+                Log::emergency("----------------------send notification changeMessageStatus-----------------------");
+                Log::emergency($exception);
+                Log::emergency("---------------------------------------------------------");
             }
-        } catch (\Exception $exception) {
-            Log::emergency("----------------------send notification changeMessageStatus-----------------------");
-            Log::emergency($exception);
-            Log::emergency("---------------------------------------------------------");
         }
+
 
         return back()->with('success', 'وضعیت پیام مورد نظر به خوانده شده تغییر و نتیجه پیگیری ثبت شد.');
     }
