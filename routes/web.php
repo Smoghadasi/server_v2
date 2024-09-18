@@ -83,25 +83,21 @@ Route::get('/conf', function () {
     Artisan::call('config:cache');
 });
 
+Route::get('hourClear', function () {
+    Load::where('created_at', '<', date('Y-m-d h:i:s', strtotime('-1 hours', time())))->update(['urgent' => 0]);
+});
+
 Route::get('/cache', function () {
     Artisan::call('config:clear');
     Artisan::call('cache:clear');
     Artisan::call('config:cache');
 });
 
-Route::get('/cache', function () {
-    Load::where('created_at', '<', date('Y-m-d h:i:s', strtotime('-1 hours', time())))->update(['urgent' => 0]);
-});
-
 
 Route::group(['middleware' => 'throttle:60,1'], function () {
 
 
-    Route::get('/', functiRoute::get('clearHour', function () {
-    Load::where('created_at', '<', date('Y-m-d h:i:s', strtotime('-1 hours', time())))->update(['urgent' => 0]);
-});
-
-on () {
+    Route::get('/', function () {
         return redirect('/dashboard');
     });
 
