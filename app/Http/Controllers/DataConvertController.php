@@ -19,6 +19,7 @@ use App\Models\Load;
 use App\Models\LoadBackup;
 use App\Models\CargoReportByFleet;
 use App\Models\Equivalent;
+use App\Models\FirstLoad;
 use App\Models\OperatorCargoListAccess;
 use App\Models\Owner;
 use App\Models\ProvinceCity;
@@ -96,55 +97,16 @@ class DataConvertController extends Controller
             ['operator_id', auth()->id()],
             ['status', 0]
         ])
-            ->orderby('id', 'asc')
+            ->orderby('id', 'desc')
             ->first();
 
-
-        //        if (!isset($cargo->id)) {
-        //            $operatorCargoListAccess = OperatorCargoListAccess::where('user_id', auth()->id())
-        //                ->select('fleet_id')
-        //                ->pluck('fleet_id')
-        //                ->toArray();
-        //
-        //            if (count($operatorCargoListAccess)) {
-        //
-        //                $dictionary = Dictionary::where('type', 'fleet')
-        //                    ->whereIn('original_word_id', $operatorCargoListAccess)
-        //                    ->select('equivalentWord')
-        //                    ->pluck('equivalentWord')
-        //                    ->toArray();
-        //
-        //                $conditions = [];
-        //
-        //                foreach ($dictionary as $item) {
-        //                    $conditions[] = ['cargo', 'LIKE', '%' . $item . '%'];
-        //
-        //                    $cargo = CargoConvertList::where(function ($q) use ($conditions) {
-        //                        return $q->where('operator_id', 0)
-        //                            ->orwhere($conditions);
-        //                    })
-        //                        ->orderby('id', 'asc')
-        //                        ->first();
-        //
-        //                    if (isset($cargo->id))
-        //                        break;
-        //                }
-        //
-        //            }
-        //
-        //            if (!isset($cargo->id))
-        //                $cargo = CargoConvertList::where('operator_id', 0)->orderby('id', 'asc')->first();
-        //        }
-
+        $operatorCargoListAccess = OperatorCargoListAccess::where('user_id', auth()->id())
+            ->select('fleet_id')
+            ->pluck('fleet_id')
+            ->toArray();
 
         if (!isset($cargo->id)) {
-            $operatorCargoListAccess = OperatorCargoListAccess::where('user_id', auth()->id())
-                ->select('fleet_id')
-                ->pluck('fleet_id')
-                ->toArray();
-
             if (count($operatorCargoListAccess)) {
-
                 $dictionary = Equivalent::where('type', 'fleet')
                     ->whereIn('original_word_id', $operatorCargoListAccess)
                     ->select('equivalentWord')
@@ -162,8 +124,9 @@ class DataConvertController extends Controller
                         ->orderby('id', 'asc')
                         ->first();
 
-                    if (isset($cargo->id))
+                    if (isset($cargo->id)) {
                         break;
+                    }
                 }
             }
 
@@ -171,10 +134,40 @@ class DataConvertController extends Controller
                 $cargo = CargoConvertList::where('operator_id', 0)->orderby('id', 'asc')->first();
         }
 
-        //        if (!isset($cargo->id))
-        //            $cargo = CargoConvertList::where('operator_id', 0)->orderby('id', 'asc')->first();
-
         if (isset($cargo->id)) {
+
+            $dictionary = Equivalent::where('type', 'fleet')
+                ->whereIn('original_word_id', $operatorCargoListAccess)
+                ->select('equivalentWord')
+                ->pluck('equivalentWord')
+                ->toArray();
+            $conditions = [];
+            foreach ($dictionary as $item) {
+                $oldCargo = CargoConvertList::where('cargo', 'LIKE', '%' . $item . '%')
+                    ->where('id', $cargo->id)
+                    ->where('status', 0)
+                    ->first();
+
+                if (isset($oldCargo->id)) {
+                    $oldCargo->operator_id = auth()->id();
+                    $oldCargo->save();
+                    return $this->dataConvert($oldCargo);
+                }
+            }
+
+            foreach ($dictionary as $item) {
+                $newCargo = CargoConvertList::where('cargo', 'LIKE', '%' . $item . '%')
+                    ->where('operator_id', 0)
+                    ->orderby('id', 'asc')
+                    ->first();
+
+                if (isset($newCargo->id)) {
+                    $newCargo->operator_id = auth()->id();
+                    $newCargo->save();
+                    return $this->dataConvert($newCargo);
+                }
+            }
+
             $cargo->operator_id = auth()->id();
             $cargo->save();
             return $this->dataConvert($cargo);
@@ -214,9 +207,22 @@ class DataConvertController extends Controller
     private function getExtraWords()
     {
         return [
-            '[از]', '[به]', '[صافی]', '[صاف]',
-            '[هرتن]', '[به_ازای_هرتن]', '[به_ازاء_هرتن]', '[هر_تن]', '[به_ازای_هر_تن]',
-            '[به_ازاء_هر_تن]', '[کرایه]', '[قیمت]', '[م]', '[میلیون]', '[تومن]', '[تن]',
+            '[از]',
+            '[به]',
+            '[صافی]',
+            '[صاف]',
+            '[هرتن]',
+            '[به_ازای_هرتن]',
+            '[به_ازاء_هرتن]',
+            '[هر_تن]',
+            '[به_ازای_هر_تن]',
+            '[به_ازاء_هر_تن]',
+            '[کرایه]',
+            '[قیمت]',
+            '[م]',
+            '[میلیون]',
+            '[تومن]',
+            '[تن]',
         ];
     }
 
@@ -231,7 +237,17 @@ class DataConvertController extends Controller
         $extraWords = $this->getExtraWords();
         $originWords = $this->getOriginWords();
         $equivalentWords = $this->getEquivalentWords();
-        $cleanedText = $this->getCleanedText($cargo->cargo, $fleetsList, $citiesList, $equivalentWords, $originWords, $extraWords, $prefixFreightConditions, $postfixFreightConditions, $provincesList);
+        $cleanedText = $this->getCleanedText(
+            $cargo->cargo,
+            $fleetsList,
+            $citiesList,
+            $equivalentWords,
+            $originWords,
+            $extraWords,
+            $prefixFreightConditions,
+            $postfixFreightConditions,
+            $provincesList
+        );
         $cargoList = [];
         $currentOrigin = -1;
         $originPrefixWord = false;
@@ -746,7 +762,7 @@ class DataConvertController extends Controller
                         ->get();
 
                     // if ($loadDuplicate === null) {
-                        $load->save();
+                    $load->save();
                     // }
                 } catch (\Exception $exception) {
                     Log::emergency("---------------------------------------------------------");
@@ -754,10 +770,68 @@ class DataConvertController extends Controller
                     Log::emergency("---------------------------------------------------------");
                 }
                 // if ($load->isBot == 1) {
-                //     $firstLoad = LoadBackup::where('mobileNumberForCoordination', $load->mobileNumberForCoordination)->first();
+                //     $firstLoad = FirstLoad::where('mobileNumberForCoordination', $load->mobileNumberForCoordination)->first();
                 //     if ($firstLoad == null) {
                 //         $load->status = BEFORE_APPROVAL;
                 //         $load->save();
+                //     }else{
+                //         try {
+                //             $first = new FirstLoad();
+                //             $first->title = $load->title;
+                //             $first->weight = $load->weight;
+                //             $first->width = $load->width;
+                //             $first->length = $load->length;
+                //             $first->height = $load->height;
+                //             $first->loadingAddress = $load->loadingAddress;
+                //             $first->dischargeAddress = $load->dischargeAddress;
+                //             $first->senderMobileNumber = $load->senderMobileNumber;
+                //             $first->receiverMobileNumber = $load->receiverMobileNumber;
+                //             $first->insuranceAmount = $load->insuranceAmount;
+                //             $first->suggestedPrice = $load->suggestedPrice;
+                //             $first->marketing_price = 0;
+                //             $first->emergencyPhone = $load->emergencyPhone;
+                //             $first->dischargeTime = $load->dischargeTime;
+                //             $first->fleet_id = $load->fleet_id;
+                //             $first->load_type_id = $load->load_type_id;
+                //             $first->tenderTimeDuration = $load->tenderTimeDuration;
+                //             $first->packing_type_id = $load->packing_type_id;
+                //             $first->loadPic = $load->loadPic;
+                //             $first->user_id = $load->user_id;
+                //             $first->loadMode = $load->loadMode;
+                //             $first->loadingHour = $load->loadingHour;
+                //             $first->loadingMinute = $load->loadingMinute;
+                //             $first->numOfTrucks = $load->numOfTrucks;
+                //             $first->origin_city_id = $load->origin_city_id;
+                //             $first->destination_city_id = $load->destination_city_id;
+                //             $first->fromCity = $load->fromCity;
+                //             $first->toCity = $load->toCity;
+                //             $first->loadingDate = $load->loadingDate;
+                //             $first->time = $load->time;
+                //             $first->latitude = $load->latitude;
+                //             $first->longitude = $load->longitude;
+                //             $first->weightPerTruck = $load->weightPerTruck;
+                //             $first->bulk = $load->bulk;
+                //             $first->dangerousProducts = $load->dangerousProducts;
+                //             $first->origin_state_id = $load->origin_state_id;
+                //             $first->description = $load->description;
+                //             $first->priceBased = $load->priceBased;
+                //             $first->bearing_id = $load->bearing_id;
+                //             $first->proposedPriceForDriver = $load->proposedPriceForDriver;
+                //             $first->operator_id = $load->operator_id;
+                //             $first->userType = $load->userType;
+                //             $first->origin_longitude = $load->origin_longitude;
+                //             $first->destination_longitude = $load->destination_longitude;
+                //             $first->mobileNumberForCoordination = $load->mobileNumberForCoordination;
+                //             $first->storeFor = $load->storeFor;
+                //             $first->status = $load->status;
+                //             $first->fleets = $load->fleets;
+                //             $first->deliveryTime = $load->deliveryTime;
+                //             $first->save();
+                //         } catch (\Exception $e) {
+                //             Log::emergency("========================= first load ==================================");
+                //             Log::emergency($e->getMessage());
+                //             Log::emergency("==============================================================");
+                //         }
                 //     }
                 // }
             }

@@ -1022,6 +1022,7 @@ class LoadController extends Controller
                     ->where('province_id', $cityFrom->parent_id)
                     ->where('fleet_id', $fleet->fleet_id)
                     ->where('version', '>', 58)
+                    ->where('notification', 'enable')
                     ->pluck('FCM_token');
                 $title = 'ایران ترابر رانندگان';
                 $body = ' بار ' . $fleet->fleet->title . ':' . ' از ' . $cityFrom->name . ' به ' . $cityTo->name;
@@ -3619,7 +3620,7 @@ class LoadController extends Controller
     // فرم نمایش اطلعات بار
     public function editLoadInfoForm($load_id)
     {
-        $cities = City::orderby('centerOfProvince', 'desc')->get();
+        $cities = ProvinceCity::where('parent_id', '!=', 0)->get();
         $fleets = Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
         $packingTypes = PackingType::get();
         $load = Load::where('id', $load_id)->first();

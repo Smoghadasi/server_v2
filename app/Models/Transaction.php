@@ -76,7 +76,14 @@ class Transaction extends Model
     public function getPaymentDateAttribute()
     {
         try {
-            $date = explode(' ', $this->created_at);
+            $transaction = Transaction::where([
+                ['user_id', $this->user_id],
+                ['status', 0]
+            ])
+                ->select('id', 'created_at')
+                ->orderBy('id', 'desc')
+                ->first();
+            $date = explode(' ', $transaction->created_at);
             return str_replace('-', '/', gregorianDateToPersian($date[0], '-')) . ' ' . $date[1];
         } catch (\Exception $exception) {
 

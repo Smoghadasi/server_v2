@@ -87,16 +87,15 @@ class ComplaintController extends Controller
             ->orderByDesc('created_at')
             ->get();
         return response()->json($complaints, 200);
-
     }
 
     public function storeComplaintDriverAdminMessage(Request $request, ComplaintDriver $complaintDriver)
     {
         $complaintDriver->adminMessage = $request->adminMessage;
         $complaintDriver->save();
-
         return back()->with('success', 'پاسخ مورد نظر ثبت شد');
     }
+
 
     ///////////////////////////////////////////////////////////////////////////////////////////
 
