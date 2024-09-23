@@ -83,6 +83,10 @@ Route::get('/conf', function () {
     Artisan::call('config:cache');
 });
 
+Route::get('hourClear', function () {
+    Load::where('created_at', '<', date('Y-m-d h:i:s', strtotime('-1 hours', time())))->update(['urgent' => 0]);
+});
+
 Route::get('/cache', function () {
     Artisan::call('config:clear');
     Artisan::call('cache:clear');
