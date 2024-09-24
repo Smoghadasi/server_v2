@@ -70,7 +70,7 @@ class SendSmsJob implements ShouldQueue
                 ->where('fleet_id', $fleet->fleet_id)
                 // ->where('id', 45172)
                 ->where('sendMessage', 0)
-                ->take(40)
+                ->take(25)
                 ->get();
             if (count($drivers) != 0) {
                 foreach ($drivers as $driver) {
