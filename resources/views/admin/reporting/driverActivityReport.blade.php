@@ -43,12 +43,15 @@
                              style="height: 370px; width: 100%;"></div>
                     </td>
                 </tr>
-                <tr>
-                    <td>
-                        <div class="text-center h6"> هزینه وایزی توسط راننده ها از 60 روز قبل</div>
-                        <canvas id="feesPaidByDrivers60DaysInAdvance" style="width:100%;max-width:100%"></canvas>
-                    </td>
-                </tr>
+                @if (in_array('paidSixDays', auth()->user()->userAccess))
+                    <tr>
+                        <td>
+                            <div class="text-center h6"> هزینه وایزی توسط راننده ها از 60 روز قبل</div>
+                            <canvas id="feesPaidByDrivers60DaysInAdvance" style="width:100%;max-width:100%"></canvas>
+                        </td>
+                    </tr>
+                @endif
+
 
             </table>
 

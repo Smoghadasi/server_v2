@@ -51,8 +51,8 @@
         <div class="card-body">
             <p>
                 <a class="btn btn-primary" href="{{ url('admin/addNewOperatorForm') }}"> + افزودن اپراتور</a>
-                <a class="btn btn-primary" href="{{ route('vacations.index') }}">  + مرخصی روزانه</a>
-                <a class="btn btn-primary" href="{{ route('vacationHour.index') }}">  + مرخصی ساعتی</a>
+                <a class="btn btn-primary" href="{{ route('vacations.index') }}"> + مرخصی روزانه</a>
+                <a class="btn btn-primary" href="{{ route('vacationHour.index') }}"> + مرخصی ساعتی</a>
             </p>
 
             <table class="table">
@@ -136,10 +136,12 @@
                                                 </button>
                                             </li>
                                             <li>
-                                                <a class="dropdown-item" href="{{ route('vacation.day', $user->id) }}"> مرخصی روزانه</a>
+                                                <a class="dropdown-item" href="{{ route('vacation.day', $user->id) }}">
+                                                    مرخصی روزانه</a>
                                             </li>
                                             <li>
-                                                <a class="dropdown-item" href="{{ route('vacation.hour', $user->id) }}"> مرخصی ساعتی</a>
+                                                <a class="dropdown-item" href="{{ route('vacation.hour', $user->id) }}">
+                                                    مرخصی ساعتی</a>
                                             </li>
                                             <li>
                                                 <button type="button" class="dropdown-item" data-bs-toggle="modal"
@@ -289,15 +291,6 @@
                                                                         <input type="checkbox" name="dashboardAllDriver"
                                                                             @if (in_array('dashboardAllDriver', $user->userAccess)) checked @endif>
                                                                         کل رانندگان
-                                                                    </label>
-                                                                </div>
-                                                            </li>
-                                                            <li>
-                                                                <div class="form-group">
-                                                                    <label>
-                                                                        <input type="checkbox" name="dashboardAllDriverActivity"
-                                                                            @if (in_array('dashboardAllDriverActivity', $user->userAccess)) checked @endif>
-                                                                        گزارش فعالیت رانندگان
                                                                     </label>
                                                                 </div>
                                                             </li>
@@ -580,6 +573,32 @@
                                                     </label>
                                                 </div>
                                                 <ul id="myUL">
+                                                    <li><span class="caret">گزارش فعالیت رانندگان</span>
+                                                        <ul class="nested">
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="dashboardAllDriverActivity"
+                                                                            @if (in_array('dashboardAllDriverActivity', $user->userAccess)) checked @endif>
+                                                                        گزارش فعالیت رانندگان
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="paidSixDays"
+                                                                            @if (in_array('paidSixDays', $user->userAccess)) checked @endif>
+                                                                        هزینه وایزی توسط راننده ها از 60 روز قبل
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                                <ul id="myUL">
                                                     <li><span class="caret">دسترسی به رانندگان</span>
                                                         <ul class="nested">
                                                             <li>
@@ -635,8 +654,7 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="searchAll"
+                                                                        <input type="checkbox" name="searchAll"
                                                                             @if (in_array('searchAll', $user->userAccess)) checked @endif>
                                                                         جستجو هدر
                                                                     </label>
