@@ -613,7 +613,7 @@ class PayController extends Controller
                     if (Transaction::where('user_id', $driver->id)
                         ->where('userType', 'driver')
                         ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
-                        ->count() == 3) {
+                        ->count() == 5) {
                         $sms = new Driver();
                         $sms->unSuccessPayment($driver->mobileNumber);
                     }
