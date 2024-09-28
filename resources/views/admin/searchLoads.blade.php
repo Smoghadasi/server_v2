@@ -12,8 +12,6 @@
                 <form method="post" action="{{ url('admin/searchLoads') }}" class="mt-3 mb-3 card card-body">
                     <h5>جستجو :</h5>
                     @csrf
-
-
                     <div class="form-group">
                         <div class="col-md-12 row">
                             <div class="col-md-3">
@@ -99,6 +97,7 @@
                                     <th>ناوگان</th>
                                     <th>مبدا</th>
                                     <th>مقصد</th>
+                                    <th>تعداد</th>
                                     <th>اپراتور</th>
                                     <th>تاریخ</th>
                                     <th>نمایش</th>
@@ -131,6 +130,14 @@
                                         </td>
                                         <td>{{ $load->fromCity }}</td>
                                         <td>{{ $load->toCity }}</td>
+                                        <td>
+                                            <span class="badge bg-primary">بازدید : {{ $load->driverVisitCount }}</span>
+                                            <span>
+                                                <a class="badge bg-success" href="{{ route('load.searchLoadDriverCall', $load->id) }}">
+                                                    تماس: {{ $load->numOfDriverCalls }}
+                                                </a>
+                                            </span>
+                                        </td>
                                         <td>
                                             @foreach ($operators as $operator)
                                                 @if ($operator->id == $load->operator_id)
