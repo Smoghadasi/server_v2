@@ -155,7 +155,7 @@ class HomeController extends Controller
     public function searchAll(Request $request)
     {
         $owners = Owner::where('mobileNumber', 'like', '%' . $request->mobileNumber . '%')->paginate(20);
-        $drivers = Driver::where('mobileNumber', 'like', '%' . $request->mobileNumber . '%')->paginate(20);
+        $drivers = Driver::with('provinceOwner')->where('mobileNumber', 'like', '%' . $request->mobileNumber . '%')->paginate(20);
         return view('admin.searchAll', compact('drivers', 'owners'));
     }
 }
