@@ -119,22 +119,25 @@
                                                     </a>
                                                 </li>
                                             @endif
-                                            <li>
-                                                <button type="button" class="dropdown-item" data-bs-toggle="modal"
-                                                    data-bs-target="#removeOperator_{{ $user->id }}">حذف
-                                                </button>
-                                            </li>
+                                            @if (auth()->user()->role == 'admin')
+                                                <li>
+                                                    <button type="button" class="dropdown-item" data-bs-toggle="modal"
+                                                        data-bs-target="#removeOperator_{{ $user->id }}">حذف
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button type="button" class="dropdown-item" data-bs-toggle="modal"
+                                                        data-bs-target="#operatorAccess_{{ $user->id }}">
+                                                        دسترسی ها
+                                                    </button>
+                                                </li>
+                                            @endif
                                             <li>
                                                 <button type="button" class="dropdown-item" data-bs-toggle="modal"
                                                     data-bs-target="#changePassOperator_{{ $user->id }}">تغییر رمز عبور
                                                 </button>
                                             </li>
-                                            <li>
-                                                <button type="button" class="dropdown-item" data-bs-toggle="modal"
-                                                    data-bs-target="#operatorAccess_{{ $user->id }}">
-                                                    دسترسی ها
-                                                </button>
-                                            </li>
+
                                             <li>
                                                 <a class="dropdown-item" href="{{ route('vacation.day', $user->id) }}">
                                                     مرخصی روزانه</a>
@@ -588,8 +591,7 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="paidSixDays"
+                                                                        <input type="checkbox" name="paidSixDays"
                                                                             @if (in_array('paidSixDays', $user->userAccess)) checked @endif>
                                                                         هزینه وایزی توسط راننده ها از 60 روز قبل
                                                                     </label>
