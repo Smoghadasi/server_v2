@@ -84,7 +84,7 @@ Route::get('/conf', function () {
 });
 
 Route::get('hourClear', function () {
-    Load::where('created_at', '<', date('Y-m-d h:i:s', strtotime('-1 hours', time())))->update(['urgent' => 0]);
+    Load::where('created_at', '<', date('Y-m-d h:i:s', strtotime('-2 hours', time())))->update(['urgent' => 0]);
 });
 
 Route::get('/cache', function () {
