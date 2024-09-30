@@ -104,22 +104,22 @@
                                             عملیات
                                         </button>
                                         <ul class="dropdown-menu">
-                                            @if ($user->status == 0)
-                                                <li>
-                                                    <a class="dropdown-item"
-                                                        href="{{ url('admin/changeOperatorStatus') }}/{{ $user->id }}">
-                                                        تغییر به فعال
-                                                    </a>
-                                                </li>
-                                            @else
-                                                <li>
-                                                    <a class="dropdown-item"
-                                                        href="{{ url('admin/changeOperatorStatus') }}/{{ $user->id }}">
-                                                        تغییر به غیرفعال
-                                                    </a>
-                                                </li>
-                                            @endif
                                             @if (auth()->user()->role == 'admin')
+                                                @if ($user->status == 0)
+                                                    <li>
+                                                        <a class="dropdown-item"
+                                                            href="{{ url('admin/changeOperatorStatus') }}/{{ $user->id }}">
+                                                            تغییر به فعال
+                                                        </a>
+                                                    </li>
+                                                @else
+                                                    <li>
+                                                        <a class="dropdown-item"
+                                                            href="{{ url('admin/changeOperatorStatus') }}/{{ $user->id }}">
+                                                            تغییر به غیرفعال
+                                                        </a>
+                                                    </li>
+                                                @endif
                                                 <li>
                                                     <button type="button" class="dropdown-item" data-bs-toggle="modal"
                                                         data-bs-target="#removeOperator_{{ $user->id }}">حذف
