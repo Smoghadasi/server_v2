@@ -101,12 +101,12 @@
                                 </span>
                             </td>
                             @php
-                                $pieces = explode(' ', $owner->deleted_at);
+                                $pieces = explode(' ', $load->deleted_at);
                             @endphp
 
                             <td>{{ $load->date }} {{ $load->dateTime }}</td>
                             <td dir="ltr">
-                                {{ gregorianDateToPersian($owner->deleted_at, '-', true) . ' ' . $pieces[1] }}
+                                {{ gregorianDateToPersian($load->deleted_at, '-', true) . ' ' . $pieces[1] }}
                             </td>
                             <td>
                                 <a class="btn btn-info btn-sm" href="{{ route('loadInfo', $load->id) }}">جزئیات</a>
