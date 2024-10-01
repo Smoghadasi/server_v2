@@ -30,6 +30,7 @@
     <title>ایران ترابر @yield('title')</title>
 
     <meta name="description" content=""/>
+    <meta name="robots" content="NOINDEX, NOFOLLOW">
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('icons/irt.png') }}"/>
