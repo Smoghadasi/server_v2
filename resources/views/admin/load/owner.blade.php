@@ -106,7 +106,8 @@
 
                             <td>{{ $load->date }} {{ $load->dateTime }}</td>
                             <td dir="ltr">
-                                {{ gregorianDateToPersian($load->deleted_at, '-', true) . ' ' . $pieces[1] }}
+                                {{ $load->deleted_at ? gregorianDateToPersian($load->deleted_at, '-', true) . ' ' . $pieces[1] : '-' }}
+                                {{-- {{ gregorianDateToPersian($load->deleted_at, '-', true) . ' ' . $pieces[1] }} --}}
                             </td>
                             <td>
                                 <a class="btn btn-info btn-sm" href="{{ route('loadInfo', $load->id) }}">جزئیات</a>
