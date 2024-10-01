@@ -24,6 +24,7 @@
                             <th>کد ملی</th>
                             <th>شماره موبایل</th>
                             <th class="text-center">تاریخ ثبت نام</th>
+                            <th class="text-center">تاریخ احراز هویت</th>
                             <th>عملیات</th>
                         </tr>
                     </thead>
@@ -38,9 +39,13 @@
                                 <td>{{ $owner->mobileNumber }}</td>
                                 @php
                                     $pieces = explode(' ', $owner->created_at);
+                                    $timeUpdated_at = explode(' ', $owner->updated_at);
                                 @endphp
                                 <td dir="ltr">
                                     {{ gregorianDateToPersian($owner->created_at, '-', true) . ' ' . $pieces[1] }}
+                                </td>
+                                <td dir="ltr">
+                                    {{ gregorianDateToPersian($owner->updated_at, '-', true) . ' ' . $timeUpdated_at[1] }}
                                 </td>
                                 <td>
                                     <a class="btn btn-sm btn-primary" href="{{ route('ownerAuth.edit', $owner) }}">بررسی

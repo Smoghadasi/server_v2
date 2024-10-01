@@ -43,7 +43,8 @@
                         <th>مبدا</th>
                         <th>مقصد</th>
                         <th>تعداد</th>
-                        <th>تاریخ</th>
+                        <th>تاریخ ثبت</th>
+                        <th>تاریخ حذف</th>
                         <th>عملیات</th>
                     </tr>
                 </thead>
@@ -99,8 +100,14 @@
                                     </a>
                                 </span>
                             </td>
+                            @php
+                                $pieces = explode(' ', $owner->deleted_at);
+                            @endphp
 
                             <td>{{ $load->date }} {{ $load->dateTime }}</td>
+                            <td dir="ltr">
+                                {{ gregorianDateToPersian($owner->deleted_at, '-', true) . ' ' . $pieces[1] }}
+                            </td>
                             <td>
                                 <a class="btn btn-info btn-sm" href="{{ route('loadInfo', $load->id) }}">جزئیات</a>
                             </td>
