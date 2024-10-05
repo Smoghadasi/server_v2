@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Bearing;
 use App\Models\Customer;
 use App\Models\Driver;
+use App\Models\Payment;
 use App\Models\PurchasedFleetControlPackage;
 use App\Models\Transaction;
 
@@ -610,10 +611,12 @@ class PayController extends Controller
                 try {
                     $driver = Driver::find($transaction->user_id);
 
-                    if (Transaction::where('user_id', $driver->id)
+                    if (
+                        Transaction::where('user_id', $driver->id)
                         ->where('userType', 'driver')
                         ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
-                        ->count() == 5) {
+                        ->count() == 5
+                    ) {
                         $sms = new Driver();
                         $sms->unSuccessPayment($driver->mobileNumber);
                     }
@@ -621,13 +624,43 @@ class PayController extends Controller
                     Log::emergency("-------------------------------- unSuccessPayment -----------------------------");
                     Log::emergency($exception->getMessage());
                     Log::emergency("------------------------------------------------------------------------------");
-
                 }
 
                 if (isset($transaction->id))
                     return redirect('https://www.zarinpal.com/pg/StartPay/' . $result->Authority);
             } catch (\Exception $exception) {
             }
+        }
+    }
+
+    public function payDriverZibal($packageName, Driver $driver)
+    {
+
+        $driverPackagesInfo = getDriverPackagesInfo();
+        if (!isset($driverPackagesInfo['data'][$packageName]['price']))
+            return abort(404);
+
+        $amount = $driverPackagesInfo['data'][$packageName]['price'];
+
+        $CallbackURL = 'http://dashboard.iran-tarabar.ir/verifyDriverPay';
+
+        $parameters = array(
+            "merchant" => 'zibal', //required
+            "callbackUrl" => $CallbackURL, //required
+            "amount" => $amount, //required
+            "orderId" => time(), //optional
+            "mobile" => "09120000000", //optional for mpg
+        );
+        $payment = new Payment();
+        $response = $payment->postToZibal('request', $parameters);
+
+        var_dump($response);
+        if ($response->result == 100) {
+            $startGateWayUrl = "https://gateway.zibal.ir/start/" . $response->trackId;
+            header('location: ' . $startGateWayUrl);
+        } else {
+            echo "errorCode: " . $response->result . "<br>";
+            echo "message: " . $response->message;
         }
     }
 
