@@ -1192,6 +1192,7 @@ class ReportingController extends Controller
             ['userType', 'driver'],
             ['created_at', '>=', $today]
         ])->pluck('user_id');
+
         $transactions = Transaction::where([
             ['status', 0],
             ['userType', 'driver'],
@@ -1199,7 +1200,7 @@ class ReportingController extends Controller
         ])
             ->whereNotIn('user_id', $successTransactions)
             ->select('*', DB::raw('count(*) as total'))
-            ->orderBy('id', 'desc')
+            ->orderByDesc('updated_at')
             ->groupby('user_id')
             ->paginate(100);
         return view('admin.reporting.unSuccessPeyment', compact('transactions'));
