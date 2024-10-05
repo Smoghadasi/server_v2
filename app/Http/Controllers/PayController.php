@@ -645,19 +645,18 @@ class PayController extends Controller
         $CallbackURL = 'http://dashboard.iran-tarabar.ir/verifyDriverPay';
 
         $parameters = array(
-            "merchant" => 'zibal', //required
+            "merchant" => '6700bb346f38030011fd6b9c', //required
             "callbackUrl" => $CallbackURL, //required
             "amount" => $amount, //required
             "orderId" => time(), //optional
-            "mobile" => "09120000000", //optional for mpg
+            "mobile" => "09184626188", //optional for mpg
         );
         $payment = new Payment();
         $response = $payment->postToZibal('request', $parameters);
 
-        var_dump($response);
         if ($response->result == 100) {
             $startGateWayUrl = "https://gateway.zibal.ir/start/" . $response->trackId;
-            header('location: ' . $startGateWayUrl);
+            return redirect($startGateWayUrl);
         } else {
             echo "errorCode: " . $response->result . "<br>";
             echo "message: " . $response->message;
