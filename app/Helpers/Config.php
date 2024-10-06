@@ -75,6 +75,9 @@ const CARD_NUMBER = '6104-3388-0045-5178';
 const BANK_CARD_OWNER = 'زرین ترابر فناور گستر';
 const MERCHANT_ID = "3d859c75-6bdf-433a-a50e-82d614b7a01a"; // بانک ملت (زرین ترابر فناور گستر)
 
+
+const MERCHANT_ID_ZIBAL = "6700bb346f38030011fd6b9c"; // بانک ملت (زرین ترابر فناور گستر)
+
 // محدودیت تماس راننده ها در سطوح مختلف
 const CALL_LIMIT_FOR_UNAUTH_DRIVERS = 10;
 const NUMBER_FOR_CALLS_PAY_DAY_FOR_SILVER_LEVEL_DRIVER = 20;

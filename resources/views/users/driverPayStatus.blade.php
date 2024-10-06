@@ -23,7 +23,7 @@
 
 <body>
 
-<div class="alert @if($status > 0) alert-success @else alert-danger @endif  m-4 text-center h4">
+<div class="alert @if($status) alert-success @else alert-danger @endif  m-4 text-center h4">
     {{ $message }}
     <p></p>
     برای ادامه اپلیکیشن را باز کنید

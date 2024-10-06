@@ -925,11 +925,12 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     /****************************************************************************************************************/
 
     Route::get('payDriver/{packageName}/{driver}', [PayController::class, 'payDriver']);
-
-
-    Route::get('payDriverZabal/{packageName}/{driver}', [PayController::class, 'payDriverZibal']);
-    // تایید عملیات
     Route::get('verifyDriverPay', [PayController::class, 'verifyDriverPay']);
+
+
+    Route::get('payDriverZibal/{packageName}/{driver}', [PayController::class, 'payDriverZibal']);
+    Route::get('verifyDriverPayZibal', [PayController::class, 'verifyDriverPayZibal']);
+
 
     /****************************************************************************************************************/
 

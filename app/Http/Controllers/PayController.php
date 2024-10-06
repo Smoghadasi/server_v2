@@ -148,6 +148,12 @@ class PayController extends Controller
     private function getStatusMessage($status): string
     {
         switch ($status) {
+            case "1":
+                return "عمليات با موفقيت انجام گرديده است.";
+            case "2":
+                return "عمليات با موفقيت انجام گرديده است";
+            case "3":
+                return "تراكنش نا موفق ميباشد";
             case "-1":
                 return "اطلاعات ارسال شده ناقص است.";
             case "-2":
@@ -640,32 +646,146 @@ class PayController extends Controller
         if (!isset($driverPackagesInfo['data'][$packageName]['price']))
             return abort(404);
 
-        $amount = $driverPackagesInfo['data'][$packageName]['price'];
+        $monthsOfThePackage = 0;
+        switch ($packageName) {
+            case 'monthly':
+                $monthsOfThePackage = 1;
+                break;
+            case 'trimester':
+                $monthsOfThePackage = 3;
+                break;
+            case 'sixMonths':
+                $monthsOfThePackage = 6;
+                break;
+        }
 
-        $CallbackURL = 'http://dashboard.iran-tarabar.ir/verifyDriverPay';
+        switch ($driverPackagesInfo['data'][$packageName]['price']) {
+            case '79000':
+                $amount = '790000';
+                break;
+            case '199000':
+                $amount = '1990000';
+                break;
+            case '399000':
+                $amount = '3990000';
+                break;
+        }
+        // $amount = $driverPackagesInfo['data'][$packageName]['price'];
+
+        $CallbackURL = 'http://localhost:8000/verifyDriverPayZibal';
 
         $parameters = array(
-            "merchant" => '6700bb346f38030011fd6b9c', //required
+            "merchant" => MERCHANT_ID_ZIBAL, //required
             "callbackUrl" => $CallbackURL, //required
             "amount" => $amount, //required
             "orderId" => time(), //optional
-            "mobile" => "09184626188", //optional for mpg
+            "mobile" => "09184696188", //optional for mpg
         );
         $payment = new Payment();
         $response = $payment->postToZibal('request', $parameters);
-
+        var_dump($response);
         if ($response->result == 100) {
-            $startGateWayUrl = "https://gateway.zibal.ir/start/" . $response->trackId;
-            return redirect($startGateWayUrl);
-        } else {
-            echo "errorCode: " . $response->result . "<br>";
-            echo "message: " . $response->message;
+            try {
+
+                $transaction = new Transaction();
+                $transaction->user_id = $driver->id;
+                $transaction->userType = ROLE_DRIVER;
+                $transaction->authority = $response->trackId;
+                $transaction->amount = $amount;
+                $transaction->monthsOfThePackage = $monthsOfThePackage;
+                $transaction->save();
+
+                try {
+                    $driver = Driver::find($transaction->user_id);
+
+                    if (
+                        Transaction::where('user_id', $driver->id)
+                        ->where('userType', 'driver')
+                        ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
+                        ->count() == 5
+                    ) {
+                        $sms = new Driver();
+                        $sms->unSuccessPayment($driver->mobileNumber);
+                    }
+                } catch (Exception $exception) {
+                    Log::emergency("-------------------------------- unSuccessPayment -----------------------------");
+                    Log::emergency($exception->getMessage());
+                    Log::emergency("------------------------------------------------------------------------------");
+                }
+
+                if (isset($transaction->id)) {
+                    $startGateWayUrl = "https://gateway.zibal.ir/start/" . $response->trackId;
+                    return redirect($startGateWayUrl);
+                }
+            } catch (\Exception $exception) {
+            }
         }
     }
 
+    public function verifyDriverPayZibal(Request $request)
+    {
+        $Authority = $request->trackId;
+        $success = $request->success;
+        // return $request;
+
+        $transaction = Transaction::where('authority', $Authority)->first();
+
+        if (isset($transaction->id)) {
+
+            if ($success == 1) {
+
+                try {
+
+                    DB::beginTransaction();
+                    $transaction->status = 100;
+                    $transaction->RefId = $Authority;
+                    $transaction->save();
+
+                    $numOfDays = 30;
+
+                    try {
+                        $numOfDays = getNumOfCurrentMonthDays();
+                    } catch (\Exception $exception) {
+                    }
+
+
+                    $activeDate = date("Y-m-d H:i:s", time() + $numOfDays * 24 * 60 * 60 * $transaction->monthsOfThePackage);
+                    $driver = Driver::find($transaction->user_id);
+
+                    try {
+                        $date = new \DateTime($driver->activeDate);
+                        $time = $date->getTimestamp();
+                        if ($time < time())
+                            $activeDate = date('Y-m-d', time() + $transaction->monthsOfThePackage * $numOfDays * 24 * 60 * 60);
+                        else
+                            $activeDate = date('Y-m-d', $time + $transaction->monthsOfThePackage * $numOfDays * 24 * 60 * 60);
+                    } catch (\Exception $e) {
+                    }
+                    $driver->activeDate = $activeDate;
+                    // خاور و نیسان
+                    $driver->freeCalls = ($driver->freeCalls > 0 ? $driver->freeCalls : 0) + DRIVER_FREE_CALLS;
+
+                    $driver->freeAcceptLoads = ($driver->freeAcceptLoads > 0 ? $driver->freeAcceptLoads : 0) + DRIVER_FREE_ACCEPT_LOAD;
+                    $driver->save();
+
+                    DB::commit();
+
+                    $status = $request->status;
+                    $message = $this->getStatusMessage($status);
+
+                    return view('users.driverPayStatus', compact('message', 'status'));
+                } catch (\Exception $exception) {
+                    DB::rollBack();
+                }
+            } else {
+            }
+        }
+        $status = 0;
+        $message = $this->getStatusMessage($status);
+        return view('users.driverPayStatus', compact('message', 'status'));
+    }
     public function verifyDriverPay()
     {
-
 
         $Authority = $_GET['Authority'];
 
