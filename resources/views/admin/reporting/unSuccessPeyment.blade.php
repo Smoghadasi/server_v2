@@ -45,7 +45,12 @@
                             <td>{{ $transaction->payerMobileNumber }}</td>
                             <td>{{ $transaction->userTypeTitle }}</td>
                             <td>{{ number_format($transaction->amount) }}</td>
-                            <td>{{ $transaction->paymentDate }}</td>
+                            @php
+                                $pieces = explode(' ', $transaction->updated_at);
+                            @endphp
+                            <td dir="ltr">
+                                {{ gregorianDateToPersian($transaction->updated_at, '-', true) . ' ' . $pieces[1] }}
+                            </td>
                             <td>
                                 @if($transaction->status == 0)
                                     <span class="badge bg-label-danger text-nowrap">پرداخت ناموفق</span>
