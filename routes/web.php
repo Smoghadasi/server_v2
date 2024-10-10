@@ -78,9 +78,10 @@ Route::post('loginUser', [AuthorizeController::class, 'loginPost'])->name('autho
 Route::post('checkActivationCode', [AuthController::class, 'checkActivationCode'])->name('checkActivationCode');
 
 Route::get('/conf', function () {
-    Artisan::call('cache:clear');
-    Artisan::call('view:clear');
-    Artisan::call('config:cache');
+    Artisan::call('optimize:clear');
+    // Artisan::call('cache:clear');
+    // Artisan::call('view:clear');
+    // Artisan::call('config:cache');
 });
 
 Route::get('hourClear', function () {
