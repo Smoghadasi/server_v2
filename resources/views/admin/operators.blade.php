@@ -746,6 +746,15 @@
                                                                     </label>
                                                                 </div>
                                                             </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="onlineUsers"
+                                                                            @if (in_array('onlineUsers', $user->userAccess)) checked @endif>
+                                                                        کاربران آنلاین
+                                                                    </label>
+                                                                </div>
+                                                            </li>
                                                             <ul id="myUL">
                                                                 <li><span class="caret">گزارش تخلف</span>
                                                                     <ul class="nested">
