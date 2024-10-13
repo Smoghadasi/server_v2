@@ -766,8 +766,7 @@ class DriverController extends Controller
             $condition[] = ['lastName', 'like', '%' . $request->lastName . '%'];
         if (isset($request->mobileNumber) && strlen($request->mobileNumber))
             $condition[] = ['mobileNumber', 'like', '%' . $request->mobileNumber . '%'];
-
-        if (isset($request->fleet_id) && strlen($request->fleet_id))
+        if (isset($request->fleet_id) && strlen($request->fleet_id) && $request->fleet_id != 0)
             $condition[] = ['fleet_id', $request->fleet_id];
 
         if (isset($request->city_id) && strlen($request->city_id))
@@ -778,7 +777,6 @@ class DriverController extends Controller
 
         if (isset($request->version) && strlen($request->version))
             $condition[] = ['version', 'like', '%' . $request->version . '%'];
-
         if (count($condition)) {
             $drivers = Driver::where($condition)->orderBy('id', 'desc')->paginate(500);
             if (count($drivers))

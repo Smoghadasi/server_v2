@@ -300,330 +300,6 @@
                                                         </ul>
                                                     </li>
                                                 </ul>
-
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="setting"
-                                                            @if (in_array('setting', $user->userAccess)) checked @endif>
-                                                        تنظیمات سامانه
-                                                    </label>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="finalApprovalAndStoreCargo"
-                                                            @if (in_array('finalApprovalAndStoreCargo', $user->userAccess)) checked @endif>
-                                                        تایید و ثبت دسته ای بار
-                                                    </label>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="loads"
-                                                            @if (in_array('loads', $user->userAccess)) checked @endif>
-                                                        بارها
-                                                    </label>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="rejectedCargoFromCargoList"
-                                                            @if (in_array('rejectedCargoFromCargoList', $user->userAccess)) checked @endif>
-                                                        بار های رد شده
-                                                    </label>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="transportationCompanies"
-                                                            @if (in_array('transportationCompanies', $user->userAccess)) checked @endif>
-                                                        باربری ها
-                                                    </label>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="fleetRatioToDriverActivityReport"
-                                                            @if (in_array('fleetRatioToDriverActivityReport', $user->userAccess)) checked @endif>
-                                                        نسبت راننده به بار
-                                                    </label>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="customers"
-                                                            @if (in_array('customers', $user->userAccess)) checked @endif>
-                                                        صاحب بارها
-                                                    </label>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="drivers"
-                                                            @if (in_array('drivers', $user->userAccess)) checked @endif>
-                                                        راننده ها
-                                                    </label>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="operators"
-                                                            @if (in_array('operators', $user->userAccess)) checked @endif>
-                                                        اپراتور ها
-                                                    </label>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="searchLoads"
-                                                            @if (in_array('searchLoads', $user->userAccess)) checked @endif>
-                                                        جستجوی بارها
-                                                    </label>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="operatorsWorkingHoursActivityReport"
-                                                            @if (in_array('operatorsWorkingHoursActivityReport', $user->userAccess)) checked @endif>
-                                                        میزان فعالیت اپراتورها
-                                                    </label>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="contactReportWithCargoOwners"
-                                                            @if (in_array('contactReportWithCargoOwners', $user->userAccess)) checked @endif>
-                                                        تماس با صاحبان بار و باربری ها - تماس با رانندگان
-                                                    </label>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="driversActivities"
-                                                            @if (in_array('driversActivities', $user->userAccess)) checked @endif>
-                                                        گزارش فعالیت رانندگان
-                                                    </label>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="appVersions"
-                                                            @if (in_array('appVersions', $user->userAccess)) checked @endif>
-                                                        ورژن اپلیکیشن ها
-                                                    </label>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="provincesAndCities"
-                                                            @if (in_array('provincesAndCities', $user->userAccess)) checked @endif>
-                                                        استان ها و شهرها
-                                                    </label>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="SOSList"
-                                                            @if (in_array('SOSList', $user->userAccess)) checked @endif>
-                                                        درخواست های امداد
-                                                    </label>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="listOfLoadsByOperator"
-                                                            @if (in_array('listOfLoadsByOperator', $user->userAccess)) checked @endif>
-                                                        بارها به تفکیک اپراتور
-                                                    </label>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="reportcargofleets"
-                                                            @if (in_array('reportcargofleets', $user->userAccess)) checked @endif>
-                                                        گزارش بار ها به تفکیک ناوگان
-                                                    </label>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="driverActivityReport"
-                                                            @if (in_array('driverActivityReport', $user->userAccess)) checked @endif>
-                                                        گزارش فعالیت رانندگان
-                                                    </label>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="fleet"
-                                                            @if (in_array('fleet', $user->userAccess)) checked @endif>
-                                                        ناوگان
-                                                    </label>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="complaints"
-                                                            @if (in_array('complaints', $user->userAccess)) checked @endif>
-                                                        دسته شکایات و انتقادها
-                                                    </label>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="accounting"
-                                                            @if (in_array('accounting', $user->userAccess)) checked @endif>
-                                                        حسابداری
-                                                    </label>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="messages"
-                                                            @if (in_array('messages', $user->userAccess)) checked @endif>
-                                                        پیام ها
-                                                    </label>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="onlineUsers"
-                                                            @if (in_array('onlineUsers', $user->userAccess)) checked @endif>
-                                                        کاربران آنلاین
-                                                    </label>
-                                                </div>
-
-
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="paymentReport"
-                                                            @if (in_array('paymentReport', $user->userAccess)) checked @endif>
-                                                        پرداخت ها
-                                                    </label>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="unSuccessPayment"
-                                                            @if (in_array('unSuccessPayment', $user->userAccess)) checked @endif>
-                                                        پرداخت ناموفق رانندگان
-                                                    </label>
-                                                </div>
-
-
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="warehouse"
-                                                            @if (in_array('warehouse', $user->userAccess)) checked @endif>
-                                                        انبار بار
-                                                    </label>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="services"
-                                                            @if (in_array('services', $user->userAccess)) checked @endif>
-                                                        خدمات ها
-                                                    </label>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="radios"
-                                                            @if (in_array('radios', $user->userAccess)) checked @endif>
-                                                        رسانه
-                                                    </label>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="freeSubscription"
-                                                            @if (in_array('freeSubscription', $user->userAccess)) checked @endif>
-                                                        اشتراک و تماس رایگان
-                                                    </label>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="loadOwner"
-                                                            @if (in_array('loadOwner', $user->userAccess)) checked @endif>
-                                                        بار های ثبت شده توسط صاحبین بار
-                                                    </label>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="summaryOfDaysReport"
-                                                            @if (in_array('summaryOfDaysReport', $user->userAccess)) checked @endif>
-                                                        خلاصه گزارش روز - گزارش فعالیت باربری ها - فعالیت صاحب بارها -
-                                                        فعالیت اپراتورها - گزارش های ترکیبی - نصب رانندگان در 30 روز
-                                                    </label>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="driversContactCall"
-                                                            @if (in_array('driversContactCall', $user->userAccess)) checked @endif>
-                                                        گزارش بر اساس تماس
-                                                    </label>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="usersByCity"
-                                                            @if (in_array('usersByCity', $user->userAccess)) checked @endif>
-                                                        گزارش استفاده کننده رانندگان
-                                                    </label>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="ownersNissan"
-                                                            @if (in_array('ownersNissan', $user->userAccess)) checked @endif>
-                                                        صاحبان بار نیسان
-                                                    </label>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="driversInMonth"
-                                                            @if (in_array('driversInMonth', $user->userAccess)) checked @endif>
-                                                        فعالیت رانندگان غیر تکراری
-                                                    </label>
-                                                </div>
-                                                <ul id="myUL">
-                                                    <li><span class="caret">گزارش فعالیت رانندگان</span>
-                                                        <ul class="nested">
-                                                            <li>
-                                                                <div class="form-group">
-                                                                    <label>
-                                                                        <input type="checkbox"
-                                                                            name="dashboardAllDriverActivity"
-                                                                            @if (in_array('dashboardAllDriverActivity', $user->userAccess)) checked @endif>
-                                                                        گزارش فعالیت رانندگان
-                                                                    </label>
-                                                                </div>
-                                                            </li>
-                                                            <li>
-                                                                <div class="form-group">
-                                                                    <label>
-                                                                        <input type="checkbox" name="paidSixDays"
-                                                                            @if (in_array('paidSixDays', $user->userAccess)) checked @endif>
-                                                                        هزینه وایزی توسط راننده ها از 60 روز قبل
-                                                                    </label>
-                                                                </div>
-                                                            </li>
-                                                        </ul>
-                                                    </li>
-                                                </ul>
-                                                <ul id="myUL">
-                                                    <li><span class="caret">دسترسی به رانندگان</span>
-                                                        <ul class="nested">
-                                                            <li>
-                                                                <div class="form-group">
-                                                                    <label>
-                                                                        <input type="checkbox" name="detailDriver"
-                                                                            @if (in_array('detailDriver', $user->userAccess)) checked @endif>
-                                                                        جزئیات و ویرایش
-                                                                    </label>
-                                                                </div>
-                                                            </li>
-                                                            <li>
-                                                                <div class="form-group">
-                                                                    <label>
-                                                                        <input type="checkbox" name="driversPaymentReport"
-                                                                            @if (in_array('driversPaymentReport', $user->userAccess)) checked @endif>
-                                                                        لیست پرداختی و تمدید اعتبار
-                                                                    </label>
-                                                                </div>
-                                                            </li>
-                                                        </ul>
-                                                    </li>
-                                                </ul>
                                                 <ul id="myUL">
                                                     <li><span class="caret">احراز هویت</span>
                                                         <ul class="nested">
@@ -649,24 +325,632 @@
                                                         </ul>
                                                     </li>
                                                 </ul>
-
                                                 <ul id="myUL">
-                                                    <li><span class="caret">جستجو</span>
+                                                    <li><span class="caret">بار ها</span>
                                                         <ul class="nested">
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox" name="searchAll"
-                                                                            @if (in_array('searchAll', $user->userAccess)) checked @endif>
-                                                                        جستجو هدر
+                                                                        <input type="checkbox" name="warehouse"
+                                                                            @if (in_array('warehouse', $user->userAccess)) checked @endif>
+                                                                        انبار بار
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <label>
+                                                                            <input type="checkbox"
+                                                                                name="rejectedCargoFromCargoList"
+                                                                                @if (in_array('rejectedCargoFromCargoList', $user->userAccess)) checked @endif>
+                                                                            بار های رد شده
+                                                                        </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="ownersNissan"
+                                                                            @if (in_array('ownersNissan', $user->userAccess)) checked @endif>
+                                                                        صاحبان بار نیسان
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="loadOwner"
+                                                                            @if (in_array('loadOwner', $user->userAccess)) checked @endif>
+                                                                        بار های ثبت شده توسط صاحبین بار
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="loadBearing"
+                                                                            @if (in_array('loadBearing', $user->userAccess)) checked @endif>
+                                                                        بار های ثبت شده توسط باربری
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="loadsReport"
+                                                                            @if (in_array('loadsReport', $user->userAccess)) checked @endif>
+                                                                        گزارش بار ها
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="driversPaymentReport"
+                                                                            @if (in_array('driversPaymentReport', $user->userAccess)) checked @endif>
+                                                                            لیست پرداختی و تمدید اعتبار
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="detailDriver"
+                                                                            @if (in_array('detailDriver', $user->userAccess)) checked @endif>
+                                                                            جزئیات و ویرایش
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="loadRegistration"
+                                                                            @if (in_array('loadRegistration', $user->userAccess)) checked @endif>
+                                                                        ثبت بار
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="confirmLoads"
+                                                                            @if (in_array('confirmLoads', $user->userAccess)) checked @endif>
+                                                                        تایید بار ها
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="EquivalentWordsInCargoRegistration"
+                                                                            @if (in_array('EquivalentWordsInCargoRegistration', $user->userAccess)) checked @endif>
+                                                                        کلمات معادل در ثبت بار
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="listOfLoadsByOperator"
+                                                                            @if (in_array('listOfLoadsByOperator', $user->userAccess)) checked @endif>
+                                                                        بار ها به تفکیک اپراتور
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+
+                                                        </ul>
+
+                                                    </li>
+                                                </ul>
+                                                <ul id="myUL">
+                                                    <li><span class="caret">گزارش ها</span>
+                                                        <ul class="nested">
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="reportcargofleets"
+                                                                            @if (in_array('reportcargofleets', $user->userAccess)) checked @endif>
+                                                                        بار ها به تفکیک ناوگان
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <ul id="myUL">
+                                                                <li><span class="caret">استفاده کنندگان</span>
+                                                                    <ul class="nested">
+                                                                        <li>
+                                                                            <div class="form-group">
+                                                                                <label>
+                                                                                    <input type="checkbox"
+                                                                                        name="separationOfTheCity"
+                                                                                        @if (in_array('separationOfTheCity', $user->userAccess)) checked @endif>
+                                                                                    تفکیک شهرستان
+                                                                                </label>
+                                                                            </div>
+                                                                        </li>
+                                                                        <li>
+                                                                            <div class="form-group">
+                                                                                <label>
+                                                                                    <input type="checkbox"
+                                                                                        name="separationOfTheState"
+                                                                                        @if (in_array('dashboardAllDriverState', $user->userAccess)) checked @endif>
+                                                                                    تفکیک استان
+                                                                                </label>
+                                                                            </div>
+                                                                        </li>
+                                                                    </ul>
+                                                                </li>
+                                                            </ul>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="freeSubscription"
+                                                                            @if (in_array('freeSubscription', $user->userAccess)) checked @endif>
+                                                                        اشتراک و تماس رایگان
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="driversInMonth"
+                                                                            @if (in_array('driversInMonth', $user->userAccess)) checked @endif>
+                                                                            فعالیت رانندگان غیر تکراری
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="driverActivityReport"
+                                                                            @if (in_array('driverActivityReport', $user->userAccess)) checked @endif>
+                                                                        فعالیت رانندگان
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="paymentOfDrivers"
+                                                                            @if (in_array('paymentOfDrivers', $user->userAccess)) checked @endif>
+                                                                        پرداخت رانندگان
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="fleetByCall"
+                                                                            @if (in_array('fleetByCall', $user->userAccess)) checked @endif>
+                                                                        ناوگان بر اساس تماس
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="driversBasedOnTheMostCalls"
+                                                                            @if (in_array('driversBasedOnTheMostCalls', $user->userAccess)) checked @endif>
+                                                                        رانندگان بر اساس بیشترین تماس
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="driversBasedOnTime"
+                                                                            @if (in_array('driversBasedOnTime', $user->userAccess)) checked @endif>
+                                                                        فعالیت رانندگان بر اساس زمان (امروز)
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="summaryOfTheDayReport"
+                                                                            @if (in_array('summaryOfTheDayReport', $user->userAccess)) checked @endif>
+                                                                        خلاصه گزارش روز
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="bearingActivities"
+                                                                            @if (in_array('bearingActivities', $user->userAccess)) checked @endif>
+                                                                            فعالیت باربری ها
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="cargoOwnersActivityReport"
+                                                                            @if (in_array('cargoOwnersActivityReport', $user->userAccess)) checked @endif>
+                                                                            فعالیت صاحب بارها
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="activityOfOperators"
+                                                                            @if (in_array('activityOfOperators', $user->userAccess)) checked @endif>
+                                                                        فعالیت اپراتور ها
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="combinedReport"
+                                                                            @if (in_array('combinedReport', $user->userAccess)) checked @endif>
+                                                                        گزارش ترکیبی
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="driverInstallationInLast30Days"
+                                                                            @if (in_array('driverInstallationInLast30Days', $user->userAccess)) checked @endif>
+                                                                            نصب رانندگان در 30 روز
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="fleetRatioToDriverActivityReport"
+                                                                            @if (in_array('fleetRatioToDriverActivityReport', $user->userAccess)) checked @endif>
+                                                                            نسبت راننده به بار
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+
+                                                        </ul>
+
+                                                    </li>
+                                                </ul>
+                                                <ul id="myUL">
+                                                    <li><span class="caret">پرداخت ها</span>
+                                                        <ul class="nested">
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="driverPayment"
+                                                                            @if (in_array('driverPayment', $user->userAccess)) checked @endif>
+                                                                        راننده ها
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="theHighestPayingDrivers"
+                                                                            @if (in_array('theHighestPayingDrivers', $user->userAccess)) checked @endif>
+                                                                        بیشترین پرداخت رانندگان
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="paymentBasedOnFleet"
+                                                                            @if (in_array('paymentBasedOnFleet', $user->userAccess)) checked @endif>
+                                                                        پرداخت بر اساس ناوگان
                                                                     </label>
                                                                 </div>
                                                             </li>
                                                         </ul>
                                                     </li>
                                                 </ul>
-
-
+                                                <ul id="myUL">
+                                                    <li><span class="caret">صاحبان بار</span>
+                                                        <ul class="nested">
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="listOfOwners"
+                                                                            @if (in_array('listOfOwners', $user->userAccess)) checked @endif>
+                                                                        لیست صاحبان بار
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <ul id="myUL">
+                                                                <li><span class="caret">بار های ثبت شده</span>
+                                                                    <ul class="nested">
+                                                                        <li>
+                                                                            <div class="form-group">
+                                                                                <label>
+                                                                                    <input type="checkbox"
+                                                                                        name="registeredLoadsByOperators"
+                                                                                        @if (in_array('registeredLoadsByOperators', $user->userAccess)) checked @endif>
+                                                                                    اپراتور
+                                                                                </label>
+                                                                            </div>
+                                                                        </li>
+                                                                        <li>
+                                                                            <div class="form-group">
+                                                                                <label>
+                                                                                    <input type="checkbox"
+                                                                                        name="registeredLoadsByOwners"
+                                                                                        @if (in_array('registeredLoadsByOwners', $user->userAccess)) checked @endif>
+                                                                                    صاحب بار
+                                                                                </label>
+                                                                            </div>
+                                                                        </li>
+                                                                    </ul>
+                                                                </li>
+                                                            </ul>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                                <ul id="myUL">
+                                                    <li><span class="caret">شکایات و انتقادات</span>
+                                                        <ul class="nested">
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="complaintsOfDrivers"
+                                                                            @if (in_array('complaintsOfDrivers', $user->userAccess)) checked @endif>
+                                                                        رانندگان
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="complaintsOfOwners"
+                                                                            @if (in_array('complaintsOfOwners', $user->userAccess)) checked @endif>
+                                                                        صاحبان بار
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="blockages"
+                                                                            @if (in_array('blockages', $user->userAccess)) checked @endif>
+                                                                        مسدودی ها
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="IPBlocked"
+                                                                            @if (in_array('IPBlocked', $user->userAccess)) checked @endif>
+                                                                        IP های مسدود
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="messages"
+                                                                            @if (in_array('messages', $user->userAccess)) checked @endif>
+                                                                        پیام ها
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <ul id="myUL">
+                                                                <li><span class="caret">گزارش تخلف</span>
+                                                                    <ul class="nested">
+                                                                        <li>
+                                                                            <div class="form-group">
+                                                                                <label>
+                                                                                    <input type="checkbox"
+                                                                                        name="violationReportOwner"
+                                                                                        @if (in_array('violationReportOwner', $user->userAccess)) checked @endif>
+                                                                                    صاحب بار
+                                                                                </label>
+                                                                            </div>
+                                                                        </li>
+                                                                        <li>
+                                                                            <div class="form-group">
+                                                                                <label>
+                                                                                    <input type="checkbox"
+                                                                                        name="violationReportDrivers"
+                                                                                        @if (in_array('violationReportDrivers', $user->userAccess)) checked @endif>
+                                                                                    رانندگان
+                                                                                </label>
+                                                                            </div>
+                                                                        </li>
+                                                                    </ul>
+                                                                </li>
+                                                            </ul>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                                <ul id="myUL">
+                                                    <li><span class="caret">ناوگان</span>
+                                                        <ul class="nested">
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="fleet"
+                                                                            @if (in_array('fleets', $user->userAccess)) checked @endif>
+                                                                        ناوگان ها
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="myFleets"
+                                                                            @if (in_array('myFleets', $user->userAccess)) checked @endif>
+                                                                        ناوگان من
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                                <ul id="myUL">
+                                                    <li><span class="caret">امکانات</span>
+                                                        <ul class="nested">
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="operatorsWorkingHoursActivityReport"
+                                                                            @if (in_array('operatorsWorkingHoursActivityReport', $user->userAccess)) checked @endif>
+                                                                        میزان فعالیت اپراتورها
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="searchLoads"
+                                                                            @if (in_array('searchLoads', $user->userAccess)) checked @endif>
+                                                                        جستجو بارها
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="operators"
+                                                                            @if (in_array('operators', $user->userAccess)) checked @endif>
+                                                                        اپراتورها
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="drivers"
+                                                                            @if (in_array('drivers', $user->userAccess)) checked @endif>
+                                                                        رانندگان
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="callWithOwner"
+                                                                            @if (in_array('callWithOwner', $user->userAccess)) checked @endif>
+                                                                        تماس با صاحب بار و باربری
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="contactTheDrivers"
+                                                                            @if (in_array('contactTheDrivers', $user->userAccess)) checked @endif>
+                                                                        تماس با رانندگان
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="appVersions"
+                                                                            @if (in_array('appVersions', $user->userAccess)) checked @endif>
+                                                                        ورژن اپلیکیشن ها
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="provincesAndCities"
+                                                                            @if (in_array('provincesAndCities', $user->userAccess)) checked @endif>
+                                                                        استان ها و شهر ها
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="services"
+                                                                            @if (in_array('services', $user->userAccess)) checked @endif>
+                                                                         خدمات ها
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                                <ul id="myUL">
+                                                    <li><span class="caret">رسانه</span>
+                                                        <ul class="nested">
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="sliders"
+                                                                            @if (in_array('sliders', $user->userAccess)) checked @endif>
+                                                                        اسلایدر
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="radios"
+                                                                            @if (in_array('radios', $user->userAccess)) checked @endif>
+                                                                        رادیو
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                                <div class="form-group">
+                                                    <label>
+                                                        <input type="checkbox" name="finalApprovalAndStoreCargo"
+                                                            @if (in_array('finalApprovalAndStoreCargo', $user->userAccess)) checked @endif>
+                                                        تایید و ثبت دسته ای بار
+                                                    </label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>
+                                                        <input type="checkbox" name="searchAll"
+                                                            @if (in_array('searchAll', $user->userAccess)) checked @endif>
+                                                        جستجو هدر
+                                                    </label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>
+                                                        <input type="checkbox" name="unSuccessPayment"
+                                                            @if (in_array('unSuccessPayment', $user->userAccess)) checked @endif>
+                                                        پرداخت ناموفق رانندگان
+                                                    </label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>
+                                                        <input type="checkbox" name="setting"
+                                                            @if (in_array('setting', $user->userAccess)) checked @endif>
+                                                        تنظیمات
+                                                    </label>
+                                                </div>
                                             </div>
                                             <div class="modal-footer text-left">
                                                 <button class="btn btn-primary" type="submit">ثبت دسترسی

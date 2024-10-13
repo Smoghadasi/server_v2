@@ -81,8 +81,6 @@
             </ul>
         </li>
 
-
-
         <li class="menu-item">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bxs-category-alt"></i>
@@ -117,6 +115,8 @@
                             <div data-i18n="Without menu">بارهای ثبت شده توسط صاحب بار</div>
                         </a>
                     </li>
+                @endif
+                @if (in_array('loadBearing', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('admin.loadBackupTransportation') }}">
                             <div data-i18n="Without menu">بارهای ثبت شده توسط باربری</div>
@@ -124,30 +124,45 @@
                     </li>
                 @endif
 
-                @if (in_array('loads', auth()->user()->userAccess))
+                @if (in_array('loadBearing', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/loads') }}">
                             <div data-i18n="Without menu"> گزارش بار ها</div>
                         </a>
                     </li>
+                @endif
+                @if (in_array('loadsReport', auth()->user()->userAccess))
+                    <li class="menu-item">
+                        <a class="menu-link" href="{{ url('admin/loads') }}">
+                            <div data-i18n="Without menu"> گزارش بار ها</div>
+                        </a>
+                    </li>
+                @endif
+
+                @if (in_array('loadRegistration', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/storeCargoConvertForm') }}">
                             <div data-i18n="Without menu">ثبت بار</div>
                         </a>
                     </li>
+                @endif
 
+                @if (in_array('confirmLoads', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('accept.cargo.index') }}">
                             <div data-i18n="Without menu">تایید بار ها</div>
                         </a>
                     </li>
+                @endif
 
+                @if (in_array('EquivalentWordsInCargoRegistration', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('equivalent.index') }}">
                             <div data-i18n="Without menu">کلمات معادل در ثبت بار</div>
                         </a>
                     </li>
                 @endif
+
                 @if (in_array('listOfLoadsByOperator', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/listOfLoadsByOperator') }}">
@@ -173,27 +188,29 @@
                         </a>
                     </li>
                 @endif
-                @if (in_array('usersByCity', auth()->user()->userAccess))
-                    <li
-                        class="menu-item {{ request()->is('admin/usersByCity*') ? 'active open' : '' }} {{ request()->is('admin/usersByProvince*') ? 'active open' : '' }}">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            {{-- <i class="menu-icon tf-icons bx bx-bar-chart"></i> --}}
-                            <div data-i18n="Layouts">استفاده کنندگان</div>
-                        </a>
-                        <ul class="menu-sub">
+                <li
+                    class="menu-item {{ request()->is('admin/usersByCity*') ? 'active open' : '' }} {{ request()->is('admin/usersByProvince*') ? 'active open' : '' }}">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        {{-- <i class="menu-icon tf-icons bx bx-bar-chart"></i> --}}
+                        <div data-i18n="Layouts">استفاده کنندگان</div>
+                    </a>
+                    <ul class="menu-sub">
+                        @if (in_array('separationOfTheCity', auth()->user()->userAccess))
                             <li class="menu-item">
                                 <a class="menu-link" href="{{ route('reporting.usersByCity') }}">
                                     <span>تفکیک شهرستان</span>
                                 </a>
                             </li>
+                        @endif
+                        @if (in_array('separationOfTheState', auth()->user()->userAccess))
                             <li class="menu-item">
                                 <a class="menu-link" href="{{ route('reporting.usersByProvince') }}">
                                     <span>تفکیک استان</span>
                                 </a>
                             </li>
-                        </ul>
-                    </li>
-                @endif
+                        @endif
+                    </ul>
+                </li>
                 @if (in_array('freeSubscription', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('freeSubscription.index') }}">
@@ -214,63 +231,82 @@
                             <div data-i18n="Without menu">فعالیت رانندگان</div>
                         </a>
                     </li>
+                @endif
+                @if (in_array('paymentOfDrivers', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/driversPaymentReport') }}">
                             <div data-i18n="Without menu">پرداخت رانندگان</div>
                         </a>
                     </li>
                 @endif
-                @if (in_array('driversContactCall', auth()->user()->userAccess))
+                @if (in_array('fleetByCall', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a href="{{ route('report.driversContactCall') }}" class="menu-link">
                             <div data-i18n="Without menu">ناوگان بر اساس تماس</div>
                         </a>
                     </li>
+                @endif
+                @if (in_array('driversBasedOnTheMostCalls', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a href="{{ route('report.driversCountCall') }}" class="menu-link">
                             <div data-i18n="Without menu">رانندگان بر اساس بیشترین تماس</div>
                         </a>
                     </li>
+                @endif
+                @if (in_array('driversBasedOnTime', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a href="{{ route('report.driversActivitiesCallDate') }}" class="menu-link">
                             <div data-i18n="Without menu">فعالیت رانندگان بر اساس زمان (امروز)</div>
                         </a>
                     </li>
                 @endif
-                @if (in_array('summaryOfDaysReport', auth()->user()->userAccess))
+                @if (in_array('summaryOfTheDayReport', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a href="{{ url('admin/summaryOfDaysReport') }}" class="menu-link">
                             <div data-i18n="Without menu">خلاصه گزارش روز</div>
                         </a>
                     </li>
-
+                @endif
+                @if (in_array('bearingActivities', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/transportationCompaniesActivityReport') }}">
                             <div data-i18n="Without menu">فعالیت باربری ها</div>
                         </a>
                     </li>
+                @endif
+
+
+                @if (in_array('cargoOwnersActivityReport', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/cargoOwnersActivityReport') }}">
                             <div data-i18n="Without menu"> فعالیت صاحب بارها</div>
                         </a>
                     </li>
+                @endif
+                @if (in_array('activityOfOperators', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/operatorsActivityReport') }}">
                             <div data-i18n="Without menu"> فعالیت اپراتورها</div>
                         </a>
                     </li>
+                @endif
+                @if (in_array('combinedReport', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/combinedReports') }}">
                             <div data-i18n="Without menu"> گزارش های ترکیبی</div>
                         </a>
                     </li>
-
+                @endif
+                @if (in_array('driverInstallationInLast30Days', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/driverInstallationInLast30Days') }}">
                             <div data-i18n="Without menu"> نصب رانندگان در 30 روز</div>
                         </a>
                     </li>
                 @endif
+
+
+
 
                 @if (in_array('fleetRatioToDriverActivityReport', auth()->user()->userAccess))
                     <li class="menu-item">
@@ -282,33 +318,38 @@
             </ul>
         </li>
 
-        @if (in_array('paymentReport', auth()->user()->userAccess))
-            <li class="menu-item">
-                <a href="javascript:void(0);" class="menu-link menu-toggle">
-                    <i class="menu-icon tf-icons bx bx-credit-card"></i>
-                    <div data-i18n="pais">پرداخت ها</div>
-                </a>
+        <li class="menu-item">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-credit-card"></i>
+                <div data-i18n="pais">پرداخت ها</div>
+            </a>
 
-                <ul class="menu-sub">
+            <ul class="menu-sub">
+                @if (in_array('driverPayment', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/paymentReport') }}/{{ ROLE_DRIVER }}/100">
                             <div data-i18n="Without menu">راننده ها</div>
                         </a>
                     </li>
-
+                @endif
+                @if (in_array('theHighestPayingDrivers', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/mostPaidDriversReport') }}">
                             <div data-i18n="Without menu">بیشترین پرداخت رانندگان</div>
                         </a>
                     </li>
+                @endif
+
+                @if (in_array('paymentBasedOnFleet', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/paymentByFleetReport') }}">
                             <div data-i18n="Without menu">پرداخت براساس ناوگان</div>
                         </a>
                     </li>
-                </ul>
-            </li>
-        @endif
+                @endif
+
+            </ul>
+        </li>
         <li
             class="menu-item {{ request()->is('admin/loadOwner*') ? 'active open' : '' }} {{ request()->is('admin/loadOperators*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -318,13 +359,14 @@
 
             <ul class="menu-sub">
                 {{-- @if (in_array('operatorsWorkingHoursActivityReport', auth()->user()->userAccess)) --}}
-                @if (auth()->user()->role == 'admin' || auth()->user()->id == 29)
+                @if (in_array('listOfOwners', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('owner.index') }}">
                             <div data-i18n="Without menu">لیست صاحبان بار</div>
                         </a>
                     </li>
                 @endif
+
                 <li
                     class="menu-item {{ request()->is('admin/loadOwner*') ? 'active open' : '' }} {{ request()->is('admin/loadOperators*') ? 'active open' : '' }}">
                     <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -332,96 +374,99 @@
                         <div data-i18n="Layouts">بار های ثبت شده</div>
                     </a>
                     <ul class="menu-sub">
-                        <li class="menu-item">
-                            <a class="menu-link" href="{{ route('admin.load.operator') }}">
-                                <span>اپراتور</span>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a class="menu-link" href="{{ route('admin.load.owner') }}">
-                                <span>صاحب بار</span>
-                            </a>
-                        </li>
+                        @if (in_array('registeredLoadsByOperators', auth()->user()->userAccess))
+                            <li class="menu-item">
+                                <a class="menu-link" href="{{ route('admin.load.operator') }}">
+                                    <span>اپراتور</span>
+                                </a>
+                            </li>
+                        @endif
+                        @if (in_array('registeredLoadsByOwners', auth()->user()->userAccess))
+                            <li class="menu-item">
+                                <a class="menu-link" href="{{ route('admin.load.owner') }}">
+                                    <span>صاحب بار</span>
+                                </a>
+                            </li>
+                        @endif
+
+
                     </ul>
                 </li>
 
                 {{-- @endif --}}
             </ul>
         </li>
-        @if (in_array('complaints', auth()->user()->userAccess))
-            <li class="menu-item {{ request()->is('admin/report*') ? 'active open' : '' }}">
-                <a href="javascript:void(0);" class="menu-link menu-toggle">
-                    <i class="menu-icon tf-icons bx bx-printer"></i>
-                    <div data-i18n="pais">شکایات و انتقادات</div>
-                </a>
+        <li class="menu-item {{ request()->is('admin/report*') ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-printer"></i>
+                <div data-i18n="pais">شکایات و انتقادات</div>
+            </a>
 
-                <ul class="menu-sub">
+            <ul class="menu-sub">
+                @if (in_array('complaintsOfDrivers', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/complaintsDriversList') }}">
                             <div data-i18n="Without menu"> رانندگان</div>
                         </a>
                     </li>
+                @endif
+                @if (in_array('complaintsOfOwners', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('complaint.owner.list') }}">
                             <div data-i18n="Without menu">صاحبان بار</div>
                         </a>
                     </li>
-
+                @endif
+                @if (in_array('blockages', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('blockedPhoneNumber.index') }}">
                             <span>مسدودی ها</span>
                         </a>
                     </li>
-
+                @endif
+                @if (in_array('IPBlocked', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/blockedIps') }}">
                             <span>IP های های مسدود</span>
                         </a>
                     </li>
-
+                @endif
+                @if (in_array('messages', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/messages') }}">
                             <span>پیام ها</span>
                         </a>
                     </li>
+                @endif
 
-                    {{-- <li class="menu-item">
-                        <a class="menu-link" href="{{ route('report.index', ['type' => 'owner']) }}">
-                            <span>گزارش تخلف</span>
-                        </a>
-                    </li> --}}
-                    <li class="menu-item {{ request()->is('admin/report*') ? 'active open' : '' }}">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            {{-- <i class="menu-icon tf-icons bx bx-bar-chart"></i> --}}
-                            <div data-i18n="Layouts">گزارش تخلف</div>
-                        </a>
-                        <ul class="menu-sub">
+
+
+                <li class="menu-item {{ request()->is('admin/report*') ? 'active open' : '' }}">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        {{-- <i class="menu-icon tf-icons bx bx-bar-chart"></i> --}}
+                        <div data-i18n="Layouts">گزارش تخلف</div>
+                    </a>
+                    <ul class="menu-sub">
+                        @if (in_array('violationReportOwner', auth()->user()->userAccess))
                             <li class="menu-item">
                                 <a class="menu-link" href="{{ route('report.index', ['type' => 'owner']) }}">
                                     <span>صاحب بار</span>
                                 </a>
                             </li>
+                        @endif
+                        @if (in_array('violationReportDrivers', auth()->user()->userAccess))
                             <li class="menu-item">
                                 <a class="menu-link" href="{{ route('report.index', ['type' => 'driver']) }}">
                                     <span>راننده</span>
                                 </a>
                             </li>
-                        </ul>
-                    </li>
-                    {{-- <li class="menu-item">
-                        <a class="menu-link" href="{{ url('admin/complaintsTransportationCompanyList') }}">
-                            <div data-i18n="Without menu"> باربری ها(نسخه قدیمی)</div>
-                        </a>
-                    </li>
+                        @endif
 
-                    <li class="menu-item">
-                        <a class="menu-link" href="{{ url('admin/complaintsCustomerList') }}">
-                            <div data-i18n="Without menu">صاحب بار(نسخه قدیمی)</div>
-                        </a>
-                    </li> --}}
-                </ul>
-            </li>
-        @endif
+                    </ul>
+                </li>
+
+            </ul>
+        </li>
         <li class="menu-item">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bxs-car"></i>
@@ -429,19 +474,21 @@
             </a>
 
             <ul class="menu-sub">
-                @if (in_array('fleet', auth()->user()->userAccess) || auth()->user()->role == 'admin')
+                @if (in_array('fleet', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('fleet.index') }}">
                             <span>ناوگان ها</span>
                         </a>
                     </li>
                 @endif
+                @if (in_array('myFleets', auth()->user()->userAccess))
+                    <li class="menu-item">
+                        <a class="menu-link" href="{{ url('admin/operatorFleets') }}">
+                            <span>ناوگان من</span>
+                        </a>
+                    </li>
+                @endif
 
-                <li class="menu-item">
-                    <a class="menu-link" href="{{ url('admin/operatorFleets') }}">
-                        <span>ناوگان من</span>
-                    </a>
-                </li>
             </ul>
         </li>
         <li class="menu-item">
@@ -483,20 +530,20 @@
                 @endif
 
 
-                @if (in_array('contactReportWithCargoOwners', auth()->user()->userAccess))
+                @if (in_array('callWithOwner', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/contactReportWithCargoOwners') }}">
                             <span>تماس با صاحب بار و باربری</span>
                         </a>
                     </li>
-
+                @endif
+                @if (in_array('contactTheDrivers', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/contactingWithDrivers') }}">
                             <span>تماس با رانندگان</span>
                         </a>
                     </li>
                 @endif
-
 
                 @if (in_array('appVersions', auth()->user()->userAccess))
                     <li class="menu-item">
@@ -538,17 +585,20 @@
                     <div data-i18n="Layouts">رسانه</div>
                 </a>
                 <ul class="menu-sub">
-                    <li class="menu-item">
-                        <a class="menu-link" href="{{ route('slider.index') }}">
-                            <span>اسلایدر</span>
-                        </a>
-                    </li>
-
-                    <li class="menu-item">
-                        <a class="menu-link" href="{{ route('radio.index') }}">
-                            <span>رادیو</span>
-                        </a>
-                    </li>
+                    @if (in_array('sliders', auth()->user()->userAccess))
+                        <li class="menu-item">
+                            <a class="menu-link" href="{{ route('slider.index') }}">
+                                <span>اسلایدر</span>
+                            </a>
+                        </li>
+                    @endif
+                    @if (in_array('radios', auth()->user()->userAccess))
+                        <li class="menu-item">
+                            <a class="menu-link" href="{{ route('radio.index') }}">
+                                <span>رادیو</span>
+                            </a>
+                        </li>
+                    @endif
                 </ul>
             </li>
         @endif
