@@ -2340,7 +2340,7 @@ class LoadController extends Controller
             'drivers.created_at',
         )
             ->where('location_at', '!=', null)
-            ->where('location_at', '>=', Carbon::now()->subMinutes(6))
+            ->where('location_at', '>=', Carbon::now()->subMinutes(120))
             ->selectRaw("{$haversine} AS distance")
             ->whereRaw("{$haversine} < ?", $radius)
             ->orderBy('distance', 'asc')

@@ -102,7 +102,7 @@ class Load extends Model
             * sin(radians(`latitude`))))";
 
         return Driver::where('location_at', '!=', null)
-            ->where('location_at', '>=', Carbon::now()->subMinutes(6))
+            ->where('location_at', '>=', Carbon::now()->subMinutes(120))
             ->selectRaw("{$haversine} AS distance")
             ->whereRaw("{$haversine} < ?", $radius)
             ->count();
