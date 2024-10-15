@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,6 +16,7 @@ class Load extends Model
         'numOfRequestedDrivers',
         'numOfSelectedDrivers',
         'numOfDriverCalls',
+        'numOfNearDriver',
         'numOfInquiryDrivers',
         'originCity',
         'destinationCity',
@@ -85,6 +87,25 @@ class Load extends Model
     public function getNumOfDriverCallsAttribute()
     {
         return DriverCall::where('load_id', $this->id)->count();
+    }
+    public function getNumOfNearDriverAttribute()
+    {
+        $latitude = $this->latitude;
+        $longitude = $this->longitude;
+        $radius = 150;
+
+        $haversine = "(6371 * acos(cos(radians(" . $latitude . "))
+            * cos(radians(`latitude`))
+            * cos(radians(`longitude`)
+            - radians(" . $longitude . "))
+            + sin(radians(" . $latitude . "))
+            * sin(radians(`latitude`))))";
+
+        return Driver::where('location_at', '!=', null)
+            ->where('location_at', '>=', Carbon::now()->subMinutes(6))
+            ->selectRaw("{$haversine} AS distance")
+            ->whereRaw("{$haversine} < ?", $radius)
+            ->count();
     }
 
     public function getNumOfSelectedDriversAttribute()

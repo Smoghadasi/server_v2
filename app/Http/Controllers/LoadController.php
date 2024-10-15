@@ -36,6 +36,7 @@ use App\Models\Tender;
 use App\Models\TenderStart;
 use App\Models\User;
 use App\Models\UserActivityReport;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -2307,6 +2308,47 @@ class LoadController extends Controller
         return view('admin.loadBackup', compact('loads'));
     }
 
+    public function nearLoadDrivers($load_id)
+    {
+        $load = Load::findOrFail($load_id);
+        $latitude = $load->latitude;
+        $longitude = $load->longitude;
+        $radius = 150;
+
+        $haversine = "(6371 * acos(cos(radians(" . $latitude . "))
+            * cos(radians(`latitude`))
+            * cos(radians(`longitude`)
+            - radians(" . $longitude . "))
+            + sin(radians(" . $latitude . "))
+            * sin(radians(`latitude`))))";
+
+        $drivers = Driver::select(
+            'drivers.id',
+            'drivers.name',
+            'drivers.lastName',
+            'drivers.nationalCode',
+            'drivers.mobileNumber',
+            'drivers.province_id',
+            'drivers.city_id',
+            'drivers.fleet_id',
+            'drivers.version',
+            'drivers.freeCalls',
+            'drivers.activeDate',
+            'drivers.location_at',
+            'drivers.latitude',
+            'drivers.latitude',
+            'drivers.created_at',
+        )
+            ->where('location_at', '!=', null)
+            ->where('location_at', '>=', Carbon::now()->subMinutes(6))
+            ->selectRaw("{$haversine} AS distance")
+            ->whereRaw("{$haversine} < ?", $radius)
+            ->orderBy('distance', 'asc')
+            ->orderByDesc('created_at')
+            ->get();
+        return view('admin.driver.driverNearOwner', compact('drivers'));
+    }
+
     public function loadOwner()
     {
         $loads = Load::orderByDesc('created_at')
@@ -2315,6 +2357,7 @@ class LoadController extends Controller
             ->where('userType', ROLE_OWNER)
             ->where('isBot', 0)
             ->paginate(20);
+
         $loadsCount = Load::orderByDesc('created_at')
             ->where('userType', ROLE_OWNER)
             ->where('isBot', 0)

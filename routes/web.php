@@ -293,6 +293,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // بار های ثبت شده صاحبان بار
         Route::get('loadOwner', [LoadController::class, 'loadOwner'])->middleware('operator')->name('admin.load.owner');
 
+        // رانندگان نزدیک بار
+        Route::get('nearLoadDrivers/{load_id}', [LoadController::class, 'nearLoadDrivers'])->middleware('operator')->name('admin.nearLoadDrivers');
+
         // بار های ثبت شده صاحبان بار (تلگرام)
         Route::get('loadOperators', [LoadController::class, 'loadOperators'])->middleware('operator')->name('admin.load.operator');
 

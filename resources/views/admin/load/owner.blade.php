@@ -99,13 +99,18 @@
                                         تماس: {{ $load->numOfDriverCalls }}
                                     </a>
                                 </span>
+                                <span>
+                                    <a class="badge bg-black" href="{{ route('admin.nearLoadDrivers', $load->id) }}">
+                                        رانندگان نزدیک: {{ $load->numOfNearDriver }}
+                                    </a>
+                                </span>
                             </td>
                             @php
                                 $pieces = explode(' ', $load->deleted_at);
                             @endphp
 
                             <td>{{ $load->date }} {{ $load->dateTime }}</td>
-                            <td dir="ltr">
+                            <td dir="ltr" class="text-center">
                                 {{ $load->deleted_at ? gregorianDateToPersian($load->deleted_at, '-', true) . ' ' . $pieces[1] : '-' }}
                                 {{-- {{ gregorianDateToPersian($load->deleted_at, '-', true) . ' ' . $pieces[1] }} --}}
                             </td>
