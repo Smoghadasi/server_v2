@@ -67,7 +67,7 @@
                                 <td>{{ $driver->mobileNumber }}</td>
                                 <td>{{ $driver->distance < 1 ? 'کمتر از یک کیلومتر' : number_format($driver->distance) . ' کیلومتر ' }}</td>
                                 @php
-                                    $time = explode(' ', $load->location_at);
+                                    $time = explode(' ', $driver->location_at);
                                 @endphp
                                 <td>{{ $time }}</td>
 
