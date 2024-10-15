@@ -22,7 +22,7 @@
                             <th>کد نسخه</th>
                             <th>شماره تلفن همراه</th>
                             <th>فاصله</th>
-                            <th>زمان ثبت لوکیشن</th>
+                            {{-- <th>زمان ثبت لوکیشن</th> --}}
                             <th class="text-center">عملیات</th>
                         </tr>
                     </thead>
@@ -66,12 +66,12 @@
                                 <td>{{ $driver->version ?? '-' }}</td>
                                 <td>{{ $driver->mobileNumber }}</td>
                                 <td>{{ $driver->distance < 1 ? 'کمتر از یک کیلومتر' : number_format($driver->distance) . ' کیلومتر ' }}</td>
-                                @php
+                                {{-- @php
                                     $time = explode(' ', $driver->location_at);
                                 @endphp
                                 <td>{{ $time }}</td>
 
-                                <td>
+                                <td> --}}
                                     <a class="btn btn-primary"
                                         href="{{ url('admin/driverInfo') }}/{{ $driver->id }}">جزئیات</a>
                                 </td>
