@@ -16,7 +16,7 @@ class Load extends Model
         'numOfRequestedDrivers',
         'numOfSelectedDrivers',
         'numOfDriverCalls',
-        // 'numOfNearDriver',
+        'numOfNearDriver',
         'numOfInquiryDrivers',
         'originCity',
         'destinationCity',
@@ -88,27 +88,32 @@ class Load extends Model
     {
         return DriverCall::where('load_id', $this->id)->count();
     }
-    // public function getNumOfNearDriverAttribute()
-    // {
-    //     $latitude = $this->latitude;
-    //     $longitude = $this->longitude;
-    //     $radius = 150;
-    //     $fleet = FleetLoad::where('load_id', $this->id)->first();
+    public function getNumOfNearDriverAttribute()
+    {
+        try {
+            $latitude = $this->latitude;
+            $longitude = $this->longitude;
+            $radius = 150;
+            $fleet = FleetLoad::where('load_id', $this->id)->first();
 
-    //     $haversine = "(6371 * acos(cos(radians(" . $latitude . "))
-    //         * cos(radians(`latitude`))
-    //         * cos(radians(`longitude`)
-    //         - radians(" . $longitude . "))
-    //         + sin(radians(" . $latitude . "))
-    //         * sin(radians(`latitude`))))";
+            $haversine = "(6371 * acos(cos(radians(" . $latitude . "))
+            * cos(radians(`latitude`))
+            * cos(radians(`longitude`)
+            - radians(" . $longitude . "))
+            + sin(radians(" . $latitude . "))
+            * sin(radians(`latitude`))))";
 
-    //     return Driver::where('location_at', '!=', null)
-    //         ->where('location_at', '>=', Carbon::now()->subMinutes(120))
-    //         ->where('fleet_id', $fleet->fleet_id)
-    //         ->selectRaw("{$haversine} AS distance")
-    //         ->whereRaw("{$haversine} < ?", $radius)
-    //         ->count();
-    // }
+            return Driver::where('location_at', '!=', null)
+                ->where('location_at', '>=', Carbon::now()->subMinutes(120))
+                ->where('fleet_id', $fleet->fleet_id)
+                ->selectRaw("{$haversine} AS distance")
+                ->whereRaw("{$haversine} < ?", $radius)
+                ->count();
+        } catch (\Exception $e) {
+            //throw $th;
+        }
+        return 0;
+    }
 
     public function getNumOfSelectedDriversAttribute()
     {
