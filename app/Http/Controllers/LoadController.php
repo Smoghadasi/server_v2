@@ -2314,7 +2314,7 @@ class LoadController extends Controller
         $latitude = $load->latitude;
         $longitude = $load->longitude;
         $radius = 150;
-        $fleet = FleetLoad::where('load_id', $load->id)->first();
+        $fleets = FleetLoad::where('load_id', $load->id)->pluck('fleet_id');
 
         $haversine = "(6371 * acos(cos(radians(" . $latitude . "))
             * cos(radians(`latitude`))
@@ -2342,7 +2342,7 @@ class LoadController extends Controller
         )
             ->where('location_at', '!=', null)
             ->where('location_at', '>=', Carbon::now()->subMinutes(120))
-            ->where('fleet_id', $fleet->fleet_id)
+            ->whereIn('fleet_id', $fleets)
             ->selectRaw("{$haversine} AS distance")
             ->whereRaw("{$haversine} < ?", $radius)
             ->orderBy('distance', 'asc')

@@ -94,7 +94,7 @@ class Load extends Model
             $latitude = $this->latitude;
             $longitude = $this->longitude;
             $radius = 150;
-            $fleet = FleetLoad::where('load_id', $this->id)->first();
+            $fleets = FleetLoad::where('load_id', $this->id)->pluck('fleet_id');
 
             $haversine = "(6371 * acos(cos(radians(" . $latitude . "))
             * cos(radians(`latitude`))
@@ -105,7 +105,7 @@ class Load extends Model
 
             return Driver::where('location_at', '!=', null)
                 ->where('location_at', '>=', Carbon::now()->subMinutes(120))
-                ->where('fleet_id', $fleet->fleet_id)
+                ->whereIn('fleet_id', $fleets)
                 ->selectRaw("{$haversine} AS distance")
                 ->whereRaw("{$haversine} < ?", $radius)
                 ->count();
