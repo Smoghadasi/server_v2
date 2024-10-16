@@ -204,6 +204,8 @@ class DriverController extends Controller
             $driver->docNumber = $request->docNumber;
             $driver->inquiryDate = $request->inquiryDate;
             $driver->mobileNumber = $request->mobileNumber;
+            $driver->notification = $request->notification;
+            $driver->sms = $request->sms;
             $driver->degreeOfEdu = $request->degreeOfEdu;
             $driver->driverType = $request->driverType;
             $driver->insuranceCode = $request->insuranceCode;
