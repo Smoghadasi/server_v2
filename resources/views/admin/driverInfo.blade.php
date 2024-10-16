@@ -68,7 +68,7 @@
                             <div class="col">
                                 <div id="notification">
                                     <label for="state" class="form-label">اعلان</label>
-                                    @if ($driver->notitication == 'enable')
+                                    @if ($driver->notification == 'enable')
                                         <div class="badge rounded-pill bg-success d-inline-block">فعال</div>
                                     @else
                                         <div class="badge rounded-pill bg-danger d-inline-block">غیر فعال</div>
