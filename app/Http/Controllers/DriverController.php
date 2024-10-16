@@ -209,7 +209,6 @@ class DriverController extends Controller
             $driver->degreeOfEdu = $request->degreeOfEdu;
             $driver->driverType = $request->driverType;
             $driver->insuranceCode = $request->insuranceCode;
-            $driver->city_id = $request->city_id;
             $driver->validityDate = $request->validityDate;
             $driver->distances = $request->distances;
             $driver->fleet_id = $request->fleet_id;
