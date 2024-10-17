@@ -9,7 +9,33 @@ class ComplaintDriver extends Model
 {
     //
 
-    protected $appends = ['driver'];
+    protected $appends = [
+        'driver',
+        'shamsiCreatedDate',
+        'shamsiUpdatedDate',
+    ];
+
+    public function getShamsiCreatedDateAttribute()
+    {
+        try {
+            $time = explode(' ', $this->created_at);
+            return gregorianDateToPersian($this->created_at, '-', true) . ' ( ' . $time[1] . ' ) ';
+        } catch (Exception $exception) {
+        }
+
+        return '';
+    }
+
+    public function getShamsiUpdatedDateAttribute()
+    {
+        try {
+            $time = explode(' ', $this->updated_at);
+            return gregorianDateToPersian($this->updated_at, '-', true) . ' ( ' . $time[1] . ' ) ';
+        } catch (Exception $exception) {
+        }
+
+        return '';
+    }
 
     public function getDriverAttribute()
     {
@@ -18,7 +44,6 @@ class ComplaintDriver extends Model
             $driver = Driver::find($this->driver_id);
             if (isset($driver->id))
                 return $driver->name . ' ' . $driver->lastName;
-
         } catch (Exception $exception) {
         }
 
@@ -29,5 +54,4 @@ class ComplaintDriver extends Model
     {
         return $this->belongsTo(Driver::class, 'driver_id');
     }
-
 }

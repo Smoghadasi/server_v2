@@ -19,7 +19,8 @@
                     <th>کد پیگیری</th>
                     <th>متن پیام</th>
                     <th>پاسخ ادمین</th>
-                    <th></th>
+                    <th>تاریخ ثبت</th>
+                    <th>عملیات</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -33,6 +34,13 @@
                         <td>{{ $complaintDriver->trackingCode }}</td>
                         <td>{{ $complaintDriver->message }}</td>
                         <td>{{ $complaintDriver->adminMessage }}</td>
+                        @php
+                            $pieces = explode(' ', $complaintDriver->created_at);
+                        @endphp
+                        <td>
+                            {{ gregorianDateToPersian($complaintDriver->created_at, '-', true) . ' ( ' . $pieces[1] . ' ) ' }}
+                        </td>
+
                         <td>
                             <button type="button" class="btn btn-primary mb-3 btn-sm text-nowrap"
 
