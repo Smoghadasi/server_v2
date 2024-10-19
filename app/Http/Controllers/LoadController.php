@@ -688,6 +688,10 @@ class LoadController extends Controller
         } catch (\Exception $exception) {
         }
         foreach ($request->destinationCities as $key => $destination_city) {
+
+            $owner->loadCount += 1;
+            $owner->save();
+
             try {
                 $message[1] = '';
                 $loadPic = null;
@@ -818,11 +822,6 @@ class LoadController extends Controller
 
                 $load->save();
 
-                $ownerLoadCount = Owner::where('mobileNumber', $load->mobileNumberForCoordination)->first();
-                if ($ownerLoadCount) {
-                    $ownerLoadCount->loadCount += 1;
-                    $ownerLoadCount->save();
-                }
 
 
                 if (isset($request->dateOfCargoDeclaration)) {
@@ -4850,6 +4849,12 @@ class LoadController extends Controller
         $load->time = time();
         $load->urgent = 1;
         $load->save();
+
+        $ownerLoadCount = Owner::where('mobileNumber', $load->mobileNumberForCoordination)->first();
+        if ($ownerLoadCount) {
+            $ownerLoadCount->loadCount += 1;
+            $ownerLoadCount->save();
+        }
         try {
             if (isset($load->id)) {
                 $fleetLists = FleetLoad::where('load_id', $task->id)->get();
