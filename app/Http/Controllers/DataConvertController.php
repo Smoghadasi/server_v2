@@ -718,6 +718,7 @@ class DataConvertController extends Controller
             }
 
             if (isset($load->id)) {
+
                 $counter++;
 
                 if (isset($fleet_id->id)) {
@@ -769,6 +770,16 @@ class DataConvertController extends Controller
                     Log::emergency($exception->getMessage());
                     Log::emergency("---------------------------------------------------------");
                 }
+                try {
+                    $ownerLoadCount = Owner::where('mobileNumber', $load->mobileNumberForCoordination)->first();
+                    if ($ownerLoadCount) {
+                        $ownerLoadCount->loadCount += 1;
+                        $ownerLoadCount->save();
+                    }
+                } catch (\Exception $th) {
+                    //throw $th;
+                }
+
                 // if ($load->isBot == 1) {
                 //     $firstLoad = FirstLoad::where('mobileNumberForCoordination', $load->mobileNumberForCoordination)->first();
                 //     if ($firstLoad == null) {
