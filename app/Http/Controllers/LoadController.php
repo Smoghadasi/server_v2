@@ -818,7 +818,11 @@ class LoadController extends Controller
 
                 $load->save();
 
-
+                $ownerLoadCount = Owner::where('mobileNumber', $load->mobileNumberForCoordination)->first();
+                if ($ownerLoadCount) {
+                    $ownerLoadCount->loadCount += 1;
+                    $ownerLoadCount->save();
+                }
 
 
                 if (isset($request->dateOfCargoDeclaration)) {
