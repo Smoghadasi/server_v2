@@ -82,6 +82,7 @@ class OwnerController extends Controller
                 }
                 $owner->isAuth = 2;
                 $owner->isOwner = 1;
+                $owner->authOwner = now();
 
                 $owner->save();
                 $response = [
@@ -139,6 +140,7 @@ class OwnerController extends Controller
                 }
                 $owner->isAuth = 2;
                 $owner->isOwner = 2;
+                $owner->authOwner = now();
                 $owner->save();
             }
             return response()->json(['message' => 'با موفقیت ذخیره شد'], 201);

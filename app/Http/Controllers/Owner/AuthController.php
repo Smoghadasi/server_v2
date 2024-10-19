@@ -20,7 +20,7 @@ class AuthController extends Controller
      */
     public function index()
     {
-        $owners = Owner::where('isAuth', 2)->paginate(10);
+        $owners = Owner::where('isAuth', 2)->orderBy('auth_at', 'asc')->paginate(10);
         $ownerPenddingCounts = Owner::where('isAuth', 2)->count();
         $ownerRejectCounts = Owner::where('isAuth', 0)->count();
         $ownerAcceptCounts = Owner::where('isAuth', 1)->count();
@@ -110,16 +110,16 @@ class AuthController extends Controller
 
     public function generateSKU()
     {
-      $number = mt_rand(10000, 99999);
-      if($this->checkSKU($number)){
-        return $this->generateSKU();
-      }
-      return (string)$number;
+        $number = mt_rand(10000, 99999);
+        if ($this->checkSKU($number)) {
+            return $this->generateSKU();
+        }
+        return (string)$number;
     }
 
     public function checkSKU($number)
     {
-      return Owner::where('sku', $number)->exists();
+        return Owner::where('sku', $number)->exists();
     }
 
     /**
@@ -184,13 +184,13 @@ class AuthController extends Controller
         if ($request->status == ACCEPT) {
             if (SMS_PANEL == 'SMSIR') {
                 $owner->acceptCustomerSmsIr($owner->mobileNumber);
-            } else{
+            } else {
                 $owner->acceptCustomerSms($owner->mobileNumber);
             }
         } else {
             if (SMS_PANEL == 'SMSIR') {
                 $owner->rejectCustomerSmsIr($owner->mobileNumber);
-            }else{
+            } else {
                 $owner->rejectCustomerSms($owner->mobileNumber);
             }
 
