@@ -1,13 +1,32 @@
 @extends('layouts.dashboard')
 
 @section('content')
-
     <div class="card">
         <h5 class="card-header">
             گزارش فعالیت رانندگان
         </h5>
         <div class="card-body">
+            <form method="get" action="{{ route('home.searchDriverActivityReport') }}" class="mt-3 mb-3 card card-body">
+                <h5>جستجو :</h5>
 
+
+                <div class="form-group">
+                    <div class="col-md-12 row">
+
+                        <div class="col-md-3">
+                            <input class="form-control" type="text" id="fromDate" name="fromDate" placeholder="از تاریخ"
+                                autocomplete="off" />
+                            <span id="span1"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <input class="form-control" type="text" name="toDate" id="fromDate" placeholder="تا تاریخ"
+                                autocomplete="off" />
+                            <span id="span2"></span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary m-2">جستجو</button>
+                </div>
+            </form>
             <table class="table">
 
                 <tr>
@@ -28,7 +47,6 @@
                         <canvas id="separationOfTheFleetsFromTheFirst" style="width:100%;max-width:100%"></canvas>
                     </td>
                 </tr>
-
                 <tr>
                     <td>
                         <div class="text-center h6"> گزارش فعالیت راننده ها از ماه قبل</div>
@@ -39,8 +57,8 @@
                 <tr>
                     <td>
                         <div class="text-center h6"> فعالیت به تفکیک ناوگان از ماه قبل</div>
-                        <div id="activityReportOfDriversFromPreviousMonthByFleets"
-                             style="height: 370px; width: 100%;"></div>
+                        <div id="activityReportOfDriversFromPreviousMonthByFleets" style="height: 370px; width: 100%;">
+                        </div>
                     </td>
                 </tr>
                 @if (in_array('paidSixDays', auth()->user()->userAccess))
@@ -57,7 +75,14 @@
 
         </div>
     </div>
+@endsection
+@section('script')
+    <script src="{{ asset('js/persianDatepicker.min.js') }}"></script>
 
+    <script type="text/javascript">
+        $("#fromDate, #span1").persianDatepicker();
+        $("#toDate, #span2").persianDatepicker();
+    </script>
 
     <script>
         // روند افزایش راننده ها از 12 ماه قبل
@@ -100,7 +125,9 @@
                 }]
             },
             options: {
-                legend: {display: false}
+                legend: {
+                    display: false
+                }
             }
         });
     </script>
@@ -108,12 +135,12 @@
     <script>
         // تفکیک ناوگان ثبت نامی از ابتدا
         var labels = [
-            @foreach($separationOfTheFleetsFromTheFirst as $key => $value)
+            @foreach ($separationOfTheFleetsFromTheFirst as $key => $value)
                 "{{ $key }}",
             @endforeach
         ];
         var yValues = [
-            @foreach($separationOfTheFleetsFromTheFirst as $value)
+            @foreach ($separationOfTheFleetsFromTheFirst as $value)
                 {{ $value }},
             @endforeach
         ];
@@ -128,7 +155,9 @@
                 }]
             },
             options: {
-                legend: {display: false},
+                legend: {
+                    display: false
+                },
                 title: {
                     display: true,
                     text: ""
@@ -140,12 +169,12 @@
     <script>
         // گزارش فعالیت راننده ها از ماه قبل
         var xValues = [
-            @foreach($activityReportOfDriversFromPreviousMonth as $value)
+            @foreach ($activityReportOfDriversFromPreviousMonth as $value)
                 "{{ $value['label'] }}",
             @endforeach
         ];
         var data = [
-            @foreach($activityReportOfDriversFromPreviousMonth as $value)
+            @foreach ($activityReportOfDriversFromPreviousMonth as $value)
                 {{ $value['value'] }},
             @endforeach
 
@@ -161,7 +190,9 @@
                 }]
             },
             options: {
-                legend: {display: false}
+                legend: {
+                    display: false
+                }
             }
         });
     </script>
@@ -183,45 +214,44 @@
                 itemclick: toggleDataSeries
             },
             data: [
-                    @foreach($activityReportOfDriversFromPreviousMonthByFleets as $item)
-                {
-                    type: "spline",
-                    name: "{{ $item['title'] }}",
-                    showInLegend: true,
-                    dataPoints: [
-                            @foreach($item['data'] as $data)
-                        {
-                            label: "{{ $data['label'] }}", y: {{ $data['value'] }}
-                        },
-                        @endforeach
-                    ]
-                },
+                @foreach ($activityReportOfDriversFromPreviousMonthByFleets as $item)
+                    {
+                        type: "spline",
+                        name: "{{ $item['title'] }}",
+                        showInLegend: true,
+                        dataPoints: [
+                            @foreach ($item['data'] as $data)
+                                {
+                                    label: "{{ $data['label'] }}",
+                                    y: {{ $data['value'] }}
+                                },
+                            @endforeach
+                        ]
+                    },
                 @endforeach
             ]
         });
         chart.render();
 
         function toggleDataSeries(e) {
-            if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+            if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
                 e.dataSeries.visible = false;
             } else {
                 e.dataSeries.visible = true;
             }
             chart.render();
         }
-
-
     </script>
 
     <script>
         // هزینه وایزی توسط راننده ها از 60 روز قبل
         var xValues = [
-            @foreach($feesPaidByDrivers60DaysInAdvance as $value)
+            @foreach ($feesPaidByDrivers60DaysInAdvance as $value)
                 "{{ $value['label'] }}",
             @endforeach
         ];
         var data = [
-            @foreach($feesPaidByDrivers60DaysInAdvance as $value)
+            @foreach ($feesPaidByDrivers60DaysInAdvance as $value)
                 {{ $value['value'] }},
             @endforeach
 
@@ -237,11 +267,10 @@
                 }]
             },
             options: {
-                legend: {display: false}
+                legend: {
+                    display: false
+                }
             }
         });
     </script>
-@stop
-
-
-
+@endsection

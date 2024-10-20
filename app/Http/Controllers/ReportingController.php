@@ -256,6 +256,31 @@ class ReportingController extends Controller
         );
     }
 
+    public function searchDriverActivityReport(Request $request)
+    {
+        // return $request;
+        $start = $request->fromDate;
+        $end = $request->toDate;
+        $startDate = persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00';
+        $endDate = persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:00';
+
+        $activityReportOfDriversFromPreviousMonth = DriverActivity::whereBetween('created_at', [$startDate, $endDate])
+            ->selectRaw('DATE(created_at) as day, COUNT(*) as value')
+            ->groupBy('day')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'label' => str_replace('-', '/', convertEnNumberToFa(gregorianDateToPersian($item->day, '-'))),
+                    'value' => $item->value
+                ];
+            });
+        // return $driverActivities;
+
+        return view('admin.reporting.searchDriverActivity',
+            compact('activityReportOfDriversFromPreviousMonth', 'start', 'end')
+        );
+    }
+
     // روند افزایش راننده ها از 12 ماه قبل
     private function getIncreaseOfDriversSince12MonthsAgo($index)
     {
@@ -469,6 +494,24 @@ class ReportingController extends Controller
 
 
         return $fleets;
+    }
+
+    // گزارش فعالیت راننده ها از ماه قبل
+    private function getSearchActivityReportOfDriversFromPreviousMonth()
+    {
+
+        $driverActivities = [];
+        for ($index = 30; $index >= 0; $index--) {
+            $day = date('Y-m-d', strtotime('-' . $index . 'day', time()));
+            $driverActivities[] = [
+                'label' => str_replace('-', '/', convertEnNumberToFa(gregorianDateToPersian($day, '-'))),
+                'value' => DriverActivity::where([
+                    ['created_at', '>', $day . ' 00:00:00'],
+                    ['created_at', '<', $day . ' 23:59:59']
+                ])->count()
+            ];
+        }
+        return $driverActivities;
     }
 
     // گزارش فعالیت راننده ها از ماه قبل
