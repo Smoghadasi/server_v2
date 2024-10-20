@@ -32,7 +32,7 @@
                                     <input type="text" name="mobileNumber" class="form-control">
                                 </div>
                             </div>
-                            <input type="hidden" name="province_id" value="{{ $usersByProvince->id }}">
+                            <input type="hidden" name="province_id" value="{{ $provinceCity->id }}">
                         </div>
                         <div class="form-group my-4">
                             <button class="btn btn-info" type="submit">جستجو</button>
@@ -114,4 +114,4 @@
     </div>
 
 
-@stop
+@endsection
