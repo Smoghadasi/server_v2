@@ -2316,7 +2316,7 @@ class LoadController extends Controller
         $load = Load::findOrFail($load_id);
         $latitude = $load->latitude;
         $longitude = $load->longitude;
-        $radius = 150;
+        $radius = 70;
         $fleets = FleetLoad::where('load_id', $load->id)->pluck('fleet_id');
 
         $haversine = "(6371 * acos(cos(radians(" . $latitude . "))
