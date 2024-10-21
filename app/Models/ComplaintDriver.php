@@ -10,32 +10,8 @@ class ComplaintDriver extends Model
     //
 
     protected $appends = [
-        'driver',
-        'shamsiCreatedDate',
-        'shamsiUpdatedDate',
+        'driver'
     ];
-
-    public function getShamsiCreatedDateAttribute()
-    {
-        try {
-            $time = explode(' ', $this->created_at);
-            return gregorianDateToPersian($this->created_at, '-', true) . ' ( ' . $time[1] . ' ) ';
-        } catch (Exception $exception) {
-        }
-
-        return '';
-    }
-
-    public function getShamsiUpdatedDateAttribute()
-    {
-        try {
-            $time = explode(' ', $this->updated_at);
-            return gregorianDateToPersian($this->updated_at, '-', true) . ' ( ' . $time[1] . ' ) ';
-        } catch (Exception $exception) {
-        }
-
-        return '';
-    }
 
     public function getDriverAttribute()
     {
