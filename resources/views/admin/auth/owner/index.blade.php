@@ -38,11 +38,11 @@
                                 <td>{{ $owner->nationalCode }}</td>
                                 <td>{{ $owner->mobileNumber }}</td>
                                 @php
-                                    $pieces = explode(' ', $owner->created_at);
+                                    $pieces = explode(' ', $owner->auth_at);
                                     $timeUpdated_at = explode(' ', $owner->updated_at);
                                 @endphp
                                 <td dir="ltr">
-                                    {{ gregorianDateToPersian($owner->created_at, '-', true) . ' ' . $pieces[1] }}
+                                    {{ gregorianDateToPersian($owner->auth_at, '-', true) . ' ' . $pieces[1] }}
                                 </td>
                                 <td dir="ltr">
                                     {{ gregorianDateToPersian($owner->updated_at, '-', true) . ' ' . $timeUpdated_at[1] }}
