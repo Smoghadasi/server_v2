@@ -24,6 +24,14 @@
                 </a>
             </li>
         @endif
+        @if (in_array('finalApprovalAndStoreCargo', auth()->user()->userAccess))
+            <li class="menu-item">
+                <a class="menu-link" href="{{ url('admin/finalApprovalAndStoreCargo') }}">
+                    <i class="menu-icon tf-icons bx bx-box"></i>
+                    <div data-i18n="Without menu">تایید و ثبت دسته ای بار</div>
+                </a>
+            </li>
+        @endif
 
         <li class="menu-item {{ request()->is('admin/support*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -33,13 +41,7 @@
                 </div>
             </a>
             <ul class="menu-sub">
-                @if (in_array('finalApprovalAndStoreCargo', auth()->user()->userAccess))
-                    <li class="menu-item">
-                        <a class="menu-link" href="{{ url('admin/finalApprovalAndStoreCargo') }}">
-                            <div data-i18n="Without menu">ثبت بار</div>
-                        </a>
-                    </li>
-                @endif
+
                 @if (in_array('unSuccessPayment', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('unSuccessPeyment.driver') }}">
