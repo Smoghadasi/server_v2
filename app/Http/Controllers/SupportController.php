@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Support;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SupportController extends Controller
 {
@@ -71,9 +72,12 @@ class SupportController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Support $support)
     {
-        //
+        $support->result = $request->result;
+        $support->user_id = Auth::id();
+        $support->save();
+        return back()->with('success', 'با موفقیت ثبت شد');
     }
 
     /**
