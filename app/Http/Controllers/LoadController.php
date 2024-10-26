@@ -2376,7 +2376,8 @@ class LoadController extends Controller
 
         try {
 
-            $driverFCM_tokens = Driver::where('location_at', '!=', null)
+            $driverFCM_tokens = Driver::select('drivers.FCM_token')
+                ->where('location_at', '!=', null)
                 ->where('location_at', '>=', Carbon::now()->subMinutes(120))
                 ->whereIn('fleet_id', $fleets)
                 ->where('version', '>', 58)
