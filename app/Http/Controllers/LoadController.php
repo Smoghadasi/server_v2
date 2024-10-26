@@ -2338,6 +2338,8 @@ class LoadController extends Controller
             'drivers.version',
             'drivers.freeCalls',
             'drivers.activeDate',
+            'drivers.status',
+            'drivers.authLevel',
             'drivers.location_at',
             'drivers.latitude',
             'drivers.latitude',
@@ -2351,7 +2353,53 @@ class LoadController extends Controller
             ->orderBy('distance', 'asc')
             ->orderByDesc('created_at')
             ->get();
-        return view('admin.driver.driverNearOwner', compact('drivers'));
+        return view('admin.driver.driverNearOwner', compact('drivers', 'load_id'));
+    }
+
+    public function sendNotifNearLoadDrivers($load_id)
+    {
+        $load = Load::findOrFail($load_id);
+        $latitude = $load->latitude;
+        $longitude = $load->longitude;
+        $radius = 70;
+        $fleets = FleetLoad::where('load_id', $load->id)->pluck('fleet_id');
+        $cityFrom = ProvinceCity::where('id', $load->origin_city_id)->first();
+        $cityTo = ProvinceCity::where('id', $load->destination_city_id)->first();
+
+        $haversine = "(6371 * acos(cos(radians(" . $latitude . "))
+            * cos(radians(`latitude`))
+            * cos(radians(`longitude`)
+            - radians(" . $longitude . "))
+            + sin(radians(" . $latitude . "))
+            * sin(radians(`latitude`))))";
+
+
+        try {
+
+            $driverFCM_tokens = Driver::where('location_at', '!=', null)
+                ->where('location_at', '>=', Carbon::now()->subMinutes(120))
+                ->whereIn('fleet_id', $fleets)
+                ->where('version', '>', 58)
+                ->where('province_id', $cityFrom->parent_id)
+                ->selectRaw("{$haversine} AS distance")
+                ->whereRaw("{$haversine} < ?", $radius)
+                ->pluck('FCM_token');
+            return $driverFCM_tokens;
+
+            $driverFCM_tokens = Driver::whereNotNull('FCM_token')
+                ->where('notification', 'enable')
+                ->pluck('FCM_token');
+            $title = 'ایران ترابر رانندگان';
+            $body = ' بار ' . $fleet->fleet->title . ':' . ' از ' . $cityFrom->name . ' به ' . $cityTo->name;
+            foreach ($driverFCM_tokens as $driverFCM_token) {
+                $this->sendNotification($driverFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
+            }
+        } catch (\Exception $exception) {
+            Log::emergency("----------------------send notification load by driver-----------------------");
+            Log::emergency($exception);
+            Log::emergency("---------------------------------------------------------");
+        }
+
     }
 
     public function loadOwner()

@@ -1,11 +1,19 @@
 @extends('layouts.dashboard')
 
 @section('content')
-
-
     <div class="card">
         <h5 class="card-header">
-            رانندگان
+            <div class="row justify-content-between">
+                <div class="col-6">
+                    رانندگان
+                </div>
+                <div class="col-6 text-end">
+                    <a href="{{ route('admin.sendNearLoadDrivers', $load_id) }}" class="btn btn-primary btn-sm">
+                        ارسال نوتیفیکشن
+                    </a>
+
+                </div>
+            </div>
         </h5>
         <div class="card-body">
 
@@ -27,7 +35,6 @@
                         </tr>
                     </thead>
                     <tbody class="small">
-
                         @forelse ($drivers as $driver)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
@@ -65,7 +72,8 @@
                                 </td>
                                 <td>{{ $driver->version ?? '-' }}</td>
                                 <td>{{ $driver->mobileNumber }}</td>
-                                <td>{{ $driver->distance < 1 ? 'کمتر از یک کیلومتر' : number_format($driver->distance) . ' کیلومتر ' }}</td>
+                                <td>{{ $driver->distance < 1 ? 'کمتر از یک کیلومتر' : number_format($driver->distance) . ' کیلومتر ' }}
+                                </td>
                                 @php
                                     $time = explode(' ', $driver->location_at);
                                 @endphp
@@ -77,11 +85,11 @@
                                 </td>
                             </tr>
                         @empty
-                        <tr class="text-center">
-                            <td colspan="10">
-                                هیچ راننده ای یافت نشد
-                            </td>
-                        </tr>
+                            <tr class="text-center">
+                                <td colspan="10">
+                                    هیچ راننده ای یافت نشد
+                                </td>
+                            </tr>
                         @endforelse
                     </tbody>
                 </table>
