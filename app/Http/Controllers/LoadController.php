@@ -2385,13 +2385,9 @@ class LoadController extends Controller
                 ->selectRaw("{$haversine} AS distance")
                 ->whereRaw("{$haversine} < ?", $radius)
                 ->pluck('FCM_token');
-            return $driverFCM_tokens;
 
-            $driverFCM_tokens = Driver::whereNotNull('FCM_token')
-                ->where('notification', 'enable')
-                ->pluck('FCM_token');
             $title = 'ایران ترابر رانندگان';
-            $body = ' بار ' . $fleet->fleet->title . ':' . ' از ' . $cityFrom->name . ' به ' . $cityTo->name;
+            $body = ' بار ' . ' از ' . $cityFrom->name . ' به ' . $cityTo->name;
             foreach ($driverFCM_tokens as $driverFCM_token) {
                 $this->sendNotification($driverFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
             }
