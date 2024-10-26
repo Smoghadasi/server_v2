@@ -2375,7 +2375,6 @@ class LoadController extends Controller
 
 
         try {
-
             $driverFCM_tokens = Driver::select('drivers.FCM_token')
                 ->where('location_at', '!=', null)
                 ->where('location_at', '>=', Carbon::now()->subMinutes(120))
@@ -2396,6 +2395,7 @@ class LoadController extends Controller
             Log::emergency($exception);
             Log::emergency("---------------------------------------------------------");
         }
+        return back()->with('success', 'ارسال اعلان انجام شد!');
 
     }
 
