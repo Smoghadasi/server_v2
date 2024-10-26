@@ -25,22 +25,57 @@
             </li>
         @endif
 
-        @if (in_array('finalApprovalAndStoreCargo', auth()->user()->userAccess))
-            <li class="menu-item">
-                <a class="menu-link" href="{{ url('admin/finalApprovalAndStoreCargo') }}">
-                    <i class="menu-icon tf-icons bx bx-box"></i>
-                    <div data-i18n="Without menu">تایید و ثبت دسته ای بار</div>
-                </a>
-            </li>
-        @endif
-        @if (in_array('unSuccessPayment', auth()->user()->userAccess))
-            <li class="menu-item">
-                <a class="menu-link" href="{{ route('unSuccessPeyment.driver') }}">
-                    <i class="menu-icon tf-icons bx bx-credit-card"></i>
-                    <div data-i18n="Without menu">پرداخت ناموفق</div>
-                </a>
-            </li>
-        @endif
+        <li class="menu-item {{ request()->is('admin/support*') ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-support"></i>
+                <div data-i18n="pais">پشتیبانی
+
+                </div>
+            </a>
+            <ul class="menu-sub">
+                @if (in_array('finalApprovalAndStoreCargo', auth()->user()->userAccess))
+                    <li class="menu-item">
+                        <a class="menu-link" href="{{ url('admin/finalApprovalAndStoreCargo') }}">
+                            <div data-i18n="Without menu">ثبت بار</div>
+                        </a>
+                    </li>
+                @endif
+                @if (in_array('unSuccessPayment', auth()->user()->userAccess))
+                    <li class="menu-item">
+                        <a class="menu-link" href="{{ route('unSuccessPeyment.driver') }}">
+                            <div data-i18n="Without menu">پرداخت ناموفق</div>
+                        </a>
+                    </li>
+                @endif
+                @if (in_array('setting', auth()->user()->userAccess))
+                    <li class="menu-item">
+                        <a href="{{ route('setting.index') }}" class="menu-link">
+                            <div data-i18n="Analytics">تنظیمات</div>
+                        </a>
+                    </li>
+                @endif
+                {{-- @if (in_array('support', auth()->user()->userAccess)) --}}
+                    <li class="menu-item {{ request()->is('admin/support*') ? 'active open' : '' }} {{ request()->is('admin/supportDriver*') ? 'active open' : '' }}">
+                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                            <div data-i18n="Layouts">تماس ورودی</div>
+                        </a>
+                        <ul class="menu-sub">
+                            <li class="menu-item">
+                                <a class="menu-link" href="{{ route('admin.indexDriver') }}">
+                                    <span>راننده</span>
+                                </a>
+                            </li>
+                            {{-- <li class="menu-item">
+                                <a class="menu-link" href="#">
+                                    <span>صاحب بار</span>
+                                </a>
+                            </li> --}}
+                        </ul>
+                    </li>
+                {{-- @endif --}}
+
+            </ul>
+        </li>
 
         <li class="menu-item">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -602,13 +637,6 @@
                 </ul>
             </li>
         @endif
-        @if (in_array('setting', auth()->user()->userAccess))
-            <li class="menu-item">
-                <a href="{{ route('setting.index') }}" class="menu-link">
-                    <i class="menu-icon tf-icons bx bx-cog"></i>
-                    <div data-i18n="Analytics">تنظیمات</div>
-                </a>
-            </li>
-        @endif
+
     </ul>
 </aside>

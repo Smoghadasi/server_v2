@@ -34,6 +34,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SliderController;
 // use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SOSController;
+use App\Http\Controllers\SupportController;
 use App\Http\Controllers\TenderController;
 use App\Http\Controllers\User\BlockPhoneNumberController;
 use App\Http\Controllers\UserController;
@@ -651,6 +652,11 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         // خلاصه گزارش روز
         Route::get('summaryOfDaysReport', [ReportingController::class, 'summaryOfDaysReport'])->middleware('operator');
+
+        Route::get('supportDriver', [SupportController::class, 'indexDriver'])->name('admin.indexDriver')->middleware('operator');
+
+        // Route::resource('support', SupportController::class)->middleware('operator');
+
 
         // گزارش فعالیت رانندگان
         Route::get('driverActivityReport', [ReportingController::class, 'driverActivityReport'])->middleware('operator');

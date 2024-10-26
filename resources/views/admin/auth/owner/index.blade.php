@@ -1,9 +1,6 @@
 @extends('layouts.dashboard')
 
 @section('content')
-
-
-
     <div class="card">
         <h5 class="card-header">احراز هویت صاحبان بار(در حال بررسی)</h5>
         <div class="card-body">
@@ -64,7 +61,5 @@
                 </div>
             </div>
         </div>
-
     </div>
-
-@stop
+@endsection
