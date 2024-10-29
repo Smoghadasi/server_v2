@@ -14,25 +14,19 @@
     <title>پنل مدیریت ایران ترابر - اهراز هویت</title>
 
     <!-- App CSS -->
-    <link href="/css/bootstrap-rtl.min.css" rel="stylesheet" type="text/css" />
-    <link href="/css/core.css" rel="stylesheet" type="text/css" />
-    <link href="/css/components.css" rel="stylesheet" type="text/css" />
-    <link href="/css/icons.css" rel="stylesheet" type="text/css" />
-    <link href="/css/pages.css" rel="stylesheet" type="text/css" />
-    <link href="/css/menu.css" rel="stylesheet" type="text/css" />
-    <link href="/css/responsive.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('css/bootstrap-rtl.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('css/core.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('css/components.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('css/icons.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('css/pages.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('css/menu.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('css/responsive.css') }}" rel="stylesheet" type="text/css" />
 
-    <!-- HTML5 Shiv and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-        <![endif]-->
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 
-    <script src="/js/modernizr.min.js"></script>
+    <script src="{{ asset('js/modernizr.min.js') }}"></script>
 
 </head>
 
@@ -55,12 +49,6 @@
             </div>
         </div>
         <!-- end card-box-->
-
-        {{-- <div class="row">
-                <div class="col-sm-12 text-center">
-                    <p class="text-muted">حساب کاربری ندارید? <a href="page-register.html" class="text-primary m-l-5"><b>ثبت نام</b></a></p>
-                </div>
-            </div> --}}
 
     </div>
     <!-- end wrapper page -->

@@ -74,6 +74,10 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('
 
 Route::post('check-user', [AuthController::class, 'checkUser'])->name('check.user');
 
+Route::get('refereshcapcha', function () {
+    return captcha_img('math');
+});
+
 Route::post('loginUser', [AuthorizeController::class, 'loginPost'])->name('authorize.login');
 
 Route::post('checkActivationCode', [AuthController::class, 'checkActivationCode'])->name('checkActivationCode');
@@ -293,6 +297,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         // بار های ثبت شده صاحبان بار
         Route::get('loadOwner', [LoadController::class, 'loadOwner'])->middleware('operator')->name('admin.load.owner');
+
 
         // رانندگان نزدیک بار
         Route::get('nearLoadDrivers/{load_id}', [LoadController::class, 'nearLoadDrivers'])->middleware('operator')->name('admin.nearLoadDrivers');

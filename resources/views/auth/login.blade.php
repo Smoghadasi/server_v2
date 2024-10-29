@@ -46,8 +46,19 @@
                             <strong>{{ $errors->first('captcha') }}</strong>
                         </span>
                     @endif
-                    <img src="{{ captcha_src('math') }}" alt="">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group refereshrecapcha">
+                                {!! captcha_img('math') !!}
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" id="refreshCaptcha" class="btn btn-danger btn-sm">تازه‌سازی</button>
+                        </div>
+                    </div>
+
                 </div>
+
             </div>
             {{-- {!! NoCaptcha::display() !!} --}}
 
@@ -91,6 +102,21 @@
 @section('script')
     <script>
         $(document).ready(function() {
+
+            $('#refreshCaptcha').click(function() {
+                $.ajax({
+                    url: "/refereshcapcha",
+                    type: 'get',
+                    dataType: 'html',
+                    success: function(json) {
+                        $('.refereshrecapcha').html(json);
+                    },
+                    error: function(data) {
+                        alert('Try Again.');
+                    }
+                });
+            });
+
             $('#formid').on('keyup keypress', function(e) {
                 var keyCode = e.keyCode || e.which;
                 if (keyCode === 13) {
