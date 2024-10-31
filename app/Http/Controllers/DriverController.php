@@ -855,17 +855,17 @@ class DriverController extends Controller
                 return ['result' => 2];
             }
 
-            try {
-                $fleetLoad = FleetLoad::where('fleet_id', $driver->fleet_id)->where('load_id', $load_id)->first();
-                if ($fleetLoad) {
-                    $fleetIds = [43, 48, 49, 50, 51, 52, 53, 55, 56, 57, 58, 59, 60, 61, 66, 74, 78, 79];
-                    if (in_array($driver->fleet_id, $fleetIds)) {
-                        return $this->checkCreditDriver($driver, $load_id, $phoneNumber, false);
-                    }
-                }
-            } catch (\Exception $e) {
-                Log::warning($e->getMessage());
-            }
+            // try {
+            //     $fleetLoad = FleetLoad::where('fleet_id', $driver->fleet_id)->where('load_id', $load_id)->first();
+            //     if ($fleetLoad) {
+            //         $fleetIds = [43, 48, 49, 50, 51, 52, 53, 55, 56, 57, 58, 59, 60, 61, 66, 74, 78, 79];
+            //         if (in_array($driver->fleet_id, $fleetIds)) {
+            //             return $this->checkCreditDriver($driver, $load_id, $phoneNumber, false);
+            //         }
+            //     }
+            // } catch (\Exception $e) {
+            //     Log::warning($e->getMessage());
+            // }
 
             if ($driver->activeDate > date("Y-m-d H:i:s", time()) || $driver->freeCalls > 0) {
 
