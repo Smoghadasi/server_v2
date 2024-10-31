@@ -24,12 +24,14 @@ class AuthController extends Controller
         $ownerPenddingCounts = Owner::where('isAuth', 2)->count();
         $ownerRejectCounts = Owner::where('isAuth', 0)->count();
         $ownerAcceptCounts = Owner::where('isAuth', 1)->count();
+        $ownerRejectedCounts = Owner::where('isRejected', 1)->count();
 
         return view('admin.auth.owner.index', compact(
             'owners',
             'ownerPenddingCounts',
             'ownerRejectCounts',
-            'ownerAcceptCounts'
+            'ownerAcceptCounts',
+            'ownerRejectedCounts'
         ));
     }
 
@@ -39,12 +41,31 @@ class AuthController extends Controller
         $ownerPenddingCounts = Owner::where('isAuth', 2)->count();
         $ownerRejectCounts = Owner::where('isAuth', 0)->count();
         $ownerAcceptCounts = Owner::where('isAuth', 1)->count();
+        $ownerRejectedCounts = Owner::where('isRejected', 1)->count();
 
         return view('admin.auth.owner.reject', compact(
             'owners',
             'ownerPenddingCounts',
             'ownerRejectCounts',
-            'ownerAcceptCounts'
+            'ownerAcceptCounts',
+            'ownerRejectedCounts'
+        ));
+    }
+
+    public function ownerRejected()
+    {
+        $owners = Owner::where('isRejected', 1)->paginate(10);
+        $ownerPenddingCounts = Owner::where('isAuth', 2)->count();
+        $ownerRejectCounts = Owner::where('isAuth', 0)->count();
+        $ownerAcceptCounts = Owner::where('isAuth', 1)->count();
+        $ownerRejectedCounts = Owner::where('isRejected', 1)->count();
+
+        return view('admin.auth.owner.reject', compact(
+            'owners',
+            'ownerPenddingCounts',
+            'ownerRejectCounts',
+            'ownerAcceptCounts',
+            'ownerRejectedCounts'
         ));
     }
 
@@ -54,11 +75,14 @@ class AuthController extends Controller
         $ownerAcceptCounts = Owner::where('isAuth', 1)->count();
         $ownerPenddingCounts = Owner::where('isAuth', 2)->count();
         $ownerRejectCounts = Owner::where('isAuth', 0)->count();
+        $ownerRejectedCounts = Owner::where('isRejected', 1)->count();
+
         return view('admin.auth.owner.accept', compact(
             'owners',
             'ownerPenddingCounts',
             'ownerRejectCounts',
-            'ownerAcceptCounts'
+            'ownerAcceptCounts',
+            'ownerRejectedCounts'
         ));
     }
 
@@ -182,12 +206,14 @@ class AuthController extends Controller
     {
         $owner->isAuth = $request->status;
         if ($request->status == ACCEPT) {
+            $owner->isRejected = 0;
             if (SMS_PANEL == 'SMSIR') {
                 $owner->acceptCustomerSmsIr($owner->mobileNumber);
             } else {
                 $owner->acceptCustomerSms($owner->mobileNumber);
             }
         } else {
+            $owner->isRejected = 1;
             if (SMS_PANEL == 'SMSIR') {
                 $owner->rejectCustomerSmsIr($owner->mobileNumber);
             } else {

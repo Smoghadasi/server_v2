@@ -11,6 +11,7 @@
                 @if (Auth::user()->role == 'admin')
                     <a href="{{ route('owner.accept') }}" class="alert p-1 alert-success">تایید شده : {{ $ownerAcceptCounts }}</a>
                 @endif
+                <a href="{{ route('owner.ownerRejected') }}" class="alert p-1 alert-dark">رد شده : {{ $ownerRejectedCounts }}</a>
             </div>
             <div class="table-responsive">
                 <table class="table">

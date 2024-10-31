@@ -850,6 +850,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // صاحبان بار تایید نشده
         Route::get('ownerReject', [OwnerAuthController::class, 'ownerReject'])->middleware('operator')->name('owner.reject');
 
+        Route::get('ownerRejected', [OwnerAuthController::class, 'ownerRejected'])->middleware('operator')->name('owner.ownerRejected');
+
         Route::get('ownerAccept', [OwnerAuthController::class, 'ownerAccept'])->middleware('operator')->name('owner.accept');
 
         Route::put('updateAuthOwner/{owner}', [OwnerAuthController::class, 'updateAuthOwner'])->middleware('operator')->name('owner.updateAuthOwner');
