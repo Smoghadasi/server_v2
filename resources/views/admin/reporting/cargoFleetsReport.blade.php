@@ -61,7 +61,11 @@
                         @foreach ($cargoReports as $cargoReport)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $cargoReport->fleet->title ?? '-' }}</td>
+                                <td>
+                                    <a href="{{ route('report.cargo.fleets.search', $fleet) }}">
+                                        {{ $cargoReport->fleet->title ?? '-' }}
+                                    </a>
+                                </td>
                                 <td>{{ $cargoReport->count }}</td>
                                 <td>{{ $cargoReport->count_owner }}</td>
                                 <td>{{ $cargoReport->count + $cargoReport->count_owner }}</td>

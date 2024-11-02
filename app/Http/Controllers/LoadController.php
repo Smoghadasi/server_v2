@@ -68,6 +68,15 @@ class LoadController extends Controller
         return view('admin.addNewLoadTypeForm', compact('loadTypes', 'message'));
     }
 
+    public function loadByFleetCity($fleet_id, $origin_city_id)
+    {
+        $loads = Load::where('fleets', 'Like', '%fleet_id":' . $fleet_id . ',%')
+            ->where('origin_city_id', $origin_city_id)
+            ->withTrashed()
+            ->paginate(20);
+        return view('admin.load.searchByFleetCity', compact('loads'));
+    }
+
     // افزودن بار جدید
     public function addNewLoadType(Request $request)
     {

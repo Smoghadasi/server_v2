@@ -276,7 +276,8 @@ class ReportingController extends Controller
             });
         // return $driverActivities;
 
-        return view('admin.reporting.searchDriverActivity',
+        return view(
+            'admin.reporting.searchDriverActivity',
             compact('activityReportOfDriversFromPreviousMonth', 'start', 'end')
         );
     }
@@ -1323,6 +1324,17 @@ class ReportingController extends Controller
             Log::emergency($exception->getMessage());
             Log::emergency("------------------------------------------------------------------------------------");
         }
+    }
+
+    public function searchCargoFleetsReport($fleet_id)
+    {
+        $loads = Load::where('fleets', 'Like', '%fleet_id":' . $fleet_id . ',%')
+            ->select('origin_city_id',  'fleets',  DB::raw('count(`origin_city_id`) as count'))
+            ->groupBy('origin_city_id')
+            ->having('count', '>', 1)
+            ->withTrashed()
+            ->paginate(20);
+        return view('admin.reporting.searchCargoFleets', compact('loads', 'fleet_id'));
     }
 
     // جستجو گزارش بار ها به تفکیک ناوگان

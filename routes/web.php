@@ -834,6 +834,12 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         //  گزارش بار ها به تفکیک ناوگان
         Route::get('cargo-fleets', [ReportingController::class, 'cargoFleetsReport'])->middleware('operator')->name('report.cargo.fleets');
 
+        Route::get('cargo-fleets/{fleet}', [ReportingController::class, 'searchCargoFleetsReport'])->middleware('operator')->name('report.cargo.fleets.search');
+
+        Route::get('loadByFleetCity/{fleet_id}/{originCity_id}', [LoadController::class, 'loadByFleetCity'])
+            ->middleware('operator')
+            ->name('load.fleet.city');
+
         // جستجو بار ها به تفکیک ناوگان
         Route::post('searchCargoFleets', [ReportingController::class, 'searchCargoFleets'])->middleware('operator')->name('search.report.cargo.fleets');
 
