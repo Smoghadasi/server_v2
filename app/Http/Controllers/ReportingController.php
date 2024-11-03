@@ -1329,8 +1329,8 @@ class ReportingController extends Controller
     public function searchCargoFleetsReport($fleet_id)
     {
         $loads = Load::where('fleets', 'Like', '%fleet_id":' . $fleet_id . ',%')
-            ->select('origin_state_id',  'fleets',  DB::raw('count(`origin_state_id`) as count'))
-            ->groupBy('origin_state_id')
+            ->select('origin_city_id',  'fleets',  DB::raw('count(`origin_city_id`) as count'))
+            ->groupBy('origin_city_id')
             ->having('count', '>', 1)
             ->withTrashed()
             ->paginate(20);
