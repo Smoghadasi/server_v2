@@ -62,7 +62,7 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>
-                                    <a href="{{ route('report.cargo.fleets.search', $fleet) }}">
+                                    <a href="{{ route('report.cargo.fleets.search', $cargoReport->fleet_id) }}">
                                         {{ $cargoReport->fleet->title ?? '-' }}
                                     </a>
                                 </td>

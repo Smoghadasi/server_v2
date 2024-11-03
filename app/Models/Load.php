@@ -19,6 +19,7 @@ class Load extends Model
         'numOfNearDriver',
         'numOfInquiryDrivers',
         'originCity',
+        'originState',
         'destinationCity',
         'distanceCity',
         'ownerAuthenticated',
@@ -125,6 +126,12 @@ class Load extends Model
     public function getOriginCityAttribute()
     {
         return ProvinceCity::where('id', $this->origin_city_id)->first();
+    }
+
+
+    public function getOriginStateAttribute()
+    {
+        return ProvinceCity::where('id', $this->origin_state_id)->first();
     }
 
     public function getDestinationCityAttribute()

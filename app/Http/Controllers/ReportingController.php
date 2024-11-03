@@ -1317,6 +1317,7 @@ class ReportingController extends Controller
                 // ->where('date', $persian_date)
                 ->orderByDesc('date')
                 ->paginate(25);
+            // return $cargoReports;
             $fleets = Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
             return view('admin.reporting.cargoFleetsReport', compact('cargoReports', 'fleets'));
         } catch (\Exception $exception) {
@@ -1329,12 +1330,25 @@ class ReportingController extends Controller
     public function searchCargoFleetsReport($fleet_id)
     {
         $loads = Load::where('fleets', 'Like', '%fleet_id":' . $fleet_id . ',%')
-            ->select('origin_city_id',  'fleets',  DB::raw('count(`origin_city_id`) as count'))
+            ->select('origin_state_id',  'fleets',  DB::raw('count(`origin_state_id`) as count'))
+            ->groupBy('origin_state_id')
+            ->having('count', '>', 1)
+            ->withTrashed()
+            ->paginate(20);
+        // return $loads;
+        return view('admin.reporting.searchCargoFleets', compact('loads', 'fleet_id'));
+    }
+
+    public function searchCargoFleetsReportCity($fleet_id, $origin_state_id)
+    {
+        $loads = Load::where('fleets', 'Like', '%fleet_id":' . $fleet_id . ',%')
+            ->where('origin_state_id', $origin_state_id)
+            ->select('origin_city_id', 'origin_state_id',  'fleets',  DB::raw('count(`origin_city_id`) as count'))
             ->groupBy('origin_city_id')
             ->having('count', '>', 1)
             ->withTrashed()
             ->paginate(20);
-        return view('admin.reporting.searchCargoFleets', compact('loads', 'fleet_id'));
+        return view('admin.reporting.searchCargoFleetsCity', compact('loads', 'fleet_id'));
     }
 
     // جستجو گزارش بار ها به تفکیک ناوگان

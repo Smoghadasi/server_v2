@@ -1,10 +1,10 @@
 @extends('layouts.dashboard')
-@section('title', '| استفاده کننده بر اساس استان')
+@section('title', '| استفاده کننده بر اساس شهرستان')
 
 @section('content')
     <div class="card">
         <h5 class="card-header">
-            گزارش استفاده کنندگان به تفکیک ناوگان (استان)
+            گزارش استفاده کنندگان به تفکیک ناوگان (شهرستان)
         </h5>
         <div class="card-body">
             <div class="mt-2">
@@ -12,7 +12,7 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>استان</th>
+                            <th>شهرستان</th>
                             <th>تعداد</th>
                         </tr>
                     </thead>
@@ -22,11 +22,8 @@
                             <tr>
                                 <td>{{ ($loads->currentPage() - 1) * $loads->perPage() + ($key + 1) }}</td>
                                 <td>
-                                    <a href="{{ route('search.fleets.city', [
-                                            'fleet' => $fleet_id,
-                                            'origin_state' => $load->origin_state_id
-                                        ]) }}">
-                                        {{ $load->originState->name }}
+                                    <a href="{{ route('load.fleet.city', ['fleet_id' => $fleet_id , 'originCity_id' => $load->origin_city_id]) }}">
+                                        {{ $load->originCity->name }}
                                     </a>
                                 </td>
                                 <td>{{ $load->count }}</td>
