@@ -74,7 +74,10 @@ class AuthController extends Controller
 
     public function ownerAccept()
     {
-        $owners = Owner::where('isAuth', 1)->paginate(10);
+        $owners = Owner::where('isAuth', 1)
+            ->orderByDesc('updated_at')
+            ->paginate(10);
+
         $ownerAcceptCounts = Owner::where('isAuth', 1)->count();
         $ownerPenddingCounts = Owner::where('isAuth', 2)->count();
         $ownerRejectCounts = Owner::where('isAuth', 0)->count();
