@@ -41,11 +41,11 @@ class DriverController extends Controller
     // لیست رانندگان
     public function drivers($drivers = [], $showSearchResult = false)
     {
-        // $fleets = Fleet::all();
+        $fleets = Fleet::all();
         if (!$showSearchResult)
             $drivers = Driver::orderBy('id', 'desc')->paginate(50);
 
-        return view('admin.drivers', compact('drivers', 'showSearchResult'));
+        return view('admin.drivers', compact('drivers', 'showSearchResult', 'fleets'));
     }
 
     // لیست رانندگان برای ادمین
@@ -755,6 +755,16 @@ class DriverController extends Controller
     // جستجوی راننده
     public function searchDrivers(Request $request)
     {
+        if ($request->fleet_id != 0) {
+            $fleet_id = $request->fleet_id;
+            $driver = Driver::where('fleet_id', $request->fleet_id)->inRandomOrder()->first();
+            if ($driver) {
+                $fleets = Fleet::all();
+                return view('admin.driver.searchDriverByFleet', compact('driver', 'fleets', 'fleet_id'));
+            } else {
+                return back()->with('danger', 'راننده ای پیدا نشد!');
+            }
+        }
         /*
         name
         lastName

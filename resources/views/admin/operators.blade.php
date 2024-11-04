@@ -960,6 +960,13 @@
                                                         تنظیمات
                                                     </label>
                                                 </div>
+                                                <div class="form-group">
+                                                    <label>
+                                                        <input type="checkbox" name="contactReportWithCargoOwners"
+                                                            @if (in_array('contactReportWithCargoOwners', $user->userAccess)) checked @endif>
+                                                        پیام ها در جزئیات رانندگان
+                                                    </label>
+                                                </div>
                                             </div>
                                             <div class="modal-footer text-left">
                                                 <button class="btn btn-primary" type="submit">ثبت دسترسی

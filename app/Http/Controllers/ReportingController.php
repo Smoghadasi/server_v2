@@ -1335,8 +1335,8 @@ class ReportingController extends Controller
             ->having('count', '>', 1)
             ->withTrashed()
             ->paginate(20);
-        // return $loads;
-        return view('admin.reporting.searchCargoFleets', compact('loads', 'fleet_id'));
+
+            return view('admin.reporting.searchCargoFleets', compact('loads', 'fleet_id'));
     }
 
     public function searchCargoFleetsReportCity($fleet_id, $origin_state_id)
