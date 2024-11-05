@@ -8,10 +8,13 @@
                     رانندگان
                 </div>
                 <div class="col-6 text-end">
-                    <a href="{{ route('admin.sendNearLoadDrivers', $load_id) }}" class="btn btn-primary btn-sm">
+                    <a href="{{ route('admin.sendNearLoadDrivers', ['load_id' => $load_id, 'type' => 'notification']) }}"
+                        class="btn btn-primary btn-sm">
                         ارسال نوتیفیکشن
                     </a>
-
+                    {{-- <a href="{{ route('admin.sendSMSNearLoadDrivers', $load_id) }}" class="btn btn-primary btn-sm">
+                        ارسال پیامک
+                    </a> --}}
                 </div>
             </div>
         </h5>

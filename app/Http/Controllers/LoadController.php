@@ -2365,7 +2365,7 @@ class LoadController extends Controller
         return view('admin.driver.driverNearOwner', compact('drivers', 'load_id'));
     }
 
-    public function sendNotifNearLoadDrivers($load_id)
+    public function sendNotifNearLoadDrivers($load_id, $type = null)
     {
         $load = Load::findOrFail($load_id);
         $latitude = $load->latitude;
@@ -2382,29 +2382,34 @@ class LoadController extends Controller
             + sin(radians(" . $latitude . "))
             * sin(radians(`latitude`))))";
 
+        if ($type == 'notification') {
+            return 'notification';
+            try {
+                $driverFCM_tokens = Driver::select('drivers.FCM_token')
+                    ->where('location_at', '!=', null)
+                    ->where('location_at', '>=', Carbon::now()->subMinutes(120))
+                    ->whereIn('fleet_id', $fleets)
+                    ->where('version', '>', 58)
+                    ->where('province_id', $cityFrom->parent_id)
+                    ->selectRaw("{$haversine} AS distance")
+                    ->whereRaw("{$haversine} < ?", $radius)
+                    ->pluck('FCM_token');
 
-        try {
-            $driverFCM_tokens = Driver::select('drivers.FCM_token')
-                ->where('location_at', '!=', null)
-                ->where('location_at', '>=', Carbon::now()->subMinutes(120))
-                ->whereIn('fleet_id', $fleets)
-                ->where('version', '>', 58)
-                ->where('province_id', $cityFrom->parent_id)
-                ->selectRaw("{$haversine} AS distance")
-                ->whereRaw("{$haversine} < ?", $radius)
-                ->pluck('FCM_token');
-
-            $title = 'ایران ترابر رانندگان';
-            $body = ' بار ' . ' از ' . $cityFrom->name . ' به ' . $cityTo->name;
-            foreach ($driverFCM_tokens as $driverFCM_token) {
-                $this->sendNotification($driverFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
+                $title = 'ایران ترابر رانندگان';
+                $body = ' بار ' . ' از ' . $cityFrom->name . ' به ' . $cityTo->name;
+                foreach ($driverFCM_tokens as $driverFCM_token) {
+                    $this->sendNotification($driverFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
+                }
+            } catch (\Exception $exception) {
+                Log::emergency("----------------------send notification load by driver-----------------------");
+                Log::emergency($exception);
+                Log::emergency("---------------------------------------------------------");
             }
-        } catch (\Exception $exception) {
-            Log::emergency("----------------------send notification load by driver-----------------------");
-            Log::emergency($exception);
-            Log::emergency("---------------------------------------------------------");
+            return back()->with('success', 'ارسال اعلان انجام شد!');
+        }else{
+            return 'sms';
         }
-        return back()->with('success', 'ارسال اعلان انجام شد!');
+
 
     }
 
