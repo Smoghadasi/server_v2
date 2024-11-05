@@ -56,6 +56,13 @@
                         </a>
                     </li>
                 @endif
+                @if (in_array('drivers', auth()->user()->userAccess))
+                    <li class="menu-item">
+                        <a class="menu-link" href="{{ route('drivers') }}">
+                            <span>رانندگان</span>
+                        </a>
+                    </li>
+                @endif
                 {{-- @if (in_array('support', auth()->user()->userAccess)) --}}
                     <li class="menu-item {{ request()->is('admin/support*') ? 'active open' : '' }} {{ request()->is('admin/supportDriver*') ? 'active open' : '' }}">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -558,13 +565,7 @@
                         </a>
                     </li>
                 @endif
-                @if (in_array('drivers', auth()->user()->userAccess))
-                    <li class="menu-item">
-                        <a class="menu-link" href="{{ route('drivers') }}">
-                            <span>رانندگان</span>
-                        </a>
-                    </li>
-                @endif
+
 
 
                 @if (in_array('callWithOwner', auth()->user()->userAccess))
