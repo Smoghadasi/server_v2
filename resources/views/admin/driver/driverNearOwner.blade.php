@@ -12,9 +12,9 @@
                         class="btn btn-primary btn-sm">
                         ارسال نوتیفیکشن
                     </a>
-                    {{-- <a href="{{ route('admin.sendSMSNearLoadDrivers', $load_id) }}" class="btn btn-primary btn-sm">
+                    <a href="{{ route('admin.sendNearLoadDrivers', ['load_id' => $load_id, 'type' => 'sms']) }}" class="btn btn-primary btn-sm">
                         ارسال پیامک
-                    </a> --}}
+                    </a>
                 </div>
             </div>
         </h5>

@@ -2365,12 +2365,23 @@ class LoadController extends Controller
         return view('admin.driver.driverNearOwner', compact('drivers', 'load_id'));
     }
 
-    public function sendNotifNearLoadDrivers($load_id, $type = null)
+    public function sendMessageNearLoadDrivers($load_id, $type = null)
     {
         $load = Load::findOrFail($load_id);
+        $radius = 70;
+
+        if ($type == 'notification') {
+            $this->sendNotificationForNearDriver($load, $radius);
+        } else {
+            $this->sendSmsForNearDriver($load, $radius);
+        }
+        return back()->with('success', 'ارسال اعلان انجام شد!');
+    }
+
+    public function sendSmsForNearDriver($load, $radius)
+    {
         $latitude = $load->latitude;
         $longitude = $load->longitude;
-        $radius = 70;
         $fleets = FleetLoad::where('load_id', $load->id)->pluck('fleet_id');
         $cityFrom = ProvinceCity::where('id', $load->origin_city_id)->first();
         $cityTo = ProvinceCity::where('id', $load->destination_city_id)->first();
@@ -2382,35 +2393,104 @@ class LoadController extends Controller
             + sin(radians(" . $latitude . "))
             * sin(radians(`latitude`))))";
 
-        if ($type == 'notification') {
-            return 'notification';
-            try {
-                $driverFCM_tokens = Driver::select('drivers.FCM_token')
-                    ->where('location_at', '!=', null)
-                    ->where('location_at', '>=', Carbon::now()->subMinutes(120))
-                    ->whereIn('fleet_id', $fleets)
-                    ->where('version', '>', 58)
-                    ->where('province_id', $cityFrom->parent_id)
-                    ->selectRaw("{$haversine} AS distance")
-                    ->whereRaw("{$haversine} < ?", $radius)
-                    ->pluck('FCM_token');
+        $drivers = Driver::select('drivers.*')
+            ->where('location_at', '!=', null)
+            ->where('location_at', '>=', Carbon::now()->subMinutes(120))
+            ->whereIn('fleet_id', $fleets)
+            ->where('sendMessage', 0)
+            ->where('version', '<', 67)
+            ->where('province_id', $cityFrom->parent_id)
+            ->selectRaw("{$haversine} AS distance")
+            ->whereRaw("{$haversine} < ?", $radius)
+            ->take(15)
+            ->get();
 
-                $title = 'ایران ترابر رانندگان';
-                $body = ' بار ' . ' از ' . $cityFrom->name . ' به ' . $cityTo->name;
-                foreach ($driverFCM_tokens as $driverFCM_token) {
-                    $this->sendNotification($driverFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
-                }
-            } catch (\Exception $exception) {
-                Log::emergency("----------------------send notification load by driver-----------------------");
-                Log::emergency($exception);
-                Log::emergency("---------------------------------------------------------");
+
+        if (count($drivers) != 0) {
+            foreach ($drivers as $driver) {
+                $driver->sendMessage = 1;
+                $driver->save();
+                $sms = new Driver();
+                $sms->subscriptionLoadSmsIr(
+                    $driver->mobileNumber,
+                    $driver->name,
+                    $cityFrom->name,
+                    $cityTo->name
+                );
             }
-            return back()->with('success', 'ارسال اعلان انجام شد!');
-        }else{
-            return 'sms';
+        } else {
+            Driver::where('province_id', $cityFrom->parent_id)
+                ->where('location_at', '!=', null)
+                ->where('location_at', '>=', Carbon::now()->subMinutes(120))
+                ->whereIn('fleet_id', $fleets)
+                ->where('version', '<', 67)
+                ->selectRaw("{$haversine} AS distance")
+                ->whereRaw("{$haversine} < ?", $radius)
+                ->where('sendMessage', 1)
+                ->update(['sendMessage' => 0]);
+
+            $drivers = Driver::where('province_id', $cityFrom->parent_id)
+                ->where('location_at', '!=', null)
+                ->where('location_at', '>=', Carbon::now()->subMinutes(120))
+                ->whereIn('fleet_id', $fleets)
+                ->where('version', '<', 67)
+                ->selectRaw("{$haversine} AS distance")
+                ->whereRaw("{$haversine} < ?", $radius)
+                ->where('sendMessage', 0)
+                ->take(15)
+                ->get();
+            if (count($drivers) != 0) {
+                foreach ($drivers as $driver) {
+                    $driver->sendMessage = 1;
+                    $driver->save();
+                    $sms = new Driver();
+                    $sms->subscriptionLoadSmsIr(
+                        $driver->mobileNumber,
+                        $driver->name,
+                        $cityFrom->name,
+                        $cityTo->name
+                    );
+                }
+            }
         }
+    }
 
+    public function sendNotificationForNearDriver($load, $radius)
+    {
+        $latitude = $load->latitude;
+        $longitude = $load->longitude;
+        $fleets = FleetLoad::where('load_id', $load->id)->pluck('fleet_id');
+        $cityFrom = ProvinceCity::where('id', $load->origin_city_id)->first();
+        $cityTo = ProvinceCity::where('id', $load->destination_city_id)->first();
 
+        $haversine = "(6371 * acos(cos(radians(" . $latitude . "))
+            * cos(radians(`latitude`))
+            * cos(radians(`longitude`)
+            - radians(" . $longitude . "))
+            + sin(radians(" . $latitude . "))
+            * sin(radians(`latitude`))))";
+
+        try {
+            $driverFCM_tokens = Driver::select('drivers.FCM_token')
+                ->where('location_at', '!=', null)
+                ->where('location_at', '>=', Carbon::now()->subMinutes(120))
+                ->whereIn('fleet_id', $fleets)
+                ->where('version', '>', 58)
+                ->where('province_id', $cityFrom->parent_id)
+                ->selectRaw("{$haversine} AS distance")
+                ->whereRaw("{$haversine} < ?", $radius)
+                ->pluck('FCM_token');
+
+            $title = 'ایران ترابر رانندگان';
+            $body = ' بار ' . ' از ' . $cityFrom->name . ' به ' . $cityTo->name;
+            foreach ($driverFCM_tokens as $driverFCM_token) {
+                $this->sendNotification($driverFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
+            }
+        } catch (\Exception $exception) {
+            Log::emergency("----------------------send notification load by driver-----------------------");
+            Log::emergency($exception);
+            Log::emergency("---------------------------------------------------------");
+        }
     }
 
     public function loadOwner()

@@ -65,7 +65,7 @@ class PostCargoSms implements ShouldQueue
                 ->where('fleet_id', $fleet->fleet_id)
                 ->where('version', '<' , 67)
                 ->where('sendMessage', 0)
-                ->take(25)
+                ->take(15)
                 ->get();
             if (count($drivers) != 0) {
                 foreach ($drivers as $driver) {
