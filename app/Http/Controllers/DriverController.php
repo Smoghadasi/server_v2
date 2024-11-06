@@ -1339,6 +1339,8 @@ class DriverController extends Controller
                 $sixMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+180 day', time())), '/');
 
                 if ($request->month > 0) {
+                    $driver->freeCalls = 3;
+                    $driver->save();
                     $free_subscription = new FreeSubscription();
                     $free_subscription->type = AUTH_VALIDITY;
                     $free_subscription->value = $request->month;
