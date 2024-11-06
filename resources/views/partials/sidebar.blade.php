@@ -63,17 +63,19 @@
                         </a>
                     </li>
                 @endif
-                {{-- @if (in_array('support', auth()->user()->userAccess)) --}}
                     <li class="menu-item {{ request()->is('admin/support*') ? 'active open' : '' }} {{ request()->is('admin/supportDriver*') ? 'active open' : '' }}">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
                             <div data-i18n="Layouts">تماس ورودی</div>
                         </a>
                         <ul class="menu-sub">
-                            <li class="menu-item">
-                                <a class="menu-link" href="{{ route('admin.indexDriver') }}">
-                                    <span>راننده</span>
-                                </a>
-                            </li>
+                            @if (in_array('incomingCallDriver', auth()->user()->userAccess))
+                                <li class="menu-item">
+                                    <a class="menu-link" href="{{ route('admin.indexDriver') }}">
+                                        <span>راننده</span>
+                                    </a>
+                                </li>
+                            @endif
+
                             {{-- <li class="menu-item">
                                 <a class="menu-link" href="#">
                                     <span>صاحب بار</span>
@@ -81,7 +83,6 @@
                             </li> --}}
                         </ul>
                     </li>
-                {{-- @endif --}}
 
             </ul>
         </li>

@@ -843,16 +843,7 @@
                                                                     </label>
                                                                 </div>
                                                             </li>
-                                                            <li>
-                                                                <div class="form-group">
-                                                                    <label>
-                                                                        <input type="checkbox"
-                                                                            name="drivers"
-                                                                            @if (in_array('drivers', $user->userAccess)) checked @endif>
-                                                                        رانندگان
-                                                                    </label>
-                                                                </div>
-                                                            </li>
+
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
@@ -932,6 +923,59 @@
                                                         </ul>
                                                     </li>
                                                 </ul>
+                                                <ul id="myUL">
+                                                    <li><span class="caret">پشتیبانی</span>
+                                                        <ul class="nested">
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="unSuccessPayment"
+                                                                            @if (in_array('unSuccessPayment', $user->userAccess)) checked @endif>
+                                                                        پرداخت ناموفق رانندگان
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="drivers"
+                                                                            @if (in_array('drivers', $user->userAccess)) checked @endif>
+                                                                        رانندگان
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="incomingCallDriver"
+                                                                            @if (in_array('incomingCallDriver', $user->userAccess)) checked @endif>
+                                                                        تماس ورودی رانندگان
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="searchAll"
+                                                                            @if (in_array('searchAll', $user->userAccess)) checked @endif>
+                                                                        جستجو هدر
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="setting"
+                                                                            @if (in_array('setting', $user->userAccess)) checked @endif>
+                                                                        تنظیمات
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
                                                 <div class="form-group">
                                                     <label>
                                                         <input type="checkbox" name="finalApprovalAndStoreCargo"
@@ -939,27 +983,9 @@
                                                         تایید و ثبت دسته ای بار
                                                     </label>
                                                 </div>
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="searchAll"
-                                                            @if (in_array('searchAll', $user->userAccess)) checked @endif>
-                                                        جستجو هدر
-                                                    </label>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="unSuccessPayment"
-                                                            @if (in_array('unSuccessPayment', $user->userAccess)) checked @endif>
-                                                        پرداخت ناموفق رانندگان
-                                                    </label>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>
-                                                        <input type="checkbox" name="setting"
-                                                            @if (in_array('setting', $user->userAccess)) checked @endif>
-                                                        تنظیمات
-                                                    </label>
-                                                </div>
+
+
+
                                                 <div class="form-group">
                                                     <label>
                                                         <input type="checkbox" name="contactReportWithCargoOwners"
