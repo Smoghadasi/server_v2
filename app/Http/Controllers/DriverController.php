@@ -595,7 +595,14 @@ class DriverController extends Controller
     // نمایش اطلاعات راننده
     public function driverInfo(Driver $driver)
     {
-        return view('admin/driverInfo', compact('driver'));
+        $freeSubscriptions = FreeSubscription::with('operator')
+            ->orderByDesc('created_at')
+            ->where('value', '!=', 0)
+            ->where('driver_id', $driver->id)
+            ->whereIn('type', ['AuthCalls', 'AuthValidity'])
+            ->get();
+        // return $freeSubscriptions;
+        return view('admin/driverInfo', compact('driver', 'freeSubscriptions'));
     }
 
     // ریپورت کردن راننده توسط باربری

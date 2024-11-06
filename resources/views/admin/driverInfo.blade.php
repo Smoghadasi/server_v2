@@ -4,19 +4,59 @@
 
     <div class="card">
         <h5 class="card-header">
-            اطلاعات راننده
+            <div class="row">
+                <div class="col-6">
+                    اطلاعات راننده
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col">
+                            <div id="status">
+                                <label for="state" class="form-label">وضعیت</label>
+                                @if ($driver->status == 0)
+                                    <div class="badge rounded-pill bg-secondary d-inline-block">غیر فعال</div>
+                                @elseif($driver->status == 1)
+                                    <div class="badge rounded-pill bg-success d-inline-block">فعال</div>
+                                @elseif($driver->status == 2)
+                                    <div class="badge rounded-pill bg-warning d-inline-block">خارج از سرویس</div>
+                                @elseif($driver->status == 3)
+                                    <div class="badge rounded-pill bg-primary d-inline-block">درحال حمل بار</div>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div id="notification">
+                                <label for="state" class="form-label">اعلان</label>
+                                @if ($driver->notification == 'enable')
+                                    <div class="badge rounded-pill bg-success d-inline-block">فعال</div>
+                                @else
+                                    <div class="badge rounded-pill bg-danger d-inline-block">غیر فعال</div>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div id="sms">
+                                <label for="state" class="form-label">پیامک</label>
+                                @if ($driver->sms == 'enable')
+                                    <div class="badge rounded-pill bg-success d-inline-block">فعال</div>
+                                @else
+                                    <div class="badge rounded-pill bg-danger d-inline-block">غیر فعال</div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </h5>
         <!-- Account -->
         <div class="card-body">
             <div class="d-flex align-items-start align-items-sm-center gap-4">
-                <img src="{{ asset('assets/img/truck-driver.jpg') }}" alt="user-avatar" class="d-block rounded" height="120"
-                    width="120" id="uploadedAvatar" />
+                <img src="{{ asset('assets/img/truck-driver.jpg') }}" alt="user-avatar" class="d-block rounded"
+                    height="120" width="120" id="uploadedAvatar" />
                 <div class="button-wrapper">
                     <p class="text-muted mb-0">تصویر راننده</p>
                 </div>
             </div>
-        </div>
-        <div class="card-header">
             <form>
                 <div class="row">
                     <div class="mb-3 col-md-6">
@@ -49,46 +89,65 @@
                         <label for="freeCalls" class="form-label">تماس رایگان</label>
                         <input type="text" class="form-control" disabled value="{{ $driver->freeCalls }}" />
                     </div>
-                    <div class="mb-3 col-md-6">
-                        <div class="row">
-                            <div class="col">
-                                <div id="status">
-                                    <label for="state" class="form-label">وضعیت</label>
-                                    @if ($driver->status == 0)
-                                        <div class="badge rounded-pill bg-secondary d-inline-block">غیر فعال</div>
-                                    @elseif($driver->status == 1)
-                                        <div class="badge rounded-pill bg-success d-inline-block">فعال</div>
-                                    @elseif($driver->status == 2)
-                                        <div class="badge rounded-pill bg-warning d-inline-block">خارج از سرویس</div>
-                                    @elseif($driver->status == 3)
-                                        <div class="badge rounded-pill bg-primary d-inline-block">درحال حمل بار</div>
-                                    @endif
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div id="notification">
-                                    <label for="state" class="form-label">اعلان</label>
-                                    @if ($driver->notification == 'enable')
-                                        <div class="badge rounded-pill bg-success d-inline-block">فعال</div>
-                                    @else
-                                        <div class="badge rounded-pill bg-danger d-inline-block">غیر فعال</div>
-                                    @endif
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div id="sms">
-                                    <label for="state" class="form-label">پیامک</label>
-                                    @if ($driver->sms == 'enable')
-                                        <div class="badge rounded-pill bg-success d-inline-block">فعال</div>
-                                    @else
-                                        <div class="badge rounded-pill bg-danger d-inline-block">غیر فعال</div>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </form>
+            <div class="card">
+                <div class="card-header">اشتراک یا تماس رایگان</div>
+                <div class="card-body">
+                    <div class="table-responsive" style="display: block; max-height: 240px; overflow-y: auto;">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>نوع</th>
+                                    <th>اپراتور</th>
+                                    <th>تعداد</th>
+                                    <th>تاریخ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($freeSubscriptions as $freeSubscription)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>
+                                            @switch($freeSubscription->type)
+                                                @case(AUTH_CALLS)
+                                                    <span class="badge bg-label-success"> تماس رایگان</span>
+                                                @break
+
+                                                @case(AUTH_VALIDITY)
+                                                    <span class="badge bg-label-warning"> اعتبار رایگان</span>
+                                                @break
+
+                                                @case(AUTH_CARGO)
+                                                    <span class="badge bg-label-primary"> بار رایگان</span>
+                                                @break
+                                            @endswitch
+                                        </td>
+                                        <td>
+                                            @if ($freeSubscription->operator_id != null)
+                                                {{ $freeSubscription->operator->name }}
+                                                {{ $freeSubscription->operator->lastName }}
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
+                                        <td>{{ $freeSubscription->value }}</td>
+                                        @php
+                                            $pieces = explode(' ', $freeSubscription->created_at);
+                                        @endphp
+                                        <td>{{ gregorianDateToPersian($freeSubscription->created_at, '-', true) . ' ( ' . $pieces[1] . ' ) ' }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
         </div>
         <div class="card-footer">
             @if (in_array('driversContactCall', auth()->user()->userAccess))
@@ -149,6 +208,9 @@
             @endif
             @if (in_array('detailDriver', auth()->user()->userAccess))
                 <a class="btn btn-primary" href="{{ url('admin/editDriver') }}/{{ $driver->id }}">ویرایش</a>
+            @endif
+            @if (in_array('detailDriver', auth()->user()->userAccess))
+                <a class="btn btn-primary" href="{{ route('admin.supportDriver.show', $driver->id) }}">ورودی تماس ها</a>
             @endif
             <div id="creditDriverExtending_{{ $driver->id }}" class="modal fade" role="dialog">
                 <div class="modal-dialog">
@@ -326,4 +388,4 @@
         </div>
     </div>
 
-@stop
+@endsection

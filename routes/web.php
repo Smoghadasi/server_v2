@@ -664,6 +664,10 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         Route::get('supportDriver', [SupportController::class, 'indexDriver'])->name('admin.indexDriver')->middleware('operator');
 
+        Route::get('supportDriver/{driver}', [SupportController::class, 'show'])
+            ->name('admin.supportDriver.show')
+            ->middleware('operator');
+
 
         Route::put('supportDriver/{support}', [SupportController::class, 'update'])->name('admin.indexDriver.update')->middleware('operator');
 

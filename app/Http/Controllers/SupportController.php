@@ -49,9 +49,14 @@ class SupportController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($driverId)
     {
-        //
+        $supports = Support::with('driver', 'owner', 'user')
+            ->where('type', 'Driver')
+            ->where('driver_id', $driverId)
+            ->orderByDesc('created_at')
+            ->paginate(15);
+        return view('admin.support.driver', compact('supports'));
     }
 
     /**
