@@ -1458,6 +1458,7 @@ class DriverController extends Controller
                     $transaction->authority = $driver->id . time();
                     $transaction->amount = $amount;
                     $transaction->status = 100;
+                    $transaction->payment_type = 'cardToCard';
                     $transaction->monthsOfThePackage = $month;
                     $transaction->save();
                 }

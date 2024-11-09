@@ -72,6 +72,7 @@
                         <th>نوع کاربر</th>
                         <th>ناوگان</th>
                         <th>مبلغ پرداخت شده</th>
+                        <th>نوع</th>
                         <th>تاریخ پرداخت</th>
                         <th>وضعیت</th>
                         <th>عملیات</th>
@@ -98,6 +99,7 @@
                             <td>{{ $transaction->userTypeTitle }} </td>
                             <td>{{ $transaction->driverFleetName }} </td>
                             <td>{{ number_format($transaction->amount) }}</td>
+                            <td>{{ $transaction->payment_type == 'online' ? 'آنلاین' : 'کارت به کارت' }}</td>
                             <td>{{ $transaction->paymentDate }}</td>
                             <td>
                                 @if($transaction->status == 0)
