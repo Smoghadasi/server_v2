@@ -25,6 +25,7 @@ use App\Models\ReportDriver;
 use App\Models\ResultOfContactingWithDriver;
 use App\Models\Setting;
 use App\Models\State;
+use App\Models\Support;
 use App\Models\Transaction;
 use Exception;
 use http\Env\Response;
@@ -601,8 +602,14 @@ class DriverController extends Controller
             ->where('driver_id', $driver->id)
             ->whereIn('type', ['AuthCalls', 'AuthValidity'])
             ->get();
+
+        $supports = Support::with('driver', 'owner', 'user')
+            ->where('type', 'Driver')
+            ->where('driver_id', $driver->id)
+            ->orderByDesc('created_at')
+            ->paginate(15);
         // return $freeSubscriptions;
-        return view('admin/driverInfo', compact('driver', 'freeSubscriptions'));
+        return view('admin/driverInfo', compact('driver', 'freeSubscriptions', 'supports'));
     }
 
     // ریپورت کردن راننده توسط باربری

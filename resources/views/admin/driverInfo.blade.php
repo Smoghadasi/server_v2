@@ -92,59 +92,160 @@
                 </div>
             </form>
             <div class="card">
-                <div class="card-header">اشتراک یا تماس رایگان</div>
+                {{-- <div class="card-header">اشتراک یا تماس رایگان</div> --}}
                 <div class="card-body">
-                    <div class="table-responsive" style="display: block; max-height: 240px; overflow-y: auto;">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>نوع</th>
-                                    <th>اپراتور</th>
-                                    <th>تعداد</th>
-                                    <th>تاریخ</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($freeSubscriptions as $freeSubscription)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>
-                                            @switch($freeSubscription->type)
-                                                @case(AUTH_CALLS)
-                                                    <span class="badge bg-label-success"> تماس رایگان</span>
-                                                @break
+                    <div class="row">
+                        <div class="col-6">
+                            <p>اشتراک یا تماس رایگان</p>
 
-                                                @case(AUTH_VALIDITY)
-                                                    <span class="badge bg-label-warning"> اعتبار رایگان</span>
-                                                @break
+                            <div class="table-responsive" style="display: block; max-height: 300px; overflow-y: auto;">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>نوع</th>
+                                            <th>اپراتور</th>
+                                            <th>تعداد</th>
+                                            <th>تاریخ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($freeSubscriptions as $freeSubscription)
+                                            <tr>
+                                                <td>{{ $loop->iteration }}</td>
+                                                <td>
+                                                    @switch($freeSubscription->type)
+                                                        @case(AUTH_CALLS)
+                                                            <span class="badge bg-label-success"> تماس رایگان</span>
+                                                        @break
 
-                                                @case(AUTH_CARGO)
-                                                    <span class="badge bg-label-primary"> بار رایگان</span>
-                                                @break
-                                            @endswitch
-                                        </td>
-                                        <td>
-                                            @if ($freeSubscription->operator_id != null)
-                                                {{ $freeSubscription->operator->name }}
-                                                {{ $freeSubscription->operator->lastName }}
-                                            @else
-                                                -
-                                            @endif
-                                        </td>
-                                        <td>{{ $freeSubscription->value }}</td>
-                                        @php
-                                            $pieces = explode(' ', $freeSubscription->created_at);
-                                        @endphp
-                                        <td>{{ gregorianDateToPersian($freeSubscription->created_at, '-', true) . ' ( ' . $pieces[1] . ' ) ' }}
-                                        </td>
-                                    </tr>
-                                @endforeach
+                                                        @case(AUTH_VALIDITY)
+                                                            <span class="badge bg-label-warning"> اعتبار رایگان</span>
+                                                        @break
+
+                                                        @case(AUTH_CARGO)
+                                                            <span class="badge bg-label-primary"> بار رایگان</span>
+                                                        @break
+                                                    @endswitch
+                                                </td>
+                                                <td>
+                                                    @if ($freeSubscription->operator_id != null)
+                                                        {{ $freeSubscription->operator->name }}
+                                                        {{ $freeSubscription->operator->lastName }}
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </td>
+                                                <td>{{ $freeSubscription->value }}</td>
+                                                @php
+                                                    $pieces = explode(' ', $freeSubscription->created_at);
+                                                @endphp
+                                                <td>{{ gregorianDateToPersian($freeSubscription->created_at, '-', true) . ' ( ' . $pieces[1] . ' ) ' }}
+                                                </td>
+                                            </tr>
+                                        @endforeach
 
 
-                            </tbody>
-                        </table>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <p>تماس ورودی</p>
+
+                            <div class="table-responsive" style="display: block; max-height: 300px; overflow-y: auto;">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>اپراتور</th>
+                                            <th>نتیجه</th>
+                                            <th>تاریخ ثبت</th>
+                                            <th>عملیات</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="small text-right">
+                                        <?php $i = 1; ?>
+                                        @forelse ($supports as $key => $support)
+                                            <tr class="text-center">
+                                                <td>{{ ($supports->currentPage() - 1) * $supports->perPage() + ($key + 1) }}
+                                                </td>
+
+                                                <td>
+                                                    {{ $support->user ? $support->user->name . ' ' . $support->user->lastName : '-' }}
+                                                </td>
+
+                                                <td>
+                                                    {{ $support->result ?? '-' }}
+                                                </td>
+                                                @php
+                                                    $pieces = explode(' ', $support->created_at);
+                                                @endphp
+                                                <td>
+                                                    {{ gregorianDateToPersian($support->created_at, '-', true) . ' ( ' . $pieces[1] . ' ) ' }}
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-primary mb-3 btn-sm text-nowrap"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#adminMessageForm_{{ $support->id }}">
+                                                        ثبت نتیحه
+                                                    </button>
+                                                    <div id="adminMessageForm_{{ $support->id }}" class="modal fade"
+                                                        role="dialog">
+                                                        <div class="modal-dialog">
+
+                                                            <!-- Modal content-->
+                                                            <form
+                                                                action="{{ route('admin.indexDriver.update', $support) }}"
+                                                                method="post" class="modal-content">
+                                                                @csrf
+                                                                @method('put')
+                                                                <div class="modal-header">
+                                                                    <h4 class="modal-title">نتیجه</h4>
+                                                                </div>
+                                                                <div class="modal-body text-right">
+
+                                                                    <div>
+                                                                        راننده :
+                                                                        {{ $support->driver->name . ' ' . $support->driver->lastName }}
+                                                                    </div>
+
+                                                                    <div class="form-group">
+                                                                        <label>نتیجه :</label>
+                                                                        <textarea class="form-control" name="result" id="result" placeholder="پاسخ"></textarea>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-footer text-left">
+                                                                    <button type="submit"
+                                                                        class="btn btn-primary mr-1">ثبت پاسخ</button>
+                                                                    <button type="button" class="btn btn-danger"
+                                                                        data-bs-dismiss="modal">
+                                                                        انصراف
+                                                                    </button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr class="text-center">
+                                                <td colspan="10">
+                                                    دیتا مورد نظر یافت نشد
+                                                </td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                                @if (Auth::user()->role_id == 'admin')
+                                    <div class="mt-3">
+                                        {{ $supports }}
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
                     </div>
+
                 </div>
             </div>
 
