@@ -5,6 +5,7 @@ use App\Http\Controllers\AddressController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AuthorizeController;
+use App\Http\Controllers\BankController;
 use App\Http\Controllers\BearingController;
 use App\Http\Controllers\CityDistanceController;
 use App\Http\Controllers\ComplaintController;
@@ -877,6 +878,11 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         /*************************************************************************************************** */
         // خدمات
         Route::resource('services', ServiceController::class)->middleware('operator');
+
+
+        // درگاه پرداخت
+        Route::resource('bank', BankController::class)->middleware("operator");
+
     });
 
 
