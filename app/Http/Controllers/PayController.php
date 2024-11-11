@@ -672,7 +672,7 @@ class PayController extends Controller
         }
         // $amount = $driverPackagesInfo['data'][$packageName]['price'];
 
-        $CallbackURL = 'http://localhost:8000/verifyDriverPayZibal';
+        $CallbackURL = 'http://dashboard.iran-tarabar.ir/verifyDriverPayZibal';
 
         $parameters = array(
             "merchant" => MERCHANT_ID_ZIBAL, //required
