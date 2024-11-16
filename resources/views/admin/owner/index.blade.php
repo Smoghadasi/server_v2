@@ -95,7 +95,7 @@
                                 <td>{{ $owner->nationalCode }}</td>
                                 <td>{{ $owner->mobileNumber }}</td>
                                 <td>
-                                    <a href="{{ route('owner.loads', $owner->id) }}">{{ $owner->loadCount }}</a>
+                                    <a href="{{ route('owner.loads', $owner->id) }}">{{ $owner->numOfLoads }}</a>
                                 </td>
                                 @php
                                     $pieces = explode(' ', $owner->created_at);
