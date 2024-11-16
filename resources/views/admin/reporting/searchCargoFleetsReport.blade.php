@@ -3,7 +3,8 @@
 @section('content')
     <div class="card">
         <h5 class="card-header">
-            گزارش بار ها به تفکیک ناوگان
+            گزارش بار ها به تفکیک ناوگان |
+            مجموعه کل ({{ $total_sum }})
         </h5>
         <div class="card-body">
             <div class="mt-2">

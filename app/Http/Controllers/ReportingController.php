@@ -1336,7 +1336,7 @@ class ReportingController extends Controller
             ->withTrashed()
             ->paginate(20);
 
-            return view('admin.reporting.searchCargoFleets', compact('loads', 'fleet_id'));
+        return view('admin.reporting.searchCargoFleets', compact('loads', 'fleet_id'));
     }
 
     public function searchCargoFleetsReportCity($fleet_id, $origin_state_id)
@@ -1355,14 +1355,6 @@ class ReportingController extends Controller
     public function searchCargoFleets(Request $request)
     {
         try {
-            // $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
-            // $fleet_id = $request->fleet_id;
-            // $cargoReports = CargoReportByFleet::with('fleet')
-            //     ->where('fleet_id', $request->fleet_id)
-            //     ->orderByDesc('date')
-            //     ->take(50)
-            //     ->get();
-
             $fromDate = persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00';
             $toDate = persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:00';
             $cargoReports = CargoReportByFleet::with('fleet')
@@ -1374,8 +1366,14 @@ class ReportingController extends Controller
                     return $query->where('fleet_id', $request->fleet_id);
                 })
                 ->get();
+            $total_sum = CargoReportByFleet::with('fleet')
+                ->whereBetween('created_at', [$fromDate, $toDate])
+                ->when($request->fleet_id !== null, function ($query) use ($request) {
+                    return $query->where('fleet_id', $request->fleet_id);
+                })
+                ->selectRaw('SUM(count + count_owner) as total_sum')->pluck('total_sum')->first();
             // $fleets = Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
-            return view('admin.reporting.searchCargoFleetsReport', compact('cargoReports'));
+            return view('admin.reporting.searchCargoFleetsReport', compact('cargoReports', 'total_sum'));
         } catch (\Exception $exception) {
             Log::emergency("---------------------------------- cargoFleetsReport ---------------------------------");
             Log::emergency($exception->getMessage());
