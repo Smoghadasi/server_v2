@@ -4874,7 +4874,7 @@ class LoadController extends Controller
     }
 
     // بارهای موجود در مقصد
-    public function LoadsInDestinationCity(Driver $driver, string $city, $radius = 1000)
+    public function LoadsInDestinationCity(Driver $driver, string $city, $radius = 200)
     {
         $rows = 150;
         $province_city = ProvinceCity::findOrFail($city);
