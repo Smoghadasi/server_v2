@@ -295,6 +295,11 @@ class DataConvertController extends Controller
                 $destinations = [];
                 //                $cargoList[$currentOrigin]['originName'] = $cityName;
                 $originName = $cityName;
+
+                $origin = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $originName)));
+                $provinceName = ProvinceCity::where('name', $origin)->where('parent_id', '!=', 0)->get();
+                $originProvince = $provinceName;
+
                 $cityName = '';
             }
 
@@ -303,7 +308,6 @@ class DataConvertController extends Controller
                 $origin = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $cityName)));
                 $provinceName = ProvinceCity::where('name', $origin)->where('parent_id', '!=', 0)->get();
             }
-
             if ($originPrefixWord && strlen($cityName) && $isOrigin) {
                 $currentOrigin = $key;
                 //                $cargoList[$currentOrigin]['originName'] = $cityName;
@@ -315,6 +319,7 @@ class DataConvertController extends Controller
             }
 
             if (in_array($item, ['[از]']) == true) {
+
                 $originPrefixWord = true;
                 $originPostfixWord = false;
                 $isOrigin = true;
@@ -363,6 +368,8 @@ class DataConvertController extends Controller
                                 'priceType' => 'توافقی'
                             ];
                         }
+                    // return dd($cargoList);
+
                     }
                 }
             }
