@@ -1204,8 +1204,6 @@ class ReportingController extends Controller
             'unsuccess' => Transaction::where([['status', 0], ['userType', $userType]])->count(),
             'success' => Transaction::where([['status', '>', 0], ['userType', $userType]])->count()
         ];
-
-
         return view('admin.reporting.paymentReport', compact('transactions', 'counter'));
     }
 

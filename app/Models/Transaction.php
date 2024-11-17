@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transaction extends Model
 {
-    protected $appends = ['userTypeTitle', 'payerName', 'payerMobileNumber','FleetDriver', 'paymentDate', 'paymentDates', 'driverFleetName', 'countOfSuccess','countOfAllTries'];
+    protected $appends = ['userTypeTitle', 'payerName', 'payerMobileNumber', 'FleetDriver', 'paymentDate', 'paymentDates', 'driverFleetName', 'countOfSuccess', 'countOfAllTries'];
 
     public function getUserTypeTitleAttribute()
     {
@@ -60,6 +60,25 @@ class Transaction extends Model
         return 'بدون شماره';
     }
 
+    public function getBankNameAttribute($bankName)
+    {
+        switch ($bankName) {
+            case ZARINPAL:
+                $status = 'زرین پال';
+                break;
+            case ZIBAL:
+                $status = 'زیبال';
+                break;
+            case SINA:
+                $status = 'بانک سینا';
+                break;
+            case MELLAT:
+                $status = 'بانک ملت';
+                break;
+        }
+        return $status;
+    }
+
     public function getFleetDriverAttribute()
     {
         try {
@@ -86,7 +105,6 @@ class Transaction extends Model
             $date = explode(' ', $transaction->created_at);
             return str_replace('-', '/', gregorianDateToPersian($date[0], '-')) . ' ' . $date[1];
         } catch (\Exception $exception) {
-
         }
         return 'بدون تاریخ';
     }
@@ -108,7 +126,6 @@ class Transaction extends Model
                 $paymentDates[] = gregorianDateToPersian(explode(' ', $transaction->created_at)[0], '-');
 
             return $paymentDates;
-
         } catch (\Exception $exception) {
         }
 
@@ -121,7 +138,6 @@ class Transaction extends Model
             if ($this->userType == ROLE_DRIVER)
                 return Driver::find($this->user_id)->fleetTitle;
         } catch (\Exception $exception) {
-
         }
 
         return 'بدون ناوگان';
