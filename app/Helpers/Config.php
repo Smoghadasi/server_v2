@@ -114,6 +114,12 @@ const ROLE_OWNER = 'owner'; // صاحبان بار
 const ROLE_ADMIN = 'admin'; // ادمین
 const ROLE_OPERATOR = 'operator'; // اپراتور
 
+// درگاه بانکی
+const ZIBAL = 'zibal'; // زیبال
+const ZARINPAL = 'zarinpal'; // زرین پال
+const SINA = 'sina'; // زرین پال
+const MELLAT = 'mellat'; // زرین پال
+
 const API_ACCESS_KEY_USER = 'AAAApyggZl8:APA91bG3uw8zZLi9XRK16x6o9luTeucXldvSx1yOy9jhpe0lRC__qCfA05jsf8BtsUbK4i9bWI2eIlTSwHbqKHHtPFtu3D1BarFh2l4ETO-klvhSkzdnLsU-pr2fYCfWRhBUzuBUfipI';
 const API_ACCESS_KEY_TRANSPORTATION_COMPANY = 'AAAAYkHeAws:APA91bHTq3VpvOTsnQpjZjYQzGvU1M3OOPuW26Lw9Zg1yUmSdjw9hfTul6fQ2TVL7XexEwzmOv960dsyeajZbs4yJaOdG0qtQj0UMOtYkI_f3ZuY6xZD1SSmt7eczO9rsVVD6v0WpuEq';
 const API_ACCESS_KEY_DRIVER = 'AAAAUSJOUE0:APA91bFUconxnZ5rTt7ChN8GYNgCLeci0nVrV1rJ8-64xED7gZ8RWPL9L_FrfswuGmktXLfQIN1GX0RAUsg1fnqF6glYJh3zJ59pHOEe48Wvhjy22JBgl3s9Ra1t16tH_NOC3-bx-adw';

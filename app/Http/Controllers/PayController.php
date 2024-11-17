@@ -610,6 +610,7 @@ class PayController extends Controller
                 $transaction->user_id = $driver->id;
                 $transaction->userType = ROLE_DRIVER;
                 $transaction->authority = $result->Authority;
+                $transaction->bank_name = ZARINPAL;
                 $transaction->amount = $amount;
                 $transaction->monthsOfThePackage = $monthsOfThePackage;
                 $transaction->save();
@@ -691,6 +692,7 @@ class PayController extends Controller
                 $transaction->user_id = $driver->id;
                 $transaction->userType = ROLE_DRIVER;
                 $transaction->authority = $response->trackId;
+                $transaction->bank_name = ZIBAL;
                 $transaction->amount = $amount;
                 $transaction->monthsOfThePackage = $monthsOfThePackage;
                 $transaction->save();
