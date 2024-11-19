@@ -792,7 +792,6 @@ class PayController extends Controller
             $result = $client->SalePaymentRequest(array(
                 "requestData" => $params
             ));
-            return dd($result);
             if ($result->SalePaymentRequestResult->Token && $result->SalePaymentRequestResult->Status === 0) {
                 // توکن دریافت شده را میتوانید در این مرحله به تراکنش مورد نظر مرتبط نموده و ذخیره سازی کنید.
                 $token = $result->SalePaymentRequestResult->Token;
