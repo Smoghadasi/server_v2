@@ -848,7 +848,7 @@ class PayController extends Controller
             "LoginAccount" => PIN_SINA,
             "Token" => $request->token
         );
-        return dd($params);
+        return $request-;
 
         $transaction = Transaction::where('authority', $request->token)->first();
         // $client = new SoapClient($confirmUrl);
