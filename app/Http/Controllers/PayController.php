@@ -848,16 +848,17 @@ class PayController extends Controller
             "LoginAccount" => PIN_SINA,
             "Token" => $request->token
         );
+        return dd($params);
+
         $transaction = Transaction::where('authority', $request->token)->first();
-        $client = new SoapClient($confirmUrl);
+        // $client = new SoapClient($confirmUrl);
         try {
 
             DB::beginTransaction();
             try {
-                $result = $client->ConfirmPayment(array(
-                    "requestData" => $params
-                ));
-                return dd($params);
+                // $result = $client->ConfirmPayment(array(
+                //     "requestData" => $params
+                // ));
                 if ($request->has('status')) {
                     if ($request->status != '0') {
                         // نمایش نتیجه ی پرداخت
