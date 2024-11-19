@@ -824,9 +824,9 @@ class PayController extends Controller
 
             DB::beginTransaction();
             try {
-                $result = $client->ConfirmPayment(array(
-                    "requestData" => $params
-                ));
+                // $result = $client->ConfirmPayment(array(
+                //     "requestData" => $params
+                // ));
                 if ($request->status != '0') {
                     // نمایش نتیجه ی پرداخت
                     $err_msg = "(<strong> کد خطا : " . $result->ConfirmPaymentResult->Status . "</strong>) ";
