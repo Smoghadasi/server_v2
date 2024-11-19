@@ -882,7 +882,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         // درگاه پرداخت
         Route::resource('bank', BankController::class)->middleware("operator");
-
     });
 
 
@@ -981,7 +980,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
     // درگاه پرداخت زیبال
     Route::get('payDriverSina/{packageName}/{driver}', [PayController::class, 'payDriverSina']);
-    Route::get('verifyDriverPaySina', [PayController::class, 'verifyDriverPaySina']);
+    Route::post('verifyDriverPaySina', [PayController::class, 'verifyDriverPaySina']);
 
     /****************************************************************************************************************/
 

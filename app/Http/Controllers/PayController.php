@@ -772,7 +772,7 @@ class PayController extends Controller
         $orderId = $this->generateOrderId();
 
         // آدرسی که بعد از پایان هر عملیات درسمت بانک نتیجه تراکنش باید به آن برگشت داده شود
-        $callbackUrl = 'https://dashboard.iran-tarabar.ir/verifyDriverPaySina';
+        $callbackUrl = 'http://localhost:8000/verifyDriverPaySina';
 
         $params = array(
             "LoginAccount" => PIN_SINA,
@@ -809,9 +809,9 @@ class PayController extends Controller
         }
     }
 
-    public function verifyDriverPaySina($token)
+    public function verifyDriverPaySina(Request $request)
     {
-        return dd($token);
+        return dd($request);
         // $confirmUrl = 'https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL';
         // $this->url = $confirmUrl;
         // $params = array(
