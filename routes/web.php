@@ -978,7 +978,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     Route::get('payDriverZibal/{packageName}/{driver}', [PayController::class, 'payDriverZibal']);
     Route::get('verifyDriverPayZibal', [PayController::class, 'verifyDriverPayZibal']);
 
-    // درگاه پرداخت زیبال
+    // درگاه پرداخت سینا
     Route::get('payDriverSina/{packageName}/{driver}', [PayController::class, 'payDriverSina']);
     Route::post('verifyDriverPaySina', [PayController::class, 'verifyDriverPaySina']);
 

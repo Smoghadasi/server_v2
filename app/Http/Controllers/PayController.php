@@ -792,44 +792,17 @@ class PayController extends Controller
             ));
             if ($result->SalePaymentRequestResult->Token && $result->SalePaymentRequestResult->Status === 0) {
                 // توکن دریافت شده را میتوانید در این مرحله به تراکنش مورد نظر مرتبط نموده و ذخیره سازی کنید.
-                $token = $result->SalePaymentRequestResult->Token;
-                try {
+                // $token = $result->SalePaymentRequestResult->Token;
+                // header("Location: https://pec.shaparak.ir/NewIPG/?Token=" . $result->SalePaymentRequestResult->Token); /* Redirect browser */
+                // exit();
 
-                    $transaction = new Transaction();
-                    $transaction->user_id = $driver->id;
-                    $transaction->userType = ROLE_DRIVER;
-                    $transaction->authority = $token;
-                    $transaction->bank_name = SINA;
-                    $transaction->amount = $amount;
-                    $transaction->monthsOfThePackage = $monthsOfThePackage;
-                    $transaction->save();
-
-                    try {
-                        $driver = Driver::find($transaction->user_id);
-
-                        if (
-                            Transaction::where('user_id', $driver->id)
-                            ->where('userType', 'driver')
-                            ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
-                            ->count() == 5
-                        ) {
-                            $sms = new Driver();
-                            $sms->unSuccessPayment($driver->mobileNumber);
-                        }
-                    } catch (Exception $exception) {
-                        Log::emergency("-------------------------------- unSuccessPayment -----------------------------");
-                        Log::emergency($exception->getMessage());
-                        Log::emergency("------------------------------------------------------------------------------");
-                    }
-                    header("Location: https://pec.shaparak.ir/NewIPG/?Token=" . $result->SalePaymentRequestResult->Token); /* Redirect browser */
-                    exit();
-                } catch (\Exception $exception) {
-                }
+                $startGateWayUrl = "https://pec.shaparak.ir/NewIPG/?Token=" . $result->SalePaymentRequestResult->Token;
+                return redirect($startGateWayUrl);
             } elseif ($result->SalePaymentRequestResult->Status  != '0') {
                 $err_msg = "(<strong> کد خطا : " . $result->SalePaymentRequestResult->Status . "</strong>) " .
                     $result->SalePaymentRequestResult->Message;
-                $errorMsg = $err_msg;
-                return false;
+                return $err_msg;
+                // return false;
             }
         } catch (Exception $ex) {
             $err_msg =  $ex->getMessage();
