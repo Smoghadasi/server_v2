@@ -853,9 +853,10 @@ class PayController extends Controller
 
             DB::beginTransaction();
             try {
-                // $result = $client->ConfirmPayment(array(
-                //     "requestData" => $params
-                // ));
+                $result = $client->ConfirmPayment(array(
+                    "requestData" => $params
+                ));
+                return dd($result->ConfirmPaymentResult->Status);
                 if ($request->has('status')) {
                     if ($request->status != '0') {
                         // نمایش نتیجه ی پرداخت
@@ -890,7 +891,7 @@ class PayController extends Controller
                     // خاور و نیسان
                     $driver->freeCalls = ($driver->freeCalls > 0 ? $driver->freeCalls : 0) + DRIVER_FREE_CALLS;
 
-                    $driver->freeAcceptLoads = ($driver->freeAcceptLoads > 0 ? $driver->freeAcceptLoads : 0) + DRIVER_FREE_ACCEPT_LOAD;
+                    // $driver->freeAcceptLoads = ($driver->freeAcceptLoads > 0 ? $driver->freeAcceptLoads : 0);
                     $driver->save();
                     return true;
                 }
