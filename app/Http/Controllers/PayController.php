@@ -817,16 +817,16 @@ class PayController extends Controller
             "Token" => $request->token
         );
         $transaction = Transaction::where('authority', $request->token)->first();
-        return $request;
 
         $client = new SoapClient($confirmUrl);
         try {
 
             DB::beginTransaction();
             try {
-                // $result = $client->ConfirmPayment(array(
-                //     "requestData" => $params
-                // ));
+                $result = $client->ConfirmPayment(array(
+                    "requestData" => $params
+                ));
+                return dd($result);
                 if ($request->status != '0') {
                     // نمایش نتیجه ی پرداخت
                     $err_msg = "(<strong> کد خطا : " . $result->ConfirmPaymentResult->Status . "</strong>) ";
