@@ -826,8 +826,8 @@ class PayController extends Controller
                 $result = $client->ConfirmPayment(array(
                     "requestData" => $params
                 ));
-                return dd($result);
-                if ($result->ConfirmPaymentResult->Status != '0') {
+                return dd($request->status);
+                if ($request->status != '0') {
                     // نمایش نتیجه ی پرداخت
                     $err_msg = "(<strong> کد خطا : " . $result->ConfirmPaymentResult->Status . "</strong>) ";
                     return $err_msg;
