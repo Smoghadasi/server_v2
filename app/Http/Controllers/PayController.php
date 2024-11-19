@@ -792,12 +792,42 @@ class PayController extends Controller
             $result = $client->SalePaymentRequest(array(
                 "requestData" => $params
             ));
-            // return dd($result);
+            return dd($result);
             if ($result->SalePaymentRequestResult->Token && $result->SalePaymentRequestResult->Status === 0) {
                 // توکن دریافت شده را میتوانید در این مرحله به تراکنش مورد نظر مرتبط نموده و ذخیره سازی کنید.
-                // $token = $result->SalePaymentRequestResult->Token;
-                header("Location: https://pec.shaparak.ir/NewIPG/?Token=" . $result->SalePaymentRequestResult->Token); /* Redirect browser */
-                exit();
+                $token = $result->SalePaymentRequestResult->Token;
+                try {
+
+                    $transaction = new Transaction();
+                    $transaction->user_id = $driver->id;
+                    $transaction->userType = ROLE_DRIVER;
+                    $transaction->authority = $token;
+                    $transaction->bank_name = SINA;
+                    $transaction->amount = $amount;
+                    $transaction->monthsOfThePackage = $monthsOfThePackage;
+                    $transaction->save();
+
+                    try {
+                        $driver = Driver::find($transaction->user_id);
+
+                        if (
+                            Transaction::where('user_id', $driver->id)
+                            ->where('userType', 'driver')
+                            ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
+                            ->count() == 5
+                        ) {
+                            $sms = new Driver();
+                            $sms->unSuccessPayment($driver->mobileNumber);
+                        }
+                    } catch (Exception $exception) {
+                        Log::emergency("-------------------------------- unSuccessPayment -----------------------------");
+                        Log::emergency($exception->getMessage());
+                        Log::emergency("------------------------------------------------------------------------------");
+                    }
+                    header("Location: https://pec.shaparak.ir/NewIPG/?Token=" . $result->SalePaymentRequestResult->Token); /* Redirect browser */
+                    exit();
+                } catch (\Exception $exception) {
+                }
             } elseif ($result->SalePaymentRequestResult->Status  != '0') {
                 $err_msg = "(<strong> کد خطا : " . $result->SalePaymentRequestResult->Status . "</strong>) " .
                     $result->SalePaymentRequestResult->Message;
@@ -811,31 +841,29 @@ class PayController extends Controller
 
     public function verifyDriverPaySina($token)
     {
-        return dd($token);
-        // $confirmUrl = 'https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL';
-        // $this->url = $confirmUrl;
-        // $params = array(
-        //     "LoginAccount" => PIN_SINA,
-        //     "Token" => $token
-        // );
+        $confirmUrl = 'https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL';
+        $params = array(
+            "LoginAccount" => PIN_SINA,
+            "Token" => $token
+        );
 
-        // $client = new SoapClient($this->url);
+        $client = new SoapClient($confirmUrl);
 
-        // try {
-        //     $result = $client->ConfirmPayment(array(
-        //         "requestData" => $params
-        //     ));
-        //     if ($result->ConfirmPaymentResult->Status != '0') {
-        //         // نمایش نتیجه ی پرداخت
-        //         $err_msg = "(<strong> کد خطا : " . $result->ConfirmPaymentResult->Status . "</strong>) ";
-        //         $this->errorMsg = $err_msg;
-        //         return false;
-        //     }
-        //     // پرداخت با موفقییت انجام شده است
-        //     return true;
-        // } catch (Exception $ex) {
-        //     $err_msg =  $ex->getMessage();
-        // }
+        try {
+            $result = $client->ConfirmPayment(array(
+                "requestData" => $params
+            ));
+            if ($result->ConfirmPaymentResult->Status != '0') {
+                // نمایش نتیجه ی پرداخت
+                $err_msg = "(<strong> کد خطا : " . $result->ConfirmPaymentResult->Status . "</strong>) ";
+                // $this->errorMsg = $err_msg;
+                return false;
+            }
+            // پرداخت با موفقییت انجام شده است
+            return true;
+        } catch (Exception $ex) {
+            $err_msg =  $ex->getMessage();
+        }
     }
 
     public function verifyDriverPayZibal(Request $request)
