@@ -809,7 +809,7 @@ class PayController extends Controller
         }
     }
 
-    public function verifyDriverPaySina(Request $request)
+    public function verifyDriverPaySina(Request $request, $token)
     {
         return dd($request);
         // $confirmUrl = 'https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL';
