@@ -826,6 +826,7 @@ class PayController extends Controller
                 $result = $client->ConfirmPayment(array(
                     "requestData" => $params
                 ));
+                return dd($result);
                 if ($result->ConfirmPaymentResult->Status != '0') {
                     // نمایش نتیجه ی پرداخت
                     $err_msg = "(<strong> کد خطا : " . $result->ConfirmPaymentResult->Status . "</strong>) ";
@@ -865,6 +866,8 @@ class PayController extends Controller
                 $err_msg =  $ex->getMessage();
             }
         } catch (\Exception $exception) {
+            $err_msg =  $exception->getMessage();
+            Log::warning($err_msg);
             DB::rollBack();
         }
     }
