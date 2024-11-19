@@ -815,25 +815,58 @@ class PayController extends Controller
         $confirmUrl = 'https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL';
         $params = array(
             "LoginAccount" => PIN_SINA,
-            "Token" => $token
+            "Token" => $request->token
         );
+        $transaction = Transaction::where('authority', $request->token)->first();
 
         $client = new SoapClient($confirmUrl);
-
         try {
-            $result = $client->ConfirmPayment(array(
-                "requestData" => $params
-            ));
-            if ($result->ConfirmPaymentResult->Status != '0') {
-                // نمایش نتیجه ی پرداخت
-                $err_msg = "(<strong> کد خطا : " . $result->ConfirmPaymentResult->Status . "</strong>) ";
-                // $this->errorMsg = $err_msg;
-                return false;
+
+            DB::beginTransaction();
+            try {
+                $result = $client->ConfirmPayment(array(
+                    "requestData" => $params
+                ));
+                if ($result->ConfirmPaymentResult->Status != '0') {
+                    // نمایش نتیجه ی پرداخت
+                    $err_msg = "(<strong> کد خطا : " . $result->ConfirmPaymentResult->Status . "</strong>) ";
+                    return $err_msg;
+                }
+                // پرداخت با موفقییت انجام شده است
+                $transaction->status = 100;
+                $transaction->RefId = $request->RRN;
+                $transaction->save();
+                $numOfDays = 30;
+
+                try {
+                    $numOfDays = getNumOfCurrentMonthDays();
+                } catch (\Exception $exception) {
+                }
+
+                $activeDate = date("Y-m-d H:i:s", time() + $numOfDays * 24 * 60 * 60 * $transaction->monthsOfThePackage);
+                $driver = Driver::find($transaction->user_id);
+
+                try {
+                    $date = new \DateTime($driver->activeDate);
+                    $time = $date->getTimestamp();
+                    if ($time < time())
+                        $activeDate = date('Y-m-d', time() + $transaction->monthsOfThePackage * $numOfDays * 24 * 60 * 60);
+                    else
+                        $activeDate = date('Y-m-d', $time + $transaction->monthsOfThePackage * $numOfDays * 24 * 60 * 60);
+                } catch (\Exception $e) {
+                }
+                $driver->activeDate = $activeDate;
+                // خاور و نیسان
+                $driver->freeCalls = ($driver->freeCalls > 0 ? $driver->freeCalls : 0) + DRIVER_FREE_CALLS;
+
+                $driver->freeAcceptLoads = ($driver->freeAcceptLoads > 0 ? $driver->freeAcceptLoads : 0) + DRIVER_FREE_ACCEPT_LOAD;
+                $driver->save();
+                return true;
+            } catch (Exception $ex) {
+                $err_msg =  $ex->getMessage();
             }
-            // پرداخت با موفقییت انجام شده است
-            return true;
-        } catch (Exception $ex) {
-            $err_msg =  $ex->getMessage();
+        } catch (\Exception $exception) {
+            DB::rollBack();
         }
     }
 
