@@ -737,7 +737,7 @@ class PayController extends Controller
 
     public function checkOrder($number)
     {
-        return Transaction::where('authority', $number)->exists();
+        return Transaction::where('ResCode', $number)->exists();
     }
 
     public function payDriverSina($packageName, Driver $driver)
@@ -799,10 +799,13 @@ class PayController extends Controller
                 "requestData" => $params
             ));
             if ($result->SalePaymentRequestResult->Token && $result->SalePaymentRequestResult->Status === 0) {
+                $token = $result->SalePaymentRequestResult->Token;
+
                 $transaction = new Transaction();
                 $transaction->user_id = $driver->id;
                 $transaction->userType = ROLE_DRIVER;
-                $transaction->authority = $this->generateOrderId();
+                $transaction->authority = $token;
+                $transaction->ResCode = $this->generateOrderId();
                 $transaction->bank_name = SINA;
                 $transaction->amount = $amount;
                 $transaction->monthsOfThePackage = $monthsOfThePackage;
@@ -846,7 +849,7 @@ class PayController extends Controller
         //     "Token" => $request->token
         // );
         $transaction = Transaction::where('authority', $request->token)->first();
-
+        return $transaction;
         // $client = new SoapClient($confirmUrl);
         try {
 
