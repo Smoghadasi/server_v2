@@ -772,7 +772,7 @@ class PayController extends Controller
         $orderId = $this->generateOrderId();
 
         // آدرسی که بعد از پایان هر عملیات درسمت بانک نتیجه تراکنش باید به آن برگشت داده شود
-        $callbackUrl = 'http://localhost:8000/verifyDriverPaySina';
+        $callbackUrl = 'https://dashboard.iran-tarabar.ir/verifyDriverPaySina';
 
         $params = array(
             "LoginAccount" => PIN_SINA,
