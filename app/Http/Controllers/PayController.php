@@ -840,22 +840,22 @@ class PayController extends Controller
 
     public function verifyDriverPaySina(Request $request)
     {
-        $confirmUrl = 'https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL';
-        $params = array(
-            "LoginAccount" => PIN_SINA,
-            "Token" => $request->token
-        );
+        // $confirmUrl = 'https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL';
+        // $params = array(
+        //     "LoginAccount" => PIN_SINA,
+        //     "Token" => $request->token
+        // );
         $transaction = Transaction::where('authority', $request->token)->first();
 
-        $client = new SoapClient($confirmUrl);
+        // $client = new SoapClient($confirmUrl);
         try {
 
             DB::beginTransaction();
             try {
-                $result = $client->ConfirmPayment(array(
-                    "requestData" => $params
-                ));
-                return dd($result->ConfirmPaymentResult->Status);
+                // $result = $client->ConfirmPayment(array(
+                //     "requestData" => $params
+                // ));
+                // return dd($result->ConfirmPaymentResult->Status);
                 if ($request->has('status')) {
                     if ($request->status != '0') {
                         // نمایش نتیجه ی پرداخت
