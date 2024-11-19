@@ -764,7 +764,6 @@ class PayController extends Controller
         // $amount = $driverPackagesInfo['data'][$packageName]['price'];
 
         // شناسه پذیرنده
-        $pin = "UfcE2rb2i77PipX3ixOC";
 
         // آدرس درگاه پرداخت
         $url = "https://pec.shaparak.ir/NewIPGServices/Sale/SaleService.asmx?WSDL";
@@ -773,10 +772,10 @@ class PayController extends Controller
         $orderId = $this->generateOrderId();
 
         // آدرسی که بعد از پایان هر عملیات درسمت بانک نتیجه تراکنش باید به آن برگشت داده شود
-        $callbackUrl = 'http://localhost:8000/verifyDriverPaySina';
+        $callbackUrl = 'https://dashboard.iran-tarabar.ir/verifyDriverPaySina';
 
         $params = array(
-            "LoginAccount" => $pin,
+            "LoginAccount" => PIN_SINA,
             "Amount" => $amount,
             "OrderId" => $orderId,
             "CallBackUrl" => $callbackUrl,
@@ -812,7 +811,31 @@ class PayController extends Controller
 
     public function verifyDriverPaySina(Request $request)
     {
-        return $request;
+        return dd($request);
+        // $confirmUrl = 'https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL';
+        // $this->url = $confirmUrl;
+        // $params = array(
+        //     "LoginAccount" => PIN_SINA,
+        //     "Token" => $token
+        // );
+
+        // $client = new SoapClient($this->url);
+
+        // try {
+        //     $result = $client->ConfirmPayment(array(
+        //         "requestData" => $params
+        //     ));
+        //     if ($result->ConfirmPaymentResult->Status != '0') {
+        //         // نمایش نتیجه ی پرداخت
+        //         $err_msg = "(<strong> کد خطا : " . $result->ConfirmPaymentResult->Status . "</strong>) ";
+        //         $this->errorMsg = $err_msg;
+        //         return false;
+        //     }
+        //     // پرداخت با موفقییت انجام شده است
+        //     return true;
+        // } catch (Exception $ex) {
+        //     $err_msg =  $ex->getMessage();
+        // }
     }
 
     public function verifyDriverPayZibal(Request $request)
