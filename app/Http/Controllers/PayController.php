@@ -846,11 +846,11 @@ class PayController extends Controller
         $confirmUrl = 'https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL';
         $params = array(
             "LoginAccount" => PIN_SINA,
-            "Token" => $request->token
+            "Token" => $request->Token
         );
-        return $request;
+        return $params;
 
-        $transaction = Transaction::where('authority', $request->token)->first();
+        $transaction = Transaction::where('authority', $request->Token)->first();
         // $client = new SoapClient($confirmUrl);
         try {
 
