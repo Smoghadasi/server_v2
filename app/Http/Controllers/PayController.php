@@ -725,10 +725,19 @@ class PayController extends Controller
     }
 
     // تابع ایجاد شناسه یکتا برای هر سفارش
+
     public function generateOrderId()
     {
         $orderId = bin2hex(random_bytes(20));
-        return $orderId;
+        if ($this->checkOrder($orderId)) {
+            return $this->generateOrderId();
+        }
+        return (string)$orderId;
+    }
+
+    public function checkOrder($number)
+    {
+        return Transaction::where('authority', $number)->exists();
     }
 
     public function payDriverSina($packageName, Driver $driver)
@@ -791,10 +800,32 @@ class PayController extends Controller
                 "requestData" => $params
             ));
             if ($result->SalePaymentRequestResult->Token && $result->SalePaymentRequestResult->Status === 0) {
-                // توکن دریافت شده را میتوانید در این مرحله به تراکنش مورد نظر مرتبط نموده و ذخیره سازی کنید.
-                // $token = $result->SalePaymentRequestResult->Token;
-                // header("Location: https://pec.shaparak.ir/NewIPG/?Token=" . $result->SalePaymentRequestResult->Token); /* Redirect browser */
-                // exit();
+                $transaction = new Transaction();
+                $transaction->user_id = $driver->id;
+                $transaction->userType = ROLE_DRIVER;
+                $transaction->authority = $orderId;
+                $transaction->bank_name = SINA;
+                $transaction->amount = $amount;
+                $transaction->monthsOfThePackage = $monthsOfThePackage;
+                $transaction->save();
+
+                try {
+                    $driver = Driver::find($transaction->user_id);
+
+                    if (
+                        Transaction::where('user_id', $driver->id)
+                        ->where('userType', 'driver')
+                        ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
+                        ->count() == 5
+                    ) {
+                        $sms = new Driver();
+                        $sms->unSuccessPayment($driver->mobileNumber);
+                    }
+                } catch (Exception $exception) {
+                    Log::emergency("-------------------------------- unSuccessPayment -----------------------------");
+                    Log::emergency($exception->getMessage());
+                    Log::emergency("------------------------------------------------------------------------------");
+                }
 
                 $startGateWayUrl = "https://pec.shaparak.ir/NewIPG/?Token=" . $result->SalePaymentRequestResult->Token;
                 return redirect($startGateWayUrl);
@@ -802,7 +833,6 @@ class PayController extends Controller
                 $err_msg = "(<strong> کد خطا : " . $result->SalePaymentRequestResult->Status . "</strong>) " .
                     $result->SalePaymentRequestResult->Message;
                 return $err_msg;
-                // return false;
             }
         } catch (Exception $ex) {
             $err_msg =  $ex->getMessage();
@@ -823,45 +853,47 @@ class PayController extends Controller
 
             DB::beginTransaction();
             try {
-                $result = $client->ConfirmPayment(array(
-                    "requestData" => $params
-                ));
-                return dd($result);
-                if ($request->status != '0') {
-                    // نمایش نتیجه ی پرداخت
-                    $err_msg = "(<strong> کد خطا : " . $result->ConfirmPaymentResult->Status . "</strong>) ";
-                    return $err_msg;
+                // $result = $client->ConfirmPayment(array(
+                //     "requestData" => $params
+                // ));
+                if ($request->has('status')) {
+                    if ($request->status != '0') {
+                        // نمایش نتیجه ی پرداخت
+                        $err_msg = "(<strong> کد خطا : " . $request->status . "</strong>) ";
+                        return $err_msg;
+                    }
+
+                    // پرداخت با موفقییت انجام شده است
+                    $transaction->status = 100;
+                    $transaction->RefId = $request->RRN;
+                    $transaction->save();
+                    $numOfDays = 30;
+
+                    try {
+                        $numOfDays = getNumOfCurrentMonthDays();
+                    } catch (\Exception $exception) {
+                    }
+
+                    $activeDate = date("Y-m-d H:i:s", time() + $numOfDays * 24 * 60 * 60 * $transaction->monthsOfThePackage);
+                    $driver = Driver::find($transaction->user_id);
+
+                    try {
+                        $date = new \DateTime($driver->activeDate);
+                        $time = $date->getTimestamp();
+                        if ($time < time())
+                            $activeDate = date('Y-m-d', time() + $transaction->monthsOfThePackage * $numOfDays * 24 * 60 * 60);
+                        else
+                            $activeDate = date('Y-m-d', $time + $transaction->monthsOfThePackage * $numOfDays * 24 * 60 * 60);
+                    } catch (\Exception $e) {
+                    }
+                    $driver->activeDate = $activeDate;
+                    // خاور و نیسان
+                    $driver->freeCalls = ($driver->freeCalls > 0 ? $driver->freeCalls : 0) + DRIVER_FREE_CALLS;
+
+                    $driver->freeAcceptLoads = ($driver->freeAcceptLoads > 0 ? $driver->freeAcceptLoads : 0) + DRIVER_FREE_ACCEPT_LOAD;
+                    $driver->save();
+                    return true;
                 }
-                // پرداخت با موفقییت انجام شده است
-                $transaction->status = 100;
-                $transaction->RefId = $request->RRN;
-                $transaction->save();
-                $numOfDays = 30;
-
-                try {
-                    $numOfDays = getNumOfCurrentMonthDays();
-                } catch (\Exception $exception) {
-                }
-
-                $activeDate = date("Y-m-d H:i:s", time() + $numOfDays * 24 * 60 * 60 * $transaction->monthsOfThePackage);
-                $driver = Driver::find($transaction->user_id);
-
-                try {
-                    $date = new \DateTime($driver->activeDate);
-                    $time = $date->getTimestamp();
-                    if ($time < time())
-                        $activeDate = date('Y-m-d', time() + $transaction->monthsOfThePackage * $numOfDays * 24 * 60 * 60);
-                    else
-                        $activeDate = date('Y-m-d', $time + $transaction->monthsOfThePackage * $numOfDays * 24 * 60 * 60);
-                } catch (\Exception $e) {
-                }
-                $driver->activeDate = $activeDate;
-                // خاور و نیسان
-                $driver->freeCalls = ($driver->freeCalls > 0 ? $driver->freeCalls : 0) + DRIVER_FREE_CALLS;
-
-                $driver->freeAcceptLoads = ($driver->freeAcceptLoads > 0 ? $driver->freeAcceptLoads : 0) + DRIVER_FREE_ACCEPT_LOAD;
-                $driver->save();
-                return true;
             } catch (Exception $ex) {
                 $err_msg =  $ex->getMessage();
             }
