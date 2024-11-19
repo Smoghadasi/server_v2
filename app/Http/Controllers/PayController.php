@@ -849,7 +849,7 @@ class PayController extends Controller
         //     "Token" => $request->token
         // );
         $transaction = Transaction::where('authority', $request->token)->first();
-        return dd($transaction, $request->token);
+        return dd($transaction, $request);
         // $client = new SoapClient($confirmUrl);
         try {
 
