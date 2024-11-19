@@ -971,13 +971,17 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
     /****************************************************************************************************************/
 
+    // درگاه پرداخت زرین پال
     Route::get('payDriver/{packageName}/{driver}', [PayController::class, 'payDriver']);
     Route::get('verifyDriverPay', [PayController::class, 'verifyDriverPay']);
 
-
+    // درگاه پرداخت زیبال
     Route::get('payDriverZibal/{packageName}/{driver}', [PayController::class, 'payDriverZibal']);
     Route::get('verifyDriverPayZibal', [PayController::class, 'verifyDriverPayZibal']);
 
+    // درگاه پرداخت زیبال
+    Route::get('payDriverSina/{packageName}/{driver}', [PayController::class, 'payDriverSina']);
+    Route::get('verifyDriverPaySina', [PayController::class, 'verifyDriverPaySina']);
 
     /****************************************************************************************************************/
 

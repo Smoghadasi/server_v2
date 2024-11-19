@@ -724,6 +724,97 @@ class PayController extends Controller
         }
     }
 
+    // تابع ایجاد شناسه یکتا برای هر سفارش
+    public function generateOrderId()
+    {
+        $orderId = bin2hex(random_bytes(20));
+        return $orderId;
+    }
+
+    public function payDriverSina($packageName, Driver $driver)
+    {
+        $driverPackagesInfo = getDriverPackagesInfo();
+        if (!isset($driverPackagesInfo['data'][$packageName]['price']))
+            return abort(404);
+
+        $monthsOfThePackage = 0;
+        switch ($packageName) {
+            case 'monthly':
+                $monthsOfThePackage = 1;
+                break;
+            case 'trimester':
+                $monthsOfThePackage = 3;
+                break;
+            case 'sixMonths':
+                $monthsOfThePackage = 6;
+                break;
+        }
+
+        switch ($driverPackagesInfo['data'][$packageName]['price']) {
+            case '79000':
+                $amount = '790000';
+                break;
+            case '199000':
+                $amount = '1990000';
+                break;
+            case '399000':
+                $amount = '3990000';
+                break;
+        }
+        // $amount = $driverPackagesInfo['data'][$packageName]['price'];
+
+        // شناسه پذیرنده
+        $pin = "UfcE2rb2i77PipX3ixOC";
+
+        // آدرس درگاه پرداخت
+        $url = "https://pec.shaparak.ir/NewIPGServices/Sale/SaleService.asmx?WSDL";
+
+        // شماره سفارش تولید شده توسط سیستم پذیرنده که باید الزاما یکتا باشد
+        $orderId = $this->generateOrderId();
+
+        // آدرسی که بعد از پایان هر عملیات درسمت بانک نتیجه تراکنش باید به آن برگشت داده شود
+        $callbackUrl = 'http://localhost:8000/verifyDriverPaySina';
+
+        $params = array(
+            "LoginAccount" => $pin,
+            "Amount" => $amount,
+            "OrderId" => $orderId,
+            "CallBackUrl" => $callbackUrl,
+            "AdditionalData" => '',
+            "Originator" => ''
+        );
+
+        // در این مرحله میتوانید اطلاعات قبل از ارسال را ذخیره سازی کنید.
+
+
+        $client = new SoapClient($url);
+
+        try {
+            $result = $client->SalePaymentRequest(array(
+                "requestData" => $params
+            ));
+            // return dd($result);
+            if ($result->SalePaymentRequestResult->Token && $result->SalePaymentRequestResult->Status === 0) {
+                // توکن دریافت شده را میتوانید در این مرحله به تراکنش مورد نظر مرتبط نموده و ذخیره سازی کنید.
+                // $token = $result->SalePaymentRequestResult->Token;
+                header("Location: https://pec.shaparak.ir/NewIPG/?Token=" . $result->SalePaymentRequestResult->Token); /* Redirect browser */
+                exit();
+            } elseif ($result->SalePaymentRequestResult->Status  != '0') {
+                $err_msg = "(<strong> کد خطا : " . $result->SalePaymentRequestResult->Status . "</strong>) " .
+                    $result->SalePaymentRequestResult->Message;
+                $errorMsg = $err_msg;
+                return false;
+            }
+        } catch (Exception $ex) {
+            $err_msg =  $ex->getMessage();
+        }
+    }
+
+    public function verifyDriverPaySina(Request $request)
+    {
+        return $request;
+    }
+
     public function verifyDriverPayZibal(Request $request)
     {
         $Authority = $request->trackId;
