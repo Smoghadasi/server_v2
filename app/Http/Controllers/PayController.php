@@ -776,7 +776,6 @@ class PayController extends Controller
         $url = "https://pec.shaparak.ir/NewIPGServices/Sale/SaleService.asmx?WSDL";
 
         // شماره سفارش تولید شده توسط سیستم پذیرنده که باید الزاما یکتا باشد
-        $orderId = $this->generateOrderId();
 
         // آدرسی که بعد از پایان هر عملیات درسمت بانک نتیجه تراکنش باید به آن برگشت داده شود
         $callbackUrl = 'https://dashboard.iran-tarabar.ir/verifyDriverPaySina';
@@ -784,7 +783,7 @@ class PayController extends Controller
         $params = array(
             "LoginAccount" => PIN_SINA,
             "Amount" => $amount,
-            "OrderId" => $orderId,
+            "OrderId" => $this->generateOrderId(),
             "CallBackUrl" => $callbackUrl,
             "AdditionalData" => '',
             "Originator" => ''
@@ -803,7 +802,7 @@ class PayController extends Controller
                 $transaction = new Transaction();
                 $transaction->user_id = $driver->id;
                 $transaction->userType = ROLE_DRIVER;
-                $transaction->authority = $orderId;
+                $transaction->authority = $this->generateOrderId();
                 $transaction->bank_name = SINA;
                 $transaction->amount = $amount;
                 $transaction->monthsOfThePackage = $monthsOfThePackage;
