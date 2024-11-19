@@ -811,7 +811,7 @@ class PayController extends Controller
 
     public function verifyDriverPaySina(Request $request)
     {
-        return dd($request);
+        return $request;
         $confirmUrl = 'https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL';
         $params = array(
             "LoginAccount" => PIN_SINA,
