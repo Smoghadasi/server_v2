@@ -763,8 +763,6 @@ class PayController extends Controller
         }
         // $amount = $driverPackagesInfo['data'][$packageName]['price'];
 
-        // شناسه پذیرنده
-
         // آدرس درگاه پرداخت
         $url = "https://pec.shaparak.ir/NewIPGServices/Sale/SaleService.asmx?WSDL";
 
