@@ -148,6 +148,8 @@ class PayController extends Controller
     private function getStatusMessage($status): string
     {
         switch ($status) {
+            case "0":
+                return "عمليات با موفقيت انجام گرديده است.";
             case "1":
                 return "عمليات با موفقيت انجام گرديده است.";
             case "2":
@@ -170,6 +172,8 @@ class PayController extends Controller
                 return "هيچ نوع عمليات مالي براي اين تراكنش يافت نشد";
             case "-22":
                 return "تراكنش نا موفق ميباشد";
+            case "-1531":
+                return "تراكنش ناموفق ميباشد";
             case "-33":
                 return "رقم تراكنش با رقم پرداخت شده مطابقت ندارد";
             case "-34":
@@ -187,7 +191,7 @@ class PayController extends Controller
             case "101":
                 return "عمليات پرداخت موفق بوده و قبلا PaymentVerification تراكنش انجام شده است.";
             default:
-                return "خطای نامشخص هنگام اتصال به درگاه زرین پال";
+                return "خطای نامشخص";
         }
     }
 
@@ -849,12 +853,10 @@ class PayController extends Controller
             "Token" => $request->Token
         );
 
-        $transaction = Transaction::where('authority', $request->Token)->first();
-        return $transaction;
         $client = new SoapClient($confirmUrl);
         try {
 
-            DB::beginTransaction();
+            // DB::beginTransaction();
             try {
                 $result = $client->ConfirmPayment(array(
                     "requestData" => $params
@@ -862,10 +864,13 @@ class PayController extends Controller
                 if ($result->ConfirmPaymentResult->Status != '0') {
                     // نمایش نتیجه ی پرداخت
                     $err_msg = "(<strong> کد خطا : " . $result->ConfirmPaymentResult->Status . "</strong>) ";
-                    return $err_msg;
+                    $status = $result->ConfirmPaymentResult->Status;
+                    $message = $this->getStatusMessage($status);
+                    return view('users.driverPayStatus', compact('message', 'status'));
                 }
 
                 // پرداخت با موفقییت انجام شده است
+                $transaction = Transaction::where('authority', $request->Token)->first();
                 $transaction->status = 100;
                 $transaction->RefId = $result->ConfirmPaymentResult->RRN;
                 $transaction->save();
@@ -894,14 +899,17 @@ class PayController extends Controller
 
                 // $driver->freeAcceptLoads = ($driver->freeAcceptLoads > 0 ? $driver->freeAcceptLoads : 0);
                 $driver->save();
-                return true;
+
+                $status = 0;
+                $message = $this->getStatusMessage($status);
+                return view('users.driverPayStatus', compact('message', 'status'));
             } catch (Exception $ex) {
                 $err_msg =  $ex->getMessage();
             }
         } catch (\Exception $exception) {
             $err_msg =  $exception->getMessage();
             Log::warning($err_msg);
-            DB::rollBack();
+            // DB::rollBack();
         }
     }
 
