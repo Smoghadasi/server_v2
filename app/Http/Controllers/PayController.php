@@ -900,7 +900,7 @@ class PayController extends Controller
                 // $driver->freeAcceptLoads = ($driver->freeAcceptLoads > 0 ? $driver->freeAcceptLoads : 0);
                 $driver->save();
 
-                $status = 0;
+                $status = 100;
                 $message = $this->getStatusMessage($status);
                 return view('users.driverPayStatus', compact('message', 'status'));
             } catch (Exception $ex) {
