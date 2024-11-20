@@ -864,7 +864,7 @@ class PayController extends Controller
                 if ($result->ConfirmPaymentResult->Status != '0') {
                     // نمایش نتیجه ی پرداخت
                     $err_msg = "(<strong> کد خطا : " . $result->ConfirmPaymentResult->Status . "</strong>) ";
-                    $status = $result->ConfirmPaymentResult->Status;
+                    $status = 0;
                     $message = $this->getStatusMessage($status);
                     return view('users.driverPayStatus', compact('message', 'status'));
                 }
