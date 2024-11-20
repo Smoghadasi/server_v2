@@ -149,7 +149,7 @@ class PayController extends Controller
     {
         switch ($status) {
             case "0":
-                return "عمليات با موفقيت انجام گرديده است.";
+                return "تراكنش نا موفق ميباشد.";
             case "1":
                 return "عمليات با موفقيت انجام گرديده است.";
             case "2":
