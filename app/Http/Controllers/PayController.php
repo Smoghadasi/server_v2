@@ -732,7 +732,7 @@ class PayController extends Controller
 
     public function generateOrderId()
     {
-        $orderId = rand(1000000, 999999);
+        $orderId = 'ORD-' . date('YmdHis') . '-' . uniqid();
         if ($this->checkOrder($orderId)) {
             return $this->generateOrderId();
         }
