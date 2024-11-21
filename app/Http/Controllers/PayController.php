@@ -88,8 +88,6 @@ class PayController extends Controller
 
     public function verify()
     {
-
-
         $Authority = $_GET['Authority'];
 
         $transaction = Transaction::where('authority', $Authority)->first();
@@ -151,9 +149,9 @@ class PayController extends Controller
             case "0":
                 return "تراكنش نا موفق ميباشد.";
             case "1":
-                return "عمليات با موفقيت انجام گرديده است.";
+                return "تراکنش موفق.";
             case "2":
-                return "عمليات با موفقيت انجام گرديده است";
+                return "تراکنش موفق";
             case "3":
                 return "تراكنش نا موفق ميباشد";
             case "-1":
@@ -187,7 +185,7 @@ class PayController extends Controller
             case "-54":
                 return "درخواست مورد نظر آرشيو شده است";
             case "100":
-                return "عمليات با موفقيت انجام گرديده است.";
+                return "تراکنش موفق.";
             case "101":
                 return "عمليات پرداخت موفق بوده و قبلا PaymentVerification تراكنش انجام شده است.";
             default:
@@ -861,11 +859,14 @@ class PayController extends Controller
                 $result = $client->ConfirmPayment(array(
                     "requestData" => $params
                 ));
+                $transaction = Transaction::where('authority', $request->Token)->first();
+
                 if ($result->ConfirmPaymentResult->Status != '0') {
                     // نمایش نتیجه ی پرداخت
                     $err_msg = "(<strong> کد خطا : " . $result->ConfirmPaymentResult->Status . "</strong>) ";
                     $status = 0;
                     $message = $this->getStatusMessage($status);
+                    $authority = $transaction->authority;
                     return view('users.driverPayStatus', compact('message', 'status'));
                 }
 
@@ -902,7 +903,9 @@ class PayController extends Controller
 
                 $status = 100;
                 $message = $this->getStatusMessage($status);
-                return view('users.driverPayStatus', compact('message', 'status'));
+                $authority = $transaction->authority;
+
+                return view('users.driverPayStatus', compact('message', 'status', 'authority'));
             } catch (Exception $ex) {
                 $err_msg =  $ex->getMessage();
             }
@@ -963,8 +966,8 @@ class PayController extends Controller
 
                     $status = $request->status;
                     $message = $this->getStatusMessage($status);
-
-                    return view('users.driverPayStatus', compact('message', 'status'));
+                    $authority = $transaction->authority;
+                    return view('users.driverPayStatus', compact('message', 'status', 'authority'));
                 } catch (\Exception $exception) {
                     DB::rollBack();
                 }
@@ -973,7 +976,9 @@ class PayController extends Controller
         }
         $status = 0;
         $message = $this->getStatusMessage($status);
-        return view('users.driverPayStatus', compact('message', 'status'));
+        $authority = $transaction->authority;
+
+        return view('users.driverPayStatus', compact('message', 'status', 'authority'));
     }
     public function verifyDriverPay()
     {
@@ -1039,17 +1044,19 @@ class PayController extends Controller
                     DB::commit();
 
                     $status = $result->Status;
+                    $authority = $transaction->authority;
                     $message = $this->getStatusMessage($status);
 
-                    return view('users.driverPayStatus', compact('message', 'status'));
+                    return view('users.driverPayStatus', compact('message', 'status', 'authority'));
                 } catch (\Exception $exception) {
                     DB::rollBack();
                 }
             }
         }
         $status = 0;
+        $authority = $transaction->authority;
         $message = $this->getStatusMessage($status);
-        return view('users.driverPayStatus', compact('message', 'status'));
+        return view('users.driverPayStatus', compact('message', 'status', 'authority'));
     }
 
     /*****************************************************************************************/

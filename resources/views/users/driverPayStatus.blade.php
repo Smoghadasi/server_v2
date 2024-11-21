@@ -22,16 +22,22 @@
 </head>
 
 <body>
-
-<div class="alert @if($status) alert-success @else alert-danger @endif  m-4 text-center h4">
-    {{ $message }}
-    <p></p>
-    برای ادامه اپلیکیشن را باز کنید
-    <p></p>
-    <button type="button"
-        onclick="window.close();">بازگشت به اپلیکیشن</button>
-</div>
-
+    <div class="text-success m-4 text-center h4">
+        <div class="mb-5">
+            @if ($status)
+                <img class="img-fuild" width="120" src="{{ asset('assets/img/ep--success-filled.png') }}"
+                    alt="">
+            @else
+                <img class="img-fuild" width="120" src="{{ asset('assets/img/ix--error-filled.png') }}"
+                    alt="">
+            @endif
+        </div>
+        {{-- <hr> --}}
+        <p>{{ $message }}.</p>
+        <p class="text-dark">کد رهگیری: {{ $authority }}</p>
+        <hr>
+        برای دسترسی به بارها وارد برنامه شوید.
+    </div>
 </body>
 
 </html>
