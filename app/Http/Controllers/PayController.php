@@ -809,7 +809,7 @@ class PayController extends Controller
                 $transaction->user_id = $driver->id;
                 $transaction->userType = ROLE_DRIVER;
                 $transaction->authority = $token;
-                $transaction->ResCode = $this->generateOrderId();
+                // $transaction->ResCode = $this->generateOrderId();
                 $transaction->bank_name = SINA;
                 $transaction->amount = $amount;
                 $transaction->monthsOfThePackage = $monthsOfThePackage;
