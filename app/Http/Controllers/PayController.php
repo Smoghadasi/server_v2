@@ -896,7 +896,7 @@ class PayController extends Controller
                 }
                 $driver->activeDate = $activeDate;
                 // خاور و نیسان
-                $driver->freeCalls = ($driver->freeCalls > 0 ? $driver->freeCalls : 0) + DRIVER_FREE_CALLS;
+                $driver->freeCalls = 3;
 
                 // $driver->freeAcceptLoads = ($driver->freeAcceptLoads > 0 ? $driver->freeAcceptLoads : 0);
                 $driver->save();
@@ -957,9 +957,9 @@ class PayController extends Controller
                     }
                     $driver->activeDate = $activeDate;
                     // خاور و نیسان
-                    $driver->freeCalls = ($driver->freeCalls > 0 ? $driver->freeCalls : 0) + DRIVER_FREE_CALLS;
+                    $driver->freeCalls = 3;
 
-                    $driver->freeAcceptLoads = ($driver->freeAcceptLoads > 0 ? $driver->freeAcceptLoads : 0) + DRIVER_FREE_ACCEPT_LOAD;
+                    // $driver->freeAcceptLoads = ($driver->freeAcceptLoads > 0 ? $driver->freeAcceptLoads : 0) + DRIVER_FREE_ACCEPT_LOAD;
                     $driver->save();
 
                     DB::commit();
@@ -1032,9 +1032,9 @@ class PayController extends Controller
                         }
                         $driver->activeDate = $activeDate;
                         // خاور و نیسان
-                        $driver->freeCalls = ($driver->freeCalls > 0 ? $driver->freeCalls : 0) + DRIVER_FREE_CALLS;
+                        $driver->freeCalls = 3;
 
-                        $driver->freeAcceptLoads = ($driver->freeAcceptLoads > 0 ? $driver->freeAcceptLoads : 0) + DRIVER_FREE_ACCEPT_LOAD;
+                        // $driver->freeAcceptLoads = ($driver->freeAcceptLoads > 0 ? $driver->freeAcceptLoads : 0) + DRIVER_FREE_ACCEPT_LOAD;
                         $driver->save();
                     } else {
                         $transaction->status = $result->Status;
