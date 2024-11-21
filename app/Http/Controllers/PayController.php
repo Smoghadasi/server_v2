@@ -732,7 +732,7 @@ class PayController extends Controller
 
     public function generateOrderId()
     {
-        $orderId = 'ORD-' . date('YmdHis') . '-' . uniqid();
+        $orderId = date('YmdHis');
         if ($this->checkOrder($orderId)) {
             return $this->generateOrderId();
         }
@@ -787,7 +787,7 @@ class PayController extends Controller
         $params = array(
             "LoginAccount" => PIN_SINA,
             "Amount" => $amount,
-            "OrderId" => $this->generateOrderId(),
+            "OrderId" => date('YmdHis'),
             "CallBackUrl" => $callbackUrl,
             "AdditionalData" => '',
             "Originator" => ''
