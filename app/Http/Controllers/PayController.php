@@ -732,7 +732,7 @@ class PayController extends Controller
 
     public function generateOrderId()
     {
-        $orderId = bin2hex(random_bytes(20));
+        $orderId = rand(1000000, 999999);
         if ($this->checkOrder($orderId)) {
             return $this->generateOrderId();
         }
