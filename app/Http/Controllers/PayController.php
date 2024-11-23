@@ -673,7 +673,7 @@ class PayController extends Controller
                 $amount = '3990000';
                 break;
         }
-        // $amount = $driverPackagesInfo['data'][$packageName]['price'];
+        $amountOrginal = $driverPackagesInfo['data'][$packageName]['price'];
 
         $CallbackURL = 'http://dashboard.iran-tarabar.ir/verifyDriverPayZibal';
 
@@ -695,7 +695,7 @@ class PayController extends Controller
                 $transaction->userType = ROLE_DRIVER;
                 $transaction->authority = $response->trackId;
                 $transaction->bank_name = ZIBAL;
-                $transaction->amount = $amount;
+                $transaction->amount = $amountOrginal;
                 $transaction->monthsOfThePackage = $monthsOfThePackage;
                 $transaction->save();
 
