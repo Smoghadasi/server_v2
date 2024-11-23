@@ -772,7 +772,7 @@ class PayController extends Controller
                 $amount = '3990000';
                 break;
         }
-        // $amount = $driverPackagesInfo['data'][$packageName]['price'];
+        $amountOrginal = $driverPackagesInfo['data'][$packageName]['price'];
 
         // آدرس درگاه پرداخت
         $url = "https://pec.shaparak.ir/NewIPGServices/Sale/SaleService.asmx?WSDL";
@@ -809,7 +809,7 @@ class PayController extends Controller
                 $transaction->authority = $token;
                 // $transaction->ResCode = $this->generateOrderId();
                 $transaction->bank_name = SINA;
-                $transaction->amount = $amount;
+                $transaction->amount = $amountOrginal;
                 $transaction->monthsOfThePackage = $monthsOfThePackage;
                 $transaction->save();
 
