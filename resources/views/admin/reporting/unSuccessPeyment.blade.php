@@ -20,6 +20,7 @@
                         <th>شماره تلفن</th>
                         <th>نوع کاربر</th>
                         <th>مبلغ پرداخت شده</th>
+                        <th>بانک</th>
                         <th>تاریخ پرداخت</th>
                         <th>وضعیت</th>
                         <th>عملیات</th>
@@ -48,6 +49,7 @@
                             @php
                                 $pieces = explode(' ', $transaction->updated_at);
                             @endphp
+                            <td>{{ $transaction->bank_name }}</td>
                             <td dir="ltr">
                                 {{ gregorianDateToPersian($transaction->updated_at, '-', true) . ' ' . $pieces[1] }}
                             </td>
