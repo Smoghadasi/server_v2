@@ -37,6 +37,7 @@ use App\Http\Controllers\SliderController;
 use App\Http\Controllers\SOSController;
 use App\Http\Controllers\SupportController;
 use App\Http\Controllers\TenderController;
+use App\Http\Controllers\TransactionManualController;
 use App\Http\Controllers\User\BlockPhoneNumberController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VacationController;
@@ -603,9 +604,19 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         Route::resource('setting', SettingController::class);
 
+        // انبار بار
         Route::resource('warehouse', WarehouseController::class);
 
+        // رادیو
         Route::resource('radio', RadioController::class);
+
+        // اشتراک های دستی
+        Route::resource('transaction-manual', TransactionManualController::class);
+
+
+        Route::get('changeStatusTransaction/{transactionManual}', [TransactionManualController::class, 'changeStatus'])
+            ->middleware('operator')
+            ->name('transactionManual.active');
 
         Route::post('restPassword/{user}', [UserController::class, 'restPassword'])->middleware('operator')->name('user.resetPass');
 
