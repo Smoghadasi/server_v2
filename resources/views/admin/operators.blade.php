@@ -949,7 +949,7 @@
                                                                 <div class="form-group">
                                                                     <label>
                                                                         <input type="checkbox"
-                                                                            name="drivers"
+                                                                            name="transactionManual"
                                                                             @if (in_array('transactionManual', $user->userAccess)) checked @endif>
                                                                         تراکنش های دستی
                                                                     </label>
