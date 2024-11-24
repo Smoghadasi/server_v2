@@ -949,6 +949,16 @@
                                                                 <div class="form-group">
                                                                     <label>
                                                                         <input type="checkbox"
+                                                                            name="drivers"
+                                                                            @if (in_array('transactionManual', $user->userAccess)) checked @endif>
+                                                                        تراکنش های دستی
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
                                                                             name="incomingCallDriver"
                                                                             @if (in_array('incomingCallDriver', $user->userAccess)) checked @endif>
                                                                         تماس ورودی رانندگان

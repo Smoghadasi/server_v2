@@ -63,6 +63,13 @@
                         </a>
                     </li>
                 @endif
+                @if (in_array('transactionManual', auth()->user()->userAccess))
+                    <li class="menu-item">
+                        <a class="menu-link" href="{{ route('transaction-manual.index') }}">
+                            <span>تراکنش های دستی</span>
+                        </a>
+                    </li>
+                @endif
                     <li class="menu-item {{ request()->is('admin/support*') ? 'active open' : '' }} {{ request()->is('admin/supportDriver*') ? 'active open' : '' }}">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
                             <div data-i18n="Layouts">تماس ورودی</div>
