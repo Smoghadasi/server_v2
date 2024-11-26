@@ -53,6 +53,7 @@ class TransactionManualController extends Controller
             $transactionManual->amount = $request->amount;
             $transactionManual->driver_id = $driver->id;
             $transactionManual->type = $request->type;
+            $transactionManual->status = 2;
             $transactionManual->date = $request->date . " " . $request->time;
             $transactionManual->miladiDate = persianDateToGregorian(str_replace('/', '-', $request->date), '-') . ' 00:00:00';
             $transactionManual->save();
@@ -61,9 +62,9 @@ class TransactionManualController extends Controller
         return back()->with('danger', 'راننده با این مشخصات یافت نشد');
     }
 
-    public function changeStatus(TransactionManual $transactionManual)
+    public function changeStatus(TransactionManual $transactionManual, $status = 1)
     {
-        $transactionManual->status = 1;
+        $transactionManual->status = $status;
         $transactionManual->save();
         return back()->with('success', 'آیتم مورد نظر حذف شد');
     }

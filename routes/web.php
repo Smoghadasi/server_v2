@@ -614,9 +614,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::resource('transaction-manual', TransactionManualController::class);
 
 
-        Route::get('changeStatusTransaction/{transactionManual}', [TransactionManualController::class, 'changeStatus'])
+        Route::get('changeStatusTransaction/{transactionManual}/{status}', [TransactionManualController::class, 'changeStatus'])
             ->middleware('operator')
-            ->name('transactionManual.active');
+            ->name('transactionManual.change.status');
 
         Route::post('restPassword/{user}', [UserController::class, 'restPassword'])->middleware('operator')->name('user.resetPass');
 

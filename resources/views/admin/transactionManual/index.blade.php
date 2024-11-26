@@ -33,8 +33,8 @@
                                             </div>
                                             <div class="col-md-6 col-sm-12 mb-0">
                                                 <label for="amount" class="form-label">مبلغ (تومان)</label>
-                                                <input type="text" name="amount" id="amount" value="79000" class="form-control"
-                                                    required placeholder="مبلغ" />
+                                                <input type="text" name="amount" id="amount" value="79000"
+                                                    class="form-control" required placeholder="مبلغ" />
                                             </div>
                                             <div class="col-md-6 col-sm-12 mb-0">
                                                 <label for="type" class="form-label">نوع</label>
@@ -77,13 +77,13 @@
                         <input class="form-control" name="mobileNumber" id="mobileNumber" placeholder="شماره موبایل">
                     </div>
                     <div class="col-md-3">
-                        <input class="form-control" type="text" id="fromDate" name="fromDate"
-                            placeholder="از تاریخ" autocomplete="off" />
+                        <input class="form-control" type="text" id="fromDate" name="fromDate" placeholder="از تاریخ"
+                            autocomplete="off" />
                         <span id="span1"></span>
                     </div>
                     <div class="col-md-3">
-                        <input class="form-control" type="text" name="toDate" id="fromDate"
-                            placeholder="تا تاریخ"  autocomplete="off"/>
+                        <input class="form-control" type="text" name="toDate" id="fromDate" placeholder="تا تاریخ"
+                            autocomplete="off" />
                         <span id="span2"></span>
                     </div>
                     <div class="col-md-2">
@@ -142,11 +142,16 @@
                                 <td class="text-center">
                                     @if ($transactionManual->status == 1)
                                         <i class="menu-icon tf-icons bx bx-check text-success"></i>
+                                    @elseif ($transactionManual->status == 0)
+                                        <i class="menu-icon tf-icons bx bx-x text-danger"></i>
                                     @else
                                         @if (Auth::user()->role == 'admin')
                                             <a class="btn btn-success btn-sm"
-                                                href="{{ route('transactionManual.active', ['transactionManual' => $transactionManual]) }}">فعال
-                                                شود
+                                                href="{{ route('transactionManual.change.status', ['transactionManual' => $transactionManual, 'status' => 1]) }}">فعال
+                                            </a>
+                                            <a class="btn btn-danger btn-sm"
+                                                href="{{ route('transactionManual.change.status', ['transactionManual' => $transactionManual, 'status' => 0]) }}">غیر
+                                                فعال
                                             </a>
                                         @endif
                                     @endif
