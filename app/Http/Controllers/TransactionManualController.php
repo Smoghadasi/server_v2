@@ -98,9 +98,18 @@ class TransactionManualController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, TransactionManual $transactionManual)
     {
-        //
+        $driver = Driver::where('mobileNumber', $request->mobileNumber)->first();
+        if ($driver) {
+            $transactionManual->amount = $request->amount;
+            $transactionManual->driver_id = $driver->id;
+            $transactionManual->type = $request->type;
+            $transactionManual->date = $request->date . " " . $request->time;
+            $transactionManual->miladiDate = persianDateToGregorian(str_replace('/', '-', $request->date), '-') . ' 00:00:00';
+            $transactionManual->save();
+            return back()->with('success', 'آیتم مورد نظر ثبت شد');
+        }
     }
 
     /**

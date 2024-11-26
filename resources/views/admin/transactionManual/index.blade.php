@@ -102,6 +102,7 @@
                             <th>مبلغ</th>
                             <th>نوع</th>
                             <th>تاریخ / ساعت</th>
+                            <th>وضعیت</th>
                             <th>عملیات</th>
                         </tr>
                     </thead>
@@ -155,6 +156,127 @@
                                             </a>
                                         @endif
                                     @endif
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-primary btn-sm text-nowrap"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#adminMessageForm_{{ $transactionManual->id }}">
+                                        ویرایش
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm text-nowrap"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#removetransactionManual_{{ $transactionManual->id }}">حذف
+                                    </button>
+                                    <!-- remove -->
+                                    <div id="removetransactionManual_{{ $transactionManual->id }}" class="modal fade"
+                                        role="dialog">
+                                        <div class="modal-dialog modal-dialog-centered">
+
+                                            <!-- Modal content-->
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title">حذف اشتراک دستی</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <strong>آیا مایل به حذف
+                                                        هستید؟
+                                                    </strong>
+                                                </div>
+                                                <div class="modal-footer text-left">
+                                                    <form
+                                                        action="{{ route('transaction-manual.destroy', $transactionManual) }}"
+                                                        method="POST">
+                                                        @csrf
+                                                        @method('delete')
+                                                        <button type="submit" class="btn btn-danger btn-sm">حذف</button>
+                                                    </form>
+                                                    <button type="button" class="btn btn-danger"
+                                                        data-bs-dismiss="modal">
+                                                        انصراف
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <!-- edit -->
+                                    <div class="modal fade" id="adminMessageForm_{{ $transactionManual->id }}"
+                                        tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="modalCenterTitle">ویرایش اشتراک های دستی
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <form
+                                                    action="{{ route('transaction-manual.update', $transactionManual) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    @method('put')
+                                                    <div class="modal-body" style="text-align: right">
+                                                        <div class="row g-2">
+                                                            <div class="col-md-6 col-sm-12 mb-3">
+                                                                <label for="mobileNumber" class="form-label">شماره
+                                                                    موبایل</label>
+                                                                <input type="text" id="mobileNumber"
+                                                                    value="{{ $transactionManual->driver->mobileNumber }}"
+                                                                    name="mobileNumber" class="form-control" required
+                                                                    placeholder="شماره موبایل" />
+                                                            </div>
+                                                            <div class="col-md-6 col-sm-12 mb-0">
+                                                                <label for="amount" class="form-label">مبلغ
+                                                                    (تومان)
+                                                                </label>
+                                                                <input type="text" name="amount" id="amount"
+                                                                    value="{{ $transactionManual->amount }}"
+                                                                    class="form-control" required placeholder="مبلغ" />
+                                                            </div>
+                                                            <div class="col-md-6 col-sm-12 mb-0">
+                                                                <label for="type" class="form-label">نوع</label>
+                                                                <select class="form-control form-select" name="type"
+                                                                    required>
+                                                                    <option
+                                                                        @if ($transactionManual->type == 'cardToCard') selected @endif
+                                                                        value="cardToCard">کارت به کارت</option>
+                                                                    <option
+                                                                        @if ($transactionManual->type == 'online') selected @endif
+                                                                        value="online">آنلاین</option>
+                                                                </select>
+                                                            </div>
+                                                            @php
+                                                                $pieces = explode(' ', $transactionManual->date);
+                                                            @endphp
+
+                                                            <div class="col-md-3 col-sm-12 mb-0">
+                                                                <label for="type" class="form-label">تاریخ</label>
+                                                                <input class="form-control" type="text" id="fromDate"
+                                                                    name="date" required placeholder="تاریخ"
+                                                                    value="{{ $pieces[0] }}" />
+                                                                <span id="span1"></span>
+                                                            </div>
+
+                                                            <div class="col-md-3 col-sm-12 mb-0">
+                                                                <label for="type" class="form-label">ساعت</label>
+                                                                <input value="{{ $pieces[1] }}" class="form-control"
+                                                                    type="time" id="time" name="time" required
+                                                                    placeholder="ساعت" autocomplete="off" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-outline-secondary"
+                                                            data-bs-dismiss="modal">
+                                                            انصرف
+                                                        </button>
+                                                        <button type="submit" class="btn btn-primary">ثبت</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </td>
                             </tr>
                         @empty
