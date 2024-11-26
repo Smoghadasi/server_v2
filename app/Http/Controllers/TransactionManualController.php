@@ -13,11 +13,19 @@ class TransactionManualController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $transactionManuals = TransactionManual::with('driver')
-        ->orderByDesc('created_at')
-        ->paginate(30);
+            ->when($request->mobileNumber !== null, function ($query) use ($request) {
+                return $query->whereHas('driver', function ($q) use ($request) {
+                    $q->where('mobileNumber', $request->mobileNumber);
+                });
+            })
+            ->when($request->toDate !== null, function ($query) use ($request) {
+                return $query->whereBetween('miladiDate', [persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00', persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:59']);
+            })
+            ->orderByDesc('created_at')
+            ->paginate(150);
         return view('admin.transactionManual.index', compact('transactionManuals'));
     }
 
@@ -46,11 +54,11 @@ class TransactionManualController extends Controller
             $transactionManual->driver_id = $driver->id;
             $transactionManual->type = $request->type;
             $transactionManual->date = $request->date . " " . $request->time;
+            $transactionManual->miladiDate = persianDateToGregorian(str_replace('/', '-', $request->date), '-') . ' 00:00:00';
             $transactionManual->save();
             return back()->with('success', 'آیتم مورد نظر ثبت شد');
         }
         return back()->with('danger', 'راننده با این مشخصات یافت نشد');
-
     }
 
     public function changeStatus(TransactionManual $transactionManual)
@@ -58,7 +66,6 @@ class TransactionManualController extends Controller
         $transactionManual->status = 1;
         $transactionManual->save();
         return back()->with('success', 'آیتم مورد نظر حذف شد');
-
     }
 
     /**

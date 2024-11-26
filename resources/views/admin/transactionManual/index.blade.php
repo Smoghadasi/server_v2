@@ -71,6 +71,26 @@
             </div>
         </h5>
         <div class="card-body">
+            <form method="get" action="{{ route('transaction-manual.index') }}">
+                <div class="form-group row mb-4">
+                    <div class="col-md-4">
+                        <input class="form-control" name="mobileNumber" id="mobileNumber" placeholder="شماره موبایل">
+                    </div>
+                    <div class="col-md-3">
+                        <input class="form-control" type="text" id="fromDate" name="fromDate"
+                            placeholder="از تاریخ" autocomplete="off" />
+                        <span id="span1"></span>
+                    </div>
+                    <div class="col-md-3">
+                        <input class="form-control" type="text" name="toDate" id="fromDate"
+                            placeholder="تا تاریخ"  autocomplete="off"/>
+                        <span id="span2"></span>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-danger btn-sm mr-2">جستجو</button>
+                    </div>
+                </div>
+            </form>
             <div class="table-responsive">
                 <table class="table table-bordered">
                     <thead>
@@ -88,8 +108,15 @@
                     <tbody class="small text-right">
                         <?php $i = 1; ?>
                         @forelse ($transactionManuals as $key => $transactionManual)
+                            @php
+                                $totalItems = $transactionManuals->total();
+                                $perPage = $transactionManuals->perPage();
+                                $currentPage = $transactionManuals->currentPage();
+                                $index = ($currentPage - 1) * $perPage + $key + 1;
+                                $reverseIndex = $totalItems - $index + 1;
+                            @endphp
                             <tr>
-                                <td>{{ ($transactionManuals->currentPage() - 1) * $transactionManuals->perPage() + ($key + 1) }}
+                                <td>{{ $reverseIndex }}
                                 </td>
                                 <td>
                                     {{ $transactionManual->driver->name }} {{ $transactionManual->driver->lastName }}
@@ -149,8 +176,6 @@
     <script type="text/javascript">
         $("#fromDate, #span1").persianDatepicker({
             formatDate: "YYYY/MM/DD",
-            startDate: "today",
-            endDate: "1410/5/5"
         });
     </script>
 @endsection
