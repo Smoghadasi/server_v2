@@ -45,14 +45,14 @@
                                             </div>
                                             <div class="col-md-3 col-sm-12 mb-0">
                                                 <label for="type" class="form-label">تاریخ</label>
-                                                <input class="form-control" type="text" id="fromDate" name="date"
+                                                <input class="form-control" type="text" id="new" name="date"
                                                     required placeholder="تاریخ" autocomplete="off" />
-                                                <span id="span1"></span>
                                             </div>
                                             <div class="col-md-3 col-sm-12 mb-0">
                                                 <label for="type" class="form-label">ساعت</label>
-                                                <input value="09:30" class="form-control" type="time" id="time"
-                                                    name="time" required placeholder="ساعت" autocomplete="off" />
+                                                <input value="{{ now() }}" class="form-control" type="time"
+                                                    id="time" name="time" required placeholder="ساعت"
+                                                    autocomplete="off" />
                                             </div>
                                         </div>
                                     </div>
@@ -188,9 +188,9 @@
                                                         method="POST">
                                                         @csrf
                                                         @method('delete')
-                                                        <button type="submit" class="btn btn-danger btn-sm">حذف</button>
+                                                        <button type="submit" class="btn btn-danger">حذف</button>
                                                     </form>
-                                                    <button type="button" class="btn btn-danger"
+                                                    <button type="button" class="btn btn-primary"
                                                         data-bs-dismiss="modal">
                                                         انصراف
                                                     </button>
@@ -299,10 +299,21 @@
 @endsection
 @section('script')
     <script src="{{ asset('js/persianDatepicker.min.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var now = new Date();
+            var hours = now.getHours().toString().padStart(2, '0');
+            var minutes = now.getMinutes().toString().padStart(2, '0');
+            var currentTime = hours + ':' + minutes;
 
-    <script type="text/javascript">
-        $("#fromDate, #span1").persianDatepicker({
+            document.getElementById('time').value = currentTime;
+        });
+        $("#fromDate").persianDatepicker({
             formatDate: "YYYY/MM/DD",
+        });
+        $("#new").persianDatepicker({
+            formatDate: "YYYY/MM/DD",
+            selectedBefore: !0
         });
     </script>
 @endsection

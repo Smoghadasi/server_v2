@@ -118,8 +118,10 @@ class TransactionManualController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(TransactionManual $transactionManual)
     {
-        //
+        $transactionManual->delete();
+        return back()->with('danger', 'آیتم مورد نظر حذف شد');
+
     }
 }
