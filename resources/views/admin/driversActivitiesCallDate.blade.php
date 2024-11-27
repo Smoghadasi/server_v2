@@ -10,9 +10,9 @@
                 <div class="col" style="text-align: left;">
                     <a href="#" class="alert p-1 alert-primary">مجموع تعداد تماس امروز: {{ $driversActivitiesCallDatesCount }}</a>
                 </div>
-                <div class="col" style="text-align: left;">
+                {{-- <div class="col" style="text-align: left;">
                     <a href="#" class="alert p-1 alert-success">مجموع کل تعداد تماس: {{ $driverCallDatesAllCount }}</a>
-                </div>
+                </div> --}}
             </div>
         </h5>
         <div class="card-body">
