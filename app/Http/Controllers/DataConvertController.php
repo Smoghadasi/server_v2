@@ -368,7 +368,7 @@ class DataConvertController extends Controller
                                 'priceType' => 'توافقی'
                             ];
                         }
-                    // return dd($cargoList);
+                        // return dd($cargoList);
 
                     }
                 }
@@ -557,6 +557,7 @@ class DataConvertController extends Controller
 
         $freight = convertFaNumberToEn(str_replace(',', '', $freight));
 
+        substr($mobileNumber, 0, 1) !== '0' ? $mobileNumber = '0' . $mobileNumber : $mobileNumber;
 
         $cargoPattern = '';
 
