@@ -998,6 +998,13 @@
 
                                                 <div class="form-group">
                                                     <label>
+                                                        <input type="checkbox" name="driversContactCall"
+                                                            @if (in_array('driversContactCall', $user->userAccess)) checked @endif>
+                                                            لیست تماس ها
+                                                    </label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>
                                                         <input type="checkbox" name="contactReportWithCargoOwners"
                                                             @if (in_array('contactReportWithCargoOwners', $user->userAccess)) checked @endif>
                                                         پیام ها در جزئیات رانندگان
