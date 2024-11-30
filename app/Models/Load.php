@@ -91,6 +91,9 @@ class Load extends Model
     }
     public function getNumOfNearDriverAttribute()
     {
+        if ($this->deleted_at != null) {
+            return 0;
+        }
         try {
             $latitude = $this->latitude;
             $longitude = $this->longitude;
