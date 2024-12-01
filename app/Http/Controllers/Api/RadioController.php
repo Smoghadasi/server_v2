@@ -10,7 +10,7 @@ class RadioController extends Controller
 {
     public function index()
     {
-        $radios = Radio::where('status', 1)->get();
+        $radios = Radio::where('status', 1)->orderByDesc('sort')->get();
         return response()->json($radios, 200);
     }
 }

@@ -55,9 +55,7 @@
                                     </span>
                                 @endif
                             </td>
-                            <td>
-                                {{ $transaction->payment_type == 'online' ? 'آنلاین' : 'کارت به کارت' }}
-                            </td>
+                            <td>{{ $transaction->payment_type == 'online' ? 'آنلاین' : 'کارت به کارت' }}</td>
                             <td>{{ gregorianDateToPersian(str_replace('-','/',$transaction->created_at), '/',true) }}</td>
                         </tr>
                     @empty
