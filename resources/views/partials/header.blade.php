@@ -12,7 +12,7 @@
                 @if(in_array('searchAll',auth()->user()->userAccess))
                     <form class="d-flex" action="{{ route('admin.searchAll') }}" method="POST">
                         @csrf
-                        <input type="text" class="form-control border-0 shadow-none" name="mobileNumber" placeholder="جستجو..." aria-label="Search...">
+                        <input type="text" class="form-control border-0 shadow-none" name="title" placeholder="جستجو..." aria-label="Search...">
                     </form>
                 @endif
             </div>

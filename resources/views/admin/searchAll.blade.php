@@ -26,7 +26,7 @@
                     <tbody class="small">
                         <?php $i = 0; ?>
 
-                        @foreach ($drivers as $driver)
+                        @forelse ($drivers as $driver)
                             <tr>
                                 <td>{{ ($drivers->currentPage() - 1) * $drivers->perPage() + ++$i }}</td>
                                 <td>
@@ -65,11 +65,15 @@
                                 <td>{{ $driver->mobileNumber }}</td>
                                 <td>{{ $driver->provinceOwner?->name ?? '-' }}</td>
                                 <td>
-                                    <a class="btn btn-primary"
+                                    <a class="btn btn-primary btn-sm"
                                         href="{{ url('admin/driverInfo') }}/{{ $driver->id }}">جزئیات</a>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr class="text-center">
+                                <td colspan="10">فیلد مورد خالی است</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -79,7 +83,6 @@
     <div class="card">
         <h5 class="card-header">صاحب بار</h5>
         <div class="card-body">
-
             <div class="table-responsive mt-4">
                 <table class="table">
                     <thead>
@@ -166,4 +169,523 @@
                 </div>
             </div>
         </div>
-@endsection
+
+        {{-- شکایات و انتقادات راننده --}}
+        <div class="card my-4">
+            <h5 class="card-header">
+                شکایات و انتقادات راننده
+            </h5>
+            <div class="card-body">
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>راننده</th>
+                                <th>صاحب بار</th>
+                                <th>بار</th>
+                                <th>نوع</th>
+                                <th>متن پیام</th>
+                                <th>پاسخ ادمین</th>
+                                <th>تاریخ</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($reportDrivers as $key => $report)
+                                <tr>
+                                    <td>{{ ($reportDrivers->currentPage() - 1) * $reportDrivers->perPage() + ($key + 1) }}</td>
+                                    <td><a href="{{ route('driver.detail', $report->driver_id) }}">{{ $report->driver->name }}
+                                            {{ $report->driver->lastName }}</a></td>
+                                    <td>
+                                        @if ($report->owner_id == null)
+                                            -
+                                        @else
+                                            <a href="{{ route('owner.show', $report->owner_id) }}">{{ $report->owner->name }}
+                                                {{ $report->owner->lastName }}</a>
+                                        @endif
+                                    </td>
+                                    <td><a href="{{ route('loadInfo', $report->load_id) }}">{{ $report->cargo->title }}</a>
+                                    </td>
+                                    <td>
+                                        @switch($report->type)
+                                            @case('owner')
+                                                صاحب بار
+                                            @break
+
+                                            @case('driver')
+                                                راننده
+                                            @break
+                                        @endswitch
+                                    </td>
+                                    <td>{{ $report->description }}</td>
+                                    <td>{{ $report->adminMessage ?? '-' }}</td>
+                                    @php
+                                        $pieces = explode(' ', $report->created_at);
+                                    @endphp
+                                    <td>{{ gregorianDateToPersian($report->created_at, '-', true) . ' ( ' . $pieces[1] . ' ) ' }}
+
+                                    <td>
+                                        <button type="button" class="btn btn-primary btn-sm text-nowrap mb-3"
+                                            data-bs-toggle="modal" data-bs-target="#adminMessageForm_{{ $report->id }}">
+                                            پاسخ به صاحب بار
+                                        </button>
+
+                                        <div id="adminMessageForm_{{ $report->id }}" class="modal fade" role="dialog">
+                                            <div class="modal-dialog">
+
+                                                <!-- Modal content-->
+                                                <form action="{{ route('report.update', $report) }}" method="post"
+                                                    class="modal-content">
+                                                    @csrf
+                                                    @method('put')
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title">پاسخ</h4>
+                                                    </div>
+                                                    <div class="modal-body text-right">
+
+                                                        <div class="form-group">
+                                                            <label>متن پاسخ ادمین :</label>
+                                                            <textarea class="form-control" name="adminMessage" id="adminMessage" placeholder="پاسخ ادمین"></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer text-left">
+                                                        <button type="submit" class="btn btn-primary mr-1">ثبت پاسخ</button>
+                                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                                                            انصراف
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @empty
+                                    <tr class="text-center">
+                                        <td colspan="10">دیتایی یافت نشد</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+
+                        </table>
+
+                        <div class="mt-3">
+                            {{ $reportDrivers }}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            {{-- شکایات و انتقادات صاحب بار --}}
+            <div class="card my-4">
+                <h5 class="card-header">
+                    شکایات و انتقادات صاحب بار
+                </h5>
+                <div class="card-body">
+
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>راننده</th>
+                                    <th>صاحب بار</th>
+                                    <th>بار</th>
+                                    <th>نوع</th>
+                                    <th>متن پیام</th>
+                                    <th>پاسخ ادمین</th>
+                                    <th>تاریخ</th>
+                                    <th>عملیات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($reportOwners as $key => $report)
+                                    <tr>
+                                        <td>{{ ($reportOwners->currentPage() - 1) * $reportDrivers->perPage() + ($key + 1) }}</td>
+                                        <td><a href="{{ route('driver.detail', $report->driver_id) }}">{{ $report->driver->name }}
+                                                {{ $report->driver->lastName }}</a></td>
+                                        <td>
+                                            @if ($report->owner_id == null)
+                                                -
+                                            @else
+                                                <a href="{{ route('owner.show', $report->owner_id) }}">{{ $report->owner->name }}
+                                                    {{ $report->owner->lastName }}</a>
+                                            @endif
+                                        </td>
+                                        <td><a href="{{ route('loadInfo', $report->load_id) }}">{{ $report->cargo->title }}</a>
+                                        </td>
+                                        <td>
+                                            @switch($report->type)
+                                                @case('owner')
+                                                    صاحب بار
+                                                @break
+
+                                                @case('driver')
+                                                    راننده
+                                                @break
+                                            @endswitch
+                                        </td>
+                                        <td>{{ $report->description }}</td>
+                                        <td>{{ $report->adminMessage ?? '-' }}</td>
+                                        @php
+                                            $pieces = explode(' ', $report->created_at);
+                                        @endphp
+                                        <td>{{ gregorianDateToPersian($report->created_at, '-', true) . ' ( ' . $pieces[1] . ' ) ' }}
+
+                                        <td>
+                                            <button type="button" class="btn btn-primary btn-sm text-nowrap mb-3"
+                                                data-bs-toggle="modal" data-bs-target="#adminMessageForm_{{ $report->id }}">
+                                                پاسخ به صاحب بار
+                                            </button>
+
+                                            <div id="adminMessageForm_{{ $report->id }}" class="modal fade" role="dialog">
+                                                <div class="modal-dialog">
+
+                                                    <!-- Modal content-->
+                                                    <form action="{{ route('report.update', $report) }}" method="post"
+                                                        class="modal-content">
+                                                        @csrf
+                                                        @method('put')
+                                                        <div class="modal-header">
+                                                            <h4 class="modal-title">پاسخ</h4>
+                                                        </div>
+                                                        <div class="modal-body text-right">
+
+                                                            <div class="form-group">
+                                                                <label>متن پاسخ ادمین :</label>
+                                                                <textarea class="form-control" name="adminMessage" id="adminMessage" placeholder="پاسخ ادمین"></textarea>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer text-left">
+                                                            <button type="submit" class="btn btn-primary mr-1">ثبت پاسخ</button>
+                                                            <button type="button" class="btn btn-danger"
+                                                                data-bs-dismiss="modal">
+                                                                انصراف
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @empty
+                                        <tr class="text-center">
+                                            <td colspan="10">دیتایی یافت نشد</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+
+                            </table>
+
+                            <div class="mt-3">
+                                {{ $reportOwners }}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                {{-- مسدودی ها --}}
+                <div class="card my-4">
+                    <h5 class="card-header">
+                        مسدودی ها
+                    </h5>
+                    <div class="card-body">
+
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>شماره</th>
+                                        <th>کد ملی</th>
+                                        <th>نام و نام خانوادگی</th>
+                                        <th>توضیحات</th>
+                                        <th>تاریخ</th>
+                                        <th>عملیات</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="small text-right">
+                                    <?php $i = 1; ?>
+                                    @forelse ($blockedPhoneNumbers as $blockedPhoneNumber)
+                                        <tr>
+                                            <td>{{ $i++ }}</td>
+                                            <td>
+                                                {{ $blockedPhoneNumber->phoneNumber ?? '-' }}
+                                            </td>
+                                            <td>
+                                                {{ $blockedPhoneNumber->nationalCode ?? '-' }}
+                                            </td>
+                                            <td>
+                                                {{ $blockedPhoneNumber->name ?? '-' }}
+                                            </td>
+                                            <td>
+                                                {{ $blockedPhoneNumber->description ?? '-' }}
+                                            </td>
+
+                                            @php
+                                                $pieces = explode(' ', $blockedPhoneNumber->created_at);
+                                            @endphp
+                                            <td dir="ltr">
+                                                {{ gregorianDateToPersian($blockedPhoneNumber->created_at, '-', true) . ' ' . $pieces[1] }}
+                                            </td>
+                                            <td>
+                                                <form
+                                                    action="{{ route('blockedPhoneNumber.destroy', $blockedPhoneNumber->phoneNumber) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    @method('delete')
+                                                    <button type="submit" class="btn btn-danger btn-sm">حذف</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr class="text-center">
+                                            <td colspan="10">فیلد مورد خالی است</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+
+                            <div class="mt-3">
+                                {{ $blockedPhoneNumbers }}
+                            </div>
+
+                            <div class="mt-3">
+                                {{ $reportOwners }}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                {{-- پیام ها --}}
+                <div class="card my-4">
+                    <h5 class="card-header">
+                        پیام ها
+                    </h5>
+                    <div class="card-body">
+
+                        <div class="table-responsive mt-4">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>عنوان پیام</th>
+                                        <th>متن پیام</th>
+                                        <th>نام نام خانوادگی</th>
+                                        <th>نوع ناوگان</th>
+                                        <th>شماره تلفن همراه</th>
+                                        <th>نوع کاربر</th>
+                                        <th>تاریخ</th>
+                                        <th>نتیجه</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php $i = 0; ?>
+                                    @forelse ($messages as $key => $message)
+                                        <tr @if ($message->status == true) style="background: #f1f1f1" @endif>
+                                            <td>{{ ($messages->currentPage() - 1) * $messages->perPage() + ($key + 1) }}</td>
+                                            <td>{{ $message->title }}</td>
+                                            <td>{{ $message->message }}</td>
+                                            <td>
+                                                {{ $message->nameAndLastName }}
+                                                @if ($message->role == ROLE_DRIVER)
+                                                    <a class="btn btn-primary btn-sm"
+                                                        href="{{ url('admin/editDriver/') }}/{{ $message->userId }}">
+                                                        پروفایل راننده
+                                                    </a>
+                                                @endif
+                                            </td>
+                                            <td>{{ $message->fleetName }} </td>
+                                            <td>{{ $message->mobileNumber }}</td>
+                                            <td>
+                                                <?php
+                                                switch ($message->role) {
+                                                    case 'bearing':
+                                                        echo 'باربری';
+                                                        break;
+                                                    case 'customer':
+                                                        echo 'مشتری';
+                                                        break;
+                                                    case 'org':
+                                                        echo 'سازمان';
+                                                        break;
+                                                    case 'driver':
+                                                        echo 'راننده';
+                                                        break;
+                                                }
+                                                ?>
+                                            </td>
+                                            <td>{{ $message->messageDateAndTime }}</td>
+                                            <td>
+                                                @if ($message->status == false)
+                                                    <button type="button" class="btn btn-primary btn-sm text-nowrap"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#changeMessageStatus_{{ $message->id }}">
+                                                        ثبت نتیجه
+                                                    </button>
+
+                                                    <!-- Modal -->
+                                                    <div id="changeMessageStatus_{{ $message->id }}" class="modal fade"
+                                                        role="dialog">
+                                                        <div class="modal-dialog">
+
+                                                            <!-- Modal content-->
+                                                            <form method="post"
+                                                                action="{{ url('admin/changeMessageStatus') }}/{{ $message->id }}"
+                                                                class="modal-content">
+                                                                @csrf
+                                                                <div class="modal-header">
+                                                                    <h4 class="modal-title">ثبت نتیجه</h4>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <div class="form-group">
+                                                                        <label> نتیجه تماس با کاربر را ثبت کنید: </label>
+                                                                        <textarea class="form-control" placeholder="نتیجه ..." name="result"></textarea>
+                                                                    </div>
+                                                                    <div class="form-check mt-2">
+                                                                        <input class="form-check-input" name="notification"
+                                                                            type="checkbox" id="gridCheck">
+                                                                        <label class="form-check-label" for="gridCheck">
+                                                                            ارسال اعلان
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-footer text-left">
+                                                                    <button type="submit" class="btn btn-primary">
+                                                                        ثبت نتیجه
+                                                                    </button>
+                                                                    <button type="button" class="btn btn-danger"
+                                                                        data-bs-dismiss="modal">
+                                                                        انصراف
+                                                                    </button>
+                                                                </div>
+                                                            </form>
+
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                    {{ $message->result }}
+                                                @endif
+
+
+                                                <button type="button" class="btn btn-danger btn-sm text-nowrap"
+                                                    data-bs-toggle="modal" data-bs-target="#remove_{{ $message->id }}">
+                                                    حذف پیام
+                                                </button>
+
+                                                <!-- Modal -->
+                                                <div id="remove_{{ $message->id }}" class="modal fade" role="dialog">
+                                                    <div class="modal-dialog">
+
+                                                        <!-- Modal content-->
+                                                        <div class="modal-content">
+                                                            @csrf
+                                                            <div class="modal-header">
+                                                                <h4 class="modal-title">حذف پیام</h4>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div class="form-group">
+                                                                    آیا مایل به حذف این پیام هستید؟
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer text-left">
+                                                                <a href="{{ url('admin/removeMessage') }}/{{ $message->id }}"
+                                                                    class="btn btn-primary">
+                                                                    بله حذف شود
+                                                                </a>
+                                                                <button type="button" class="btn btn-danger"
+                                                                    data-bs-dismiss="modal">
+                                                                    انصراف
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr class="text-center">
+                                            <td colspan="10">فیلد مورد خالی است</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+
+                {{-- تماس با صاحب بار و باربری --}}
+                <div class="card my-4">
+                    <h5 class="card-header">
+                        تماس با صاحب بار و باربری
+                    </h5>
+                    <div class="card-body">
+
+                        <div class="table-responsive mt-4">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>شماره تماس</th>
+                                        <th>نام و نام خانوادگی</th>
+                                        <th>تاریخ اولین تماس</th>
+                                        <th>تاریخ آخرین تماس</th>
+                                        <th>آخرین نتیجه ثبت شده</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($contactReportWithCargoOwners as $key => $contactReportWithCargoOwner)
+                                        <tr>
+                                            <td>
+                                                {{ ($contactReportWithCargoOwners->currentPage() - 1) * $contactReportWithCargoOwners->perPage() + ($key + 1) }}
+                                            </td>
+                                            <td>{{ $contactReportWithCargoOwner->mobileNumber }}</td>
+                                            <td>
+                                                {{ $contactReportWithCargoOwner->nameAndLastName !== '' ? $contactReportWithCargoOwner->nameAndLastName : '-' }}
+                                                <span
+                                                    class="text-primary small mr-1">{{ $contactReportWithCargoOwner->registerStatus }}</span>
+                                            </td>
+                                            <td>
+                                                {{ $contactReportWithCargoOwner->firstCal !== '' ? $contactReportWithCargoOwner->firstCal : '-' }}
+                                            </td>
+                                            <td>
+                                                {{ $contactReportWithCargoOwner->lastCal !== '' ? $contactReportWithCargoOwner->lastCal : '-' }}
+                                            </td>
+                                            <td>
+                                                @if (isset($contactReportWithCargoOwner->results[0]))
+                                                    <div class="alert alert-info">
+                                                        {{ $contactReportWithCargoOwner->results[0]->result }}
+                                                    </div>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <a class="btn btn-primary btn-sm small m-1 p-2"
+                                                    href="{{ url('admin/contactReportWithCargoOwners') }}/{{ $contactReportWithCargoOwner->mobileNumber }}">تاریخچه
+                                                    تماس ها</a>
+
+                                                @if (auth()->user()->role == ROLE_ADMIN)
+                                                    <a class="btn btn-danger btn-sm small m-1 p-2"
+                                                        href="{{ url('admin/deleteContactReportWithCargoOwners') }}/{{ $contactReportWithCargoOwner->id }}">
+                                                        حذف
+                                                    </a>
+                                                @endif
+
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr class="text-center">
+                                            <td colspan="10">فیلد مورد خالی است</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            @endsection

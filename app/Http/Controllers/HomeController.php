@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\AppVersion;
 use App\Models\Bearing;
+use App\Models\BlockPhoneNumber;
+use App\Models\ContactReportWithCargoOwner;
 use App\Models\ContactUs;
 use App\Models\Customer;
 use App\Models\Driver;
@@ -11,6 +13,7 @@ use App\Models\DriverActivity;
 use App\Models\Load;
 use App\Models\LoadBackup;
 use App\Models\Owner;
+use App\Models\Report;
 use App\Models\SiteOption;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -154,8 +157,74 @@ class HomeController extends Controller
 
     public function searchAll(Request $request)
     {
-        $owners = Owner::where('mobileNumber', 'like', '%' . $request->mobileNumber . '%')->paginate(20);
-        $drivers = Driver::with('provinceOwner')->where('mobileNumber', 'like', '%' . $request->mobileNumber . '%')->paginate(20);
-        return view('admin.searchAll', compact('drivers', 'owners'));
+
+        // صاحب بار
+        $owners = Owner::where('mobileNumber', 'like', '%' . $request->title . '%')
+            ->orWhere('nationalCode', $request->title)
+            ->orWhere('name', 'like', '%' . $request->title . '%')
+            ->orWhere('lastName', 'like', '%' . $request->title . '%')
+            ->paginate(20);
+
+        // شکایات راننده
+        $drivers = Driver::with('provinceOwner')
+            ->where('mobileNumber', 'like', '%' . $request->title . '%')
+            ->orWhere('nationalCode', $request->title)
+            ->orWhere('name', 'like', '%' . $request->title . '%')
+            ->orWhere('lastName', 'like', '%' . $request->title . '%')
+            ->paginate(20);
+
+        // شکایات راننده
+        $reportDrivers = Report::with(['cargo' => function ($query) {
+            $query->withTrashed();
+        }, 'driver', 'owner'])->where('type', 'driver')
+            ->whereHas('driver', function ($q) use ($request) {
+                $q->where('mobileNumber', $request->title);
+                $q->orWhere('nationalCode', $request->title);
+                $q->orWhere('name', 'like', '%' . $request->title . '%');
+                $q->orWhere('lastName', 'like', '%' . $request->title . '%');
+            })
+            ->orderByDesc('created_at')->paginate(20);
+
+        // شکایات صاحب بار
+        $reportOwners = Report::with(['cargo' => function ($query) {
+            $query->withTrashed();
+        }, 'driver', 'owner'])->where('type', 'driver')
+            ->whereHas('owner', function ($q) use ($request) {
+                $q->where('mobileNumber', $request->title);
+                $q->orWhere('nationalCode', $request->title);
+                $q->orWhere('name', 'like', '%' . $request->title . '%');
+                $q->orWhere('lastName', 'like', '%' . $request->title . '%');
+            })
+            ->orderByDesc('created_at')->paginate(20);
+
+        // شماره های مسدودی
+        $blockedPhoneNumbers = BlockPhoneNumber::orderByDesc('created_at')
+            ->where('phoneNumber', 'like', '%' . $request->title . '%')
+            ->orWhere('nationalCode', $request->title)
+            ->orWhere('name', 'like', '%' . $request->title . '%')
+            ->paginate(20);
+
+        // پیام ها
+        $messages = ContactUs::orderby('id', 'desc')
+            ->where('mobileNumber', $request->title)
+            ->orWhere('name', 'like', '%' . $request->title . '%')
+            ->orWhere('lastName', 'like', '%' . $request->title . '%')
+            ->paginate(20);
+
+        // تماس با صاحب بار و باربری
+        $contactReportWithCargoOwners = ContactReportWithCargoOwner::orderby('id', 'desc')
+            ->where('mobileNumber', $request->title)
+            ->orWhere('nameAndLastName', $request->title)
+            ->paginate(20);
+
+        return view('admin.searchAll', compact([
+            'drivers',
+            'owners',
+            'reportDrivers',
+            'reportOwners',
+            'blockedPhoneNumbers',
+            'messages',
+            'contactReportWithCargoOwners'
+        ]));
     }
 }
