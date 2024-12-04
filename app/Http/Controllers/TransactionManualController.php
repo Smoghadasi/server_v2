@@ -32,7 +32,6 @@ class TransactionManualController extends Controller
             })
             ->orderByDesc('created_at')
             ->paginate(150);
-        // return $transactionManuals;
         return view('admin.transactionManual.index', compact('transactionManuals'));
     }
 
@@ -222,6 +221,9 @@ class TransactionManualController extends Controller
             })
             ->when($request->toDate !== null, function ($query) use ($request) {
                 return $query->whereBetween('miladiDate', [persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00', persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:59']);
+            })
+            ->when($request->status !== null, function ($query) use ($request) {
+                return $query->whereStatus('1');
             })
             ->withTrashed()
             ->get();

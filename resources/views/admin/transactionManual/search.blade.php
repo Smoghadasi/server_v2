@@ -10,6 +10,37 @@
             </div>
         </h5>
         <div class="card-body">
+            <form method="GET" action="{{ route('transaction-manual.search') }}">
+                <div class="form-group row mb-4">
+                    <div class="col-md-2">
+                        <lable class="form-label">شماره موبایل :</label>
+                        <input class="form-control" name="mobileNumber" id="mobileNumber">
+                    </div>
+                    <div class="col-md-2">
+                        <lable class="form-label">از تاریخ :</label>
+                        <input class="form-control" type="text" id="fromDate" name="fromDate"
+                            autocomplete="off" />
+                        <span id="span1"></span>
+                    </div>
+                    <div class="col-md-2">
+                        <lable class="form-label">تا تاریخ :</label>
+                        <input class="form-control" type="text" name="toDate" id="toDate"
+                            autocomplete="off" />
+                        <span id="span2"></span>
+                    </div>
+                    <div class="col-md-2">
+                        <lable class="form-label">وضعیت :</label>
+                        <select class="form-control form-select" name="status">
+                            <option></option>
+                            <option value="1">فعال</option>
+                            <option value="0">غیر فعال</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mt-3">
+                        <button type="submit" class="btn btn-danger">جستجو</button>
+                    </div>
+                </div>
+            </form>
             <div class="table-responsive">
                 <table class="table table-bordered">
                     <thead>
@@ -216,6 +247,10 @@
                     </tbody>
                 </table>
             </div>
+            <div class="h5 mt-2 mb-2">
+                جمع کل :
+                {{ number_format($transactionManuals->sum('amount')) }}
+            </div>
         </div>
     </div>
 @endsection
@@ -223,6 +258,9 @@
     <script src="{{ asset('js/persianDatepicker.min.js') }}"></script>
     <script>
         $("#fromDate").persianDatepicker({
+            formatDate: "YYYY/MM/DD",
+        });
+        $("#toDate").persianDatepicker({
             formatDate: "YYYY/MM/DD",
         });
     </script>

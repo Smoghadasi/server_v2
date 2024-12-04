@@ -77,21 +77,32 @@
         <div class="card-body">
             <form method="get" action="{{ route('transaction-manual.search') }}">
                 <div class="form-group row mb-4">
-                    <div class="col-md-4">
-                        <input class="form-control" name="mobileNumber" id="mobileNumber" placeholder="شماره موبایل">
+                    <div class="col-md-2">
+                        <lable class="form-label">شماره موبایل :</label>
+                        <input class="form-control" name="mobileNumber" id="mobileNumber">
                     </div>
-                    <div class="col-md-3">
-                        <input class="form-control" type="text" id="fromDate" name="fromDate" placeholder="از تاریخ"
+                    <div class="col-md-2">
+                        <lable class="form-label">از تاریخ :</label>
+                        <input class="form-control" type="text" id="fromDate" name="fromDate"
                             autocomplete="off" />
                         <span id="span1"></span>
                     </div>
-                    <div class="col-md-3">
-                        <input class="form-control" type="text" name="toDate" id="toDate" placeholder="تا تاریخ"
+                    <div class="col-md-2">
+                        <lable class="form-label">تا تاریخ :</label>
+                        <input class="form-control" type="text" name="toDate" id="toDate"
                             autocomplete="off" />
                         <span id="span2"></span>
                     </div>
                     <div class="col-md-2">
-                        <button type="submit" class="btn btn-danger btn-sm mr-2">جستجو</button>
+                        <lable class="form-label">وضعیت :</label>
+                        <select class="form-control form-select" name="status">
+                            <option></option>
+                            <option value="1">فعال</option>
+                            <option value="0">غیر فعال</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mt-3">
+                        <button type="submit" class="btn btn-danger">جستجو</button>
                     </div>
                 </div>
             </form>
@@ -99,7 +110,7 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            {{-- <th>#</th> --}}
+                            <th>#</th>
                             <th>نام و نام خانوادگی</th>
                             <th>شماره همراه</th>
                             <th>ناوگان</th>
@@ -107,6 +118,7 @@
                             {{-- <th>نوع</th> --}}
                             <th>تاریخ اولین واریز</th>
                             <th>تاریخ آخرین تماس</th>
+                            <th>تاریخ آخرین اشتراک</th>
                             {{-- <th>وضعیت</th> --}}
                             {{-- <th>عملیات</th> --}}
                         </tr>
@@ -115,6 +127,8 @@
                         <?php $i = 1; ?>
                         @forelse ($transactionManuals as $key => $transactionManual)
                             <tr>
+                                <td>{{ $loop->iteration }}</td>
+
                                 <td>
                                     <a href="{{ route('transaction-manual.show', $transactionManual->driver_id) }}">
                                         {{ $transactionManual->driver->name }}
@@ -138,6 +152,9 @@
                                 </td>
                                 <td>
                                     {{ $transactionManual->firstPaymentDate }}
+                                </td>
+                                <td>
+                                    {{ $transactionManual->lastActiveDate }}
                                 </td>
                                 {{-- <td class="text-center">
                                     @if ($transactionManual->status == 1)
@@ -287,10 +304,6 @@
                         @endforelse
                     </tbody>
                 </table>
-            </div>
-
-            <div class="mt-3">
-                {{ $transactionManuals }}
             </div>
 
         </div>

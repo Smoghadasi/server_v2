@@ -12,7 +12,7 @@ class TransactionManual extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $appends = ['lastPaymentDate', 'firstPaymentDate'];
+    protected $appends = ['lastPaymentDate', 'firstPaymentDate', 'lastActiveDate'];
 
     public function driver(): BelongsTo
     {
@@ -58,6 +58,15 @@ class TransactionManual extends Model
                 ->first();
             // $date = explode(' ', $transaction->updated_at);
             return $transaction->date;
+        } catch (\Exception $exception) {
+        }
+        return 'بدون تاریخ';
+    }
+    public function getLastActiveDateAttribute()
+    {
+        try {
+            $driver = Driver::find($this->driver_id);
+            return gregorianDateToPersian($driver->activeDate, '-', true) ?? null;
         } catch (\Exception $exception) {
         }
         return 'بدون تاریخ';
