@@ -19,7 +19,10 @@ class CreateTransactionManualsTable extends Migration
             $table->integer('amount');
             $table->enum('type', ['cardToCard', 'online'])->default('cardToCard');
             $table->string('date')->nullable();
+            $table->string('miladiDate')->nullable();
+            $table->text('description')->nullable();
             $table->boolean('status')->default(0);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

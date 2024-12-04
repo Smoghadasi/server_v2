@@ -205,23 +205,27 @@ function getCustomerPackagesInfo()
     ];
 }
 
+const MONTHLY = 79000;
+const TRIMESTER = 199000;
+const SIXMONTHS = 399000;
+
 function getCustomerCallPackagesInfo()
 {
     return [
         'calls' => CUSTOMER_FREE_DRIVER_CALLS,
         'loads' => CUSTOMER_FREE_LOADS,
         'monthly' => [
-            'price' => 79000,
+            'price' => MONTHLY,
             'calls' => CUSTOMER_FREE_DRIVER_CALLS,
             'loads' => CUSTOMER_FREE_LOADS,
         ],
         'trimester' => [
-            'price' => 199000,
+            'price' => TRIMESTER,
             'calls' => CUSTOMER_FREE_DRIVER_CALLS,
             'loads' => CUSTOMER_FREE_LOADS,
         ],
         'sixMonths' => [
-            'price' => 399000,
+            'price' => SIXMONTHS,
             'calls' => CUSTOMER_FREE_DRIVER_CALLS,
             'loads' => CUSTOMER_FREE_LOADS,
         ]

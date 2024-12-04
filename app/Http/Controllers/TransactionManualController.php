@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Driver;
+use App\Models\Transaction;
 use App\Models\TransactionManual;
+use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TransactionManualController extends Controller
 {
@@ -16,6 +20,8 @@ class TransactionManualController extends Controller
     public function index(Request $request)
     {
         $transactionManuals = TransactionManual::with('driver')
+            ->select('*', DB::raw('count(`driver_id`) as total'))
+            ->groupBy('driver_id')
             ->when($request->mobileNumber !== null, function ($query) use ($request) {
                 return $query->whereHas('driver', function ($q) use ($request) {
                     $q->where('mobileNumber', $request->mobileNumber);
@@ -24,8 +30,8 @@ class TransactionManualController extends Controller
             ->when($request->toDate !== null, function ($query) use ($request) {
                 return $query->whereBetween('miladiDate', [persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00', persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:59']);
             })
-            ->orderByDesc('created_at')
             ->paginate(150);
+        // return $transactionManuals;
         return view('admin.transactionManual.index', compact('transactionManuals'));
     }
 
@@ -49,6 +55,16 @@ class TransactionManualController extends Controller
     {
         $driver = Driver::where('mobileNumber', $request->mobileNumber)->first();
         if ($driver) {
+            $duplicateTransaction = TransactionManual::where('driver_id', $driver->id)->orderByDesc('created_at')->first();
+            if ($duplicateTransaction) {
+                $to = Carbon::createFromFormat('Y-m-d H:s:i', $duplicateTransaction->miladiDate);
+                $from = Carbon::createFromFormat('Y-m-d H:s:i', persianDateToGregorian(str_replace('/', '-', $request->date), '-') . ' 00:00:00');
+                $diff_in_days = $to->diffInDays($from);
+                if ($diff_in_days > 30) {
+                    TransactionManual::whereDriverId($driver->id)->update(['status' => 0]);
+                    TransactionManual::whereDriverId($driver->id)->delete();
+                }
+            }
             $transactionManual = new TransactionManual();
             $transactionManual->amount = $request->amount;
             $transactionManual->driver_id = $driver->id;
@@ -66,7 +82,71 @@ class TransactionManualController extends Controller
     {
         $transactionManual->status = $status;
         $transactionManual->save();
-        return back()->with('success', 'آیتم مورد نظر حذف شد');
+        if ($status == 1) {
+            $driver = Driver::find($transactionManual->driver_id);
+            if ($transactionManual->amount == MONTHLY) {
+                $this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, 1);
+            } elseif ($transactionManual->amount == TRIMESTER) {
+                $this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, 3);
+            } elseif ($transactionManual->amount == SIXMONTHS) {
+                $this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, 6);
+            }
+        }
+
+        TransactionManual::whereDriverId($transactionManual->driver_id)->delete();
+
+        return redirect()->route('transaction-manual.index')->with('success', 'آیتم مورد نظر تغییر کرد');
+    }
+
+    /**
+     * @param Driver $driver
+     * @param Request $request
+     * @return void
+     * @throws Exception
+     */
+    public function updateActivationDateAndFreeCallsAndFreeAcceptLoads(Driver $driver, $month): bool
+    {
+        try {
+
+            $date = new \DateTime($driver->activeDate);
+            $time = $date->getTimestamp();
+            if ($time < time())
+                $driver->activeDate = date('Y-m-d', time() + $month * 30 * 24 * 60 * 60);
+            else
+                $driver->activeDate = date('Y-m-d', $time + $month * 30 * 24 * 60 * 60);
+
+            $driver->save();
+
+            try {
+                if ($month > 0) {
+
+                    $driverPackagesInfo = getDriverPackagesInfo();
+                    $amount = 0;
+                    if ($month == 1)
+                        $amount = $driverPackagesInfo['data']['monthly']['price'];
+                    else if ($month == 3)
+                        $amount = $driverPackagesInfo['data']['trimester']['price'];
+                    else if ($month == 6)
+                        $amount = $driverPackagesInfo['data']['sixMonths']['price'];
+
+                    $transaction = new Transaction();
+                    $transaction->user_id = $driver->id;
+                    $transaction->userType = ROLE_DRIVER;
+                    $transaction->authority = $driver->id . time();
+                    $transaction->amount = $amount;
+                    $transaction->status = 100;
+                    $transaction->payment_type = 'cardToCard';
+                    $transaction->monthsOfThePackage = $month;
+                    $transaction->save();
+                }
+            } catch (Exception $e) {
+            }
+
+            return true;
+        } catch (Exception $exception) {
+        }
+
+        return false;
     }
 
     /**
@@ -75,9 +155,15 @@ class TransactionManualController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($driverId)
     {
-        //
+        $driver = Driver::find($driverId);
+
+        $transactionManuals = TransactionManual::with('driver')
+            ->whereDriverId($driverId)
+            ->orderByDesc('date')
+            ->get();
+        return view('admin.transactionManual.show', compact('transactionManuals', 'driver'));
     }
 
     /**
@@ -106,6 +192,7 @@ class TransactionManualController extends Controller
             $transactionManual->driver_id = $driver->id;
             $transactionManual->type = $request->type;
             $transactionManual->date = $request->date . " " . $request->time;
+            $transactionManual->description = $request->description;
             $transactionManual->miladiDate = persianDateToGregorian(str_replace('/', '-', $request->date), '-') . ' 00:00:00';
             $transactionManual->save();
             return back()->with('success', 'آیتم مورد نظر ثبت شد');
@@ -122,6 +209,21 @@ class TransactionManualController extends Controller
     {
         $transactionManual->delete();
         return back()->with('danger', 'آیتم مورد نظر حذف شد');
+    }
 
+    public function search(Request $request)
+    {
+        $transactionManuals = TransactionManual::with('driver')
+            ->when($request->mobileNumber !== null, function ($query) use ($request) {
+                return $query->whereHas('driver', function ($q) use ($request) {
+                    $q->where('mobileNumber', $request->mobileNumber);
+                });
+            })
+            ->when($request->toDate !== null, function ($query) use ($request) {
+                return $query->whereBetween('miladiDate', [persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00', persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:59']);
+            })
+            ->withTrashed()
+            ->get();
+        return view('admin.transactionManual.search', compact('transactionManuals'));
     }
 }

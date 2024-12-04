@@ -27,6 +27,7 @@ class OwnerController extends Controller
         $ownerPenddingCounts = Owner::where('isAuth', 2)->count();
         $ownerRejectCounts = Owner::where('isAuth', 0)->count();
         $ownerAcceptCounts = Owner::where('isAuth', 1)->count();
+        $ownerRejectedCounts = Owner::where('isRejected', 1)->count();
 
         $owners = Owner::orderByDesc('created_at')->paginate(10);
         return view('admin.owner.index', compact([
@@ -34,6 +35,7 @@ class OwnerController extends Controller
             'ownerPenddingCounts',
             'ownerRejectCounts',
             'ownerAcceptCounts',
+            'ownerRejectedCounts',
             'loadsToday',
             'loadsTodayOwner'
         ]));

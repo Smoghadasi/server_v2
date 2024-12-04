@@ -44,11 +44,13 @@ use App\Http\Controllers\VacationController;
 use App\Http\Controllers\VacationHourController;
 use App\Http\Controllers\WarehouseController;
 use App\Models\City;
+use App\Models\Driver;
 use App\Models\Load;
 use App\Models\State;
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -451,6 +453,13 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // نمایش لیست راننده ها
         Route::get('drivers', [DriverController::class, 'drivers'])->middleware('operator')->name('drivers');
 
+        // Route::get('threeDaysDrivers', function () {
+
+        //     $driver = Driver::whereNotNull('activeDate')
+        //         // ->where('activeDate', '!=', '')
+        //         ->whereRaw('DATEDIFF(activeDate, NOW()) = 3')
+        //         ->count();
+        // });
         // نمایش لیست رانندگان برای ادمین
         Route::get('adminDrivers', [DriverController::class, 'adminDrivers'])->middleware('operator')->name('adminDrivers');
 
@@ -602,16 +611,20 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         /***************************************************************************************************/
         Route::get('profile', [UserController::class, 'adminProfile'])->middleware('operator')->name('user.edit');
 
-        Route::resource('setting', SettingController::class);
+        Route::resource('setting', SettingController::class)->middleware('operator');
 
         // انبار بار
-        Route::resource('warehouse', WarehouseController::class);
+        Route::resource('warehouse', WarehouseController::class)->middleware('operator');
 
         // رادیو
-        Route::resource('radio', RadioController::class);
+        Route::resource('radio', RadioController::class)->middleware('operator');
 
         // اشتراک های دستی
-        Route::resource('transaction-manual', TransactionManualController::class);
+        Route::resource('transaction-manual', TransactionManualController::class)->middleware('operator');
+
+        Route::get('transaction-search', [TransactionManualController::class, 'search'])
+            ->middleware('operator')
+            ->name('transaction-manual.search');
 
 
         Route::get('changeStatusTransaction/{transactionManual}/{status}', [TransactionManualController::class, 'changeStatus'])

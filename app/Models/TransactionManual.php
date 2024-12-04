@@ -5,10 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TransactionManual extends Model
 {
     use HasFactory;
+    use SoftDeletes;
+
+    protected $appends = ['lastPaymentDate', 'firstPaymentDate'];
 
     public function driver(): BelongsTo
     {
@@ -26,5 +30,36 @@ class TransactionManual extends Model
                 break;
         }
         return $type;
+    }
+
+    public function getLastPaymentDateAttribute()
+    {
+        try {
+            $transaction = TransactionManual::where([
+                ['driver_id', $this->driver_id]
+            ])
+                ->select('id', 'created_at', 'date')
+                ->orderBy('created_at','asc')
+                ->first();
+            // $date = explode(' ', $transaction->created_at);
+            return $transaction->date;
+        } catch (\Exception $exception) {
+        }
+        return 'بدون تاریخ';
+    }
+
+    public function getFirstPaymentDateAttribute()
+    {
+        try {
+            $transaction = TransactionManual::where('driver_id', $this->driver_id)
+                ->select('id', 'updated_at', 'date')
+
+                ->orderByDesc('updated_at')
+                ->first();
+            // $date = explode(' ', $transaction->updated_at);
+            return $transaction->date;
+        } catch (\Exception $exception) {
+        }
+        return 'بدون تاریخ';
     }
 }
