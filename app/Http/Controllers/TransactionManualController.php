@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Driver;
+use App\Models\FreeSubscription;
+use App\Models\Setting;
 use App\Models\Transaction;
 use App\Models\TransactionManual;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class TransactionManualController extends Controller
@@ -88,6 +91,7 @@ class TransactionManualController extends Controller
             $transactionManual->amount = $request->amount;
             $transactionManual->driver_id = $driver->id;
             $transactionManual->type = $request->type;
+            $transactionManual->description = $request->description;
             $transactionManual->status = 2;
             $transactionManual->date = $request->date . " " . $request->time;
             $transactionManual->miladiDate = persianDateToGregorian(str_replace('/', '-', $request->date), '-') . ' 00:00:00';
@@ -105,8 +109,7 @@ class TransactionManualController extends Controller
             $driver = Driver::find($transactionManual->driver_id);
             $currentDate = Carbon::now();
             $difference = $currentDate->diffInDays($driver->activeDate);
-
-            if ($difference > 15) {
+            if ($currentDate < $driver->activeDate && $difference > 15) {
                 TransactionManual::whereDriverId($transactionManual->driver_id)->delete();
                 return redirect()->route('transaction-manual.index')->with('danger', 'اشتراک مورد نظر بیشتر از 15 روز می باشد');
             }
@@ -143,18 +146,39 @@ class TransactionManualController extends Controller
                 $driver->activeDate = date('Y-m-d', $time + $month * 30 * 24 * 60 * 60);
 
             $driver->save();
-
+            $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+            $oneMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+30 day', time())), '/');
+            $threeMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+90 day', time())), '/');
+            $sixMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+180 day', time())), '/');
+            $setting = Setting::first();
             try {
                 if ($month > 0) {
+                    $free_subscription = new FreeSubscription();
+                    $free_subscription->type = AUTH_VALIDITY;
+                    $free_subscription->value = $month;
+                    $free_subscription->driver_id = $driver->id;
+                    $free_subscription->operator_id = Auth::id();
+                    $free_subscription->save();
 
-                    $driverPackagesInfo = getDriverPackagesInfo();
-                    $amount = 0;
-                    if ($month == 1)
-                        $amount = $driverPackagesInfo['data']['monthly']['price'];
-                    else if ($month == 3)
-                        $amount = $driverPackagesInfo['data']['trimester']['price'];
-                    else if ($month == 6)
-                        $amount = $driverPackagesInfo['data']['sixMonths']['price'];
+                    $months = [1 => $oneMonth, 3 => $threeMonth, 6 => $sixMonth];
+                    $amountKeys = [
+                        1 => 'monthly',
+                        3 => 'trimester',
+                        6 => 'sixMonths'
+                    ];
+
+                    if (array_key_exists($month, $months)) {
+                        $sms = new Driver();
+
+                        if ($setting->sms_panel == 'SMSIR') {
+                            $sms->freeSubscriptionSmsIr($driver->mobileNumber, $persian_date, $months[$month]);
+                        } else {
+                            $sms->freeSubscription($driver->mobileNumber, $persian_date, $months[$month]);
+                        }
+                        $driverPackagesInfo = getDriverPackagesInfo();
+                        $amount = $driverPackagesInfo['data'][$amountKeys[$month]]['price'];
+                    }
+
 
                     $transaction = new Transaction();
                     $transaction->user_id = $driver->id;
