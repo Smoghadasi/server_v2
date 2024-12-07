@@ -5,7 +5,7 @@
         <h5 class="card-header">
             <div class="row justify-content-between">
                 <div class="col-6">
-                    اشتراک های دستی
+                    اشتراک های دستی (امروز)
                 </div>
                 <div class="col-6 text-end">
                     <!-- Button trigger modal -->
@@ -141,12 +141,6 @@
 
                                 <td>{{ \App\Http\Controllers\FleetController::getFleetName($transactionManual->driver->fleet_id) }}</td>
 
-                                {{-- <td>
-                                    {{ $transactionManual->amount }}
-                                </td>
-                                <td>
-                                    {{ $transactionManual->type }}
-                                </td> --}}
                                 <td>
                                     {{ $transactionManual->lastPaymentDate }}
                                 </td>
@@ -156,144 +150,70 @@
                                 <td>
                                     {{ $transactionManual->lastActiveDate }}
                                 </td>
-                                {{-- <td class="text-center">
-                                    @if ($transactionManual->status == 1)
-                                        <i class="menu-icon tf-icons bx bx-check text-success"></i>
-                                    @elseif ($transactionManual->status == 0)
-                                        <i class="menu-icon tf-icons bx bx-x text-danger"></i>
-                                    @else
-                                        @if (Auth::user()->role == 'admin')
-                                            <a class="btn btn-success btn-sm"
-                                                href="{{ route('transactionManual.change.status', ['transactionManual' => $transactionManual, 'status' => 1]) }}">فعال
-                                            </a>
-                                            <a class="btn btn-danger btn-sm"
-                                                href="{{ route('transactionManual.change.status', ['transactionManual' => $transactionManual, 'status' => 0]) }}">غیر
-                                                فعال
-                                            </a>
-                                        @endif
-                                    @endif
-                                </td> --}}
-                                {{-- <td>
-                                    <button type="button" class="btn btn-primary btn-sm text-nowrap"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#adminMessageForm_{{ $transactionManual->id }}">
-                                        ویرایش
-                                    </button>
-                                    <button type="button" class="btn btn-danger btn-sm text-nowrap"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#removetransactionManual_{{ $transactionManual->id }}">حذف
-                                    </button>
-                                    <!-- remove -->
-                                    <div id="removetransactionManual_{{ $transactionManual->id }}" class="modal fade"
-                                        role="dialog">
-                                        <div class="modal-dialog modal-dialog-centered">
+                            </tr>
+                        @empty
+                            <tr class="text-center">
+                                <td colspan="10">
+                                    دیتا مورد نظر یافت نشد
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
 
-                                            <!-- Modal content-->
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h4 class="modal-title">حذف اشتراک دستی</h4>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <strong>آیا مایل به حذف
-                                                        هستید؟
-                                                    </strong>
-                                                </div>
-                                                <div class="modal-footer text-left">
-                                                    <form
-                                                        action="{{ route('transaction-manual.destroy', $transactionManual) }}"
-                                                        method="POST">
-                                                        @csrf
-                                                        @method('delete')
-                                                        <button type="submit" class="btn btn-danger">حذف</button>
-                                                    </form>
-                                                    <button type="button" class="btn btn-primary"
-                                                        data-bs-dismiss="modal">
-                                                        انصراف
-                                                    </button>
-                                                </div>
-                                            </div>
+        </div>
+    </div>
 
-                                        </div>
-                                    </div>
-                                    <!-- edit -->
-                                    <div class="modal fade" id="adminMessageForm_{{ $transactionManual->id }}"
-                                        tabindex="-1" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="modalCenterTitle">ویرایش اشتراک های دستی
-                                                    </h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                        aria-label="Close"></button>
-                                                </div>
-                                                <form
-                                                    action="{{ route('transaction-manual.update', $transactionManual) }}"
-                                                    method="POST">
-                                                    @csrf
-                                                    @method('put')
-                                                    <div class="modal-body" style="text-align: right">
-                                                        <div class="row g-2">
-                                                            <div class="col-md-6 col-sm-12 mb-3">
-                                                                <label for="mobileNumber" class="form-label">شماره
-                                                                    موبایل</label>
-                                                                <input type="text" id="mobileNumber"
-                                                                    value="{{ $transactionManual->driver->mobileNumber }}"
-                                                                    name="mobileNumber" class="form-control" required
-                                                                    placeholder="شماره موبایل" />
-                                                            </div>
-                                                            <div class="col-md-6 col-sm-12 mb-0">
-                                                                <label for="amount" class="form-label">مبلغ
-                                                                    (تومان)
-                                                                </label>
-                                                                <input type="text" name="amount" id="amount"
-                                                                    value="{{ $transactionManual->amount }}"
-                                                                    class="form-control" required placeholder="مبلغ" />
-                                                            </div>
-                                                            <div class="col-md-6 col-sm-12 mb-0">
-                                                                <label for="type" class="form-label">نوع</label>
-                                                                <select class="form-control form-select" name="type"
-                                                                    required>
-                                                                    <option
-                                                                        @if ($transactionManual->type == 'cardToCard') selected @endif
-                                                                        value="cardToCard">کارت به کارت</option>
-                                                                    <option
-                                                                        @if ($transactionManual->type == 'online') selected @endif
-                                                                        value="online">آنلاین</option>
-                                                                </select>
-                                                            </div>
-                                                            @php
-                                                                $pieces = explode(' ', $transactionManual->date);
-                                                            @endphp
+    <div class="card mt-4">
+        <h5 class="card-header">
+            <div class="row justify-content-between">
+                <div class="col-6">
+                    اشتراک های کارت به کارت (روز های گذشته)
+                </div>
+            </div>
+        </h5>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>نام و نام خانوادگی</th>
+                            <th>شماره همراه</th>
+                            <th>ناوگان</th>
+                            <th>تاریخ اولین واریز</th>
+                            <th>تاریخ آخرین تماس</th>
+                            <th>تاریخ آخرین اشتراک</th>
+                        </tr>
+                    </thead>
+                    <tbody class="small text-right">
+                        <?php $i = 1; ?>
+                        @forelse ($oldtransactionManuals as $key => $transactionManual)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
 
-                                                            <div class="col-md-3 col-sm-12 mb-0">
-                                                                <label for="type" class="form-label">تاریخ</label>
-                                                                <input class="form-control" type="text" id="fromDate"
-                                                                    name="date" required placeholder="تاریخ"
-                                                                    value="{{ $pieces[0] }}" />
-                                                                <span id="span1"></span>
-                                                            </div>
+                                <td>
+                                    <a href="{{ route('transaction-manual.show', $transactionManual->driver_id) }}">
+                                        {{ $transactionManual->driver->name }}
+                                        {{ $transactionManual->driver->lastName }}
+                                        {{ '(' . $transactionManual->total . ')' }}
+                                    </a>
+                                </td>
 
-                                                            <div class="col-md-3 col-sm-12 mb-0">
-                                                                <label for="type" class="form-label">ساعت</label>
-                                                                <input value="{{ $pieces[1] }}" class="form-control"
-                                                                    type="time" id="time" name="time" required
-                                                                    placeholder="ساعت" autocomplete="off" />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-outline-secondary"
-                                                            data-bs-dismiss="modal">
-                                                            انصرف
-                                                        </button>
-                                                        <button type="submit" class="btn btn-primary">ثبت</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <td>{{ $transactionManual->driver->mobileNumber }}</td>
 
-                                </td> --}}
+                                <td>{{ \App\Http\Controllers\FleetController::getFleetName($transactionManual->driver->fleet_id) }}</td>
+
+                                <td>
+                                    {{ $transactionManual->lastPaymentDate }}
+                                </td>
+                                <td>
+                                    {{ $transactionManual->firstPaymentDate }}
+                                </td>
+                                <td>
+                                    {{ $transactionManual->lastActiveDate }}
+                                </td>
                             </tr>
                         @empty
                             <tr class="text-center">

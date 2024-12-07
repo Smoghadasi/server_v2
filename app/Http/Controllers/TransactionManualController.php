@@ -19,6 +19,7 @@ class TransactionManualController extends Controller
      */
     public function index(Request $request)
     {
+        // تاریخ امروز
         $transactionManuals = TransactionManual::with('driver')
             ->select('*', DB::raw('count(`driver_id`) as total'))
             ->groupBy('driver_id')
@@ -30,9 +31,27 @@ class TransactionManualController extends Controller
             ->when($request->toDate !== null, function ($query) use ($request) {
                 return $query->whereBetween('miladiDate', [persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00', persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:59']);
             })
+            ->where('miladiDate', '>=', date('Y/m/d', time()) . ' 00:00:00')
             ->orderByDesc('created_at')
             ->paginate(150);
-        return view('admin.transactionManual.index', compact('transactionManuals'));
+
+
+        $oldtransactionManuals = TransactionManual::with('driver')
+            ->select('*', DB::raw('count(`driver_id`) as total'))
+            ->groupBy('driver_id')
+            ->when($request->mobileNumber !== null, function ($query) use ($request) {
+                return $query->whereHas('driver', function ($q) use ($request) {
+                    $q->where('mobileNumber', $request->mobileNumber);
+                });
+            })
+            ->when($request->toDate !== null, function ($query) use ($request) {
+                return $query->whereBetween('miladiDate', [persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00', persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:59']);
+            })
+            ->where('miladiDate', '<', date('Y/m/d', time()) . ' 00:00:00')
+            ->orderByDesc('created_at')
+            ->paginate(150);
+
+        return view('admin.transactionManual.index', compact('transactionManuals', 'oldtransactionManuals'));
     }
 
     /**
@@ -84,6 +103,14 @@ class TransactionManualController extends Controller
         $transactionManual->save();
         if ($status == 1) {
             $driver = Driver::find($transactionManual->driver_id);
+            $currentDate = Carbon::now();
+            $difference = $currentDate->diffInDays($driver->activeDate);
+
+            if ($difference > 15) {
+                TransactionManual::whereDriverId($transactionManual->driver_id)->delete();
+                return redirect()->route('transaction-manual.index')->with('danger', 'اشتراک مورد نظر بیشتر از 15 روز می باشد');
+            }
+
             if ($transactionManual->amount == MONTHLY) {
                 $this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, 1);
             } elseif ($transactionManual->amount == TRIMESTER) {
