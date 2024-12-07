@@ -26,34 +26,18 @@ class TransactionManualController extends Controller
         $transactionManuals = TransactionManual::with('driver')
             ->select('*', DB::raw('count(`driver_id`) as total'))
             ->groupBy('driver_id')
-            ->when($request->mobileNumber !== null, function ($query) use ($request) {
-                return $query->whereHas('driver', function ($q) use ($request) {
-                    $q->where('mobileNumber', $request->mobileNumber);
-                });
-            })
-            ->when($request->toDate !== null, function ($query) use ($request) {
-                return $query->whereBetween('miladiDate', [persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00', persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:59']);
-            })
-            ->where('miladiDate', '>=', date('Y/m/d', time()) . ' 00:00:00')
+            // ->where('miladiDate', '>=', date('Y/m/d', time()) . ' 00:00:00')
             ->orderByDesc('created_at')
             ->paginate(150);
 
 
         $oldtransactionManuals = TransactionManual::with('driver')
-            ->select('*', DB::raw('count(`driver_id`) as total'))
-            ->groupBy('driver_id')
-            ->when($request->mobileNumber !== null, function ($query) use ($request) {
-                return $query->whereHas('driver', function ($q) use ($request) {
-                    $q->where('mobileNumber', $request->mobileNumber);
-                });
-            })
-            ->when($request->toDate !== null, function ($query) use ($request) {
-                return $query->whereBetween('miladiDate', [persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00', persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:59']);
-            })
-            ->where('updated_at', '>', date('Y/m/d', time()) . ' 00:00:00')
+            ->where('status', '1')
+            ->orWhere('driver_id', '147552')
+            ->withTrashed()
             ->orderByDesc('created_at')
             ->paginate(150);
-
+        // return $oldtransactionManuals;
         return view('admin.transactionManual.index', compact('transactionManuals', 'oldtransactionManuals'));
     }
 
@@ -101,11 +85,14 @@ class TransactionManualController extends Controller
         return back()->with('danger', 'راننده با این مشخصات یافت نشد');
     }
 
-    public function changeStatus(TransactionManual $transactionManual, $status = 1)
+    public function changeStatus(Request $request, TransactionManual $transactionManual)
     {
-        $transactionManual->status = $status;
+        $driver = Driver::where('mobileNumber', $request->mobileNumber)->first();
+
+        $transactionManual->status = $request->status;
+        $transactionManual->driver_id = $driver->id;
         $transactionManual->save();
-        if ($status == 1) {
+        if ($request->status == 1) {
             $driver = Driver::find($transactionManual->driver_id);
             $currentDate = Carbon::now();
             $difference = $currentDate->diffInDays($driver->activeDate);

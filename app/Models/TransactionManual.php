@@ -52,12 +52,12 @@ class TransactionManual extends Model
     {
         try {
             $transaction = TransactionManual::where('driver_id', $this->driver_id)
-                ->select('id', 'updated_at', 'date')
-
-                ->orderByDesc('updated_at')
+                ->select('id', 'created_at', 'date')
+                ->orderByDesc('created_at')
                 ->first();
-            // $date = explode(' ', $transaction->updated_at);
-            return $transaction->date;
+            $date = explode(' ', $transaction->created_at);
+
+            return gregorianDateToPersian($transaction->created_at, '-', true) . ' | ' .  $date[1] ;
         } catch (\Exception $exception) {
         }
         return 'بدون تاریخ';

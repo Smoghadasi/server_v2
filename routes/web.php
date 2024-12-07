@@ -627,7 +627,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
             ->name('transaction-manual.search');
 
 
-        Route::get('changeStatusTransaction/{transactionManual}/{status}', [TransactionManualController::class, 'changeStatus'])
+        Route::put('changeStatusTransaction/{transactionManual}', [TransactionManualController::class, 'changeStatus'])
             ->middleware('operator')
             ->name('transactionManual.change.status');
 
