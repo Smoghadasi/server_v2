@@ -3810,7 +3810,7 @@ class LoadController extends Controller
         $cities = ProvinceCity::where('parent_id', '!=', 0)->get();
         $fleets = Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
         $packingTypes = PackingType::get();
-        $load = Load::where('id', $load_id)->first();
+        $load = Load::where('id', $load_id)->withTrashed()->first();
         $message = '';
         $fleetListArray = '';
 
@@ -3826,8 +3826,11 @@ class LoadController extends Controller
     }
 
     // ویرایش اطلاعات بار در وب
-    public function editLoadInfoInWeb(NewLoadRequest $request, Load $load)
+    public function editLoadInfoInWeb(NewLoadRequest $request, string $load_id)
     {
+        $load = Load::whereId($load_id)
+            ->withTrashed()
+            ->first();
         return $this->editLoadInfo($request, $load);
         return redirect(url('admin/loadInfo/' . $request->id));
     }
