@@ -36,7 +36,7 @@ class TransactionManualController extends Controller
             ->where('miladiDate', '>', date('Y/m/d', time()) . ' 00:00:00')
             ->orWhere('driver_id', '147552')
             ->withTrashed()
-            ->orderByDesc('created_at')
+            ->orderBy('miladiDate', 'asc')
             ->paginate(150);
         // return $oldtransactionManuals;
         return view('admin.transactionManual.index', compact('transactionManuals', 'oldtransactionManuals'));
@@ -277,7 +277,7 @@ class TransactionManualController extends Controller
                 return $query->whereStatus('1');
             })
             ->withTrashed()
-            ->orderByDesc('created_at')
+            ->orderBy('miladiDate', 'asc')
             ->paginate(150);
         return view('admin.transactionManual.search', compact('transactionManuals', 'oldtransactionManuals'));
     }
