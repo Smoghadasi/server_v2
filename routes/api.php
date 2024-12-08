@@ -43,9 +43,9 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::group(['middleware' => 'throttle:60,1'], function () {
-    Route::middleware('auth:api')->get('/user', function (Request $request) {
-        return $request->user();
-    });
+    // Route::middleware('auth:api')->get('/user', function (Request $request) {
+    //     return $request->user();
+    // });
 
     // درخواست کد فعال سازی
     Route::post('requestActivationCode', [LoginController::class, 'requestActivationCode']);
