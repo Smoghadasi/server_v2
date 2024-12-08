@@ -705,10 +705,7 @@ class LoadController extends Controller
                 $message[1] = '';
                 $loadPic = null;
 
-                if (isset($request->marketing_price))
-                    $request->marketing_price = $request->marketing_price;
-                else
-                    $request->marketing_price = 0;
+                $request->marketing_price = $request->marketing_price ?? 0;
 
                 if (!isset($request->tenderTimeDuration))
                     $request->tenderTimeDuration = 15;
@@ -830,8 +827,10 @@ class LoadController extends Controller
                     $load->urgent = true;
 
                 $load->save();
-
-
+                if (Load::where('userType', ROLE_OWNER)->where('user_id', $owner->id)->withTrashed()->count() == 1) {
+                    $sms = new Load();
+                    $sms->firstLoad($owner->mobileNumber);
+                }
 
                 if (isset($request->dateOfCargoDeclaration)) {
 

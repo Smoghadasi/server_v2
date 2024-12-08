@@ -66,7 +66,7 @@ class TransactionManual extends Model
     {
         try {
             $driver = Driver::find($this->driver_id);
-            return gregorianDateToPersian($driver->activeDate, '-', true) ?? '-';
+            return gregorianDateToPersian($driver->activeDate, '-', true) ?? null;
         } catch (\Exception $exception) {
         }
         return 'بدون تاریخ';
