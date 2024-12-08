@@ -26,7 +26,7 @@ class TransactionManualController extends Controller
         $transactionManuals = TransactionManual::with('driver')
             ->select('*', DB::raw('count(`driver_id`) as total'))
             ->groupBy('driver_id')
-            // ->where('miladiDate', '>=', date('Y/m/d', time()) . ' 00:00:00')
+            ->where('miladiDate', '>=', date('Y/m/d', time()) . ' 00:00:00')
             ->orderByDesc('created_at')
             ->paginate(150);
 
