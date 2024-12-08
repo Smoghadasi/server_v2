@@ -194,7 +194,7 @@
                             <?php $i = 1; ?>
                             @forelse ($oldtransactionManuals as $key => $transactionManual)
                                 <tr>
-                                    <td>{{ $transactionManual->id }}</td>
+                                    <td>{{ $loop->iteration }}</td>
 
                                     <td>
                                         {{ $transactionManual->driver->name }}

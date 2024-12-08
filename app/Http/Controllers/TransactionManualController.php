@@ -234,7 +234,7 @@ class TransactionManualController extends Controller
             $transactionManual->description = $request->description;
             $transactionManual->miladiDate = persianDateToGregorian(str_replace('/', '-', $request->date), '-') . ' ' . $request->time;
             $transactionManual->save();
-            return back()->with('success', 'آیتم مورد نظر ثبت شد');
+            return redirect()->route('transaction-manual.index')->with('success', 'آیتم مورد نظر ثبت شد');
         }
     }
 
@@ -247,7 +247,7 @@ class TransactionManualController extends Controller
     public function destroy(TransactionManual $transactionManual)
     {
         $transactionManual->delete();
-        return back()->with('danger', 'آیتم مورد نظر حذف شد');
+        return redirect()->route('transaction-manual.index')->with('danger', 'آیتم مورد نظر حذف شد');
     }
 
     public function search(Request $request)
