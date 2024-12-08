@@ -35,6 +35,7 @@ class TransactionManualController extends Controller
             ->where('status', '1')
             ->orWhere('driver_id', '147552')
             ->withTrashed()
+            ->where('miladiDate', '>=', date('Y/m/d', time()) . ' 00:00:00')
             ->orderByDesc('created_at')
             ->paginate(150);
         // return $oldtransactionManuals;
