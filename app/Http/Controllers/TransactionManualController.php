@@ -265,8 +265,20 @@ class TransactionManualController extends Controller
             ->when($request->status !== null, function ($query) use ($request) {
                 return $query->whereStatus('1');
             })
-            ->withTrashed()
             ->get();
-        return view('admin.transactionManual.search', compact('transactionManuals'));
+
+        $oldtransactionManuals = TransactionManual::with('driver')
+            ->where('status', '1')
+            ->orWhere('driver_id', '147552')
+            ->when($request->toDate !== null, function ($query) use ($request) {
+                return $query->whereBetween('miladiDate', [persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00', persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:59']);
+            })
+            ->when($request->status !== null, function ($query) use ($request) {
+                return $query->whereStatus('1');
+            })
+            ->withTrashed()
+            ->orderByDesc('created_at')
+            ->paginate(150);
+        return view('admin.transactionManual.search', compact('transactionManuals', 'oldtransactionManuals'));
     }
 }
