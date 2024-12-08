@@ -223,8 +223,10 @@ class TransactionManualController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, TransactionManual $transactionManual)
+    public function update(Request $request, string $transactionManualId)
     {
+        $transactionManual = TransactionManual::whereId($transactionManualId)->withTrashed()->first();
+
         $driver = Driver::where('mobileNumber', $request->mobileNumber)->first();
         if ($driver) {
             $transactionManual->amount = $request->amount;
