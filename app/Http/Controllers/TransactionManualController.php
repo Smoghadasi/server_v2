@@ -33,9 +33,9 @@ class TransactionManualController extends Controller
 
         $oldtransactionManuals = TransactionManual::with('driver')
             ->where('status', '1')
+            ->where('miladiDate', '>', date('Y/m/d', time()) . ' 00:00:00')
             ->orWhere('driver_id', '147552')
             ->withTrashed()
-            ->where('miladiDate', '>', date('Y/m/d', time()) . ' 00:00:00')
             ->orderByDesc('created_at')
             ->paginate(150);
         // return $oldtransactionManuals;
@@ -79,7 +79,7 @@ class TransactionManualController extends Controller
             $transactionManual->description = $request->description;
             $transactionManual->status = 2;
             $transactionManual->date = $request->date . " " . $request->time;
-            $transactionManual->miladiDate = persianDateToGregorian(str_replace('/', '-', $request->date), '-') . ' 00:00:00';
+            $transactionManual->miladiDate = persianDateToGregorian(str_replace('/', '-', $request->date), '-') . ' ' . $request->time;
             $transactionManual->save();
             return back()->with('success', 'آیتم مورد نظر ثبت شد');
         }
@@ -232,7 +232,7 @@ class TransactionManualController extends Controller
             $transactionManual->type = $request->type;
             $transactionManual->date = $request->date . " " . $request->time;
             $transactionManual->description = $request->description;
-            $transactionManual->miladiDate = persianDateToGregorian(str_replace('/', '-', $request->date), '-') . ' 00:00:00';
+            $transactionManual->miladiDate = persianDateToGregorian(str_replace('/', '-', $request->date), '-') . ' ' . $request->time;
             $transactionManual->save();
             return back()->with('success', 'آیتم مورد نظر ثبت شد');
         }
