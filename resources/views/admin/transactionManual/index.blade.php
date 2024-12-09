@@ -432,7 +432,7 @@
 
                             @forelse ($oldtransactionNonDrivers as $key => $transactionManual)
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
+                                    <td>#</td>
 
                                     <td>
                                         {{ $transactionManual->driver->name }}
