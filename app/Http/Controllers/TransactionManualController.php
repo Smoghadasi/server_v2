@@ -34,12 +34,20 @@ class TransactionManualController extends Controller
         $oldtransactionManuals = TransactionManual::with('driver')
             ->where('status', '1')
             ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
-            // ->orWhere('driver_id', '147552')
+            ->Where('driver_id', '!=' , '147552')
+            ->withTrashed()
+            ->orderByDesc('miladiDate')
+            ->paginate(150);
+
+        $oldtransactionNonDrivers = TransactionManual::with('driver')
+            ->where('status', '1')
+            ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
+            ->Where('driver_id', '147552')
             ->withTrashed()
             ->orderByDesc('miladiDate')
             ->paginate(150);
         // return $oldtransactionManuals;
-        return view('admin.transactionManual.index', compact('transactionManuals', 'oldtransactionManuals'));
+        return view('admin.transactionManual.index', compact('transactionManuals', 'oldtransactionManuals', 'oldtransactionNonDrivers'));
     }
 
     /**
