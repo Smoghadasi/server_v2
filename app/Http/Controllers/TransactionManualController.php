@@ -293,7 +293,6 @@ class TransactionManualController extends Controller
             ->Where('driver_id', '!=', '147552')
             ->where('status', '1')
             ->withTrashed()
-            ->orderByDesc('created_at')
             ->paginate(150);
 
 
@@ -310,7 +309,6 @@ class TransactionManualController extends Controller
             })
             // ->where('status', '1')
             ->withTrashed()
-            ->orderByDesc('created_at')
             ->paginate(150);
 
         return view('admin.transactionManual.search', compact([
