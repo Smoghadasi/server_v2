@@ -36,7 +36,6 @@ class TransactionManualController extends Controller
             ->where('miladiDate', '>', date('Y/m/d', time()) . ' 00:00:00')
             ->Where('driver_id', '!=', '147552')
             ->withTrashed()
-            ->orderByDesc('miladiDate')
             ->paginate(150);
 
         $oldtransactionNonDrivers = TransactionManual::with('driver')
@@ -44,7 +43,6 @@ class TransactionManualController extends Controller
             ->where('miladiDate', '>', date('Y/m/d', time()) . ' 00:00:00')
             ->Where('driver_id', '147552')
             ->withTrashed()
-            ->orderByDesc('miladiDate')
             ->paginate(150);
         // return $oldtransactionNonDrivers;
         return view('admin.transactionManual.index', compact('transactionManuals', 'oldtransactionManuals', 'oldtransactionNonDrivers'));
