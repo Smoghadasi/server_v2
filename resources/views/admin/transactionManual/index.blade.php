@@ -660,12 +660,7 @@
 
                                     </td>
                                 </tr>
-                            @empty
-                                <tr class="text-center">
-                                    <td colspan="10">
-                                        دیتا مورد نظر یافت نشد
-                                    </td>
-                                </tr>
+
                             @endforelse
                         </tbody>
                     </table>
