@@ -276,13 +276,11 @@ class TransactionManualController extends Controller
                 ]);
             })
             ->when($request->status !== null, function ($query) use ($request) {
-                return $query->whereStatus('1');
+                return $query->whereStatus($request->status);
             })
             ->get();
 
         $oldtransactionManuals = TransactionManual::with('driver')
-            ->where('status', '1')
-            ->orWhere('driver_id', '147552')
             ->when($request->toDate !== null, function ($query) use ($request) {
                 return $query->whereBetween('miladiDate', [
                     persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00',
@@ -290,11 +288,33 @@ class TransactionManualController extends Controller
                 ]);
             })
             ->when($request->status !== null, function ($query) use ($request) {
-                return $query->whereStatus('1');
+                return $query->whereStatus($request->status);
+            })
+            ->Where('driver_id', '!=', '147552')
+            ->withTrashed()
+            ->orderByDesc('miladiDate')
+            ->paginate(150);
+
+
+        $oldtransactionNonDrivers = TransactionManual::with('driver')
+            ->Where('driver_id', '147552')
+            ->when($request->toDate !== null, function ($query) use ($request) {
+                return $query->whereBetween('miladiDate', [
+                    persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00',
+                    persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:59'
+                ]);
+            })
+            ->when($request->status !== null, function ($query) use ($request) {
+                return $query->whereStatus($request->status);
             })
             ->withTrashed()
             ->orderByDesc('miladiDate')
             ->paginate(150);
-        return view('admin.transactionManual.search', compact('transactionManuals', 'oldtransactionManuals'));
+
+        return view('admin.transactionManual.search', compact([
+            'transactionManuals',
+            'oldtransactionManuals',
+            'oldtransactionNonDrivers'
+        ]));
     }
 }
