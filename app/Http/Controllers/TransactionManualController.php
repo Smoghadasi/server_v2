@@ -291,6 +291,7 @@ class TransactionManualController extends Controller
                 return $query->whereStatus($request->status);
             })
             ->Where('driver_id', '!=', '147552')
+            ->where('status', '1')
             ->withTrashed()
             ->orderByDesc('miladiDate')
             ->paginate(150);
@@ -307,6 +308,7 @@ class TransactionManualController extends Controller
             ->when($request->status !== null, function ($query) use ($request) {
                 return $query->whereStatus($request->status);
             })
+            ->where('status', '1')
             ->withTrashed()
             ->orderByDesc('miladiDate')
             ->paginate(150);
