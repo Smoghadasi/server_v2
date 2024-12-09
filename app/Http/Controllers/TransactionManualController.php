@@ -308,7 +308,7 @@ class TransactionManualController extends Controller
             ->when($request->status !== null, function ($query) use ($request) {
                 return $query->whereStatus($request->status);
             })
-            ->where('status', '1')
+            // ->where('status', '1')
             ->withTrashed()
             ->orderByDesc('miladiDate')
             ->paginate(150);
