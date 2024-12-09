@@ -33,8 +33,8 @@ class TransactionManualController extends Controller
 
         $oldtransactionManuals = TransactionManual::with('driver')
             ->where('status', '1')
-            ->orWhere('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
-            ->orWhere('driver_id', '147552')
+            ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
+            // ->orWhere('driver_id', '147552')
             ->withTrashed()
             ->orderByDesc('miladiDate')
             ->paginate(150);
