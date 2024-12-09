@@ -660,6 +660,7 @@
 
                                     </td>
                                 </tr>
+                            @empty
 
                             @endforelse
                         </tbody>
