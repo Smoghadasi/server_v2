@@ -79,27 +79,26 @@
                 <div class="form-group row mb-4">
                     <div class="col-md-2">
                         <lable class="form-label">شماره موبایل :</label>
-                        <input class="form-control" name="mobileNumber" id="mobileNumber">
+                            <input class="form-control" name="mobileNumber" id="mobileNumber">
                     </div>
                     <div class="col-md-2">
                         <lable class="form-label">از تاریخ :</label>
-                        <input class="form-control" type="text" id="fromDate" name="fromDate"
-                            autocomplete="off" />
-                        <span id="span1"></span>
+                            <input class="form-control" type="text" id="fromDate" name="fromDate" autocomplete="off" />
+                            <span id="span1"></span>
                     </div>
                     <div class="col-md-2">
                         <lable class="form-label">تا تاریخ :</label>
-                        <input class="form-control" type="text" name="toDate" id="toDate"
-                            autocomplete="off" />
-                        <span id="span2"></span>
+                            <input class="form-control" type="text" name="toDate" id="toDate"
+                                autocomplete="off" />
+                            <span id="span2"></span>
                     </div>
                     <div class="col-md-2">
                         <lable class="form-label">وضعیت :</label>
-                        <select class="form-control form-select" name="status">
-                            <option></option>
-                            <option value="1">فعال</option>
-                            <option value="0">غیر فعال</option>
-                        </select>
+                            <select class="form-control form-select" name="status">
+                                <option></option>
+                                <option value="1">فعال</option>
+                                <option value="0">غیر فعال</option>
+                            </select>
                     </div>
                     <div class="col-md-2 mt-3">
                         <button type="submit" class="btn btn-danger">جستجو</button>
@@ -139,7 +138,8 @@
 
                                 <td>{{ $transactionManual->driver->mobileNumber }}</td>
 
-                                <td>{{ \App\Http\Controllers\FleetController::getFleetName($transactionManual->driver->fleet_id) }}</td>
+                                <td>{{ \App\Http\Controllers\FleetController::getFleetName($transactionManual->driver->fleet_id) }}
+                                </td>
 
                                 <td>
                                     {{ $transactionManual->lastPaymentDate }}
@@ -224,64 +224,73 @@
                                         @elseif ($transactionManual->status == 0)
                                             <i class="menu-icon tf-icons bx bx-x text-danger"></i>
                                         @else
-                                        @if (Auth::user()->role == 'admin')
-                                        <button type="button" class="btn btn-success btn-sm text-nowrap"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#editTransactionManual_{{ $transactionManual->id }}">
-                                            تغییر وضعیت
-                                        </button>
-                                        <!-- Active -->
-                                        <div class="modal fade" id="editTransactionManual_{{ $transactionManual->id }}"
-                                            tabindex="-1" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="modalCenterTitle">فعال سازی اشتراک های
-                                                            دستی
-                                                        </h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Close"></button>
-                                                    </div>
-                                                    <form action="{{ route('transactionManual.change.status', $transactionManual) }}"
-                                                        method="POST">
-                                                        @csrf
-                                                        @method('put')
-                                                        <div class="modal-body" style="text-align: right">
-                                                            <div class="row g-2">
-                                                                <div class="col-md-6 col-sm-12 mb-3">
-                                                                    <label for="mobileNumber" class="form-label">شماره
-                                                                        موبایل</label>
-                                                                    <input type="text" id="mobileNumber"
-                                                                        value="{{ $transactionManual->driver->mobileNumber }}"
-                                                                        name="mobileNumber" class="form-control"
-                                                                        required placeholder="شماره موبایل" />
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <label for="description"
-                                                                        class="form-label">وضعیت</label>
-                                                                    <select name="status" class="form-select" id="">
-                                                                        <option selected value="1">فعال</option>
-                                                                        <option value="0">غیر فعال</option>
-                                                                    </select>
-                                                                </div>
+                                            @if (Auth::user()->role == 'admin')
+                                                <button type="button" class="btn btn-success btn-sm text-nowrap"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#editTransactionManual_{{ $transactionManual->id }}">
+                                                    تغییر وضعیت
+                                                </button>
+                                                <!-- Active -->
+                                                <div class="modal fade"
+                                                    id="editTransactionManual_{{ $transactionManual->id }}"
+                                                    tabindex="-1" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="modalCenterTitle">فعال سازی
+                                                                    اشتراک های
+                                                                    دستی
+                                                                </h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
+                                                            <form
+                                                                action="{{ route('transactionManual.change.status', $transactionManual) }}"
+                                                                method="POST">
+                                                                @csrf
+                                                                @method('put')
+                                                                <div class="modal-body" style="text-align: right">
+                                                                    <div class="row g-2">
+                                                                        <div class="col-md-6 col-sm-12 mb-3">
+                                                                            <label for="mobileNumber"
+                                                                                class="form-label">شماره
+                                                                                موبایل</label>
+                                                                            <input type="text" id="mobileNumber"
+                                                                                value="{{ $transactionManual->driver->mobileNumber }}"
+                                                                                name="mobileNumber" class="form-control"
+                                                                                required placeholder="شماره موبایل" />
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <label for="description"
+                                                                                class="form-label">وضعیت</label>
+                                                                            <select name="status" class="form-select"
+                                                                                id="">
+                                                                                <option selected value="1">فعال
+                                                                                </option>
+                                                                                <option value="0">غیر فعال</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button"
+                                                                        class="btn btn-outline-secondary"
+                                                                        data-bs-dismiss="modal">
+                                                                        انصرف
+                                                                    </button>
+                                                                    <button type="submit"
+                                                                        class="btn btn-primary">ثبت</button>
+                                                                </div>
+                                                            </form>
                                                         </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-outline-secondary"
-                                                                data-bs-dismiss="modal">
-                                                                انصرف
-                                                            </button>
-                                                            <button type="submit" class="btn btn-primary">ثبت</button>
-                                                        </div>
-                                                    </form>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    @endif
+                                            @endif
                                         @endif
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-primary btn-sm text-nowrap" data-bs-toggle="modal"
+                                        <button type="button" class="btn btn-primary btn-sm text-nowrap"
+                                            data-bs-toggle="modal"
                                             data-bs-target="#adminMessageForm_{{ $transactionManual->id }}">
                                             ویرایش
                                         </button>
@@ -315,7 +324,8 @@
                                                             @method('delete')
                                                             <button type="submit" class="btn btn-danger">حذف</button>
                                                         </form>
-                                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                                                        <button type="button" class="btn btn-primary"
+                                                            data-bs-dismiss="modal">
                                                             انصراف
                                                         </button>
                                                     </div>
@@ -329,12 +339,14 @@
                                             <div class="modal-dialog modal-dialog-centered" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title" id="modalCenterTitle">ویرایش اشتراک های دستی
+                                                        <h5 class="modal-title" id="modalCenterTitle">ویرایش اشتراک های
+                                                            دستی
                                                         </h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
                                                     </div>
-                                                    <form action="{{ route('transaction-manual.update', $transactionManual) }}"
+                                                    <form
+                                                        action="{{ route('transaction-manual.update', $transactionManual) }}"
                                                         method="POST">
                                                         @csrf
                                                         @method('put')
@@ -354,12 +366,13 @@
                                                                     </label>
                                                                     <input type="text" name="amount" id="amount"
                                                                         value="{{ $transactionManual->amount }}"
-                                                                        class="form-control" required placeholder="مبلغ" />
+                                                                        class="form-control" required
+                                                                        placeholder="مبلغ" />
                                                                 </div>
                                                                 <div class="col-md-6 col-sm-12 mb-0">
                                                                     <label for="type" class="form-label">نوع</label>
-                                                                    <select class="form-control form-select" name="type"
-                                                                        required>
+                                                                    <select class="form-control form-select"
+                                                                        name="type" required>
                                                                         <option
                                                                             @if ($transactionManual->type == 'cardToCard') selected @endif
                                                                             value="cardToCard">کارت به کارت</option>
@@ -374,16 +387,18 @@
 
                                                                 <div class="col-md-3 col-sm-12 mb-0">
                                                                     <label for="type" class="form-label">تاریخ</label>
-                                                                    <input class="form-control" type="text" id="fromDate"
-                                                                        name="date" required placeholder="تاریخ"
+                                                                    <input class="form-control" type="text"
+                                                                        id="fromDate" name="date" required
+                                                                        placeholder="تاریخ"
                                                                         value="{{ $pieces[0] }}" />
                                                                     <span id="span1"></span>
                                                                 </div>
 
                                                                 <div class="col-md-3 col-sm-12 mb-0">
                                                                     <label for="type" class="form-label">ساعت</label>
-                                                                    <input value="{{ $pieces[1] }}" class="form-control"
-                                                                        type="time" id="time" name="time" required
+                                                                    <input value="{{ $pieces[1] }}"
+                                                                        class="form-control" type="time"
+                                                                        id="time" name="time" required
                                                                         placeholder="ساعت" autocomplete="off" />
                                                                 </div>
                                                                 <div class="col-md-12">

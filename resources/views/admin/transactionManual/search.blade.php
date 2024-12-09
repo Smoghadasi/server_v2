@@ -98,15 +98,68 @@
                                         @elseif ($transactionManual->status == 0)
                                             <i class="menu-icon tf-icons bx bx-x text-danger"></i>
                                         @else
-                                            @if (Auth::user()->role == 'admin')
-                                                <a class="btn btn-success btn-sm"
-                                                    href="{{ route('transactionManual.change.status', ['transactionManual' => $transactionManual, 'status' => 1]) }}">فعال
-                                                </a>
-                                                <a class="btn btn-danger btn-sm"
-                                                    href="{{ route('transactionManual.change.status', ['transactionManual' => $transactionManual, 'status' => 0]) }}">غیر
-                                                    فعال
-                                                </a>
-                                            @endif
+                                        @if (Auth::user()->role == 'admin')
+                                        <button type="button" class="btn btn-success btn-sm text-nowrap"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editTransactionManual_{{ $transactionManual->id }}">
+                                            تغییر وضعیت
+                                        </button>
+                                        <!-- Active -->
+                                        <div class="modal fade"
+                                            id="editTransactionManual_{{ $transactionManual->id }}"
+                                            tabindex="-1" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="modalCenterTitle">فعال سازی
+                                                            اشتراک های
+                                                            دستی
+                                                        </h5>
+                                                        <button type="button" class="btn-close"
+                                                            data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <form
+                                                        action="{{ route('transactionManual.change.status', $transactionManual) }}"
+                                                        method="POST">
+                                                        @csrf
+                                                        @method('put')
+                                                        <div class="modal-body" style="text-align: right">
+                                                            <div class="row g-2">
+                                                                <div class="col-md-6 col-sm-12 mb-3">
+                                                                    <label for="mobileNumber"
+                                                                        class="form-label">شماره
+                                                                        موبایل</label>
+                                                                    <input type="text" id="mobileNumber"
+                                                                        value="{{ $transactionManual->driver->mobileNumber }}"
+                                                                        name="mobileNumber" class="form-control"
+                                                                        required placeholder="شماره موبایل" />
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label for="description"
+                                                                        class="form-label">وضعیت</label>
+                                                                    <select name="status" class="form-select"
+                                                                        id="">
+                                                                        <option selected value="1">فعال
+                                                                        </option>
+                                                                        <option value="0">غیر فعال</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button"
+                                                                class="btn btn-outline-secondary"
+                                                                data-bs-dismiss="modal">
+                                                                انصرف
+                                                            </button>
+                                                            <button type="submit"
+                                                                class="btn btn-primary">ثبت</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
                                         @endif
                                     @endif
 
