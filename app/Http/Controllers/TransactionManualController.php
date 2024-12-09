@@ -263,7 +263,6 @@ class TransactionManualController extends Controller
 
     public function search(Request $request)
     {
-        // return $request;
         $transactionManuals = TransactionManual::with('driver')
             ->when($request->mobileNumber !== null, function ($query) use ($request) {
                 return $query->whereHas('driver', function ($q) use ($request) {
@@ -271,20 +270,24 @@ class TransactionManualController extends Controller
                 });
             })
             ->when($request->toDate !== null, function ($query) use ($request) {
-                $date = persianDateToGregorian(str_replace('/', '-', $request->toDate), '-');
-                return $query->whereBetween('miladiDate', ["$date 00:00:00", "$date 23:59:59"]);
+                return $query->whereBetween('miladiDate', [
+                    persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00',
+                    persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:59'
+                ]);
             })
             ->when($request->status !== null, function ($query) use ($request) {
                 return $query->whereStatus('1');
             })
             ->get();
 
-
         $oldtransactionManuals = TransactionManual::with('driver')
             ->where('status', '1')
             ->orWhere('driver_id', '147552')
             ->when($request->toDate !== null, function ($query) use ($request) {
-                return $query->whereBetween('miladiDate', [persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00', persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:59']);
+                return $query->whereBetween('miladiDate', [
+                    persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00',
+                    persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:59'
+                ]);
             })
             ->when($request->status !== null, function ($query) use ($request) {
                 return $query->whereStatus('1');
