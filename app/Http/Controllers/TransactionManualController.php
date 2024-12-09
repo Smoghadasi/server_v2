@@ -255,7 +255,7 @@ class TransactionManualController extends Controller
     public function destroy(string $transactionManualId)
     {
         $transactionManual = TransactionManual::whereId($transactionManualId)->withTrashed()->first();
-        $transactionManual->delete();
+        $transactionManual->forceDelete();
         return redirect()->route('transaction-manual.index')->with('danger', 'آیتم مورد نظر حذف شد');
     }
 
