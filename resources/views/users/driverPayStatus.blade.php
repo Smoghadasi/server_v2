@@ -34,7 +34,7 @@
         </div>
         {{-- <hr> --}}
         <p>{{ $message }}.</p>
-        <p class="text-dark">کد رهگیری: {{ $authority }}</p>
+        <p class="text-dark">کد رهگیری: {{ $authority ?? '' }}</p>
         <hr>
         برای دسترسی به بارها وارد برنامه شوید.
     </div>
