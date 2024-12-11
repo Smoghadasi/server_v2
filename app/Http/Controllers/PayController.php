@@ -1040,8 +1040,8 @@ class PayController extends Controller
                     } else {
                         $transaction->status = 0;
                         $transaction->save();
-                        return $transaction;
                     }
+                    Log::warning($result);
 
                     DB::commit();
 
