@@ -613,6 +613,7 @@ class PayController extends Controller
                 $transaction->userType = ROLE_DRIVER;
                 $transaction->authority = $result->Authority;
                 $transaction->bank_name = ZARINPAL;
+                $transaction->status = 2;
                 $transaction->amount = $amount;
                 $transaction->monthsOfThePackage = $monthsOfThePackage;
                 $transaction->save();
@@ -1037,7 +1038,7 @@ class PayController extends Controller
                         // $driver->freeAcceptLoads = ($driver->freeAcceptLoads > 0 ? $driver->freeAcceptLoads : 0) + DRIVER_FREE_ACCEPT_LOAD;
                         $driver->save();
                     } else {
-                        $transaction->status = $result->Status;
+                        $transaction->status = 0;
                         $transaction->save();
                     }
 
