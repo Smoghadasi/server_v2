@@ -20,6 +20,7 @@
                         <th>نام</th>
                         <th>نام رادیو</th>
                         <th>وضعیت</th>
+                        <th>تاریخ ثبت</th>
                         <th>عملیات</th>
                     </tr>
                 </thead>
@@ -43,6 +44,9 @@
                                     </td>
                                 @break
                             @endswitch
+                            <td>
+                                {{ $radio->persianDate }}
+                            </td>
                             <td>
                                 <a class="btn btn-info btn-sm" href="{{ route('radio.show', $radio) }}">جزئیات</a>
                             </td>
