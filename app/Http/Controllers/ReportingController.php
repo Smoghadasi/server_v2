@@ -1230,7 +1230,7 @@ class ReportingController extends Controller
     {
         $today = date('Y-m-d', time()) . ' 00:00:00';
         $successTransactions = Transaction::where([
-            ['status', '>', 0],
+            ['status', '>', 2],
             ['userType', 'driver'],
             ['created_at', '>=', $today]
         ])->pluck('user_id');
