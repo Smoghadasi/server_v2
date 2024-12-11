@@ -142,34 +142,34 @@ class ReportingController extends Controller
             'total' => Transaction::where('status', '>', 0)->sum('amount'),
             'toDay' => Transaction::where([
                 ['created_at', '>', $todayDate],
-                ['status', '>', 0]
+                ['status', '>', 2]
             ])->sum('amount'),
             'yesterday' => Transaction::where([
                 ['created_at', '>', $yesterdayDate],
                 ['created_at', '<', $todayDate],
-                ['status', '>', 0]
+                ['status', '>', 2]
             ])->sum('amount'),
             'week' => Transaction::where([
                 ['created_at', '>', $weekDate],
-                ['status', '>', 0]
+                ['status', '>', 2]
             ])->sum('amount'),
             'month' => Transaction::where([
                 ['created_at', '>=', $monthDate],
-                ['status', '>', 0]
+                ['status', '>', 2]
             ])->sum('amount'),
             'drivers' => Transaction::where([
                 ['created_at', '>', $weekDate],
-                ['status', '>', 0],
+                ['status', '>', 2],
                 ['userType', ROLE_DRIVER]
             ])->sum('amount'),
             'transportationCompany' => Transaction::where([
                 ['created_at', '>', $weekDate],
-                ['status', '>', 0],
+                ['status', '>', 2],
                 ['userType', ROLE_TRANSPORTATION_COMPANY]
             ])->sum('amount'),
             'cargoOwner' => Transaction::where([
                 ['created_at', '>', $weekDate],
-                ['status', '>', 0],
+                ['status', '>', 2],
                 ['userType', ROLE_CARGo_OWNER]
             ])->sum('amount'),
         ];
