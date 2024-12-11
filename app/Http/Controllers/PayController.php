@@ -787,7 +787,7 @@ class PayController extends Controller
         $params = array(
             "LoginAccount" => PIN_SINA,
             "Amount" => $amount,
-            "OrderId" => date('YmdHisu') . $driver->id,
+            "OrderId" => date('YmdHis') . $driver->id,
             "CallBackUrl" => $callbackUrl,
             "AdditionalData" => '',
             "Originator" => ''
