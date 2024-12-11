@@ -1058,6 +1058,8 @@ class PayController extends Controller
         $status = 0;
         $authority = $transaction->authority;
         $message = $this->getStatusMessage($status);
+        $transaction->status = 0;
+        $transaction->save();
         return view('users.driverPayStatus', compact('message', 'status', 'authority'));
     }
 
