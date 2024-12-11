@@ -139,7 +139,7 @@ class ReportingController extends Controller
         ];
 
         $incomes = [
-            'total' => Transaction::where('status', '>', 0)->sum('amount'),
+            'total' => Transaction::where('status', '>', 2)->sum('amount'),
             'toDay' => Transaction::where([
                 ['created_at', '>', $todayDate],
                 ['status', '>', 2]
@@ -190,7 +190,7 @@ class ReportingController extends Controller
             $incomes[] = [
                 'label' => str_replace('-', '/', convertEnNumberToFa(gregorianDateToPersian($day, '-'))),
                 'value' => Transaction::where([
-                    ['status', '>', 0],
+                    ['status', '>', 2],
                     ['created_at', '>', $day . ' 00:00:00'],
                     ['created_at', '<', $day . ' 23:59:59'],
                     ['userType', $userType]
@@ -1180,7 +1180,7 @@ class ReportingController extends Controller
         if ($status == 0 || $status == 2) {
             $today = date('Y-m-d', time()) . ' 00:00:00';
             $successTransactions = Transaction::where([
-                ['status', '>', 0],
+                ['status', '>', 2],
                 ['userType', $userType],
                 ['created_at', '>=', $today]
             ])->pluck('user_id');
@@ -1202,7 +1202,7 @@ class ReportingController extends Controller
 
         $counter = [
             'unsuccess' => Transaction::where([['status', 0], ['userType', $userType]])->count(),
-            'success' => Transaction::where([['status', '>', 0], ['userType', $userType]])->count()
+            'success' => Transaction::where([['status', '>', 2], ['userType', $userType]])->count()
         ];
         return view('admin.reporting.paymentReport', compact('transactions', 'counter'));
     }
@@ -1213,7 +1213,7 @@ class ReportingController extends Controller
         $fromDate = persianDateToGregorian(str_replace('/', '-', $request->from), '-') . ' 00:00:00';
         $toDate = persianDateToGregorian(str_replace('/', '-', $request->to), '-') . ' 00:00:00';
 
-        $transactions = Transaction::where('status', '>', 0)
+        $transactions = Transaction::where('status', '>', 2)
             ->whereBetween('created_at', [$fromDate, $toDate])
             ->orderBy('created_at', 'asc')
             ->select('id', 'created_at', 'amount')
@@ -1252,7 +1252,7 @@ class ReportingController extends Controller
     public function mostPaidDriversReport()
     {
         $transactions = Transaction::where([
-            ['status', '>', 0],
+            ['status', '>', 2],
             ['userType', ROLE_DRIVER]
         ])
             ->select('user_id', 'userType', DB::raw('count(*) as total'), DB::raw('sum(amount) as totalAmount'))
@@ -1270,7 +1270,7 @@ class ReportingController extends Controller
         $paymentByFleetReport = Fleet::join('drivers', 'drivers.fleet_id', 'fleets.id')
             ->join('transactions', 'transactions.user_id', 'drivers.id')
             ->where([
-                ['transactions.status', '>', 0],
+                ['transactions.status', '>', 2],
                 ['userType', ROLE_DRIVER]
             ])
             ->select('fleets.id', 'fleets.title', DB::raw('count(*) as total'), DB::raw('sum(amount) as totalAmount'))

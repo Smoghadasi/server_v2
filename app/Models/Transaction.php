@@ -116,7 +116,7 @@ class Transaction extends Model
             $paymentDates = [];
             $transactions = Transaction::where([
                 ['user_id', $this->user_id],
-                ['status', '>', 0]
+                ['status', '>', 2]
             ])
                 ->select('id', 'created_at')
                 ->orderBy('id', 'desc')
@@ -149,7 +149,7 @@ class Transaction extends Model
             return Transaction::where([
                 ['user_id', $this->user_id],
                 ['userType', $this->userType],
-                ['status', '>', 0]
+                ['status', '>', 2]
             ])->count();
         } catch (\Exception $e) {
         }
