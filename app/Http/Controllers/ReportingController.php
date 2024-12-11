@@ -1177,7 +1177,7 @@ class ReportingController extends Controller
     public function paymentReport($userType, $status)
     {
 
-        if ($status == 0) {
+        if ($status == 0 || $status == 2) {
             $today = date('Y-m-d', time()) . ' 00:00:00';
             $successTransactions = Transaction::where([
                 ['status', '>', 0],
@@ -1194,9 +1194,9 @@ class ReportingController extends Controller
                 ->orderBy('id', 'desc')
                 ->groupby('user_id')
                 ->paginate(100);
-        } else if ($status > 0)
+        } else if ($status > 2)
             $transactions = Transaction::where([
-                ['status', '>', 0],
+                ['status', '>', 2],
                 ['userType', $userType]
             ])->orderBy('id', 'desc')->paginate(100);
 
@@ -1236,10 +1236,10 @@ class ReportingController extends Controller
         ])->pluck('user_id');
 
         $transactions = Transaction::where([
-            ['status', 0],
             ['userType', 'driver'],
             ['created_at', '>=', $today]
         ])
+            ->whereIn('status', [0, 2])
             ->whereNotIn('user_id', $successTransactions)
             ->select('*', DB::raw('count(*) as total'))
             ->orderByDesc('updated_at')

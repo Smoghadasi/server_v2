@@ -56,10 +56,8 @@
                             <td>
                                 @if($transaction->status == 0)
                                     <span class="badge bg-label-danger text-nowrap">پرداخت ناموفق</span>
-                                @elseif($transaction->status == 100 || $transaction->status == 101)
-                                    <span class="badge bg-label-success text-nowrap">پرداخت شده</span>
-                                @else
-                                    <span class="badge bg-label-secondary text-nowrap">بدون وضعیت</span>
+                                @elseif($transaction->status == 2)
+                                    <span class="badge bg-label-warning text-nowrap">در انتظار پرداخت</span>
                                 @endif
                             </td>
                             <td>
