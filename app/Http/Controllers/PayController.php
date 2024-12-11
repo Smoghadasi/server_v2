@@ -1038,10 +1038,9 @@ class PayController extends Controller
                         // $driver->freeAcceptLoads = ($driver->freeAcceptLoads > 0 ? $driver->freeAcceptLoads : 0) + DRIVER_FREE_ACCEPT_LOAD;
                         $driver->save();
                     } else {
-                        $transaction->status = 0;
+                        $transaction->status = $result->Status;
                         $transaction->save();
                     }
-                    Log::warning($result);
 
                     DB::commit();
 
