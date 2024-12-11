@@ -696,6 +696,7 @@ class PayController extends Controller
                 $transaction->userType = ROLE_DRIVER;
                 $transaction->authority = $response->trackId;
                 $transaction->bank_name = ZIBAL;
+                $transaction->status = 2;
                 $transaction->amount = $amountOrginal;
                 $transaction->monthsOfThePackage = $monthsOfThePackage;
                 $transaction->save();
@@ -808,6 +809,7 @@ class PayController extends Controller
                 $transaction->user_id = $driver->id;
                 $transaction->userType = ROLE_DRIVER;
                 $transaction->authority = $token;
+                $transaction->status = 2;
                 // $transaction->ResCode = $this->generateOrderId();
                 $transaction->bank_name = SINA;
                 $transaction->amount = $amountOrginal;
@@ -868,6 +870,8 @@ class PayController extends Controller
                     $status = 0;
                     $message = $this->getStatusMessage($status);
                     $authority = $transaction->authority;
+                    $transaction->status = 0;
+                    $transaction->save();
                     return view('users.driverPayStatus', compact('message', 'status'));
                 }
 
@@ -973,11 +977,15 @@ class PayController extends Controller
                     DB::rollBack();
                 }
             } else {
+                $transaction->status = 0;
+                $transaction->save();
             }
         }
         $status = 0;
         $message = $this->getStatusMessage($status);
         $authority = $transaction->authority;
+        $transaction->status = 0;
+        $transaction->save();
 
         return view('users.driverPayStatus', compact('message', 'status', 'authority'));
     }
