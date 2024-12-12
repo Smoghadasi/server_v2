@@ -57,7 +57,7 @@ class Driver extends Authenticatable
     public function getTransactionCountAttribute()
     {
         try {
-            return Transaction::where('user_id', $this->id)->where('status', '>', 0)->count();
+            return Transaction::where('user_id', $this->id)->where('status', '>', 2)->count();
         } catch (\Exception $exception) {
         }
 
@@ -72,7 +72,7 @@ class Driver extends Authenticatable
     public function getCountOfPaisAttribute()
     {
         return [
-            'isPaid' => Transaction::where([['user_id', $this->id], ['status', '>', 0]])->count(),
+            'isPaid' => Transaction::where([['user_id', $this->id], ['status', '>', 2]])->count(),
             'unPaid' => Transaction::where([['user_id', $this->id], ['status', 0]])->count(),
         ];
     }
@@ -184,6 +184,45 @@ class Driver extends Authenticatable
     }
 
     public function unSuccessPayment($mobile)
+    {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.sms.ir/v1/send/verify',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS =>
+            '{' . '
+                "mobile": ' .
+                '"' . $mobile . '",
+                "templateId": 580573,
+                "parameters": [
+                  {
+                    "name": "TEL",
+                    "value":' . ' " ' . TELL . '"' . '
+                  }
+                ]
+              }',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json',
+                'Accept: text/plain',
+                'x-api-key: QlDsnB6uLz3glijWOP02YcXiBAEjf06Hw5WOcRWovUGVESpJIPMkwRdcPRbEPPMj'
+            ),
+        ));
+
+        curl_exec($curl);
+        curl_close($curl);
+
+        return true;
+    }
+
+    // ارسال پیامک برای رانندگانی که سه روز از اشتراک باقی نمانده است
+    public function sendDriverThreeDays($mobile)
     {
         $curl = curl_init();
 
