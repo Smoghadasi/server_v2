@@ -23,6 +23,11 @@ class DriverCall extends Model
         return $this->belongsTo(Driver::class);
     }
 
+    public function cargo(): BelongsTo
+    {
+        return $this->belongsTo(Load::class, 'load_id');
+    }
+
     /**
      * Get the user that owns the DriverCall
      *

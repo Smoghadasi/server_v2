@@ -27,7 +27,13 @@
                         @foreach ($messages as $key => $message)
                             <tr @if ($message->status == true) style="background: #f1f1f1" @endif>
                                 <td>{{ ($messages->currentPage() - 1) * $messages->perPage() + ($key + 1) }}</td>
-                                <td>{{ $message->title }}</td>
+                                <td>
+                                    @if ($message->status == true)
+                                        <a href="{{ route('messages.show', $message->id) }}">{{ $message->title }}</a>
+                                    @else
+                                        {{ $message->title }}
+                                    @endif
+                                </td>
                                 <td>{{ $message->message }}</td>
                                 <td>
                                     {{ $message->nameAndLastName }}

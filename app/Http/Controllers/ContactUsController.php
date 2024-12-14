@@ -75,8 +75,11 @@ class ContactUsController extends Controller
     // نمایش پیام ها
     public function messages()
     {
-        $messages = ContactUs::orderby('id', 'desc')->paginate(20);
-        return view('admin/messages', compact('messages'));
+        $messages = ContactUs::whereIn('role', ['owner', 'driver'])
+            ->where('parent_id', null)
+            ->orderby('id', 'desc')
+            ->paginate(20);
+        return view('admin.message.index', compact('messages'));
     }
 
     // نمایش پیام ها رانندگان
@@ -113,9 +116,14 @@ class ContactUsController extends Controller
     // تغییر وضعیت به خوانده شده
     public function changeMessageStatus(ContactUs $contactUs, Request $request)
     {
+        $contact = new ContactUs();
+        $contact->status = true;
+        $contact->parent_id = $contactUs->id;
+        $contact->role = 'operator';
+        $contact->result = strlen($request->result) ? $request->result : "نتیجه ای ثبت نشده!";
+        $contact->save();
 
         $contactUs->status = true;
-        $contactUs->result = strlen($request->result) ? $request->result : "نتیجه ای ثبت نشده!";
         $contactUs->save();
         if ($request->notification == 'on') {
             try {
@@ -138,6 +146,16 @@ class ContactUsController extends Controller
 
 
         return back()->with('success', 'وضعیت پیام مورد نظر به خوانده شده تغییر و نتیجه پیگیری ثبت شد.');
+    }
+
+    public function show(ContactUs $contactUs)
+    {
+        $contactUses = ContactUs::with('childrenRecursive')
+            ->where('parent_id', null)
+            ->whereId($contactUs->id)
+            ->first();
+        // return $contactUses;
+        return view('admin.message.show', compact('contactUses'));
     }
 
     private function sendNotification($FCM_token, $title, $body)

@@ -968,6 +968,22 @@ class DriverController extends Controller
                         }
                     }
                 }
+                try {
+                    $driverCallOwnerCount = DriverCall::where('load_id', $load->id)->whereHas('cargo', function ($q) {
+                        $q->where('operator_id', 0);
+                        $q->where('userType', ROLE_OWNER);
+                    })->count();
+                    if ($driverCallOwnerCount == 11) {
+                        $owner = Owner::find($load->user_id);
+                        if (!is_null($owner->FCM_token)) {
+                            $title = 'صاحب بار عزیز';
+                            $body = `بیش از 10 راننده برای بار از ($load->fromCity) به ($load->toCity)، با شما تماس گرفته اند.`;
+                            $this->sendNotification($owner->FCM_token, $title, $body, API_ACCESS_KEY_OWNER);
+                        }
+                    }
+                } catch (\Throwable $th) {
+                    //throw $th;
+                }
 
                 return ['result' => true];
             } elseif (FleetLoad::where('load_id', $load_id)->where('fleet_id', '!=', 82)->whereHas('cargo', function ($q) {
