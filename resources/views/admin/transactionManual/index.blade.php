@@ -440,7 +440,7 @@
                     </table>
                     <div class="h5 mt-2 mb-2">
                         جمع کل :
-                        {{ number_format($oldtransactionManuals->sum('amount')) }}
+                        {{ number_format($anotherTransactions->sum('amount')) }}
                     </div>
                 </div>
 
