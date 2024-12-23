@@ -123,8 +123,6 @@ class ContactUsController extends Controller
         $contact->result = strlen($request->result) ? $request->result : "نتیجه ای ثبت نشده!";
         $contact->save();
 
-        $contactUs->status = true;
-        $contactUs->save();
         if ($request->notification == 'on') {
             try {
                 if ($contactUs->role == 'driver') {
