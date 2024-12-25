@@ -58,6 +58,11 @@
                                                 <label for="description" class="form-label">توضیحات</label>
                                                 <textarea class="form-control" name="description"></textarea>
                                             </div>
+                                            <div class="col-md-6 col-sm-12 mb-3">
+                                                <label for="mobileNumber" class="form-label">تماس رایگان</label>
+                                                <input type="number" value="0" max="3" min="0" id="freeCalls" name="freeCalls"
+                                                    class="form-control" placeholder="تماس رایگان" />
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
@@ -193,11 +198,8 @@
                         <tbody class="small text-right">
                             <?php $i = 1; ?>
                             @php
-                                $anotherTransactions = $oldtransactionManuals->merge($oldtransactionNonDrivers)
-                                                                    ->sortByDesc('miladiDate');
+                                $anotherTransactions = $oldtransactionManuals->merge($oldtransactionNonDrivers)->sortByDesc('miladiDate');
                             @endphp
-
-
 
                             @forelse ($anotherTransactions as $key => $transactionManual)
                                 <tr>
@@ -440,7 +442,7 @@
                     </table>
                     <div class="h5 mt-2 mb-2">
                         جمع کل :
-                        {{ number_format($anotherTransactions->sum('amount')) }}
+                        {{ number_format($anotherTransactions->sum('amount')) }} تومان
                     </div>
                 </div>
 

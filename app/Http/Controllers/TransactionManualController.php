@@ -68,6 +68,17 @@ class TransactionManualController extends Controller
     {
         $driver = Driver::where('mobileNumber', $request->mobileNumber)->first();
         if ($driver) {
+            if ($request->freeCalls > 0) {
+                $free_subscription = new FreeSubscription();
+                $free_subscription->type = AUTH_CALLS;
+                $free_subscription->value = $request->freeCalls;
+                $free_subscription->driver_id = $driver->id;
+                $free_subscription->operator_id = Auth::id();
+                $free_subscription->save();
+                $driver->freeCallTotal += $request->freeCalls;
+                $driver->freeCalls += $request->freeCalls;
+                $driver->save();
+            }
             $duplicateTransaction = TransactionManual::where('driver_id', $driver->id)->orderByDesc('created_at')->first();
             if ($duplicateTransaction) {
                 $to = Carbon::createFromFormat('Y-m-d H:s:i', $duplicateTransaction->miladiDate);
