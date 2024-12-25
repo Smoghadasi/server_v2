@@ -536,7 +536,8 @@ class DataConvertController extends Controller
                         $request->$freight,
                         $request->$priceType,
                         $request->$title,
-                        $counter
+                        $counter,
+                        $cargo->id
                     );
                 }
             } catch (\Exception $exception) {
@@ -550,7 +551,7 @@ class DataConvertController extends Controller
     }
 
     // ذخیره بار
-    public function storeCargo($origin, $originState, $destination, $destinationState, $mobileNumber, $description, $fleet, $freight, $priceType, $title, &$counter)
+    public function storeCargo($origin, $originState, $destination, $destinationState, $mobileNumber, $description, $fleet, $freight, $priceType, $title, &$counter, $cargoId)
     {
         if (!strlen(trim($origin)) || $origin == null || $origin == 'null' || !strlen(trim($destination)) || $destination == null || $destination == 'null' || !strlen($fleet) || !strlen($mobileNumber))
             return;
@@ -586,6 +587,7 @@ class DataConvertController extends Controller
             $load->width = 0;
             $load->length = 0;
             $load->height = 0;
+            $load->cargo_convert_list_id = $cargoId;
             $load->loadingAddress = '';
             $load->dischargeAddress = '';
             $load->senderMobileNumber = $mobileNumber;
