@@ -113,6 +113,9 @@
                                     @if ($owner->moreDayLoad >= 3)
                                         <span class="badge bg-primary">3+</span>
                                     @endif
+                                    @if ($owner->isAccepted == 1)
+                                        <i class="menu-icon tf-icons bx bx-check-shield text-success"></i>
+                                    @endif
                                 </td>
                                 <td>
                                     @switch($owner->isAuth)

@@ -148,6 +148,7 @@ class OwnerController extends Controller
         $ownerPenddingCounts = Owner::where('isAuth', 2)->count();
         $ownerRejectCounts = Owner::where('isAuth', 0)->count();
         $ownerAcceptCounts = Owner::where('isAuth', 1)->count();
+        $ownerRejectedCounts = Owner::where('isRejected', 1)->count();
 
         $owners = Owner::where('nationalCode', 'LIKE', "%$request->searchWord%")
             ->orWhere('mobileNumber', 'LIKE', "%$request->searchWord%")
@@ -160,6 +161,7 @@ class OwnerController extends Controller
             'ownerPenddingCounts',
             'ownerRejectCounts',
             'ownerAcceptCounts',
+            'ownerRejectedCounts',
             'loadsToday',
             'loadsTodayOwner'
         ));
