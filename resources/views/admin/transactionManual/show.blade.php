@@ -22,6 +22,7 @@
                             <th>نوع</th>
                             <th>تاریخ واریزی</th>
                             <th>توضیحات</th>
+                            <th>جواب ادمین</th>
                             {{-- <th>تاریخ آخرین تماس</th> --}}
                             <th>وضعیت</th>
                             <th>عملیات</th>
@@ -53,9 +54,8 @@
 
                                 <td>{{ $transactionManual->date }}</td>
 
-                                <td>
-                                    {{ $transactionManual->description ? Str::limit($transactionManual->description, 20, '...') : '-' }}
-                                </td>
+                                <td>{{ $transactionManual->description ? Str::limit($transactionManual->description, 20, '...') : '-' }}</td>
+                                <td>{{ $transactionManual->result ? Str::limit($transactionManual->result, 20, '...') : '-' }}</td>
 
                                 <td class="text-center">
                                     @if ($transactionManual->status == 1)
@@ -232,6 +232,13 @@
                                                                     class="form-label">توضیحات</label>
                                                                 <textarea class="form-control" name="description">{{ $transactionManual->description }}</textarea>
                                                             </div>
+                                                            @if (Auth::user()->role == 'admin')
+                                                                <div class="col-md-12">
+                                                                    <label for="result"
+                                                                        class="form-label">جواب ادمین</label>
+                                                                    <textarea class="form-control" name="result">{{ $transactionManual->result }}</textarea>
+                                                                </div>
+                                                            @endif
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">

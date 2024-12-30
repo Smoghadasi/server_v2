@@ -50,6 +50,8 @@
                             <th>مبلغ</th>
                             <th>نوع</th>
                             <th>تاریخ واریزی</th>
+                            <th>توضیحات</th>
+                            <th>جواب ادمین</th>
                             {{-- <th>تاریخ آخرین تماس</th> --}}
                             <th>وضعیت</th>
                             <th>عملیات</th>
@@ -86,6 +88,8 @@
                                 <td>
                                     {{ $transactionManual->date }}
                                 </td>
+                                <td>{{ $transactionManual->description ? Str::limit($transactionManual->description, 20, '...') : '-' }}</td>
+                                <td>{{ $transactionManual->result ? Str::limit($transactionManual->result, 20, '...') : '-' }}</td>
 
                                 <td class="text-center">
                                     @if ($transactionManual->deleted_at != null)
