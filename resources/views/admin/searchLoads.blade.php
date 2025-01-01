@@ -71,14 +71,22 @@
                         <div class="alert alert-info text-right">{{ $message }}</div>
                     @endif
                     @if (isset($firstDateLoad))
-                    <div class="row alert alert-info text-right">
-                        <div class="col-2">
-                            تاریخ اولین بار
+                        <div class="row alert alert-info text-right">
+                            <div class="col-2">
+                                تاریخ اولین بار
+                            </div>
+                            <div class="col-2" style="text-align: right">
+                                {{ $firstDateLoad->loadingDate }}
+                            </div>
+                            <div class="col " style="text-align: right">
+
+                                @if ($loads[0]?->ownerAuthenticated == true)
+                                    صاحب بار تایید شده
+                                    <i class="menu-icon tf-icons bx bx-check-shield text-success"></i>
+                                @endif
+                            </div>
+
                         </div>
-                        <div class="col-2" style="text-align: right">
-                            {{ $firstDateLoad->loadingDate }}
-                        </div>
-                    </div>
 
                     @endif
                 </form>
@@ -107,7 +115,8 @@
                                 <?php $i = 0; ?>
                                 @foreach ($loads as $key => $load)
                                     <tr>
-                                        <td><input type="checkbox" name="loads[]" id="loads[]" value="{{ $load->id }}">
+                                        <td><input type="checkbox" name="loads[]" id="loads[]"
+                                                value="{{ $load->id }}">
                                         </td>
                                         <td>
                                             {{ $key + 1 }}
@@ -123,7 +132,9 @@
                                             @php
                                                 $fleets = json_decode($load->fleets, true);
                                                 for ($i = 0; $i < count($fleets); $i++) {
-                                                    echo '<span class="alert alert-info m-1 p-1">' . $fleets[0]['title'] . '</span>';
+                                                    echo '<span class="alert alert-info m-1 p-1">' .
+                                                        $fleets[0]['title'] .
+                                                        '</span>';
                                                 }
                                             @endphp
 
@@ -133,7 +144,8 @@
                                         <td>
                                             <span class="badge bg-primary">بازدید : {{ $load->driverVisitCount }}</span>
                                             <span>
-                                                <a class="badge bg-success" href="{{ route('load.searchLoadDriverCall', $load->id) }}">
+                                                <a class="badge bg-success"
+                                                    href="{{ route('load.searchLoadDriverCall', $load->id) }}">
                                                     تماس: {{ $load->numOfDriverCalls }}
                                                 </a>
                                             </span>
@@ -148,11 +160,12 @@
                                         @php
                                             $pieces = explode(' ', $load->created_at);
                                         @endphp
-                                        <td>{{ $load->loadingDate . " " .  $pieces[1] }}</td>
+                                        <td>{{ $load->loadingDate . ' ' . $pieces[1] }}</td>
                                         <td>
                                             <div class="dropdown">
                                                 <div class="btn-group dropstart">
-                                                    <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <button type="button" class="btn btn-primary dropdown-toggle"
+                                                        data-bs-toggle="dropdown" aria-expanded="false">
                                                         عملیات
                                                     </button>
                                                     <ul class="dropdown-menu">
@@ -164,12 +177,14 @@
                                                         </li>
 
                                                         <li>
-                                                            <button type="button" class="dropdown-item" data-bs-toggle="modal"
-                                                                    data-bs-target="#removeLoad_{{ $load->id }}">حذف
+                                                            <button type="button" class="dropdown-item"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#removeLoad_{{ $load->id }}">حذف
                                                             </button>
                                                         </li>
                                                     </ul>
-                                                    <div id="removeLoad_{{ $load->id }}" class="modal fade" role="dialog">
+                                                    <div id="removeLoad_{{ $load->id }}" class="modal fade"
+                                                        role="dialog">
                                                         <div class="modal-dialog">
 
                                                             <!-- Modal content-->
@@ -180,18 +195,20 @@
                                                                 <div class="modal-body">
                                                                     <p>آیا مایل به حذف بار
                                                                         <span class="text-primary">
-                                                                    {{ $load->title }}</span>
+                                                                            {{ $load->title }}</span>
                                                                         هستید؟
                                                                     </p>
                                                                 </div>
                                                                 <div class="modal-footer text-left">
-                                                                    <form action="{{ route('remove.load', $load) }}" method="POST">
+                                                                    <form action="{{ route('remove.load', $load) }}"
+                                                                        method="POST">
                                                                         @csrf
                                                                         @method('DELETE')
-                                                                        <button class="btn btn-primary" type="submit">حذف</button>
+                                                                        <button class="btn btn-primary"
+                                                                            type="submit">حذف</button>
                                                                     </form>
                                                                     <button type="button" class="btn btn-danger"
-                                                                            data-bs-dismiss="modal">
+                                                                        data-bs-dismiss="modal">
                                                                         انصراف
                                                                     </button>
                                                                 </div>
