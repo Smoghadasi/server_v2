@@ -39,7 +39,7 @@ class TransactionManual extends Model
                 ['driver_id', $this->driver_id]
             ])
                 ->select('id', 'created_at', 'date')
-                ->orderBy('created_at','asc')
+                ->orderBy('created_at', 'asc')
                 ->first();
             // $date = explode(' ', $transaction->created_at);
             return $transaction->date;
@@ -57,7 +57,7 @@ class TransactionManual extends Model
                 ->first();
             $date = explode(' ', $transaction->created_at);
 
-            return gregorianDateToPersian($transaction->created_at, '-', true) . ' | ' .  $date[1] ;
+            return gregorianDateToPersian($transaction->created_at, '-', true) . ' | ' .  $date[1];
         } catch (\Exception $exception) {
         }
         return 'بدون تاریخ';
@@ -65,8 +65,14 @@ class TransactionManual extends Model
     public function getLastActiveDateAttribute()
     {
         try {
-            $driver = Driver::find($this->driver_id);
-            return gregorianDateToPersian($driver->activeDate, '-', true) ?? null;
+            // $driver = Driver::find($this->driver_id);
+            $transaction = Transaction::where('userType', 'driver')
+                ->where('user_id', $this->driver_id)
+                ->whereIn('status', [100, 101])
+                ->latest('created_at')
+                ->first();
+
+            return gregorianDateToPersian($transaction->created_at, '-', true) ?? null;
         } catch (\Exception $exception) {
         }
         return 'بدون تاریخ';
