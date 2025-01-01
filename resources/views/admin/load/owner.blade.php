@@ -63,17 +63,17 @@
                                     {{ $load->title }}
                                 </td>
                                 <td>{{ $load->senderMobileNumber }}</td>
-                                @if (Auth::user()->role == 'admin')
-                                    <td class="{{ $load->owner->isAccepted == 1 ? 'text-success' : '' }}">
-                                        <a class="{{ $load->owner->isAccepted == 1 ? 'text-success' : '' }}" href="{{ route('owner.show', $load->owner->id) }}">
-                                            {{ $load->owner->name }} {{ $load->owner->lastName }}
-                                        </a>
-                                    </td>
-                                @else
-                                    <td>
+                                {{-- @if (Auth::user()->role == 'admin') --}}
+                                <td class="{{ $load->owner->isAccepted == 1 ? 'text-success' : '' }}">
+                                    <a class="{{ $load->owner->isAccepted == 1 ? 'text-success' : '' }}" href="{{ route('owner.show', $load->owner->id) }}">
+                                        {{ $load->owner->name }} {{ $load->owner->lastName }}
+                                    </a>
+                                </td>
+                                {{-- @else --}}
+                                    {{-- <td>
                                         {{ $load->owner->name }} {{ $load->owner->lastName }}
                                     </td>
-                                @endif
+                                @endif --}}
 
                                 {{--                        <td>{{ $load->userType == ROLE_CUSTOMER ? 'صاحب بار' : 'باربری' }}</td> --}}
                                 <td>
