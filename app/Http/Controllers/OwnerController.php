@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Fleet;
 use App\Models\Load;
 use App\Models\Owner;
 use Illuminate\Http\Request;
@@ -30,6 +31,8 @@ class OwnerController extends Controller
         $ownerRejectedCounts = Owner::where('isRejected', 1)->count();
 
         $owners = Owner::orderByDesc('created_at')->paginate(10);
+
+        $fleets = Fleet::all();
         return view('admin.owner.index', compact([
             'owners',
             'ownerPenddingCounts',
@@ -37,7 +40,8 @@ class OwnerController extends Controller
             'ownerAcceptCounts',
             'ownerRejectedCounts',
             'loadsToday',
-            'loadsTodayOwner'
+            'loadsTodayOwner',
+            'fleets'
         ]));
     }
 
@@ -136,6 +140,7 @@ class OwnerController extends Controller
     // جستجوی صاحبان بار
     public function searchOwners(Request $request)
     {
+
         $loadsToday = Load::where('userType', ROLE_OWNER)
             ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
             ->withTrashed()
@@ -149,13 +154,23 @@ class OwnerController extends Controller
         $ownerRejectCounts = Owner::where('isAuth', 0)->count();
         $ownerAcceptCounts = Owner::where('isAuth', 1)->count();
         $ownerRejectedCounts = Owner::where('isRejected', 1)->count();
+        $fleets = Fleet::all();
 
-        $owners = Owner::where('nationalCode', 'LIKE', "%$request->searchWord%")
-            ->orWhere('mobileNumber', 'LIKE', "%$request->searchWord%")
-            ->orWhere('name', 'LIKE', "%$request->searchWord%")
-            ->orWhere('lastName', 'LIKE', "%$request->searchWord%")
-            ->orderby('id', 'desc')
-            ->paginate(5);
+
+        if ($request->has('fleet_id')) {
+            $owners = Owner::whereHas('loads', function ($q) use ($request) {
+                $q->where('fleets', 'Like', '%fleet_id":' . $request->fleet_id . ',%');
+                $q->where('userType', 'owner');
+                $q->withTrashed();
+            })->paginate(5000);
+        } else {
+            $owners = Owner::where('nationalCode', 'LIKE', "%$request->searchWord%")
+                ->orWhere('mobileNumber', 'LIKE', "%$request->searchWord%")
+                ->orWhere('name', 'LIKE', "%$request->searchWord%")
+                ->orWhere('lastName', 'LIKE', "%$request->searchWord%")
+                ->orderby('id', 'desc')
+                ->paginate(5);
+        }
         return view('admin.owner.index', compact(
             'owners',
             'ownerPenddingCounts',
@@ -163,7 +178,8 @@ class OwnerController extends Controller
             'ownerAcceptCounts',
             'ownerRejectedCounts',
             'loadsToday',
-            'loadsTodayOwner'
+            'loadsTodayOwner',
+            'fleets'
         ));
     }
 
@@ -187,7 +203,7 @@ class OwnerController extends Controller
             $q->where('fleets', 'Like', '%fleet_id":' . 82 . ',%');
             $q->where('userType', 'owner');
         })
-        ->paginate();
+            ->paginate();
 
         $loadsToday = Load::where('userType', ROLE_OWNER)
             ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
