@@ -123,6 +123,7 @@
                             <th>تاریخ اولین واریز</th>
                             <th>تاریخ آخرین تماس</th>
                             <th>تاریخ آخرین اشتراک</th>
+                            <th>جواد ادمین</th>
                             {{-- <th>وضعیت</th> --}}
                             {{-- <th>عملیات</th> --}}
                         </tr>
@@ -154,6 +155,9 @@
                                 </td>
                                 <td>
                                     {{ $transactionManual->lastActiveDate }}
+                                </td>
+                                <td>
+                                    {{ $transactionManual->lastAdminMessage }}
                                 </td>
                             </tr>
                         @empty

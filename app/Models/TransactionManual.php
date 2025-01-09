@@ -12,7 +12,7 @@ class TransactionManual extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $appends = ['lastPaymentDate', 'firstPaymentDate', 'lastActiveDate'];
+    protected $appends = ['lastPaymentDate', 'firstPaymentDate', 'lastActiveDate', 'lastAdminMessage'];
 
     public function driver(): BelongsTo
     {
@@ -76,5 +76,19 @@ class TransactionManual extends Model
         } catch (\Exception $exception) {
         }
         return 'بدون تاریخ';
+    }
+    public function getLastAdminMessageAttribute()
+    {
+        try {
+            // $driver = Driver::find($this->driver_id);
+            $transactionManual = TransactionManual::where('driver_id', $this->driver_id)
+                ->whereNotNull('result_at')
+                ->latest('result_at')
+                ->first();
+
+            return $transactionManual ? $transactionManual->result : null;
+        } catch (\Exception $exception) {
+        }
+        return '';
     }
 }

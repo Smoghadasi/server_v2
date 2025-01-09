@@ -252,6 +252,7 @@ class TransactionManualController extends Controller
             $transactionManual->date = $request->date . " " . $request->time;
             $transactionManual->description = $request->description;
             $transactionManual->result = $request->result;
+            $transactionManual->result_at = now();
             $transactionManual->miladiDate = persianDateToGregorian(str_replace('/', '-', $request->date), '-') . ' ' . $request->time;
             $transactionManual->save();
             return redirect()->route('transaction-manual.index')->with('success', 'آیتم مورد نظر ثبت شد');
