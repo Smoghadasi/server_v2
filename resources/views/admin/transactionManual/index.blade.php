@@ -157,7 +157,7 @@
                                     {{ $transactionManual->lastActiveDate }}
                                 </td>
                                 <td>
-                                    {{ $transactionManual->lastAdminMessage ? '' }}
+                                    {{ $transactionManual->lastAdminMessage }}
                                 </td>
                             </tr>
                         @empty
