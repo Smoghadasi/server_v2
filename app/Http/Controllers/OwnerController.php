@@ -31,9 +31,9 @@ class OwnerController extends Controller
         $ownerRejectedCounts = Owner::where('isRejected', 1)->count();
 
         // if (auth()->user()->role == 'admin') {
-        //     $owners = Owner::orderByDesc('created_at')->paginate(10);
+        $owners = Owner::orderByDesc('created_at')->paginate(10);
         // } elseif (auth()->user()->role == 'operator') {
-            $owners = collect();
+        // $owners = collect();
         // }
 
 
@@ -46,6 +46,14 @@ class OwnerController extends Controller
             'ownerRejectedCounts',
             'loadsToday',
             'loadsTodayOwner',
+            'fleets'
+        ]));
+    }
+
+    public function ownerOperators()
+    {
+        $fleets = Fleet::all();
+        return view('admin.owner.operators', compact([
             'fleets'
         ]));
     }

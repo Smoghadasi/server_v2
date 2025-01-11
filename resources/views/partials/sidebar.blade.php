@@ -65,7 +65,7 @@
                 @endif
                 @if (in_array('listOfOwners', auth()->user()->userAccess))
                     <li class="menu-item">
-                        <a class="menu-link" href="{{ route('owner.index') }}">
+                        <a class="menu-link" href="{{ route('owner.operators') }}">
                             <span>صاحبان بار</span>
                         </a>
                     </li>

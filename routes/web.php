@@ -277,6 +277,10 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // لیست صاحبان بار
         Route::resource('owner', OwnerController::class)->middleware("operator");
 
+        Route::get('ownerOperators', [OwnerController::class, 'ownerOperators'])
+            ->name('owner.operators')
+            ->middleware('operator');
+
         Route::get('ownersNissan', [OwnerController::class, 'ownersNissan'])
             ->name('ownersNissan')
             ->middleware('operator');

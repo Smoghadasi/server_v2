@@ -5,7 +5,7 @@
     <div class="card">
         <h5 class="card-header">لیست صاحبان بار</h5>
         <div class="card-body">
-            @if (auth()->user()->role == 'admin')
+            {{-- @if (auth()->user()->role == 'admin') --}}
                 <div class="my-3">
                     <div class="row justify-content-between">
                         <div class="col">
@@ -29,7 +29,7 @@
                         </div>
                     </div>
                 </div>
-            @endif
+            {{-- @endif --}}
             <form method="post" action="{{ route('owner.search') }}">
                 @csrf
                 <div class="form-group row">
@@ -50,100 +50,98 @@
                     </div>
                 </div>
             </form>
-            @if ($owners != '[]')
 
-                <div class="table-responsive mt-4">
-                    <table class="table">
-                        <thead>
+            <div class="table-responsive mt-4">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>نام و نام خانوادگی</th>
+                            <th>احراز هویت</th>
+                            <th>نوع</th>
+                            <th>کد ملی</th>
+                            <th>شماره موبایل</th>
+                            <th>بار ها</th>
+                            <th class="text-center">تاریخ</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody class="small">
+                        <?php $i = 0; ?>
+                        @forelse($owners as $owner)
                             <tr>
-                                <th>#</th>
-                                <th>نام و نام خانوادگی</th>
-                                <th>احراز هویت</th>
-                                <th>نوع</th>
-                                <th>کد ملی</th>
-                                <th>شماره موبایل</th>
-                                <th>بار ها</th>
-                                <th class="text-center">تاریخ</th>
-                                <th>عملیات</th>
+                                <td>{{ ($owners->currentPage() - 1) * $owners->perPage() + ++$i }}</td>
+                                <td>
+                                    {{ $owner->name }} {{ $owner->lastName }}
+                                    @if ($owner->status == 1)
+                                        <span class="badge bg-success">فعال</span>
+                                    @else
+                                        <span class="badge bg-danger">غیر فعال</span>
+                                    @endif
+                                    @if ($owner->moreDayLoad >= 3)
+                                        <span class="badge bg-primary">3+</span>
+                                    @endif
+                                    @if ($owner->isAccepted == 1)
+                                        <i class="menu-icon tf-icons bx bx-check-shield text-success"></i>
+                                    @endif
+                                </td>
+                                <td>
+                                    @switch($owner->isAuth)
+                                        @case(0)
+                                            <span class="badge bg-danger">انجام نشده</span>
+                                        @break
+
+                                        @case(1)
+                                            <span class="badge bg-success">انجام شده</span>
+                                        @break
+
+                                        @case(2)
+                                            <span class="badge bg-secondary">در حال بررسی</span>
+                                        @break
+                                    @endswitch
+                                </td>
+                                <td>
+                                    @switch($owner->isOwner)
+                                        @case(1)
+                                            صاحب بار
+                                        @break
+
+                                        @case(2)
+                                            باربری
+                                        @break
+
+                                        @default
+                                            تعیین نشده
+                                    @endswitch
+                                </td>
+                                <td>{{ $owner->nationalCode }}</td>
+                                <td>{{ $owner->mobileNumber }}</td>
+                                <td>
+                                    <a href="{{ route('owner.loads', $owner->id) }}">{{ $owner->numOfLoads }}</a>
+                                </td>
+                                @php
+                                    $pieces = explode(' ', $owner->created_at);
+                                @endphp
+                                <td dir="ltr">
+                                    {{ gregorianDateToPersian($owner->created_at, '-', true) . ' ' . $pieces[1] }}
+                                </td>
+
+                                <td>
+                                    <a class="btn btn-sm btn-primary" href="{{ route('owner.show', $owner) }}">مشاهده</a>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody class="small">
-                            <?php $i = 0; ?>
-                            @forelse($owners as $owner)
-                                <tr>
-                                    <td>{{ ($owners->currentPage() - 1) * $owners->perPage() + ++$i }}</td>
-                                    <td>
-                                        {{ $owner->name }} {{ $owner->lastName }}
-                                        @if ($owner->status == 1)
-                                            <span class="badge bg-success">فعال</span>
-                                        @else
-                                            <span class="badge bg-danger">غیر فعال</span>
-                                        @endif
-                                        @if ($owner->moreDayLoad >= 3)
-                                            <span class="badge bg-primary">3+</span>
-                                        @endif
-                                        @if ($owner->isAccepted == 1)
-                                            <i class="menu-icon tf-icons bx bx-check-shield text-success"></i>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @switch($owner->isAuth)
-                                            @case(0)
-                                                <span class="badge bg-danger">انجام نشده</span>
-                                            @break
-
-                                            @case(1)
-                                                <span class="badge bg-success">انجام شده</span>
-                                            @break
-
-                                            @case(2)
-                                                <span class="badge bg-secondary">در حال بررسی</span>
-                                            @break
-                                        @endswitch
-                                    </td>
-                                    <td>
-                                        @switch($owner->isOwner)
-                                            @case(1)
-                                                صاحب بار
-                                            @break
-
-                                            @case(2)
-                                                باربری
-                                            @break
-
-                                            @default
-                                                تعیین نشده
-                                        @endswitch
-                                    </td>
-                                    <td>{{ $owner->nationalCode }}</td>
-                                    <td>{{ $owner->mobileNumber }}</td>
-                                    <td>
-                                        <a href="{{ route('owner.loads', $owner->id) }}">{{ $owner->numOfLoads }}</a>
-                                    </td>
-                                    @php
-                                        $pieces = explode(' ', $owner->created_at);
-                                    @endphp
-                                    <td dir="ltr">
-                                        {{ gregorianDateToPersian($owner->created_at, '-', true) . ' ' . $pieces[1] }}
-                                    </td>
-
-                                    <td>
-                                        <a class="btn btn-sm btn-primary" href="{{ route('owner.show', $owner) }}">مشاهده</a>
-                                    </td>
+                            @empty
+                                <tr class="text-center">
+                                    <td colspan="10">فیلد مورد خالی است</td>
                                 </tr>
-                                @empty
-                                    <tr class="text-center">
-                                        <td colspan="10">فیلد مورد خالی است</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                        <div class="mt-2">
-                            {{ $owners }}
-                        </div>
+                            @endforelse
+                        </tbody>
+                    </table>
+                    <div class="mt-2">
+                        {{ $owners }}
                     </div>
                 </div>
-            @endif
+            </div>
         </div>
 
 
