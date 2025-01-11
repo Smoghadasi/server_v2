@@ -30,7 +30,12 @@ class OwnerController extends Controller
         $ownerAcceptCounts = Owner::where('isAuth', 1)->count();
         $ownerRejectedCounts = Owner::where('isRejected', 1)->count();
 
-        $owners = Owner::orderByDesc('created_at')->paginate(10);
+        if (auth()->user()->role == 'admin') {
+            $owners = Owner::orderByDesc('created_at')->paginate(10);
+        } elseif (auth()->user()->role == 'operator') {
+            $owners = collect();
+        }
+
 
         $fleets = Fleet::all();
         return view('admin.owner.index', compact([
@@ -158,11 +163,19 @@ class OwnerController extends Controller
 
 
         if ($request->has('fleet_id')) {
-            $owners = Owner::whereHas('loads', function ($q) use ($request) {
-                $q->where('fleets', 'Like', '%fleet_id":' . $request->fleet_id . ',%');
-                $q->where('userType', 'owner');
-                $q->withTrashed();
-            })->paginate(5000);
+            if (auth()->user()->role == 'admin') {
+                $owners = Owner::whereHas('loads', function ($q) use ($request) {
+                    $q->where('fleets', 'Like', '%fleet_id":' . $request->fleet_id . ',%');
+                    $q->where('userType', 'owner');
+                    $q->withTrashed();
+                })->paginate(5000);
+            } elseif (auth()->user()->role == 'operator') {
+                $owners = Owner::whereHas('loads', function ($q) use ($request) {
+                    $q->where('fleets', 'Like', '%fleet_id":' . $request->fleet_id . ',%');
+                    $q->where('userType', 'owner');
+                    $q->withTrashed();
+                })->inRandomOrder()->paginate(1);
+            }
         } else {
             $owners = Owner::where('nationalCode', 'LIKE', "%$request->searchWord%")
                 ->orWhere('mobileNumber', 'LIKE', "%$request->searchWord%")

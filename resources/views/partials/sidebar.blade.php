@@ -63,6 +63,13 @@
                         </a>
                     </li>
                 @endif
+                @if (in_array('listOfOwners', auth()->user()->userAccess))
+                    <li class="menu-item">
+                        <a class="menu-link" href="{{ route('owner.index') }}">
+                            <span>صاحبان بار</span>
+                        </a>
+                    </li>
+                @endif
                 @if (in_array('transactionManual', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('transaction-manual.index') }}">
@@ -411,13 +418,13 @@
 
             <ul class="menu-sub">
                 {{-- @if (in_array('operatorsWorkingHoursActivityReport', auth()->user()->userAccess)) --}}
-                @if (in_array('listOfOwners', auth()->user()->userAccess))
+                {{-- @if (in_array('listOfOwners', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('owner.index') }}">
                             <div data-i18n="Without menu">لیست صاحبان بار</div>
                         </a>
                     </li>
-                @endif
+                @endif --}}
 
                 <li
                     class="menu-item {{ request()->is('admin/loadOwner*') ? 'active open' : '' }} {{ request()->is('admin/loadOperators*') ? 'active open' : '' }}">

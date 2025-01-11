@@ -94,7 +94,7 @@ Route::get('/conf', function () {
 });
 
 Route::get('hourClear', function () {
-    Load::where('created_at', '<', date('Y-m-d h:i:s', strtotime('-2 hours', time())))->update(['urgent' => 0]);
+    Load::where('urgent', 1)->update(['urgent' => 0]);
 });
 
 Route::get('/cache', function () {
@@ -504,10 +504,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         /*************************************************************************************/
         // نمایش پیام ها
         Route::get('messages', [ContactUsController::class, 'messages'])->middleware('operator');
-
-        Route::get('messages/{contactUs}', [ContactUsController::class, 'show'])
-            ->name('messages.show')
-            ->middleware('operator');
 
         // تغییر وضعیت پیامهای کاربران به خوانده شده
         Route::post('changeMessageStatus/{contactUs}', [ContactUsController::class, 'changeMessageStatus'])->middleware('operator');
