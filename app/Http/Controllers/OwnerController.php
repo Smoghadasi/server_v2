@@ -30,11 +30,11 @@ class OwnerController extends Controller
         $ownerAcceptCounts = Owner::where('isAuth', 1)->count();
         $ownerRejectedCounts = Owner::where('isRejected', 1)->count();
 
-        if (auth()->user()->role == 'admin') {
-            $owners = Owner::orderByDesc('created_at')->paginate(10);
-        } elseif (auth()->user()->role == 'operator') {
+        // if (auth()->user()->role == 'admin') {
+        //     $owners = Owner::orderByDesc('created_at')->paginate(10);
+        // } elseif (auth()->user()->role == 'operator') {
             $owners = collect();
-        }
+        // }
 
 
         $fleets = Fleet::all();
