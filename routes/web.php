@@ -470,6 +470,10 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // فرم ثبت راننده جدید
         Route::get('addNewDriverForm', [DriverController::class, 'addNewDriverForm'])->middleware('operator');
 
+        Route::get('messages/{contactUs}', [ContactUsController::class, 'show'])
+            ->name('messages.show')
+            ->middleware('operator');
+
         // افزودن راننده جدید
         Route::post('addNewDriver', [DriverController::class, 'addNewDriver'])->middleware('operator');
 
