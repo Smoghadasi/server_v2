@@ -202,7 +202,7 @@ class OwnerController extends Controller
                 ->orWhere('name', 'LIKE', "%$request->searchWord%")
                 ->orWhere('lastName', 'LIKE', "%$request->searchWord%")
                 ->orderby('id', 'desc')
-                ->paginate(5);
+                ->paginate(5000);
         }
         return view('admin.owner.index', compact(
             'owners',
