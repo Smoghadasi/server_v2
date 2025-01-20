@@ -2503,7 +2503,9 @@ class LoadController extends Controller
             ->where('userType', ROLE_OWNER)
             ->where('isBot', 0)
             ->paginate(20);
-        $fleets = Fleet::all();
+        $fleets = Fleet::select('id', 'title', 'parent_id')
+            ->where('parent_id', '!=', 0)
+            ->get();
 
         $loadsCount = Load::orderByDesc('created_at')
             ->where('userType', ROLE_OWNER)
