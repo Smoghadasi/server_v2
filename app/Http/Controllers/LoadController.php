@@ -2492,14 +2492,18 @@ class LoadController extends Controller
         }
     }
 
-    public function loadOwner()
+    public function loadOwner(Request $request)
     {
         $loads = Load::orderByDesc('created_at')
             ->with('owner')
             ->withTrashed()
+            ->when($request->fleet_id !== null, function ($query) use ($request) {
+                return $query->where('fleets', 'Like', '%fleet_id":' . $request->fleet_id . ',%');
+            })
             ->where('userType', ROLE_OWNER)
             ->where('isBot', 0)
             ->paginate(20);
+        $fleets = Fleet::all();
 
         $loadsCount = Load::orderByDesc('created_at')
             ->where('userType', ROLE_OWNER)
@@ -2512,7 +2516,12 @@ class LoadController extends Controller
             ->withTrashed()
             ->where('isBot', 0)
             ->count();
-        return view('admin.load.owner', compact('loads', 'loadsCount', 'loadsToday'));
+        return view('admin.load.owner', compact([
+            'loads',
+            'loadsCount',
+            'loadsToday',
+            'fleets'
+        ]));
     }
 
     public function loadOperators()

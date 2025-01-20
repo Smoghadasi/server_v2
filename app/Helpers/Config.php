@@ -257,6 +257,15 @@ function getDriverPackagesInfo()
     ];
 }
 
+// app/Http/Helpers.php
+function appendQueryString($queryString, $key, $value) {
+    $queryArray = [];
+    parse_str($queryString, $queryArray);
+    $queryArray[$key] = $value;
+    return http_build_query($queryArray);
+}
+
+
 
 const FLEET_CONTROL_PRICE = 5000;
 const FLEET_CONTROL_DISCOUNT = 10;

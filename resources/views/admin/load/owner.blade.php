@@ -31,6 +31,21 @@
                 <a href="{{ route('loadToday.owner') }}" class="alert p-1 alert-success">تعداد بار های ثبت شده امروز:
                     {{ $loadsToday }}</a>
             </div>
+            <form method="get" action="{{ route('admin.load.owner') }}">
+                <div class="form-group row">
+                    <div class="col-md-2 mt-3">
+                        <select class="form-select" name="fleet_id">
+                            <option disabled selected>انتخاب ناوگان</option>
+                            @foreach ($fleets as $fleet)
+                                <option value="{{ $fleet->id }}">{{ $fleet->title }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-4 mt-3">
+                        <button type="submit" class="btn btn-primary mr-2">جستجو</button>
+                    </div>
+                </div>
+            </form>
             <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -65,12 +80,13 @@
                                 <td>{{ $load->senderMobileNumber }}</td>
                                 {{-- @if (Auth::user()->role == 'admin') --}}
                                 <td class="{{ $load->owner->isAccepted == 1 ? 'text-success' : '' }}">
-                                    <a class="{{ $load->owner->isAccepted == 1 ? 'text-success' : '' }}" href="{{ route('owner.show', $load->owner->id) }}">
+                                    <a class="{{ $load->owner->isAccepted == 1 ? 'text-success' : '' }}"
+                                        href="{{ route('owner.show', $load->owner->id) }}">
                                         {{ $load->owner->name }} {{ $load->owner->lastName }}
                                     </a>
                                 </td>
                                 {{-- @else --}}
-                                    {{-- <td>
+                                {{-- <td>
                                         {{ $load->owner->name }} {{ $load->owner->lastName }}
                                     </td>
                                 @endif --}}
@@ -96,7 +112,8 @@
 
                                     </span>
                                     <span>
-                                        <a class="badge bg-success" href="{{ route('load.searchLoadDriverCall', $load->id) }}">
+                                        <a class="badge bg-success"
+                                            href="{{ route('load.searchLoadDriverCall', $load->id) }}">
                                             تماس: {{ $load->numOfDriverCalls }}
                                         </a>
                                     </span>
@@ -125,7 +142,51 @@
             </div>
         </div>
         <div class="mt-2 mb-2">
-            {{ $loads }}
+            @if ($loads->hasPages())
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        {{-- Previous Page Link --}}
+                        @if ($loads->onFirstPage())
+                            <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                        @else
+                            <li class="page-item"><a class="page-link"
+                                    href="{{ $loads->previousPageUrl() }}&fleet_id={{ request('fleet_id') }}"
+                                    rel="prev">&laquo;</a></li>
+                        @endif
+
+                        {{-- Pagination Elements --}}
+                        @foreach ($loads->getUrlRange(1, $loads->lastPage()) as $page => $url)
+                            @if (
+                                $page == 1 ||
+                                    $page == $loads->lastPage() ||
+                                    ($page >= $loads->currentPage() - 2 && $page <= $loads->currentPage() + 2))
+                                @if ($page == $loads->currentPage())
+                                    <li class="page-item active"><span class="page-link">{{ $page }}</span></li>
+                                @else
+                                    <li class="page-item"><a class="page-link"
+                                            href="{{ $url }}&fleet_id={{ request('fleet_id') }}">{{ $page }}</a>
+                                    </li>
+                                @endif
+                            @elseif ($page == $loads->currentPage() - 3 || $page == $loads->currentPage() + 3)
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            @endif
+                        @endforeach
+
+                        {{-- Next Page Link --}}
+                        @if ($loads->hasMorePages())
+                            <li class="page-item"><a class="page-link"
+                                    href="{{ $loads->nextPageUrl() }}&fleet_id={{ request('fleet_id') }}"
+                                    rel="next">&raquo;</a></li>
+                        @else
+                            <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                        @endif
+                    </ul>
+                </nav>
+            @endif
+
+
+
+
         </div>
     </div>
 
