@@ -40,7 +40,7 @@
                                     $timeUpdated_at = explode(' ', $owner->updated_at);
                                 @endphp
                                 <td dir="ltr">
-                                    {{ gregorianDateToPersian($owner->auth_at, '-', true) . ' ' . $pieces[1] }}
+                                    {{ $owner->auth_at ? gregorianDateToPersian($owner->auth_at, '-', true) . ' ' . $pieces[1] : '-' }}
                                 </td>
                                 <td dir="ltr">
                                     {{ gregorianDateToPersian($owner->updated_at, '-', true) . ' ' . $timeUpdated_at[1] }}
