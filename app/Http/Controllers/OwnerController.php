@@ -6,6 +6,7 @@ use App\Models\Fleet;
 use App\Models\Load;
 use App\Models\Owner;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OwnerController extends Controller
 {
@@ -183,12 +184,13 @@ class OwnerController extends Controller
 
 
         if ($request->has('fleet_id')) {
-            if (auth()->user()->role == 'admin') {
+            if (auth()->user()->role == 'admin' || Auth::id() == 29) {
                 $owners = Owner::whereHas('loads', function ($q) use ($request) {
                     $q->where('fleets', 'Like', '%fleet_id":' . $request->fleet_id . ',%');
                     $q->where('userType', 'owner');
                     $q->withTrashed();
-                })->paginate(5000);
+                })->paginate(20);
+
             } elseif (auth()->user()->role == 'operator') {
                 $owners = Owner::whereHas('loads', function ($q) use ($request) {
                     $q->where('fleets', 'Like', '%fleet_id":' . $request->fleet_id . ',%');

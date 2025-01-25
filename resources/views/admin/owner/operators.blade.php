@@ -28,8 +28,7 @@
                     </div>
                 </div>
             </div>
-            <form method="post" action="{{ route('owner.search') }}">
-                @csrf
+            <form method="get" action="{{ route('owner.search') }}">
                 <div class="form-group row">
                     <div class="col-md-4 mt-3">
                         <input class="form-control" name="searchWord" id="searchWord"

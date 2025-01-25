@@ -6,29 +6,29 @@
         <h5 class="card-header">لیست صاحبان بار</h5>
         <div class="card-body">
             {{-- @if (auth()->user()->role == 'admin') --}}
-                <div class="my-3">
-                    <div class="row justify-content-between">
-                        <div class="col">
-                            <a href="{{ route('ownerAuth.index') }}" class="alert p-1 alert-secondary">در حال بررسی :
-                                {{ $ownerPenddingCounts }}</a>
-                            <a href="{{ route('owner.reject') }}" class="alert p-1 alert-danger">تایید نشده :
-                                {{ $ownerRejectCounts }}</a>
-                            <a href="{{ route('owner.accept') }}" class="alert p-1 alert-success">تایید شده :
-                                {{ $ownerAcceptCounts }}</a>
-                            <a href="{{ route('owner.ownerRejected') }}" class="alert p-1 alert-dark">رد شده :
-                                {{ $ownerRejectedCounts }}</a>
+            <div class="my-3">
+                <div class="row justify-content-between">
+                    <div class="col">
+                        <a href="{{ route('ownerAuth.index') }}" class="alert p-1 alert-secondary">در حال بررسی :
+                            {{ $ownerPenddingCounts }}</a>
+                        <a href="{{ route('owner.reject') }}" class="alert p-1 alert-danger">تایید نشده :
+                            {{ $ownerRejectCounts }}</a>
+                        <a href="{{ route('owner.accept') }}" class="alert p-1 alert-success">تایید شده :
+                            {{ $ownerAcceptCounts }}</a>
+                        <a href="{{ route('owner.ownerRejected') }}" class="alert p-1 alert-dark">رد شده :
+                            {{ $ownerRejectedCounts }}</a>
 
-                        </div>
-                        <div class="col" style="text-align: left;">
-                            <a href="{{ route('loadToday.owner') }}" class="alert p-1 alert-primary">تعداد بار های ثبت شده
-                                امروز
-                                (کل): {{ $loadsToday }}</a>
-                            <a href="{{ route('admin.load.owner') }}" class="alert p-1 alert-dark">تعداد بار های ثبت شده
-                                امروز
-                                (صاحب بار): {{ $loadsTodayOwner }}</a>
-                        </div>
+                    </div>
+                    <div class="col" style="text-align: left;">
+                        <a href="{{ route('loadToday.owner') }}" class="alert p-1 alert-primary">تعداد بار های ثبت شده
+                            امروز
+                            (کل): {{ $loadsToday }}</a>
+                        <a href="{{ route('admin.load.owner') }}" class="alert p-1 alert-dark">تعداد بار های ثبت شده
+                            امروز
+                            (صاحب بار): {{ $loadsTodayOwner }}</a>
                     </div>
                 </div>
+            </div>
             {{-- @endif --}}
             <form method="post" action="{{ route('owner.search') }}">
                 @csrf
@@ -138,7 +138,48 @@
                         </tbody>
                     </table>
                     <div class="mt-2">
-                        {{ $owners }}
+                        @if ($owners->hasPages())
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination">
+                                    {{-- Previous Page Link --}}
+                                    @if ($owners->onFirstPage())
+                                        <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                                    @else
+                                        <li class="page-item"><a class="page-link"
+                                                href="{{ $owners->previousPageUrl() }}&fleet_id={{ request('fleet_id') }}"
+                                                rel="prev">&laquo;</a></li>
+                                    @endif
+
+                                    {{-- Pagination Elements --}}
+                                    @foreach ($owners->getUrlRange(1, $owners->lastPage()) as $page => $url)
+                                        @if (
+                                            $page == 1 ||
+                                                $page == $owners->lastPage() ||
+                                                ($page >= $owners->currentPage() - 2 && $page <= $owners->currentPage() + 2))
+                                            @if ($page == $owners->currentPage())
+                                                <li class="page-item active"><span class="page-link">{{ $page }}</span>
+                                                </li>
+                                            @else
+                                                <li class="page-item"><a class="page-link"
+                                                        href="{{ $url }}&fleet_id={{ request('fleet_id') }}">{{ $page }}</a>
+                                                </li>
+                                            @endif
+                                        @elseif ($page == $owners->currentPage() - 3 || $page == $owners->currentPage() + 3)
+                                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                                        @endif
+                                    @endforeach
+
+                                    {{-- Next Page Link --}}
+                                    @if ($owners->hasMorePages())
+                                        <li class="page-item"><a class="page-link"
+                                                href="{{ $owners->nextPageUrl() }}&fleet_id={{ request('fleet_id') }}"
+                                                rel="next">&raquo;</a></li>
+                                    @else
+                                        <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                                    @endif
+                                </ul>
+                            </nav>
+                        @endif
                     </div>
                 </div>
             </div>

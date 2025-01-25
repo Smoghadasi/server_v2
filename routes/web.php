@@ -291,7 +291,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // تغییر وضعیت صاحبان بار
         Route::get('changeOwnerStatus/{owner}', [OwnerController::class, 'changeOwnerStatus'])->middleware('admin')->name('owner.change.status');
 
-        Route::post('ownerSearch', [OwnerController::class, 'searchOwners'])->middleware('operator')->name('owner.search');
+        Route::get('ownerSearch', [OwnerController::class, 'searchOwners'])->middleware('operator')->name('owner.search');
 
 
         // بارهای مشتریان
