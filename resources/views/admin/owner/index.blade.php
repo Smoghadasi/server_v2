@@ -29,9 +29,7 @@
                     </div>
                 </div>
             </div>
-            {{-- @endif --}}
-            <form method="post" action="{{ route('owner.search') }}">
-                @csrf
+            <form method="get" action="{{ route('owner.search') }}">
                 <div class="form-group row">
                     <div class="col-md-4 mt-3">
                         <input class="form-control" name="searchWord" id="searchWord"
@@ -41,7 +39,13 @@
                         <select class="form-select" name="fleet_id">
                             <option disabled selected>انتخاب ناوگان</option>
                             @foreach ($fleets as $fleet)
-                                <option value="{{ $fleet->id }}">{{ $fleet->title }}</option>
+                                @if (isset($fleetId))
+                                    <option @if ($fleet->id == $fleetId) selected @endif value="{{ $fleet->id }}">
+                                        {{ $fleet->title }}</option>
+                                @else
+                                    <option value="{{ $fleet->id }}">
+                                        {{ $fleet->title }}</option>
+                                @endif
                             @endforeach
                         </select>
                     </div>

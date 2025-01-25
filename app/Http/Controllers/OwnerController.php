@@ -181,7 +181,7 @@ class OwnerController extends Controller
         $ownerAcceptCounts = Owner::where('isAuth', 1)->count();
         $ownerRejectedCounts = Owner::where('isRejected', 1)->count();
         $fleets = Fleet::all();
-
+        $fleetId = $request->fleet_id;
 
         if ($request->has('fleet_id')) {
             if (auth()->user()->role == 'admin' || Auth::id() == 29) {
@@ -190,7 +190,6 @@ class OwnerController extends Controller
                     $q->where('userType', 'owner');
                     $q->withTrashed();
                 })->paginate(20);
-
             } elseif (auth()->user()->role == 'operator') {
                 $owners = Owner::whereHas('loads', function ($q) use ($request) {
                     $q->where('fleets', 'Like', '%fleet_id":' . $request->fleet_id . ',%');
@@ -214,7 +213,8 @@ class OwnerController extends Controller
             'ownerRejectedCounts',
             'loadsToday',
             'loadsTodayOwner',
-            'fleets'
+            'fleets',
+            'fleetId'
         ));
     }
 
