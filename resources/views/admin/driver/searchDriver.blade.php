@@ -5,77 +5,44 @@
 
     <div class="card">
         <h5 class="card-header">
-            رانندگان
+            لیست تماس
         </h5>
         <div class="card-body">
 
-            @if (auth()->user()->role == 'admin')
-                <div class="alert alert-info text-right">
-                    @if (isDriverAutoActive())
-                        تایید رانندگان بصورت خودکار
-                        <a class="btn btn-danger" href="{{ url('admin/changeSiteOption/driverAutoActive') }}">
-                            تغییر به غیر خودکار
-                        </a>
-                    @else
-                        تایید رانندگان بصورت غیر خودکار
-                        <a class="btn btn-primary" href="{{ url('admin/changeSiteOption/driverAutoActive') }}">
-                            تغییر به خودکار
-                        </a>
-                    @endif
-                </div>
-            @endif
-
             <div class="col-md-12 mb-3">
-                <a class="btn btn-primary" href="{{ url('admin/addNewDriverForm') }}"> + افزودن راننده</a>
-            </div>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDriverCall">افزودن راننده +</button>
+                <div id="addDriverCall" class="modal fade" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered">
 
-            <form action="{{ url('admin/searchDrivers') }}" method="post">
-                @csrf
-                <div class="col-lg-12 border rounded mt-2 mb-2 p-2">
-                    <h6>جستجوی رانندگان : </h6>
-                    <div class="container">
-                        <div class="row row-cols-4">
-                            <div class="col">
-                                <div class="form-group">
-                                    <label>نام :</label>
-                                    <input type="text" name="name" class="form-control">
+                        <!-- Modal content-->
+                        <form action="{{ route('load.driverCall.store') }}" method="post" class="modal-content">
+                            @csrf
+                            <div class="modal-header">
+                                <h4 class="modal-title">پاسخ</h4>
+                            </div>
+                            <div class="modal-body text-right">
+                                <div class="row">
+                                    <div class="form-group col-12">
+                                        <label>شماره موبایل راننده</label>
+                                        <input class="form-control" name="mobileNumber" type="text">
+                                    </div>
+                                    <input type="hidden" value="{{ $load_id }}" name="load_id">
+                                    {{-- <div class="form-group col-6">
+                                        <label>شماره موبایل راننده</label>
+                                        <input class="form-control" name="mobileNumber" type="text">
+                                    </div> --}}
                                 </div>
                             </div>
-                            <div class="col">
-                                <div class="form-group">
-                                    <label>نام خانوادگی :</label>
-                                    <input type="text" name="lastName" class="form-control">
-                                </div>
+                            <div class="modal-footer text-left">
+                                <button type="submit" class="btn btn-primary mr-1">ثبت</button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                                    انصراف
+                                </button>
                             </div>
-                            <div class="col">
-                                <div class="form-group">
-                                    <label>شماره تلفن :</label>
-                                    <input type="text" name="mobileNumber" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="form-group">
-                                    <label>کد نسخه :</label>
-                                    <input type="text" name="version" class="form-control">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group my-4">
-                            <button class="btn btn-info" type="submit">جستجو</button>
-                        </div>
+                        </form>
                     </div>
-
-
                 </div>
-            </form>
-
-            @if (isset($showSearchResult) && $showSearchResult)
-                <div class="col-lg-12 alert alert-info">
-                    تعداد یافته ها :
-                    {{ count($drivers) }}
-                    راننده
-                </div>
-            @endif
+            </div>
 
             <div class="table-responsive">
                 <table class="table">

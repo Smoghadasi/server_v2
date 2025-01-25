@@ -2565,12 +2565,27 @@ class LoadController extends Controller
             $q->where('load_id', $load_id);
         })->paginate(100);
 
-        if (count($drivers))
-            return view('admin.driver.searchDriver', compact('drivers'));
-
-        return back()->with('danger', 'راننده ای پیدا نشد!');
+        return view('admin.driver.searchDriver', compact('drivers', 'load_id'));
     }
 
+    public function storeDriverCall(Request $request)
+    {
+        $driver = Driver::where('mobileNumber', $request->mobileNumber)->first();
+        if ($driver) {
+            $driverCall = new DriverCall();
+            $driverCall->driver_id = $driver->id;
+            $driverCall->phoneNumber = $driver->mobileNumber;
+            $driverCall->load_id = $request->load_id;
+            $driverCall->latitude = 0;
+            $driverCall->longitude = 0;
+            $driverCall->date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+            $driverCall->dateTime = now()->format('H:i:s');
+            $driverCall->save();
+            return back()->with('success', 'با موفقیت ذخیره شد!');
+        } else {
+            return back()->with('danger', 'راننده ای پیدا نشد!');
+        }
+    }
     // بار های ثبت شده توسط صاحبین بار (امروز)
     public function loadOwnerToday()
     {

@@ -327,6 +327,11 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
             ->middleware('operator')
             ->name('load.searchLoadDriverCall');
 
+        Route::post('storeDriverCallLoad', [LoadController::class, 'storeDriverCall'])
+            ->middleware('operator')
+            ->name('load.driverCall.store');
+
+
         // (امروز)بار های ثبت شده صاحبان بار
         Route::get('loadOwnerToday', [LoadController::class, 'loadOwnerToday'])->middleware('operator')->name('loadToday.owner');
 
