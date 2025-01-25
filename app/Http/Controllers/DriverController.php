@@ -858,6 +858,13 @@ class DriverController extends Controller
         $driver->activeDate = null;
         $driver->save();
 
+        $free_subscription = new FreeSubscription();
+        $free_subscription->type = AUTH_VALIDITY_DELETED;
+        $free_subscription->value = 1;
+        $free_subscription->driver_id = $driver->id;
+        $free_subscription->operator_id = Auth::id();
+        $free_subscription->save();
+
         return back()->with('success', 'اشتراک با موفقیت پاک شد');
     }
 

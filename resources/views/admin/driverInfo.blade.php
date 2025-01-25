@@ -126,6 +126,9 @@
                                                         @case(AUTH_CARGO)
                                                             <span class="badge bg-label-primary"> بار رایگان</span>
                                                         @break
+                                                        @case(AUTH_VALIDITY_DELETED)
+                                                            <span class="badge bg-label-primary"> حذف اشتراک</span>
+                                                        @break
                                                     @endswitch
                                                 </td>
                                                 <td>
