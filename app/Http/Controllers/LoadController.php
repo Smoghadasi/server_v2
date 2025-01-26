@@ -2397,7 +2397,7 @@ class LoadController extends Controller
             ->where('location_at', '>=', Carbon::now()->subMinutes(120))
             ->whereIn('fleet_id', $fleets)
             ->where('sendMessage', 0)
-            ->where('version', '<', 67)
+            // ->where('version', '<', 67)
             ->where('province_id', $cityFrom->parent_id)
             ->selectRaw("{$haversine} AS distance")
             ->whereRaw("{$haversine} < ?", $radius)
