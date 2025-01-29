@@ -39,13 +39,15 @@
                                     value="{{ $ownerAuth->mobileNumber }}" id="mobileNumber">
                             </div>
                         </div>
-                        @if(auth()->user()->role == 'admin' || auth()->user()->id == 29)
+                        @if (auth()->user()->role == 'admin' || auth()->user()->id == 29)
                             <div class="mb-3 row">
                                 <label for="isOwner" class="col-md-2 col-form-label">نوع</label>
                                 <div class="col-md-10">
                                     <select class="form-select" name="isOwner" id="isOwner">
-                                        <option @if($ownerAuth->isOwner == 1) selected @endif value="1">صاحب بار</option>
-                                        <option @if($ownerAuth->isOwner == 2) selected @endif value="2">باربری</option>
+                                        <option @if ($ownerAuth->isOwner == 1) selected @endif value="1">صاحب بار
+                                        </option>
+                                        <option @if ($ownerAuth->isOwner == 2) selected @endif value="2">باربری
+                                        </option>
                                     </select>
                                 </div>
                             </div>
@@ -53,8 +55,10 @@
                                 <label for="isAccepted" class="col-md-2 col-form-label">وضعیت تایید</label>
                                 <div class="col-md-10">
                                     <select class="form-select" name="isAccepted" id="isAccepted">
-                                        <option @if($ownerAuth->isAccepted == 0) selected @endif value="0">تایید نشده</option>
-                                        <option @if($ownerAuth->isAccepted == 1) selected @endif value="1">تایید شده</option>
+                                        <option @if ($ownerAuth->isAccepted == 0) selected @endif value="0">تایید نشده
+                                        </option>
+                                        <option @if ($ownerAuth->isAccepted == 1) selected @endif value="1">تایید شده
+                                        </option>
                                     </select>
                                 </div>
                             </div>
@@ -79,7 +83,8 @@
                                 <select class="form-control col-md-4" name="province_id" id="origin_city_id">
                                     <option disabled selected value="0">استان مورد نظر خود را انتخاب کنید</option>
                                     @foreach ($provinces as $province)
-                                        <option @if($province->id == $ownerAuth->province_id) selected @endif value="{{ $province->id }}">
+                                        <option @if ($province->id == $ownerAuth->province_id) selected @endif
+                                            value="{{ $province->id }}">
                                             {{ $province->name }}
                                         </option>
                                     @endforeach
@@ -111,42 +116,71 @@
                                 <label for="activityLicense" class="col-md-2 col-form-label">عکس پروانه فعالیت</label>
                                 <div class="col-md-10">
                                     <a href="{{ asset($ownerAuth->activityLicense) }}">
-                                        <img width="250"  class="img-fluid" src="{{ asset($ownerAuth->activityLicense) }}" alt="">
+                                        <img width="250" class="img-fluid"
+                                            src="{{ asset($ownerAuth->activityLicense) }}" alt="">
                                     </a>
                                 </div>
                             </div>
                         @else
-                        <div class="mb-3 row">
-                            <label for="sanaImage" class="col-md-2 col-form-label">تصویر ثنا</label>
-                                <input type="file" class="form-control" name="sanaImage"/>
+                            <div class="mb-3 row">
+                                <label for="sanaImage" class="col-md-2 col-form-label">تصویر ثنا</label>
+                                <input type="file" class="form-control" name="sanaImage" />
 
                                 <div class="col-md-10">
                                     <a href="{{ asset($ownerAuth->sanaImage) }}">
-                                        <img width="250" class="img-fluid" src="{{ asset($ownerAuth->sanaImage) }}" alt="">
+                                        <img width="250" class="img-fluid" src="{{ asset($ownerAuth->sanaImage) }}"
+                                            alt="">
                                     </a>
                                 </div>
                             </div>
                         @endif
                         <div class="mb-3 row">
                             <label for="nationalCardImage" class="col-md-2 col-form-label">تصویر کارت ملی</label>
-                            <input type="file" class="form-control" name="nationalCardImage"/>
+                            <input type="file" class="form-control" name="nationalCardImage" />
 
                             <div class="col-md-10">
                                 <a href="{{ asset($ownerAuth->nationalCardImage) }}">
-                                    <img width="250" class="img-fluid" src="{{ asset($ownerAuth->nationalCardImage) }}" alt="">
+                                    <img width="250" class="img-fluid"
+                                        src="{{ asset($ownerAuth->nationalCardImage) }}" alt="">
                                 </a>
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <label for="nationalFaceImage" class="col-md-2 col-form-label">تصویر کارت ملی کنار چهره</label>
-                            <input type="file" class="form-control" name="nationalFaceImage"/>
+                            <label for="nationalFaceImage" class="col-md-2 col-form-label">تصویر کارت ملی کنار
+                                چهره</label>
+                            <input type="file" class="form-control" name="nationalFaceImage" />
 
                             <div class="col-md-10">
                                 <a href="{{ asset($ownerAuth->nationalFaceImage) }}">
-                                    <img width="250" class="img-fluid" src="{{ asset($ownerAuth->nationalFaceImage) }}" alt="">
+                                    <img width="250" class="img-fluid"
+                                        src="{{ asset($ownerAuth->nationalFaceImage) }}" alt="">
                                 </a>
                             </div>
                         </div>
+                        @if (Auth::user()->role == 'admin')
+                            <div class="mb-3 col">
+                                <div class="row">
+                                    <div class="col">
+                                        <label class="form-label" for="basic-default-company">نوتیفیکشن :</label>
+                                        <select class="form-control form-select" name="notification" id="">
+                                            <option @if ($ownerAuth->notification == 1) selected @endif value="1">فعال
+                                            </option>
+                                            <option @if ($ownerAuth->notification == 0) selected @endif value="0">غیر
+                                                فعال</option>
+                                        </select>
+                                    </div>
+                                    <div class="col">
+                                        <label class="form-label" for="basic-default-company">پیامک :</label>
+                                        <select class="form-control form-select" name="sms" id="">
+                                            <option @if ($ownerAuth->sms == 1) selected @endif value="1">فعال
+                                            </option>
+                                            <option @if ($ownerAuth->sms == 0) selected @endif value="0">غیر
+                                                فعال</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                         <button type="submit" class="btn btn-primary">بروز رسانی اطلاعات</button>
                         <button type="button" class="btn btn-success" data-bs-toggle="modal"
                             data-bs-target="#acceptLevel">

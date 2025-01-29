@@ -7,43 +7,76 @@
 
             <div class="card mb-4">
                 <div class="card-header">
-                    @switch($owner->isOwner)
-                        @case(1)
-                            صاحب بار
-                        @break
+                    <div class="row">
+                        <div class="col-6">
+                            @switch($owner->isOwner)
+                                @case(1)
+                                    صاحب بار
+                                @break
 
-                        @case(2)
-                            باربری
-                        @break
+                                @case(2)
+                                    باربری
+                                @break
 
-                        @default
-                            تعیین نشده
-                    @endswitch
-                </div>
-                 <!-- Account -->
-                 <div class="card-body">
-                    <div class="d-flex align-items-start align-items-sm-center gap-4">
-                      <img
-                        src="{{ $owner->profileImage !== null ? asset($owner->profileImage) : asset('img/notFound.jpg') }}"
-                        alt="user-avatar"
-                        class="d-block rounded"
-                        height="100"
-                        width="100"
-                        id="uploadedAvatar"
-                      />
-                      <div class="button-wrapper">
-                        <form action="{{ route('owner.removeProfile', $owner->id) }}" method="POST">
-                            @method('delete')
-                            @csrf
-                            <button type="submit" class="btn btn-outline-secondary account-image-reset mb-4">
-                                <i class="bx bx-reset d-block d-sm-none"></i>
-                                <span class="d-none d-sm-block">حذف</span>
-                              </button>
-                        </form>
-                      </div>
+                                @default
+                                    تعیین نشده
+                            @endswitch
+                        </div>
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col">
+                                    <div id="status">
+                                        <label for="state" class="form-label">وضعیت</label>
+                                        @if ($owner->status == 0)
+                                            <div class="badge rounded-pill bg-secondary d-inline-block">غیر فعال</div>
+                                        @elseif($owner->status == 1)
+                                            <div class="badge rounded-pill bg-success d-inline-block">فعال</div>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div id="notification">
+                                        <label for="state" class="form-label">اعلان</label>
+                                        @if ($owner->notification == 1)
+                                            <div class="badge rounded-pill bg-success d-inline-block">فعال</div>
+                                        @else
+                                            <div class="badge rounded-pill bg-danger d-inline-block">غیر فعال</div>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div id="sms">
+                                        <label for="state" class="form-label">پیامک</label>
+                                        @if ($owner->sms == 1)
+                                            <div class="badge rounded-pill bg-success d-inline-block">فعال</div>
+                                        @else
+                                            <div class="badge rounded-pill bg-danger d-inline-block">غیر فعال</div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                  <hr class="my-0" />
+
+                </div>
+                <!-- Account -->
+                <div class="card-body">
+                    <div class="d-flex align-items-start align-items-sm-center gap-4">
+                        <img src="{{ $owner->profileImage !== null ? asset($owner->profileImage) : asset('img/notFound.jpg') }}"
+                            alt="user-avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar" />
+                        <div class="button-wrapper">
+                            <form action="{{ route('owner.removeProfile', $owner->id) }}" method="POST">
+                                @method('delete')
+                                @csrf
+                                <button type="submit" class="btn btn-outline-secondary account-image-reset mb-4">
+                                    <i class="bx bx-reset d-block d-sm-none"></i>
+                                    <span class="d-none d-sm-block">حذف</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <hr class="my-0" />
                 <div class="card-body">
                     <div class="row">
                         <div class="mb-3 col-md-6">
@@ -106,7 +139,8 @@
                             <label for="ratingOwner" class="col-form-label">امتیاز</label>
                             <div class="col-md-12">
                                 <input class="form-control" type="text" name="ratingOwner" disabled
-                                    value="{{ $owner->ratingOwner == null ? 'بدون امتیاز' : $owner->ratingOwner }}" id="ratingOwner">
+                                    value="{{ $owner->ratingOwner == null ? 'بدون امتیاز' : $owner->ratingOwner }}"
+                                    id="ratingOwner">
                             </div>
                         </div>
                         <div class="mb-3 col-md-6">
@@ -149,7 +183,8 @@
                             <div class="mb-3 col-md-6">
                                 <label for="activityLicense" class="col-form-label">عکس پروانه فعالیت</label>
                                 <div class="col-md-10">
-                                    <a href="{{ $owner->activityLicense !== null ? asset($owner->activityLicense) : asset('img/notFound.jpg') }}" target="_blank">
+                                    <a href="{{ $owner->activityLicense !== null ? asset($owner->activityLicense) : asset('img/notFound.jpg') }}"
+                                        target="_blank">
                                         <img class="img-fluid" width="500"
                                             src="{{ $owner->activityLicense !== null ? asset($owner->activityLicense) : asset('img/notFound.jpg') }}">
                                     </a>
@@ -159,7 +194,8 @@
                             <div class="mb-3 col-md-6">
                                 <label for="sanaImage" class="col-form-label">تصویر ثنا</label>
                                 <div class="col-md-10">
-                                    <a href="{{ $owner->sanaImage !== null ? asset($owner->sanaImage) : asset('img/notFound.jpg') }}" target="_blank">
+                                    <a href="{{ $owner->sanaImage !== null ? asset($owner->sanaImage) : asset('img/notFound.jpg') }}"
+                                        target="_blank">
                                         <img class="img-fluid" width="500"
                                             src="{{ $owner->sanaImage !== null ? asset($owner->sanaImage) : asset('img/notFound.jpg') }}">
                                     </a>
@@ -170,9 +206,10 @@
                         <div class="mb-3 col-md-6">
                             <label for="nationalCardImage" class="col-form-label">تصویر کارت ملی</label>
                             <div class="col-md-10">
-                                <a href="{{ $owner->nationalCardImage !== null ? asset($owner->nationalCardImage) : asset('img/notFound.jpg') }}" target="_blank">
+                                <a href="{{ $owner->nationalCardImage !== null ? asset($owner->nationalCardImage) : asset('img/notFound.jpg') }}"
+                                    target="_blank">
                                     <img class="img-fluid" width="500"
-                                    src="{{ $owner->nationalCardImage !== null ? asset($owner->nationalCardImage) : asset('img/notFound.jpg') }}">
+                                        src="{{ $owner->nationalCardImage !== null ? asset($owner->nationalCardImage) : asset('img/notFound.jpg') }}">
 
                                 </a>
                             </div>
@@ -181,7 +218,8 @@
                             <label for="nationalFaceImage" class="col-form-label">تصویر کارت ملی کنار
                                 چهره</label>
                             <div class="col-md-10">
-                                <a href="{{ $owner->nationalFaceImage !== null ? asset($owner->nationalFaceImage) : asset('img/notFound.jpg') }}" target="_blank">
+                                <a href="{{ $owner->nationalFaceImage !== null ? asset($owner->nationalFaceImage) : asset('img/notFound.jpg') }}"
+                                    target="_blank">
                                     <img class="img-fluid" width="500"
                                         src="{{ $owner->nationalFaceImage !== null ? asset($owner->nationalFaceImage) : asset('img/notFound.jpg') }}">
                                 </a>
