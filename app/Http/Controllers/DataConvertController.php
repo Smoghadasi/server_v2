@@ -34,6 +34,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use PHPUnit\Exception;
 
 
@@ -494,6 +495,21 @@ class DataConvertController extends Controller
     // ذخیره دسته ای بارها
     public function storeMultiCargo(Request $request, CargoConvertList $cargo)
     {
+        $keys = $request->input('key'); // لیست کلیدهای موجود در درخواست
+        $rules = [];
+        $messages = [];
+
+        foreach ($keys as $key) {
+            $rules["mobileNumber_{$key}"] = 'required|digits:11';
+            $messages["mobileNumber_{$key}.required"] = "شماره تلفن {$key} الزامی است.";
+            $messages["mobileNumber_{$key}.digits"] = "شماره تلفن {$key} باید دقیقا ۱۱ رقم باشد.";
+        }
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return back()->with('danger', 'شماره موبایل کمتر از 11 رقم است')->withErrors($validator)->withInput();
+        }
         try {
 
             if (UserActivityReport::where([
