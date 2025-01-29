@@ -837,6 +837,16 @@
                                                                 <div class="form-group">
                                                                     <label>
                                                                         <input type="checkbox"
+                                                                            name="bookmark"
+                                                                            @if (in_array('bookmark', $user->userAccess)) checked @endif>
+                                                                            علامت گذاری شده ها
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
                                                                             name="operators"
                                                                             @if (in_array('operators', $user->userAccess)) checked @endif>
                                                                         اپراتورها

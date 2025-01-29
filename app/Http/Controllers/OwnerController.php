@@ -114,6 +114,7 @@ class OwnerController extends Controller
      */
     public function show(Owner $owner)
     {
+        // return $owner->bookmark;
         if ($owner->isAccepted == 1 && $owner->sku == null) {
             $owner->sku = $this->generateSKU();
             $owner->save();

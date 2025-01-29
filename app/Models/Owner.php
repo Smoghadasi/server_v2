@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use SoapClient;
 
 class Owner extends Model
@@ -40,6 +43,11 @@ class Owner extends Model
         $input_data = array("tell" => TELL);
         $client->sendPatternSms($fromNum, $toNum, $user, $pass, $pattern_code, $input_data);
         return $rand;
+    }
+
+    public function bookmark(): MorphOne
+    {
+        return $this->morphOne(Bookmark::class, 'userable');
     }
     public function acceptCustomerSmsIr($mobile)
     {
@@ -140,7 +148,7 @@ class Owner extends Model
             ->orderByDesc('created_at')->first();
         $now = now();
         if ($lastLoad != null) {
-            return $lastLoad->created_at->diff($now)->format("%a") ;
+            return $lastLoad->created_at->diff($now)->format("%a");
         }
     }
 
@@ -149,8 +157,8 @@ class Owner extends Model
         return $score = Score::where('type', 'Driver')->where('owner_id', $this->id)->avg('value');
         if ($score === null) {
             return null;
-        }else{
-            return round($score,1);
+        } else {
+            return round($score, 1);
         }
     }
 

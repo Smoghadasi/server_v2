@@ -557,6 +557,13 @@
             </a>
 
             <ul class="menu-sub">
+                @if (in_array('bookmark', auth()->user()->userAccess))
+                    <li class="menu-item">
+                        <a class="menu-link" href="{{ route('bookmark.index') }}">
+                            <div data-i18n="Without menu">علامت گذاری شده ها</div>
+                        </a>
+                    </li>
+                @endif
                 @if (in_array('operatorsWorkingHoursActivityReport', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/operatorsWorkingHoursActivityReport') }}">

@@ -8,6 +8,46 @@
                 <div class="col-6">
                     اطلاعات راننده
                 </div>
+                <div class="col-6" style="justify-items: left">
+                    <!-- Icon Dropdown -->
+                    <div class="">
+                        <div class="">
+                            <div class="btn-group m-0">
+                                <button type="button" class="btn btn-link  dropdown-toggle hide-arrow"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bx bx-dots-vertical-rounded"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <form action="{{ route('bookmark.store') }}" method="post">
+                                            @csrf
+                                            <input type="hidden" value="{{ $driver->id }}" name="user_id">
+                                            <input type="hidden" value="driver" name="type">
+                                            <button class="dropdown-item"
+                                                type="submit">{{ $driver->bookmark ? 'حذف علامت گذاری' : 'علامت گذاری' }}</button>
+                                        </form>
+                                        {{-- <a class="dropdown-item" href="javascript:void(0);">علامت گذاری</a> --}}
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!--/ Icon Dropdown -->
+                </div>
+            </div>
+        </h5>
+        <!-- Account -->
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <div class="d-flex align-items-start align-items-sm-center gap-4">
+                        <img src="{{ asset('assets/img/truck-driver.jpg') }}" alt="user-avatar" class="d-block rounded"
+                            height="120" width="120" id="uploadedAvatar" />
+                        <div class="button-wrapper">
+                            <p class="text-muted mb-0">تصویر راننده</p>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-6">
                     <div class="row">
                         <div class="col">
@@ -47,16 +87,7 @@
                     </div>
                 </div>
             </div>
-        </h5>
-        <!-- Account -->
-        <div class="card-body">
-            <div class="d-flex align-items-start align-items-sm-center gap-4">
-                <img src="{{ asset('assets/img/truck-driver.jpg') }}" alt="user-avatar" class="d-block rounded"
-                    height="120" width="120" id="uploadedAvatar" />
-                <div class="button-wrapper">
-                    <p class="text-muted mb-0">تصویر راننده</p>
-                </div>
-            </div>
+
             <form>
                 <div class="row">
                     <div class="mb-3 col-md-6">

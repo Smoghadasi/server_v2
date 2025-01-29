@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AuthorizeController;
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\BearingController;
+use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\CityDistanceController;
 use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\CustomerController;
@@ -271,11 +272,16 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // نمایش لیست مشتریان
         Route::get('customers', [CustomerController::class, 'customers'])->middleware('operator');
 
+
         //جستجو
         Route::post('customers', [CustomerController::class, 'searchCustomers'])->middleware('operator');
 
         // لیست صاحبان بار
         Route::resource('owner', OwnerController::class)->middleware("operator");
+        // علامت گذاری
+        Route::resource('bookmark', BookmarkController::class)->middleware("operator");
+
+
 
         Route::get('ownerOperators', [OwnerController::class, 'ownerOperators'])
             ->name('owner.operators')

@@ -22,59 +22,92 @@
                                     تعیین نشده
                             @endswitch
                         </div>
+                        <div class="col-6" style="justify-items: left">
+                            <!-- Icon Dropdown -->
+                            <div class="">
+                                <div class="">
+                                    <div class="btn-group m-0">
+                                        <button type="button" class="btn btn-link  dropdown-toggle hide-arrow"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <form action="{{ route('bookmark.store') }}" method="post">
+                                                    @csrf
+                                                    <input type="hidden" value="{{ $owner->id }}" name="user_id">
+                                                    <input type="hidden" value="owner" name="type">
+                                                    <button class="dropdown-item"
+                                                        type="submit">{{ $owner->bookmark ? 'حذف علامت گذاری' : 'علامت گذاری' }}</button>
+                                                </form>
+                                                {{-- <a class="dropdown-item" href="javascript:void(0);">علامت گذاری</a> --}}
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--/ Icon Dropdown -->
+                        </div>
+                    </div>
+                </div>
+                <!-- Account -->
+                <div class="card-body">
+                    <div class="row">
                         <div class="col-6">
-                            <div class="row">
-                                <div class="col">
-                                    <div id="status">
-                                        <label for="state" class="form-label">وضعیت</label>
-                                        @if ($owner->status == 0)
-                                            <div class="badge rounded-pill bg-secondary d-inline-block">غیر فعال</div>
-                                        @elseif($owner->status == 1)
-                                            <div class="badge rounded-pill bg-success d-inline-block">فعال</div>
-                                        @endif
-                                    </div>
+                            <div class="d-flex align-items-start align-items-sm-center gap-4">
+                                <img src="{{ $owner->profileImage !== null ? asset($owner->profileImage) : asset('img/notFound.jpg') }}"
+                                    alt="user-avatar" class="d-block rounded" height="100" width="100"
+                                    id="uploadedAvatar" />
+                                <div class="button-wrapper">
+                                    <form action="{{ route('owner.removeProfile', $owner->id) }}" method="POST">
+                                        @method('delete')
+                                        @csrf
+                                        <button type="submit" class="btn btn-outline-secondary account-image-reset mb-4">
+                                            <i class="bx bx-reset d-block d-sm-none"></i>
+                                            <span class="d-none d-sm-block">حذف</span>
+                                        </button>
+                                    </form>
                                 </div>
-                                <div class="col">
-                                    <div id="notification">
-                                        <label for="state" class="form-label">اعلان</label>
-                                        @if ($owner->notification == 1)
-                                            <div class="badge rounded-pill bg-success d-inline-block">فعال</div>
-                                        @else
-                                            <div class="badge rounded-pill bg-danger d-inline-block">غیر فعال</div>
-                                        @endif
+                            </div>
+                        </div>
+                        <div class="col-6" style="justify-items: left">
+                            <div class="col-6">
+                                <div class="row">
+                                    <div class="col">
+                                        <div id="status">
+                                            <label for="state" class="form-label">وضعیت</label>
+                                            @if ($owner->status == 0)
+                                                <div class="badge rounded-pill bg-secondary d-inline-block">غیر فعال</div>
+                                            @elseif($owner->status == 1)
+                                                <div class="badge rounded-pill bg-success d-inline-block">فعال</div>
+                                            @endif
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col">
-                                    <div id="sms">
-                                        <label for="state" class="form-label">پیامک</label>
-                                        @if ($owner->sms == 1)
-                                            <div class="badge rounded-pill bg-success d-inline-block">فعال</div>
-                                        @else
-                                            <div class="badge rounded-pill bg-danger d-inline-block">غیر فعال</div>
-                                        @endif
+                                    <div class="col">
+                                        <div id="notification">
+                                            <label for="state" class="form-label">اعلان</label>
+                                            @if ($owner->notification == 1)
+                                                <div class="badge rounded-pill bg-success d-inline-block">فعال</div>
+                                            @else
+                                                <div class="badge rounded-pill bg-danger d-inline-block">غیر فعال</div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div id="sms">
+                                            <label for="state" class="form-label">پیامک</label>
+                                            @if ($owner->sms == 1)
+                                                <div class="badge rounded-pill bg-success d-inline-block">فعال</div>
+                                            @else
+                                                <div class="badge rounded-pill bg-danger d-inline-block">غیر فعال</div>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                </div>
-                <!-- Account -->
-                <div class="card-body">
-                    <div class="d-flex align-items-start align-items-sm-center gap-4">
-                        <img src="{{ $owner->profileImage !== null ? asset($owner->profileImage) : asset('img/notFound.jpg') }}"
-                            alt="user-avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar" />
-                        <div class="button-wrapper">
-                            <form action="{{ route('owner.removeProfile', $owner->id) }}" method="POST">
-                                @method('delete')
-                                @csrf
-                                <button type="submit" class="btn btn-outline-secondary account-image-reset mb-4">
-                                    <i class="bx bx-reset d-block d-sm-none"></i>
-                                    <span class="d-none d-sm-block">حذف</span>
-                                </button>
-                            </form>
-                        </div>
-                    </div>
                 </div>
                 <hr class="my-0" />
                 <div class="card-body">

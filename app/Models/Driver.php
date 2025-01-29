@@ -183,6 +183,11 @@ class Driver extends Authenticatable
         return true;
     }
 
+    public function bookmark()
+    {
+        return $this->morphOne(Bookmark::class, 'userable');
+    }
+
     public function unSuccessPayment($mobile)
     {
         $curl = curl_init();
@@ -265,8 +270,8 @@ class Driver extends Authenticatable
         return $score = Score::where('type', 'Owner')->where('driver_id', $this->id)->avg('value');
         if ($score === null) {
             return null;
-        }else{
-            return round($score,1);
+        } else {
+            return round($score, 1);
         }
     }
     //
