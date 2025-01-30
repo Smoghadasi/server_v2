@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Bookmark;
 use App\Models\Fleet;
 use App\Models\Load;
 use App\Models\Owner;
@@ -30,6 +31,7 @@ class OwnerController extends Controller
         $ownerRejectCounts = Owner::where('isAuth', 0)->count();
         $ownerAcceptCounts = Owner::where('isAuth', 1)->count();
         $ownerRejectedCounts = Owner::where('isRejected', 1)->count();
+        $ownerBookmarkCount = Bookmark::where('type', 'owner')->count();
 
         // if (auth()->user()->role == 'admin') {
         $owners = Owner::orderByDesc('created_at')->paginate(10);
@@ -47,7 +49,8 @@ class OwnerController extends Controller
             'ownerRejectedCounts',
             'loadsToday',
             'loadsTodayOwner',
-            'fleets'
+            'fleets',
+            'ownerBookmarkCount'
         ]));
     }
 
@@ -183,6 +186,7 @@ class OwnerController extends Controller
         $ownerRejectedCounts = Owner::where('isRejected', 1)->count();
         $fleets = Fleet::all();
         $fleetId = $request->fleet_id;
+        $ownerBookmarkCount = Bookmark::where('type', 'owner')->count();
 
         if ($request->has('fleet_id')) {
             if (auth()->user()->role == 'admin' || Auth::id() == 29) {
@@ -215,7 +219,8 @@ class OwnerController extends Controller
             'loadsToday',
             'loadsTodayOwner',
             'fleets',
-            'fleetId'
+            'fleetId',
+            'ownerBookmarkCount'
         ));
     }
 

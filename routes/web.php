@@ -357,7 +357,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         });
 
         // جستجو همه جدول ها
-        Route::post('searchAll', [HomeController::class, 'searchAll'])
+        Route::get('searchAll', [HomeController::class, 'searchAll'])
             ->middleware('operator')
             ->name('admin.searchAll');
 

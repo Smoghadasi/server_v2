@@ -14,9 +14,11 @@ class BookmarkController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $bookmarks = Bookmark::paginate(20);
+        $bookmarks = Bookmark::when($request->type !== null, function ($query) use ($request) {
+            return $query->where('type', 'owner');
+        })->paginate(100);
         return view('admin.bookmark.index', compact('bookmarks'));
     }
 
@@ -36,11 +38,12 @@ class BookmarkController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $bookmark = Bookmark::where('userable_id', $request->user_id)->where('type', $request->type)->first();
         if ($bookmark) {
             $bookmark->delete();
-            return back()->with('danger', 'آیتم مورد نظر حذف شد');
+            return back();
         }
 
         $user = null;
@@ -56,9 +59,8 @@ class BookmarkController extends Controller
             $bookmark->type = $request->type;
             $user->bookmark()->save($bookmark);
 
-            return back()->with('success', 'آیتم مورد نظر ذخیره شد');
+            return back();
         }
-
     }
 
 
@@ -106,7 +108,5 @@ class BookmarkController extends Controller
     {
         $bookmark->delete();
         return back()->with('success', 'آیتم مورد نظر ذخیره شد');
-
-
     }
 }

@@ -17,6 +17,8 @@
                             {{ $ownerAcceptCounts }}</a>
                         <a href="{{ route('owner.ownerRejected') }}" class="alert p-1 alert-dark">رد شده :
                             {{ $ownerRejectedCounts }}</a>
+                        <a href="{{ route('bookmark.index', ['type' => 'owner']) }}" class="alert p-1 alert-primary"> علامت گذاری شده ها :
+                            {{ $ownerBookmarkCount }}</a>
 
                     </div>
                     <div class="col" style="text-align: left;">
@@ -76,6 +78,27 @@
                             <tr>
                                 <td>{{ ($owners->currentPage() - 1) * $owners->perPage() + ++$i }}</td>
                                 <td>
+                                    @if ($owner->bookmark)
+                                        <form style="display: contents" action="{{ route('bookmark.store') }}"
+                                            method="post">
+                                            @csrf
+                                            <input type="hidden" value="{{ $owner->id }}" name="user_id">
+                                            <input type="hidden" value="owner" name="type">
+                                            <button class="btn btn-link" type="submit">
+                                                <i class='bx bxs-bookmark-star'></i>
+                                            </button>
+                                        </form>
+                                    @else
+                                        <form style="display: contents" action="{{ route('bookmark.store') }}"
+                                            method="post">
+                                            @csrf
+                                            <input type="hidden" value="{{ $owner->id }}" name="user_id">
+                                            <input type="hidden" value="owner" name="type">
+                                            <button class="btn btn-link" type="submit">
+                                                <i class='bx bx-bookmark'></i>
+                                            </button>
+                                        </form>
+                                    @endif
                                     {{ $owner->name }} {{ $owner->lastName }}
                                     @if ($owner->status == 1)
                                         <span class="badge bg-success">فعال</span>

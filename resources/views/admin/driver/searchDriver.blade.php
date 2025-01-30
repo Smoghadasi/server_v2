@@ -26,7 +26,7 @@
                                         <label>شماره موبایل راننده</label>
                                         <input class="form-control" name="mobileNumber" type="text">
                                     </div>
-                                    <input type="hidden" value="{{ $load_id }}" name="load_id">
+                                    {{-- <input type="hidden" value="{{ $load_id }}" name="load_id"> --}}
                                     {{-- <div class="form-group col-6">
                                         <label>شماره موبایل راننده</label>
                                         <input class="form-control" name="mobileNumber" type="text">

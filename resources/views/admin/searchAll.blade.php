@@ -30,6 +30,27 @@
                             <tr>
                                 <td>{{ ($drivers->currentPage() - 1) * $drivers->perPage() + ++$i }}</td>
                                 <td>
+                                    @if ($driver->bookmark)
+                                        <form style="display: contents" action="{{ route('bookmark.store') }}"
+                                            method="post">
+                                            @csrf
+                                            <input type="hidden" value="{{ $driver->id }}" name="user_id">
+                                            <input type="hidden" value="driver" name="type">
+                                            <button class="btn btn-link" type="submit">
+                                                <i class='bx bxs-bookmark-star'></i>
+                                            </button>
+                                        </form>
+                                    @else
+                                        <form style="display: contents" action="{{ route('bookmark.store') }}"
+                                            method="post">
+                                            @csrf
+                                            <input type="hidden" value="{{ $driver->id }}" name="user_id">
+                                            <input type="hidden" value="driver" name="type">
+                                            <button class="btn btn-link" type="submit">
+                                                <i class='bx bx-bookmark'></i>
+                                            </button>
+                                        </form>
+                                    @endif
                                     {{ $driver->name }} {{ $driver->lastName }}
 
                                     @if ($driver->status == 0)
@@ -104,6 +125,27 @@
                             <tr>
                                 <td>{{ ($owners->currentPage() - 1) * $owners->perPage() + ++$i }}</td>
                                 <td>
+                                    @if ($owner->bookmark)
+                                        <form style="display: contents" action="{{ route('bookmark.store') }}"
+                                            method="post">
+                                            @csrf
+                                            <input type="hidden" value="{{ $owner->id }}" name="user_id">
+                                            <input type="hidden" value="owner" name="type">
+                                            <button class="btn btn-link" type="submit">
+                                                <i class='bx bxs-bookmark-star'></i>
+                                            </button>
+                                        </form>
+                                    @else
+                                        <form style="display: contents" action="{{ route('bookmark.store') }}"
+                                            method="post">
+                                            @csrf
+                                            <input type="hidden" value="{{ $owner->id }}" name="user_id">
+                                            <input type="hidden" value="owner" name="type">
+                                            <button class="btn btn-link" type="submit">
+                                                <i class='bx bx-bookmark'></i>
+                                            </button>
+                                        </form>
+                                    @endif
                                     {{ $owner->name }} {{ $owner->lastName }}
                                     @if ($owner->status == 1)
                                         <span class="badge bg-success">فعال</span>
