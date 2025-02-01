@@ -3403,11 +3403,21 @@ class LoadController extends Controller
 
     }
 
+    public function getFileContents($url) {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $data = curl_exec($ch);
+        curl_close($ch);
+        return $data;
+    }
+
+
     private function sendNotification($FCM_token, $title, $body)
     {
 
         $serviceAccountPath = asset('assets/zarin-tarabar-firebase-adminsdk-9x6c3-7dbc939cac.json');
-        $serviceAccount = json_decode(file_get_contents($serviceAccountPath), true);
+        $serviceAccount = json_decode($this->getFileContents($serviceAccountPath), true);
 
         $clientEmail = $serviceAccount['client_email'];
         $privateKey = $serviceAccount['private_key'];
