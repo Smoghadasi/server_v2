@@ -14,6 +14,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\FreeSubscriptionController;
 use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\DataConvertController;
+use App\Http\Controllers\DiscrepancyController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\FleetController as AdminFleetController;
 use App\Http\Controllers\HomeController;
@@ -468,6 +469,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // نمایش لیست راننده ها
         Route::get('drivers', [DriverController::class, 'drivers'])->middleware('operator')->name('drivers');
 
+
+        Route::get('discrepancy', [DriverController::class, 'drivers'])->middleware('operator')->name('drivers');
+
         // Route::get('threeDaysDrivers', function () {
 
         //     $driver = Driver::whereNotNull('activeDate')
@@ -631,6 +635,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('profile', [UserController::class, 'adminProfile'])->middleware('operator')->name('user.edit');
 
         Route::resource('setting', SettingController::class)->middleware('operator');
+
+        // صورت مغایرت
+        Route::resource('discrepancy', DiscrepancyController::class)->middleware('operator');
 
         // انبار بار
         Route::resource('warehouse', WarehouseController::class)->middleware('operator');

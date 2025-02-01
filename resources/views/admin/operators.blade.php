@@ -934,6 +934,22 @@
                                                     </li>
                                                 </ul>
                                                 <ul id="myUL">
+                                                    <li><span class="caret">حسابداری</span>
+                                                        <ul class="nested">
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="discrepancies"
+                                                                            @if (in_array('discrepancies', $user->userAccess)) checked @endif>
+                                                                        صورت مغایرت بانکی
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                                <ul id="myUL">
                                                     <li><span class="caret">پشتیبانی</span>
                                                         <ul class="nested">
                                                             <li>

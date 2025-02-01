@@ -2,7 +2,7 @@
     <div class="app-brand demo">
         <a href="{{ url('/dashboard') }}" class="app-brand-link">
             <span class="app-brand-logo demo">
-                <img src="{{ asset('icons/irt.png') }}" width="50" height="50"/>
+                <img src="{{ asset('icons/irt.png') }}" width="50" height="50" />
             </span>
             <span class="app-brand-text demo menu-text fw-bolder ms-2">ایران ترابر</span>
 
@@ -77,27 +77,45 @@
                         </a>
                     </li>
                 @endif
-                    <li class="menu-item {{ request()->is('admin/support*') ? 'active open' : '' }} {{ request()->is('admin/supportDriver*') ? 'active open' : '' }}">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            <div data-i18n="Layouts">تماس ورودی</div>
-                        </a>
-                        <ul class="menu-sub">
-                            @if (in_array('incomingCallDriver', auth()->user()->userAccess))
-                                <li class="menu-item">
-                                    <a class="menu-link" href="{{ route('admin.indexDriver') }}">
-                                        <span>راننده</span>
-                                    </a>
-                                </li>
-                            @endif
+                <li
+                    class="menu-item {{ request()->is('admin/support*') ? 'active open' : '' }} {{ request()->is('admin/supportDriver*') ? 'active open' : '' }}">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <div data-i18n="Layouts">تماس ورودی</div>
+                    </a>
+                    <ul class="menu-sub">
+                        @if (in_array('incomingCallDriver', auth()->user()->userAccess))
+                            <li class="menu-item">
+                                <a class="menu-link" href="{{ route('admin.indexDriver') }}">
+                                    <span>راننده</span>
+                                </a>
+                            </li>
+                        @endif
 
-                            {{-- <li class="menu-item">
+                        {{-- <li class="menu-item">
                                 <a class="menu-link" href="#">
                                     <span>صاحب بار</span>
                                 </a>
                             </li> --}}
-                        </ul>
-                    </li>
+                    </ul>
+                </li>
 
+            </ul>
+        </li>
+        <li class="menu-item">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-credit-card"></i>
+                <div data-i18n="pais">حسابداری
+
+                </div>
+            </a>
+            <ul class="menu-sub">
+                @if (in_array('discrepancies', auth()->user()->userAccess))
+                    <li class="menu-item">
+                        <a class="menu-link" href="{{ route('discrepancy.index') }}">
+                            <div data-i18n="Without menu">صورت مغایرت</div>
+                        </a>
+                    </li>
+                @endif
             </ul>
         </li>
 
@@ -662,6 +680,24 @@
                 </ul>
             </li>
         @endif
+        {{-- @if (in_array('accounting', auth()->user()->userAccess)) --}}
+        <li class="menu-item">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-credit-card"></i>
+                <div data-i18n="Layouts">حسابداری</div>
+            </a>
+            <ul class="menu-sub">
+                {{-- @if (in_array('accounting', auth()->user()->userAccess)) --}}
+                <li class="menu-item">
+                    <a class="menu-link" href="{{ route('slider.index') }}">
+                        <span>صورت مغایرت</span>
+                    </a>
+                </li>
+                {{-- @endif --}}
+
+            </ul>
+        </li>
+        {{-- @endif --}}
 
     </ul>
 </aside>
