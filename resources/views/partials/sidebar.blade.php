@@ -101,23 +101,27 @@
 
             </ul>
         </li>
-        <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-credit-card"></i>
-                <div data-i18n="pais">حسابداری
+        @if (in_array('discrepancies', auth()->user()->userAccess))
 
-                </div>
-            </a>
-            <ul class="menu-sub">
-                @if (in_array('discrepancies', auth()->user()->userAccess))
-                    <li class="menu-item">
-                        <a class="menu-link" href="{{ route('discrepancy.index') }}">
-                            <div data-i18n="Without menu">صورت مغایرت</div>
-                        </a>
-                    </li>
-                @endif
-            </ul>
-        </li>
+            <li class="menu-item">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class="menu-icon tf-icons bx bx-credit-card"></i>
+                    <div data-i18n="pais">حسابداری
+
+                    </div>
+                </a>
+                <ul class="menu-sub">
+                    @if (in_array('discrepancies', auth()->user()->userAccess))
+                        <li class="menu-item">
+                            <a class="menu-link" href="{{ route('discrepancy.index') }}">
+                                <div data-i18n="Without menu">صورت مغایرت</div>
+                            </a>
+                        </li>
+                    @endif
+                </ul>
+            </li>
+        @endif
+
 
         <li class="menu-item">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
