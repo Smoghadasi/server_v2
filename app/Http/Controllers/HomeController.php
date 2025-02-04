@@ -15,6 +15,7 @@ use App\Models\LoadBackup;
 use App\Models\Owner;
 use App\Models\Report;
 use App\Models\SiteOption;
+use App\Models\TrackableItems;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -157,6 +158,7 @@ class HomeController extends Controller
 
     public function searchAll(Request $request)
     {
+        $tracks = TrackableItems::with('childrenRecursive')->where('mobileNumber', $request->title)->where('parent_id', 0)->get();
 
         // صاحب بار
         $owners = Owner::where('mobileNumber', 'like', '%' . $request->title . '%')
@@ -224,7 +226,8 @@ class HomeController extends Controller
             'reportOwners',
             'blockedPhoneNumbers',
             'messages',
-            'contactReportWithCargoOwners'
+            'contactReportWithCargoOwners',
+            'tracks'
         ]));
     }
 }
