@@ -112,8 +112,11 @@
                                 </td>
 
                                 <td>
-                                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                                    @if ($track->status == 0)
+                                        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
                                         data-bs-target="#followUp">پیگیری مجدد</button>
+                                    @endif
+
                                     <div class="modal fade" id="followUp" tabindex="-1" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered" role="document">
                                             <div class="modal-content">
@@ -216,8 +219,6 @@
                                                             </div>
                                                         </div>
                                                     </div>
-
-
                                                 </div>
                                             </div>
                                         </div>

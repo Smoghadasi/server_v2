@@ -473,7 +473,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('drivers', [DriverController::class, 'drivers'])->middleware('operator')->name('drivers');
 
 
-        Route::get('discrepancy', [DriverController::class, 'drivers'])->middleware('operator')->name('drivers');
 
         // Route::get('threeDaysDrivers', function () {
 
