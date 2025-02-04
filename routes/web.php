@@ -39,6 +39,7 @@ use App\Http\Controllers\SliderController;
 use App\Http\Controllers\SOSController;
 use App\Http\Controllers\SupportController;
 use App\Http\Controllers\TenderController;
+use App\Http\Controllers\TrackableItemController;
 use App\Http\Controllers\TransactionManualController;
 use App\Http\Controllers\User\BlockPhoneNumberController;
 use App\Http\Controllers\UserController;
@@ -282,6 +283,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // علامت گذاری
         Route::resource('bookmark', BookmarkController::class)->middleware("operator");
 
+
+        Route::resource('trackableItems', TrackableItemController::class)->middleware("operator");
 
 
         Route::get('ownerOperators', [OwnerController::class, 'ownerOperators'])

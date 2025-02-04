@@ -56,6 +56,11 @@
                         </a>
                     </li>
                 @endif
+                    <li class="menu-item">
+                        <a href="{{ route('trackableItems.index') }}" class="menu-link">
+                            <div data-i18n="Analytics">موارد قابل پیشگیری</div>
+                        </a>
+                    </li>
                 @if (in_array('drivers', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('drivers') }}">
