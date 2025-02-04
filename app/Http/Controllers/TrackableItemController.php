@@ -50,13 +50,13 @@ class TrackableItemController extends Controller
         if ($request->has('parent_id')) {
             $parentTrack = TrackableItems::findOrFail($request->parent_id);
             $track->parent_id = $request->parent_id;
-            $track->user_id = Auth::id();
             $track->mobileNumber = $parentTrack->mobileNumber;
             $track->tracking_code = $parentTrack->tracking_code;
             $track->description = $parentTrack->description;
         } else {
             $track->parent_id = 0;
             $track->mobileNumber = $request->mobileNumber;
+            $track->user_id = Auth::id();
             $track->tracking_code = rand(10000, 99999);
             $track->description = $request->description;
         }
