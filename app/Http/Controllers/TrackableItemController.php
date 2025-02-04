@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\TrackableItems;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TrackableItemController extends Controller
 {
@@ -15,12 +16,11 @@ class TrackableItemController extends Controller
     public function index(Request $request)
     {
         if ($request->has('parentId')) {
-            $tracks = TrackableItems::where('parent_id', $request->parentId)->paginate(100);
+            $tracks = TrackableItems::where('parent_id', $request->parentId)->with('user')->paginate(100);
         } elseif ($request->has('status')) {
-            $tracks = TrackableItems::where('status', $request->status)->where('parent_id', 0)->paginate(40);
-
+            $tracks = TrackableItems::with('user')->where('status', $request->status)->where('parent_id', 0)->paginate(40);
         } else {
-            $tracks = TrackableItems::with('childrenRecursive')->where('parent_id', 0)
+            $tracks = TrackableItems::with('childrenRecursive', 'user')->where('parent_id', 0)
                 ->orderByDesc('status')
                 ->paginate(40);
         }
@@ -50,6 +50,7 @@ class TrackableItemController extends Controller
         if ($request->has('parent_id')) {
             $parentTrack = TrackableItems::findOrFail($request->parent_id);
             $track->parent_id = $request->parent_id;
+            $track->user_id = Auth::id();
             $track->mobileNumber = $parentTrack->mobileNumber;
             $track->tracking_code = $parentTrack->tracking_code;
             $track->description = $parentTrack->description;

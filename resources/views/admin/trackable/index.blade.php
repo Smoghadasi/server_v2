@@ -81,6 +81,7 @@
                         <tr>
                             <th>ردیف</th>
                             <th>شماره موبایل</th>
+                            <th>اپراتور</th>
                             <th>کد رهگیری</th>
                             <th>توضیحات</th>
                             <th>وضعیت</th>
@@ -100,7 +101,8 @@
                                         {{ ($tracks->currentPage() - 1) * $tracks->perPage() + ($key + 1) }}
                                     @endif
                                 </td>
-                                <td>{{ $track->mobileNumber  }}({{$track->childrenRecursive->count()}})</td>
+                                <td>{{ $track->mobileNumber }}({{$track->childrenRecursive->count()}})</td>
+                                <td>{{ $track->user->name ?? '-' }} {{ $track->user->lastName ?? '' }}</td>
                                 <td>{{ $track->tracking_code }}</td>
                                 <td>{{ Str::limit($track->description, 30) }}</td>
                                 <td>{{ $track->status ? 'فعال' : 'بایگانی شد' }}</td>

@@ -19,6 +19,7 @@ class CreateTrackableItemsTable extends Migration
             $table->string('date')->nullable();
             $table->integer('tracking_code')->nullable();
             $table->unsignedInteger('parent_id')->default(0);
+            $table->unsignedInteger('user_id')->default(0);
             $table->text('description')->nullable();
             $table->text('result')->nullable();
             $table->boolean('status')->default(0);
