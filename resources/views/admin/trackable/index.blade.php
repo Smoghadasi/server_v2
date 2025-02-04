@@ -100,7 +100,7 @@
                                         {{ ($tracks->currentPage() - 1) * $tracks->perPage() + ($key + 1) }}
                                     @endif
                                 </td>
-                                <td>{{ $track->mobileNumber }}</td>
+                                <td>{{ $track->mobileNumber  }}({{$track->childrenRecursive->count()}})</td>
                                 <td>{{ $track->tracking_code }}</td>
                                 <td>{{ Str::limit($track->description, 30) }}</td>
                                 <td>{{ $track->status ? 'فعال' : 'بایگانی شد' }}</td>
@@ -155,75 +155,72 @@
                                             </div>
                                         </div>
                                     </div>
-                                    @if (Auth::user()->role == 'admin')
-                                        @if ($track->status == 1)
-                                            <button data-bs-toggle="modal" data-bs-target="#submitClose"
-                                                class="btn btn-sm btn-outline-danger">بستن</button>
-                                            <div class="modal fade" id="submitClose" tabindex="-1" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="submitCloseTitle">بستن تیکت شماره
-                                                                :
-                                                                {{ $track->tracking_code }} </h5>
-                                                            <button type="button" class="btn-close"
-                                                                data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-                                                        <form method="POST"
-                                                            action="{{ route('trackableItems.destroy', $track) }}">
-                                                            @csrf
-                                                            @method('delete')
-
-                                                            <div class="modal-body">
-                                                                <div class="row">
-                                                                    <div class="col-12">
-                                                                        <textarea class="form-control" name="result" id="" cols="15" rows="5"
-                                                                            placeholder="متن توضیحات"></textarea>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-outline-secondary"
-                                                                    data-bs-dismiss="modal">
-                                                                    بستن
-                                                                </button>
-                                                                <button type="submit"
-                                                                    class="btn btn-primary">ثبت</button>
-                                                            </div>
-                                                        </form>
-
+                                    @if ($track->status == 1)
+                                        <button data-bs-toggle="modal" data-bs-target="#submitClose"
+                                            class="btn btn-sm btn-outline-danger">بستن</button>
+                                        <div class="modal fade" id="submitClose" tabindex="-1" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="submitCloseTitle">بستن تیکت شماره
+                                                            :
+                                                            {{ $track->tracking_code }} </h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        @else
-                                            <button data-bs-toggle="modal" data-bs-target="#watchResult"
-                                                class="btn btn-sm btn-outline-success">مشاهده نتیجه</button>
-                                            <div class="modal fade" id="watchResult" tabindex="-1" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="watchResultTitle">نتیجه تیکت شماره
-                                                                :
-                                                                {{ $track->tracking_code }} </h5>
-                                                            <button type="button" class="btn-close"
-                                                                data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-
+                                                    <form method="POST"
+                                                        action="{{ route('trackableItems.destroy', $track) }}">
+                                                        @csrf
+                                                        @method('delete')
 
                                                         <div class="modal-body">
                                                             <div class="row">
                                                                 <div class="col-12">
-                                                                    <textarea class="form-control" disabled name="description" id="" cols="15" rows="5"
-                                                                        placeholder="متن نتیجه">{{ $track->result }}</textarea>
+                                                                    <textarea class="form-control" name="result" id="" cols="15" rows="5"
+                                                                        placeholder="متن توضیحات"></textarea>
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-outline-secondary"
+                                                                data-bs-dismiss="modal">
+                                                                بستن
+                                                            </button>
+                                                            <button type="submit" class="btn btn-primary">ثبت</button>
+                                                        </div>
+                                                    </form>
 
-
-                                                    </div>
                                                 </div>
                                             </div>
-                                        @endif
+                                        </div>
+                                        @else
+                                        <button data-bs-toggle="modal" data-bs-target="#watchResult"
+                                            class="btn btn-sm btn-outline-success">مشاهده نتیجه</button>
+                                        <div class="modal fade" id="watchResult" tabindex="-1" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="watchResultTitle">نتیجه تیکت شماره
+                                                            :
+                                                            {{ $track->tracking_code }} </h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                    </div>
+
+
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <div class="col-12">
+                                                                <textarea class="form-control" disabled name="description" id="" cols="15" rows="5"
+                                                                    placeholder="متن نتیجه">{{ $track->result }}</textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
                                     @endif
 
 
