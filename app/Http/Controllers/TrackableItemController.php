@@ -21,7 +21,7 @@ class TrackableItemController extends Controller
 
         } else {
             $tracks = TrackableItems::with('childrenRecursive')->where('parent_id', 0)
-                ->orderByDesc('created_at')
+                ->orderByDesc('status')
                 ->paginate(40);
         }
         return view('admin.trackable.index', compact('tracks'));
