@@ -56,11 +56,11 @@ class TrackableItemController extends Controller
         } else {
             $track->parent_id = 0;
             $track->mobileNumber = $request->mobileNumber;
-            $track->user_id = Auth::id();
             $track->tracking_code = rand(10000, 99999);
             $track->description = $request->description;
         }
 
+        $track->user_id = Auth::id();
         $track->date = $request->date . " " . $request->time;
         $track->save();
 
