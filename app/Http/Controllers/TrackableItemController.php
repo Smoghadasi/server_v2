@@ -109,6 +109,7 @@ class TrackableItemController extends Controller
         $trackableItem->status = 0;
         $trackableItem->result = $request->result;
         $trackableItem->save();
+        TrackableItems::where('parent_id', $trackableItem->id)->update(['status' => 0]);
         return back()->with('danger', 'تیکت مورد نظر بسته شد.');
     }
 }
