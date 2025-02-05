@@ -20,7 +20,9 @@ class TrackableItemController extends Controller
         } elseif ($request->has('status')) {
             $tracks = TrackableItems::with('user')->where('status', $request->status)->where('parent_id', 0)->paginate(40);
         } else {
-            $tracks = TrackableItems::with('childrenRecursive', 'user')->where('parent_id', 0)
+            $tracks = TrackableItems::with('childrenRecursive', 'user')
+                ->where('parent_id', 0)
+                ->where('status', 1)
                 ->orderByDesc('status')
                 ->paginate(40);
         }
