@@ -14,9 +14,15 @@ class DiscrepancyController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $discrepancies = Discrepancy::orderByDesc('created_at')->paginate(20);
+        $fromDate = persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00';
+        $toDate = persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 00:00:00';
+        $discrepancies = Discrepancy::orderByDesc('created_at')
+            ->when($request->toDate !== null, function ($query) use ($fromDate, $toDate) {
+                return $query->whereBetween('created_at', [$fromDate, $toDate]);
+            })
+            ->paginate(100);
         return view('admin.discrepancy.index', compact('discrepancies'));
     }
 
@@ -67,7 +73,6 @@ class DiscrepancyController extends Controller
         $discrepancy->total_all = $request->total_all;
         $discrepancy->save();
         return back()->with('success', 'با موفقیت ثبت شد.');
-
     }
 
     /**

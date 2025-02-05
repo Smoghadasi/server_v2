@@ -13,6 +13,24 @@
                 </div>
         </h5>
         <div class="card-body">
+            <form method="GET" action="{{ route('discrepancy.index') }}" class="form-group">
+                <div class="col-md-12 row">
+                    <div class="col-md-3">
+                        <input class="form-control" type="text" id="fromDate" name="fromDate"
+                            placeholder="از تاریخ" autocomplete="off" />
+                        {{-- <span id="span1"></span> --}}
+                    </div>
+                    <div class="col-md-3">
+                        <input class="form-control" type="text" name="toDate" id="fromDate"
+                            placeholder="تا تاریخ"  autocomplete="off"/>
+                        {{-- <span id="span2"></span> --}}
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary m-2">جستجو</button>
+
+                    </div>
+                </div>
+            </div>
             <table class="table">
                 <thead>
                     <tr>
@@ -50,4 +68,16 @@
         </div>
     </div>
 
-@stop
+@endsection
+@section('script')
+    <script src="{{ asset('js/persianDatepicker.min.js') }}"></script>
+
+    <script type="text/javascript">
+       $("#fromDate, #span1").persianDatepicker({
+            formatDate: "YYYY/MM/DD",
+            selectedBefore: !0
+        });
+       $("#toDate").persianDatepicker();
+
+    </script>
+@endsection
