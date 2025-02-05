@@ -125,6 +125,9 @@
                                             @if ($load->deleted_at != null)
                                                 <i class="menu-icon tf-icons bx bx-trash text-danger"></i>
                                             @endif
+                                            @if ($load->isBot == 1)
+                                                <i class="menu-icon tf-icons bx bx-bot text-success"></i>
+                                            @endif
                                             {{ $load->title }}
                                         </td>
                                         <td>{{ $load->mobileNumberForCoordination }}</td>
