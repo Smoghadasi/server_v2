@@ -131,11 +131,16 @@
                                         <td>
                                             @php
                                                 $fleets = json_decode($load->fleets, true);
-                                                for ($i = 0; $i < count($fleets); $i++) {
+                                                $maxItems = 3;
+                                                for ($i = 0; $i < min(count($fleets), $maxItems); $i++) {
                                                     echo '<span class="alert alert-info m-1 p-1">' .
-                                                        $fleets[0]['title'] .
+                                                        $fleets[$i]['title'] .
                                                         '</span>';
                                                 }
+                                                if (count($fleets) > $maxItems) {
+                                                    echo '<span class="alert alert-info m-1 p-1">...</span>';
+                                                }
+
                                             @endphp
 
                                         </td>
