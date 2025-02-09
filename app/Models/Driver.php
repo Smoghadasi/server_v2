@@ -84,7 +84,7 @@ class Driver extends Authenticatable
 
     public function driverCalls(): HasMany
     {
-        return $this->hasMany(DriverCall::class);
+        return $this->hasMany(DriverCall::class, 'driver_id');
     }
 
     public function getOperatorMessageAttribute()
