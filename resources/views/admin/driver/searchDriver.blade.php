@@ -100,13 +100,11 @@
                                 </td>
                                 <td>{{ $driver->version ?? '-' }}</td>
                                 <td>{{ $driver->mobileNumber }}</td>
-                                {{-- @php
-                                    $pieces = explode(' ', $driver->created_at);
-                                @endphp --}}
-                                {{-- <td>{{ gregorianDateToPersian($report->created_at, '-', true) . ' ( ' . $pieces[1] . ' ) ' }} </td> --}}
-                                <td>
-                                    {{ $driver->driverCalls[0] }}
-                                </td>
+                                @php
+                                    $pieces = explode(' ', $driver->driverCalls[0]->created_at);
+                                @endphp
+                                <td>{{ gregorianDateToPersian($driver->driverCalls[0]->created_at, '-', true) . ' ( ' . $pieces[1] . ' ) ' }} </td>
+
 
                                 <td>
                                     <a class="btn btn-primary"
