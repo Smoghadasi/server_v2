@@ -105,7 +105,7 @@
                                 @endphp --}}
                                 {{-- <td>{{ gregorianDateToPersian($report->created_at, '-', true) . ' ( ' . $pieces[1] . ' ) ' }} </td> --}}
                                 <td>
-                                    {{ gregorianDateToPersian($driver->driverCalls->created_at, '-', true) }}
+                                    {{ $driver->driverCalls }}
                                 </td>
 
                                 <td>
