@@ -2561,7 +2561,7 @@ class LoadController extends Controller
     }
     public function searchLoadDriverCall(string $load_id)
     {
-        $drivers = Driver::whereHas('driverCalls', function ($q) use ($load_id) {
+        $drivers = Driver::with('driverCalls')->whereHas('driverCalls', function ($q) use ($load_id) {
             $q->where('load_id', $load_id);
         })->paginate(100);
 
