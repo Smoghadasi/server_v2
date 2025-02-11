@@ -63,57 +63,52 @@
                     <tbody class="small">
                         <?php $i = 0; ?>
 
-                        @foreach ($drivers as $driver)
+                        @foreach ($driverCalls as $driverCall)
                             <tr>
-                                <td>{{ ($drivers->currentPage() - 1) * $drivers->perPage() + ++$i }}</td>
+                                <td>{{ ($driverCalls->currentPage() - 1) * $driverCalls->perPage() + ++$i }}</td>
                                 <td>
-                                    {{ $driver->name }} {{ $driver->lastName }}
+                                    {{ $driverCall->driver->name }} {{ $driverCall->driver->lastName }}
 
-                                    @if ($driver->status == 0)
+                                    @if ($driverCall->driver->status == 0)
                                         <span class="alert alert-danger p-1">غیرفعال</span>
                                     @else
                                         <span class="alert alert-success p-1">فعال</span>
                                     @endif
                                 </td>
                                 <td>
-                                    @if ($driver->authLevel == DRIVER_AUTH_UN_AUTH)
+                                    @if ($driverCall->driver->authLevel == DRIVER_AUTH_UN_AUTH)
                                         <span class="badge bg-label-danger"> انجام نشده</span>
-                                    @elseif ($driver->authLevel == DRIVER_AUTH_SILVER_PENDING)
+                                    @elseif ($driverCall->driver->authLevel == DRIVER_AUTH_SILVER_PENDING)
                                         <span class="badge bg-label-secondary border border-danger"><span
                                                 class="badge bg-label-secondary">سطح نقره ای : </span> در حال بررسی</span>
-                                    @elseif ($driver->authLevel == DRIVER_AUTH_SILVER)
+                                    @elseif ($driverCall->driver->authLevel == DRIVER_AUTH_SILVER)
                                         <span class="badge bg-label-secondary">سطح نقره ای</span>
-                                    @elseif ($driver->authLevel == DRIVER_AUTH_GOLD_PENDING)
+                                    @elseif ($driverCall->driver->authLevel == DRIVER_AUTH_GOLD_PENDING)
                                         <span class="badge bg-label-warning border border-danger"><span
                                                 class="badge bg-label-warning">سطح طلایی ای: </span> در حال بررسی</span>
-                                    @elseif ($driver->authLevel == DRIVER_AUTH_GOLD)
+                                    @elseif ($driverCall->driver->authLevel == DRIVER_AUTH_GOLD)
                                         <span class="badge bg-label-warning">سطح طلایی</span>
                                     @endif
                                 </td>
-                                <td>{{ $driver->nationalCode }}</td>
-                                <td>{{ \App\Http\Controllers\FleetController::getFleetName($driver->fleet_id) }}</td>
+                                <td>{{ $driverCall->driver->nationalCode }}</td>
+                                <td>{{ \App\Http\Controllers\FleetController::getFleetName($driverCall->driver->fleet_id) }}</td>
                                 <td>
-                                    {{ gregorianDateToPersian($driver->created_at, '-', true) }}
-                                    @if (isset(explode(' ', $driver->created_at)[1]))
-                                        {{ explode(' ', $driver->created_at)[1] }}
+                                    {{ gregorianDateToPersian($driverCall->driver->created_at, '-', true) }}
+                                    @if (isset(explode(' ', $driverCall->driver->created_at)[1]))
+                                        {{ explode(' ', $driverCall->driver->created_at)[1] }}
                                     @endif
                                 </td>
-                                <td>{{ $driver->version ?? '-' }}</td>
-                                <td>{{ $driver->mobileNumber }}</td>
-
-                                <td>
-                                    @foreach ($driver->driverCalls as $driverCall)
-                                        {{ gregorianDateToPersian($driverCall->created_at, '-', true) }}
-                                        @if (isset(explode(' ', $driverCall)[1]))
-                                            {{ explode(' ', $driverCall)[1] }}
-                                        @endif
-                                    @endforeach
-                                </td>
+                                <td>{{ $driverCall->driver->version ?? '-' }}</td>
+                                <td>{{ $driverCall->driver->mobileNumber }}</td>
+                                @php
+                                    $pieces = explode(' ', $driverCall->created_at);
+                                @endphp
+                                <td>{{ gregorianDateToPersian($driverCalls->created_at, '-', true) . ' ( ' . $pieces[1] . ' ) ' }} </td>
 
 
                                 <td>
                                     <a class="btn btn-primary"
-                                        href="{{ url('admin/driverInfo') }}/{{ $driver->id }}">جزئیات</a>
+                                        href="{{ url('admin/driverInfo') }}/{{ $driverCall->driver->id }}">جزئیات</a>
                                 </td>
                             </tr>
                         @endforeach
@@ -121,7 +116,7 @@
                 </table>
             </div>
             @if (!isset($showSearchResult) || !$showSearchResult)
-                {{ $drivers }}
+                {{ $driverCalls }}
             @endif
 
         </div>
