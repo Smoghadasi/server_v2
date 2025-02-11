@@ -100,10 +100,13 @@
                                 </td>
                                 <td>{{ $driver->version ?? '-' }}</td>
                                 <td>{{ $driver->mobileNumber }}</td>
-                                @php
-                                    $pieces = explode(' ', $driver->driverCalls[0]->created_at);
-                                @endphp
-                                <td>{{ gregorianDateToPersian($driver->driverCalls[0]->created_at, '-', true) . ' ( ' . $pieces[1] . ' ) ' }} </td>
+
+                                <td>
+                                    @foreach ($driver->driverCalls as $driverCall)
+                                        {{ gregorianDateToPersian($driverCall->created_at, '-', true) }}
+                                        {{ explode(' ', $driverCall)[1] }}
+                                    @endforeach
+                                </td>
 
 
                                 <td>
