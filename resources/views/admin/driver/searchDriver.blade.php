@@ -56,6 +56,7 @@
                             <th>تاریخ ثبت نام</th>
                             <th>کد نسخه</th>
                             <th>شماره تلفن همراه</th>
+                            <th>تاریخ و ساعت تماس</th>
                             <th class="text-center">عملیات</th>
                         </tr>
                     </thead>
@@ -99,6 +100,12 @@
                                 </td>
                                 <td>{{ $driver->version ?? '-' }}</td>
                                 <td>{{ $driver->mobileNumber }}</td>
+                                @php
+                                    $pieces = explode(' ', $driver->driverCalls[0]->created_at);
+                                @endphp
+                                <td>{{ gregorianDateToPersian($driver->driverCalls[0]->created_at, '-', true) . ' ( ' . $pieces[1] . ' ) ' }} </td>
+
+
                                 <td>
                                     <a class="btn btn-primary"
                                         href="{{ url('admin/driverInfo') }}/{{ $driver->id }}">جزئیات</a>
