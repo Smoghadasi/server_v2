@@ -8,12 +8,12 @@
                     رانندگان
                 </div>
                 <div class="col-6 text-end">
-                    <a href="{{ route('admin.sendNearLoadDrivers', ['load_id' => $load_id, 'type' => 'notification']) }}"
+                    <a href="{{ route('admin.sendNearLoadDrivers', ['load_id' => $load->id, 'type' => 'notification']) }}"
                         class="btn btn-primary btn-sm">
-                        ارسال نوتیفیکشن
+                        ارسال نوتیفیکشن ({{ $load->numOfNotif }})
                     </a>
-                    <a href="{{ route('admin.sendNearLoadDrivers', ['load_id' => $load_id, 'type' => 'sms']) }}" class="btn btn-primary btn-sm">
-                        ارسال پیامک
+                    <a href="{{ route('admin.sendNearLoadDrivers', ['load_id' => $load->id, 'type' => 'sms']) }}" class="btn btn-primary btn-sm">
+                        ارسال پیامک ({{ $load->numOfSms }})
                     </a>
                 </div>
             </div>
@@ -33,7 +33,7 @@
                             <th>کد نسخه</th>
                             <th>شماره تلفن همراه</th>
                             <th>فاصله</th>
-                            <th>زمان ثبت</th>
+                            <th>زمان آنلاین</th>
                             <th class="text-center">عملیات</th>
                         </tr>
                     </thead>
@@ -81,7 +81,7 @@
                                     $time = explode(' ', $driver->location_at);
                                 @endphp
 
-                                <td>{{ $time[1] }}</td>
+                                <td>{{ gregorianDateToPersian($driver->location_at, '-', true) }} {{ $time[1] }}</td>
                                 <td>
                                     <a class="btn btn-primary"
                                         href="{{ url('admin/driverInfo') }}/{{ $driver->id }}">جزئیات</a>

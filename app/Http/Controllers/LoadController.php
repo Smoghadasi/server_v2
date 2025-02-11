@@ -2321,7 +2321,14 @@ class LoadController extends Controller
 
     public function nearLoadDrivers($load_id)
     {
-        $load = Load::findOrFail($load_id);
+        $load = Load::whereId($load_id)->select([
+            'id',
+            'numOfSms',
+            'numOfNotif',
+            'latitude',
+            'longitude'
+        ])->first();
+
         $latitude = $load->latitude;
         $longitude = $load->longitude;
         $radius = 70;
@@ -2361,7 +2368,7 @@ class LoadController extends Controller
             ->orderBy('distance', 'asc')
             ->orderByDesc('created_at')
             ->get();
-        return view('admin.driver.driverNearOwner', compact('drivers', 'load_id'));
+        return view('admin.driver.driverNearOwner', compact('drivers', 'load'));
     }
 
     public function sendMessageNearLoadDrivers($load_id, $type = null)
@@ -2370,10 +2377,13 @@ class LoadController extends Controller
         $radius = 70;
 
         if ($type == 'notification') {
+            $load->numOfNotif += 1;
             $this->sendNotificationForNearDriver($load, $radius);
         } else {
+            $load->numOfSms += 1;
             $this->sendSmsForNearDriver($load, $radius);
         }
+        $load->save();
         return back()->with('success', 'ارسال اعلان انجام شد!');
     }
 
@@ -3404,7 +3414,8 @@ class LoadController extends Controller
 
     }
 
-    public function getFileContents($url) {
+    public function getFileContents($url)
+    {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
