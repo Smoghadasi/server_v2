@@ -2321,13 +2321,7 @@ class LoadController extends Controller
 
     public function nearLoadDrivers($load_id)
     {
-        $load = Load::whereId($load_id)->select([
-            'id',
-            'numOfSms',
-            'numOfNotif',
-            'latitude',
-            'longitude'
-        ])->first();
+        $load = Load::whereId($load_id)->first();
 
         $latitude = $load->latitude;
         $longitude = $load->longitude;
