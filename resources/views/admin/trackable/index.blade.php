@@ -104,7 +104,7 @@
                                 <td>{{ $track->mobileNumber }}({{$track->childrenRecursive->count()}})</td>
                                 <td>{{ $track->user->name ?? '-' }} {{ $track->user->lastName ?? '' }}</td>
                                 <td>{{ $track->tracking_code }}</td>
-                                <td>{{ Str::limit($track->description, 30) }}</td>
+                                <td>{{ $track->description }}</td>
                                 <td>{{ $track->status ? 'فعال' : 'بایگانی شد' }}</td>
                                 {{-- @php
                                 $pieces = explode(' ', $track->created_at);
