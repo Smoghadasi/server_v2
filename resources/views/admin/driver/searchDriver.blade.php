@@ -103,7 +103,7 @@
                                 @php
                                     $pieces = explode(' ', $driverCall->created_at);
                                 @endphp
-                                <td>{{ gregorianDateToPersian($driverCalls->created_at, '-', true) . ' ( ' . $pieces[1] . ' ) ' }} </td>
+                                <td>{{ gregorianDateToPersian($driverCall->created_at, '-', true) . ' ( ' . $pieces[1] . ' ) ' }} </td>
 
 
                                 <td>
