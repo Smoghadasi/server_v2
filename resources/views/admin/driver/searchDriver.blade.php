@@ -104,7 +104,9 @@
                                 <td>
                                     @foreach ($driver->driverCalls as $driverCall)
                                         {{ gregorianDateToPersian($driverCall->created_at, '-', true) }}
-                                        {{ explode(' ', $driverCall)[1] }}
+                                        @if (isset(explode(' ', $driverCall)[1]))
+                                            {{ explode(' ', $driverCall)[1] }}
+                                        @endif
                                     @endforeach
                                 </td>
 
