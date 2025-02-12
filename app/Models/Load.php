@@ -97,7 +97,7 @@ class Load extends Model
         try {
             $latitude = $this->latitude;
             $longitude = $this->longitude;
-            $radius = 70;
+            $radius = 120;
             $fleets = FleetLoad::where('load_id', $this->id)->pluck('fleet_id');
 
             $haversine = "(6371 * acos(cos(radians(" . $latitude . "))
