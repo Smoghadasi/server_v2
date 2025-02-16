@@ -5293,7 +5293,7 @@ class LoadController extends Controller
         $cities = ProvinceCity::where('parent_id', '!=', 0)->get();
         $fleets = Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
         $operators = User::where('status', 1)
-            ->whereIn('operator', ['admin', 'operator'])
+            ->whereIn('role', ['admin', 'operator'])
             ->get();
         $countLoads = LoadBackup::where('mobileNumberForCoordination', $request->mobileNumber)->count();
         return view(
