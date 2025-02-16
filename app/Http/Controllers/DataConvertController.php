@@ -623,7 +623,7 @@ class DataConvertController extends Controller
                 if ($owner != null) {
                     $load->user_id = $owner->id;
                     $load->userType = ROLE_OWNER;
-                    $load->operator_id = 0;
+                    $load->operator_id = auth()->id();
                     $load->isBot = 1;
                 } else {
                     $load->user_id = auth()->id();
