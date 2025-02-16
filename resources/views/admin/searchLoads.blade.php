@@ -125,9 +125,9 @@
                                             @if ($load->deleted_at != null)
                                                 <i class="menu-icon tf-icons bx bx-trash text-danger"></i>
                                             @endif
-                                            @if ($load->isBot == 1 && $load->userType == 'owner')
+                                            {{-- @if ($load->isBot == 1 && $load->userType == 'owner')
                                                 <i class="menu-icon tf-icons bx bx-bot text-primary"></i>
-                                            @endif
+                                            @endif --}}
                                             {{ $load->title }}
                                         </td>
                                         <td>{{ $load->mobileNumberForCoordination }}</td>
