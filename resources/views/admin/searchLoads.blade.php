@@ -161,7 +161,7 @@
                                         <td>
                                             @foreach ($operators as $operator)
                                                 @if ($operator->id == $load->operator_id)
-                                                    {{ $operator->name }} {{ $operator->lastName }}
+                                                    صاحب بار / {{ $operator->name }} {{ $operator->lastName }}
                                                 @endif
                                             @endforeach
                                         </td>
