@@ -732,16 +732,26 @@ class DataConvertController extends Controller
             if (!isset($fleet_id->id)) {
                 $fleet_id = Fleet::where('title', str_replace('ی', 'ي', str_replace('ک', 'ك', $fleet)))->first();
             }
-            $loadDuplicate = Load::where('mobileNumberForCoordination', $load->mobileNumberForCoordination)
+
+            $conditions = [
+                'mobileNumberForCoordination' => $load->mobileNumberForCoordination,
+                'origin_city_id' => $load->origin_city_id,
+                'destination_city_id' => $load->destination_city_id,
+                ['fleets', 'LIKE', '%fleet_id":' . $fleet_id->id . ',%']
+            ];
+            $loadDuplicate = Load::where($conditions)
                 ->where('userType', 'operator')
-                ->where('origin_city_id', $load->origin_city_id)
-                ->where('destination_city_id', $load->destination_city_id)
-                ->where('fleets', 'Like', '%fleet_id":' . $fleet_id->id . ',%')
                 ->first();
-            if ($loadDuplicate == null) {
-                // $loadDuplicate->delete();
+
+            $loadDuplicateOwner = Load::where($conditions)
+                ->where('userType', 'owner')
+                ->where('isBot', 0)
+                ->first();
+
+            if (is_null($loadDuplicate) && is_null($loadDuplicateOwner)) {
                 $load->save();
             }
+
 
             if (isset($load->id)) {
 
