@@ -93,6 +93,7 @@
                         <th>کد ملی</th>
                         <th>نام و نام خانوادگی</th>
                         <th>توضیحات</th>
+                        <th>اپراتور</th>
                         <th>تاریخ</th>
                         <th>عملیات</th>
                     </tr>
@@ -113,6 +114,9 @@
                             </td>
                             <td>
                                 {{ $blockedPhoneNumber->description ?? '-' }}
+                            </td>
+                            <td>
+                                {{ $blockedPhoneNumber->operator->name . ' ' . $blockedPhoneNumber->operator->lastName ?? '-' }}
                             </td>
 
                             @php

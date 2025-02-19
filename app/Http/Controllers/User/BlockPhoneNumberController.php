@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\BlockPhoneNumber;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BlockPhoneNumberController extends Controller
 {
@@ -16,7 +17,7 @@ class BlockPhoneNumberController extends Controller
     public function index($blockedPhoneNumbers = [], $showSearchResult = false)
     {
         if (!$showSearchResult)
-            $blockedPhoneNumbers = BlockPhoneNumber::orderByDesc('created_at')->paginate(20);
+            $blockedPhoneNumbers = BlockPhoneNumber::with('operator')->orderByDesc('created_at')->paginate(20);
         return view('admin.blockedPhoneNumbers', compact('blockedPhoneNumbers'));
     }
 
@@ -49,6 +50,7 @@ class BlockPhoneNumberController extends Controller
         $blockedPhoneNumber->nationalCode = $request->nationalCode;
         $blockedPhoneNumber->name = $request->name;
         $blockedPhoneNumber->description = $request->description;
+        $blockedPhoneNumber->operator_id = Auth::id();
         $blockedPhoneNumber->save();
 
         return back()->with('success', 'شماره تلفن ' . $request->phoneNumber . ' به لیست ممنوعه اضافه شد.');
