@@ -80,7 +80,7 @@
                 $('#total').text(total.toLocaleString() + ' تومان');
 
                 var totalPayment = parseFloat($('#totalPayment').text().replace(/,/g, '').replace(' تومان', '') || 0);
-                var amountDifference = total - totalPayment;
+                var amountDifference = totalPayment - total;
                 $('#amountDifference').text(amountDifference.toLocaleString() + ' تومان');
                 $('#total_card').val(total);
                 $('#total_all').val(amountDifference);
