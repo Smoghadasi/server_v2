@@ -116,7 +116,7 @@
                                 {{ $blockedPhoneNumber->description ?? '-' }}
                             </td>
                             <td>
-                                {{ $blockedPhoneNumber->operator ? $blockedPhoneNumber->name . ' ' . $blockedPhoneNumber->operator->lastName : '-' }}
+                                {{ $blockedPhoneNumber->operator ? $blockedPhoneNumber->operator->name . ' ' . $blockedPhoneNumber->operator->lastName : '-' }}
                             </td>
 
                             @php
