@@ -111,8 +111,7 @@ class LoadController extends Controller
             ->withTrashed()
             ->count();
 
-        $loadsToday = Load::where('userType', ROLE_OWNER)
-            ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
+        $loadsToday = Load::where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
             ->withTrashed()
             ->whereIn('id', $loadIds)
             ->count();

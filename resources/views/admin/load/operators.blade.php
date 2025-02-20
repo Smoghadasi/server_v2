@@ -58,17 +58,22 @@
                                 {{ $load->title }}
                             </td>
                             <td>{{ $load->senderMobileNumber }}</td>
-                            @if (Auth::user()->role == 'admin')
-                                <td>
-                                    <a href="{{ route('owner.show', $load->owner->id) }}">
+                            @if ($load->owner)
+                                @if (Auth::user()->role == 'admin')
+                                    <td>
+                                        <a href="{{ route('owner.show', $load->owner->id) }}">
+                                            {{ $load->owner->name }} {{ $load->owner->lastName }}
+                                        </a>
+                                    </td>
+                                @else
+                                    <td>
                                         {{ $load->owner->name }} {{ $load->owner->lastName }}
-                                    </a>
-                                </td>
+                                    </td>
+                                @endif
                             @else
-                                <td>
-                                    {{ $load->owner->name }} {{ $load->owner->lastName }}
-                                </td>
+                            -
                             @endif
+
 
                             {{--                        <td>{{ $load->userType == ROLE_CUSTOMER ? 'صاحب بار' : 'باربری' }}</td> --}}
                             <td>
