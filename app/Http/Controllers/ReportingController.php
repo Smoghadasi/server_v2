@@ -390,25 +390,29 @@ class ReportingController extends Controller
     }
     public function driversCountCallSearch(Request $request)
     {
-        $fleets = Fleet::where('parent_id', '!=', 0)->get();
+        try {
+            $fleets = Fleet::where('parent_id', '!=', 0)->get();
 
-        $driverCalls = DriverCall::with('driver')
-            ->when($request->mobileNumber !== null, function ($query) use ($request) {
-                return $query->whereHas('driver', function ($q) use ($request) {
-                    $q->where('mobileNumber', $request->mobileNumber);
-                });
-            })
-            ->when($request->fleet_id !== null, function ($query) use ($request) {
-                return $query->whereHas('driver', function ($q) use ($request) {
-                    $q->where('fleet_id', $request->fleet_id);
-                });
-            })
-            ->groupBy('callingDate')
-            ->select('driver_calls.*', 'callingDate', DB::raw('count(*) as totalCalls'))
-            ->orderByDesc('callingDate')
-            ->get();
+            $driverCalls = DriverCall::with('driver')
+                ->when($request->mobileNumber !== null, function ($query) use ($request) {
+                    return $query->whereHas('driver', function ($q) use ($request) {
+                        $q->where('mobileNumber', $request->mobileNumber);
+                    });
+                })
+                ->when($request->fleet_id !== null, function ($query) use ($request) {
+                    return $query->whereHas('driver', function ($q) use ($request) {
+                        $q->where('fleet_id', $request->fleet_id);
+                    });
+                })
+                ->groupBy('callingDate')
+                ->select('driver_calls.*', 'callingDate', DB::raw('count(*) as totalCalls'))
+                ->orderByDesc('callingDate')
+                ->get();
 
-        return view('admin.reporting.driversCountCallSearch', compact('driverCalls', 'fleets'));
+            return view('admin.reporting.driversCountCallSearch', compact('driverCalls', 'fleets'));
+        } catch (\Throwable $th) {
+            return back()->with('danger', 'تماس با این مشخصات یافت نشد');
+        }
     }
 
 
