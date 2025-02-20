@@ -71,7 +71,7 @@
                                     </td>
                                 @endif
                             @else
-                            -
+                            <td>-</td>
                             @endif
 
 
