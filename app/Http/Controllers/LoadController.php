@@ -118,7 +118,7 @@ class LoadController extends Controller
         $operators = User::where('status', 1)
             ->whereIn('role', ['admin', 'operator'])
             ->get();
-        return view('admin.load.operators', compact('loads', 'loadsCount', 'loadsToday'));
+        return view('admin.load.operators', compact('loads', 'loadsCount', 'loadsToday' , 'operators'));
     }
 
     // نمایش فرم ویرایش نوع بار
