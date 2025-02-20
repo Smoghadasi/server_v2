@@ -7,9 +7,6 @@
                 <div class="col">
                     گزارش تماس راننده
                 </div>
-                <div class="col" style="text-align: left;">
-                    <a class="alert p-1 alert-primary">مجموع تعداد تماس: {{ $driverCalls->count() }}</a>
-                </div>
             </div>
         </h5>
         <div class="card-body">

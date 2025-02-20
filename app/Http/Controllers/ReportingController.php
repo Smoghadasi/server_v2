@@ -392,9 +392,17 @@ class ReportingController extends Controller
     {
         $fleets = Fleet::where('parent_id', '!=', 0)->get();
 
-        $driverCalls = DriverCall::with('driver')->whereHas('driver', function ($q) use ($request) {
-            $q->where('mobileNumber', $request->mobileNumber);
-        })
+        $driverCalls = DriverCall::with('driver')
+            ->when($request->mobileNumber !== null, function ($query) use ($request) {
+                return $query->whereHas('driver', function ($q) use ($request) {
+                    $q->where('mobileNumber', $request->mobileNumber);
+                });
+            })
+            ->when($request->fleet_id !== null, function ($query) use ($request) {
+                return $query->whereHas('driver', function ($q) use ($request) {
+                    $q->where('fleet_id', $request->fleet_id);
+                });
+            })
             ->groupBy('callingDate')
             ->select('driver_calls.*', 'callingDate', DB::raw('count(*) as totalCalls'))
             ->orderByDesc('callingDate')
