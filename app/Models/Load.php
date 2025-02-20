@@ -27,7 +27,7 @@ class Load extends Model
         'avarageRateOwner',
     ];
 
-    public function diver()
+    public function driver()
     {
         return $this->hasOne(Driver::class);
     }

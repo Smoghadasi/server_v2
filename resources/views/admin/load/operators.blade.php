@@ -71,7 +71,13 @@
                                     </td>
                                 @endif
                             @else
-                            <td>-</td>
+                                <td>
+                                    @foreach ($operators as $operator)
+                                        @if ($operator->id == $load->operator_id)
+                                            صاحب بار / {{ $operator->name }} {{ $operator->lastName }}
+                                        @endif
+                                    @endforeach
+                                </td>
                             @endif
 
 

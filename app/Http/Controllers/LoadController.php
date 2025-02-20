@@ -115,6 +115,9 @@ class LoadController extends Controller
             ->withTrashed()
             ->whereIn('id', $loadIds)
             ->count();
+        $operators = User::where('status', 1)
+            ->whereIn('role', ['admin', 'operator'])
+            ->get();
         return view('admin.load.operators', compact('loads', 'loadsCount', 'loadsToday'));
     }
 
