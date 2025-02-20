@@ -101,10 +101,11 @@ class LoadController extends Controller
             ->whereIn('id', $loadIds)
             ->paginate(100);
 
-        $fleets = Fleet::select('id', 'title', 'parent_id')
-            ->where('parent_id', '!=', 0)
-            ->get();
-
+        $loads = Load::orderByDesc('created_at')
+            ->with('owner')
+            ->withTrashed()
+            ->whereIn('id', $loadIds)
+            ->paginate(20);
         $loadsCount = Load::orderByDesc('created_at')
             ->whereIn('id', $loadIds)
             ->withTrashed()
@@ -115,13 +116,7 @@ class LoadController extends Controller
             ->withTrashed()
             ->whereIn('id', $loadIds)
             ->count();
-        return view('admin.load.owner', compact([
-            'loads',
-            'loadsCount',
-            'loadsToday',
-            'fleets'
-        ]));
-        return $driverCalls;
+        return view('admin.load.operators', compact('loads', 'loadsCount', 'loadsToday'));
     }
 
     // نمایش فرم ویرایش نوع بار
