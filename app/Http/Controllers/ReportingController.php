@@ -399,6 +399,12 @@ class ReportingController extends Controller
                         $q->where('mobileNumber', $request->mobileNumber);
                     });
                 })
+                ->when($request->toDate !== null, function ($query) use ($request) {
+                    return $query->whereBetween('created_at', [
+                        persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00',
+                        persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:59'
+                    ]);
+                })
                 ->when($request->fleet_id !== null, function ($query) use ($request) {
                     return $query->whereHas('driver', function ($q) use ($request) {
                         $q->where('fleet_id', $request->fleet_id);
@@ -409,7 +415,7 @@ class ReportingController extends Controller
                 ->orderByDesc('callingDate')
                 ->get();
 
-            return view('admin.reporting.driversCountCallSearch', compact('driverCalls', 'fleets'));
+            return view('admin.reporting.driversCountCallSearch', compact('driverCalls', 'fleets', 'request'));
         } catch (\Throwable $th) {
             return back()->with('danger', 'تماس با این مشخصات یافت نشد');
         }

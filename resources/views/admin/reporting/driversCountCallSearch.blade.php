@@ -14,7 +14,7 @@
                 <div class="row">
                     <div class="col-md-3 col-sm-12">
                         <label>شماره موبایل</label>
-                        <input class="form-control" name="mobileNumber" id="mobileNumber">
+                        <input class="form-control" name="mobileNumber" value="{{ $request->mobileNumber }}" id="mobileNumber">
                     </div>
 
                     <div class="col-md-3 col-sm-12">
@@ -29,12 +29,12 @@
 
                     <div class="col-md-3 col-sm-12">
                         <label>از تاریخ : </label>
-                        <input class="form-control" type="text" id="fromDate" name="fromDate">
+                        <input class="form-control" value="{{ $request->fromDate }}" type="text" id="fromDate" name="fromDate">
                     </div>
 
                     <div class="col-md-3 col-sm-12">
                         <label>تا تاریخ : </label>
-                        <input class="form-control" type="text" id="toDate" name="toDate">
+                        <input class="form-control" value="{{ $request->toDate }}" type="text" id="toDate" name="toDate">
                     </div>
 
                     <div class="col-md-4 col-sm-12">
