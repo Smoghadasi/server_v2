@@ -62,12 +62,16 @@ class DriverCall extends Model
 
     public function getOwnerScoreAttribute()
     {
-        $load = Load::where('id', $this->load_id)->withTrashed()->first();
-        $score = Score::where('type', 'Owner')->where('driver_id', $this->driver_id)->where('owner_id', $load->user_id)->first();
-        if ($score === null) {
+        try {
+            $load = Load::where('id', $this->load_id)->withTrashed()->first();
+            $score = Score::where('type', 'Owner')->where('driver_id', $this->driver_id)->where('owner_id', $load->user_id)->first();
+            if ($score === null) {
+                return null;
+            } else {
+                return $score->value;
+            }
+        } catch (\Throwable $th) {
             return null;
-        } else {
-            return $score->value;
         }
     }
 }

@@ -337,22 +337,75 @@ class ReportingController extends Controller
 
         return view('admin.reporting.driversContactCall', compact(['basedCalls', 'basedFleets', 'groupBy']));
     }
-    public function driversCountCall($basedCalls = [], $showSearchResult = false)
+    public function driversCountCall(Request $request, $basedCalls = [], $showSearchResult = false)
     {
         $fromDate = gregorianDateToPersian(date('Y/m/d', time()), '/');
         $toDate = $fromDate;
+        $fleets = Fleet::where('parent_id', '!=', 0)->get();
         if (!$showSearchResult) {
-            $basedCalls = DriverCallCount::with('driver')
-                ->groupBy('driver_id')
-                ->select('driver_id', 'persian_date', 'created_date', DB::raw('sum(calls) as countOfCalls'))
+            // محاسبه تعداد تماس‌های امروز برای هر راننده
+            $basedCalls = DriverCallCount::join('drivers', 'driver_call_counts.driver_id', '=', 'drivers.id')
+                ->groupBy('driver_call_counts.driver_id')
+                ->select(
+                    'driver_call_counts.driver_id',
+                    'drivers.name',
+                    'drivers.lastName',
+                    // 'drivers.fleetTitle',
+                    'drivers.mobileNumber',
+                    'driver_call_counts.persian_date',
+                    'driver_call_counts.created_date',
+                    DB::raw('sum(driver_call_counts.calls) as countOfCalls')
+                )
                 ->orderByDesc('countOfCalls')
-                ->where('persian_date', $fromDate)
+                ->where('driver_call_counts.persian_date', $fromDate)
+                ->when($request->toDate !== null, function ($query) use ($request) {
+                    return $query->whereBetween('driver_call_counts.created_date', [
+                        persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00',
+                        persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:59'
+                    ]);
+                })
                 ->paginate(20);
+
+            // دریافت شناسه‌های رانندگان برای محاسبه مجموع تماس‌ها
+            $driverIds = $basedCalls->pluck('driver_id');
+
+            // محاسبه مجموع تماس‌ها برای هر راننده
+            $totalCalls = DriverCallCount::whereIn('driver_id', $driverIds)
+                ->groupBy('driver_id')
+                ->select('driver_id', DB::raw('sum(calls) as totalCalls'))
+                ->get()
+                ->keyBy('driver_id');
+
+            // اضافه کردن مجموع تماس‌ها به نتیجه نهایی
+            $basedCalls->each(function ($item) use ($totalCalls) {
+                $item->totalCalls = $totalCalls[$item->driver_id]->totalCalls ?? 0;
+            });
+
+            // return $basedCalls;
         }
 
 
-        return view('admin.reporting.driversCountCall', compact('basedCalls', 'fromDate', 'toDate'));
+
+        return view('admin.reporting.driversCountCall', compact('basedCalls', 'fromDate', 'toDate', 'fleets'));
     }
+    public function driversCountCallSearch(Request $request)
+    {
+        $fleets = Fleet::where('parent_id', '!=', 0)->get();
+
+        $driverCalls = DriverCall::with('driver')->whereHas('driver', function ($q) use ($request) {
+            $q->where('mobileNumber', $request->mobileNumber);
+        })
+            ->groupBy('callingDate')
+            ->select('driver_calls.*', 'callingDate', DB::raw('count(*) as totalCalls'))
+            ->orderByDesc('callingDate')
+            ->get();
+
+        return view('admin.reporting.driversCountCallSearch', compact('driverCalls', 'fleets'));
+    }
+
+
+
+
 
     public function driversInMonth(Request $request)
     {

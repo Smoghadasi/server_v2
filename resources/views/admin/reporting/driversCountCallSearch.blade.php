@@ -3,10 +3,16 @@
 @section('content')
     <div class="card">
         <h5 class="card-header">
-            گزارش رانندگان بر اساس بیشترین تماس (امروز)
+            <div class="row justify-content-between">
+                <div class="col">
+                    گزارش تماس راننده
+                </div>
+                <div class="col" style="text-align: left;">
+                    <a class="alert p-1 alert-primary">مجموع تعداد تماس: {{ $driverCalls->count() }}</a>
+                </div>
+            </div>
         </h5>
         <div class="card-body">
-
             <form class="my-4" method="get" action="{{ route('report.driversCountCallSearch') }}">
                 <div class="row">
                     <div class="col-md-3 col-sm-12">
@@ -40,44 +46,39 @@
                 </div>
 
             </form>
-
             <div class="mt-2">
                 <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>راننده</th>
-                            <th>ناوگان</th>
-                            <th>تلفن</th>
-                            <th>تعداد</th>
-                            <th>تعداد کل</th>
-                            {{--                        <th>تاریخ تماس</th> --}}
-                            {{--                        <th>تاریخ ثبت نام</th> --}}
+                            <th>تاریخ</th>
+                            <th>تعداد تماس</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        @foreach ($basedCalls as $basedCall)
+                        @foreach ($driverCalls as $key => $driversActivitiesCallDate)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $basedCall->driver->name . ' ' . $basedCall->driver->lastName ?? '-' }}</td>
-                                <td>{{ $basedCall->driver->fleetTitle ?? '-' }}</td>
-                                <td>{{ $basedCall->driver->mobileNumber ?? '-' }}</td>
-                                <td>{{ $basedCall->countOfCalls }}</td>
-                                <td>{{ $basedCall->totalCalls }}</td>
+                                <td>
+                                    {{ str_replace('-', '/', gregorianDateToPersian($driversActivitiesCallDate->created_at, '-', true)) }}
+                                </td>
+                                <td>
+                                    <a href="{{ route('report.loadDriversCountCall', [
+                                        'callingDate' => $driversActivitiesCallDate->callingDate,
+                                        'driverId' => $driversActivitiesCallDate->driver_id,
+                                    ]) }}">{{ $driversActivitiesCallDate->totalCalls }}</a>
+
+
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
-
-            <div class="mt-2 mb-2">
-                {{ $basedCalls }}
-            </div>
         </div>
     </div>
 @endsection
-
 @section('script')
     <script src="{{ asset('js/persianDatepicker.min.js') }}"></script>
 

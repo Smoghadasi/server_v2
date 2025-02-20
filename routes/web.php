@@ -739,6 +739,11 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // نمودار فعالیت رانندگان بر اساس تماس
         Route::get('driversCountCall', [ReportingController::class, 'driversCountCall'])->name('report.driversCountCall');
 
+        // نتیجه فعالیت رانندگان بر اساس تماس
+        Route::get('driversCountCallSearch', [ReportingController::class, 'driversCountCallSearch'])->name('report.driversCountCallSearch');
+
+        Route::get('loadDriversCountCall/{callingDate}/{driverId}', [LoadController::class, 'loadDriversCountCall'])->name('report.loadDriversCountCall');
+
         Route::post('searchDriversCountCall', [ReportingController::class, 'searchDriversCountCall'])
             ->middleware('operator')
             ->name('search.driverCall.count');

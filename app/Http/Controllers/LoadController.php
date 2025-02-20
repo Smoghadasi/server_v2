@@ -92,6 +92,38 @@ class LoadController extends Controller
         return $this->addNewLoadTypeForm('نوع بار جدید با عنوان ' . $request->title . ' افزوده شد. ');
     }
 
+    public function loadDriversCountCall($callingDate, $driverId)
+    {
+        $loadIds = DriverCall::where('callingDate', $callingDate)->where('driver_id', $driverId)->pluck('load_id');
+        $loads = Load::orderByDesc('created_at')
+            ->with('owner')
+            ->withTrashed()
+            ->whereIn('id', $loadIds)
+            ->paginate(100);
+
+        $fleets = Fleet::select('id', 'title', 'parent_id')
+            ->where('parent_id', '!=', 0)
+            ->get();
+
+        $loadsCount = Load::orderByDesc('created_at')
+            ->whereIn('id', $loadIds)
+            ->withTrashed()
+            ->count();
+
+        $loadsToday = Load::where('userType', ROLE_OWNER)
+            ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
+            ->withTrashed()
+            ->whereIn('id', $loadIds)
+            ->count();
+        return view('admin.load.owner', compact([
+            'loads',
+            'loadsCount',
+            'loadsToday',
+            'fleets'
+        ]));
+        return $driverCalls;
+    }
+
     // نمایش فرم ویرایش نوع بار
     public function editLoadTypeForm($id)
     {
