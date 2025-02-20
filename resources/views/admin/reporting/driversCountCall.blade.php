@@ -84,11 +84,9 @@
     <script type="text/javascript">
         $("#toDate").persianDatepicker({
             formatDate: "YYYY/MM/DD",
-            selectedBefore: !0
         });
         $("#fromDate").persianDatepicker({
             formatDate: "YYYY/MM/DD",
-            selectedBefore: !0
         });
     </script>
 @endsection
