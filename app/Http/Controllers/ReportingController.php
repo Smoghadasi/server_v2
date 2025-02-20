@@ -408,7 +408,6 @@ class ReportingController extends Controller
                 ->select('driver_calls.*', 'callingDate', DB::raw('count(*) as totalCalls'))
                 ->orderByDesc('callingDate')
                 ->get();
-            return $driverCalls;
 
             return view('admin.reporting.driversCountCallSearch', compact('driverCalls', 'fleets'));
         } catch (\Throwable $th) {
