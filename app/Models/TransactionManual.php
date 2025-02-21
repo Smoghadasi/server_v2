@@ -28,6 +28,9 @@ class TransactionManual extends Model
             case 'online':
                 $type = 'آنلاین';
                 break;
+            case 'gift':
+                $type = 'هدیه';
+                break;
         }
         return $type;
     }

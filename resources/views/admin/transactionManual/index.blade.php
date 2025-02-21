@@ -33,14 +33,16 @@
                                             </div>
                                             <div class="col-md-6 col-sm-12 mb-0">
                                                 <label for="amount" class="form-label">مبلغ (تومان)</label>
-                                                <input type="text" name="amount" id="amount" value="79000"
-                                                    class="form-control" required placeholder="مبلغ" />
+                                                <input type="text" name="amount" id="amount"
+                                                    value="{{ MONTHLY }}" class="form-control" required
+                                                    placeholder="مبلغ" />
                                             </div>
                                             <div class="col-md-6 col-sm-12 mb-0">
                                                 <label for="type" class="form-label">نوع</label>
                                                 <select class="form-control form-select" name="type" required>
                                                     <option value="cardToCard">کارت به کارت</option>
                                                     <option value="online">آنلاین</option>
+                                                    <option id="gift" value="gift">هدیه</option>
                                                 </select>
                                             </div>
                                             <div class="col-md-3 col-sm-12 mb-0">
@@ -54,14 +56,19 @@
                                                     id="time" name="time" required placeholder="ساعت"
                                                     autocomplete="off" />
                                             </div>
+                                            <div class="col-md-6 col-sm-12 mb-0" id="reagent">
+                                                <label for="reagent" class="form-label">تلفن تماس معرف</label>
+                                                <input name="reagent" class="form-control" type="text">
+                                            </div>
                                             <div class="col-md-12">
                                                 <label for="description" class="form-label">توضیحات</label>
                                                 <textarea class="form-control" name="description"></textarea>
                                             </div>
                                             <div class="col-md-6 col-sm-12 mb-3">
                                                 <label for="mobileNumber" class="form-label">تماس رایگان</label>
-                                                <input type="number" value="0" max="3" min="0" id="freeCalls" name="freeCalls"
-                                                    class="form-control" placeholder="تماس رایگان" />
+                                                <input type="number" value="0" max="3" min="0"
+                                                    id="freeCalls" name="freeCalls" class="form-control"
+                                                    placeholder="تماس رایگان" />
                                             </div>
                                         </div>
                                     </div>
@@ -88,7 +95,8 @@
                     </div>
                     <div class="col-md-2">
                         <lable class="form-label">از تاریخ :</label>
-                            <input class="form-control" type="text" id="fromDate" name="fromDate" autocomplete="off" />
+                            <input class="form-control" type="text" id="fromDate" name="fromDate"
+                                autocomplete="off" />
                             <span id="span1"></span>
                     </div>
                     <div class="col-md-2">
@@ -202,7 +210,9 @@
                         <tbody class="small text-right">
                             <?php $i = 1; ?>
                             @php
-                                $anotherTransactions = $oldtransactionManuals->merge($oldtransactionNonDrivers)->sortByDesc('miladiDate');
+                                $anotherTransactions = $oldtransactionManuals
+                                    ->merge($oldtransactionNonDrivers)
+                                    ->sortByDesc('miladiDate');
                             @endphp
 
                             @forelse ($anotherTransactions as $key => $transactionManual)
@@ -474,6 +484,22 @@
         $("#new").persianDatepicker({
             formatDate: "YYYY/MM/DD",
             selectedBefore: !0
+        });
+
+        $(document).ready(function() {
+            $('select[name="type"]').change(function() {
+                var selectedValue = $(this).val();
+                if (selectedValue === 'gift') {
+                    $('#reagent').show();
+                    $('input[name="reagent"]').attr('required', true);
+                } else {
+                    $('#reagent').hide();
+                    $('input[name="reagent"]').removeAttr('required');
+                }
+            });
+
+            // Initially hide the div
+            $('#reagent').hide();
         });
     </script>
 @endsection
