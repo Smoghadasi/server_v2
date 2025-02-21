@@ -201,6 +201,7 @@
                                 <th>ناوگان</th>
                                 <th>مبلغ</th>
                                 <th>نوع</th>
+                                <th>معرف</th>
                                 <th>تاریخ واریزی</th>
                                 <th>توضیحات</th>
                                 <th>وضعیت</th>
@@ -234,6 +235,7 @@
                                         {{ number_format($transactionManual->amount) }}
                                     </td>
                                     <td>{{ $transactionManual->type }}</td>
+                                    <td>{{ $transactionManual->reagent ?? '-' }}</td>
 
                                     <td>{{ $transactionManual->date }}</td>
 
