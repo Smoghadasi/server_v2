@@ -159,11 +159,16 @@
                                             </span>
                                         </td>
                                         <td>
-                                            @foreach ($operators as $operator)
-                                                @if ($operator->id == $load->operator_id)
-                                                    صاحب بار / {{ $operator->name }} {{ $operator->lastName }}
-                                                @endif
-                                            @endforeach
+                                            @if ($load->userType == 'owner' && $load->isBot == 0)
+                                                -
+                                            @else
+                                                @foreach ($operators as $operator)
+                                                    @if ($operator->id == $load->operator_id)
+                                                        صاحب بار / {{ $operator->name }} {{ $operator->lastName }}
+                                                    @endif
+                                                @endforeach
+                                            @endif
+
                                         </td>
                                         @php
                                             $pieces = explode(' ', $load->created_at);
