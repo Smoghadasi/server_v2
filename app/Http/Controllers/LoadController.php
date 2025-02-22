@@ -2403,7 +2403,7 @@ class LoadController extends Controller
     public function sendMessageNearLoadDrivers($load_id, $type = null)
     {
         $load = Load::findOrFail($load_id);
-        $radius = 70;
+        $radius = 120;
 
         if ($type == 'notification') {
             $load->numOfNotif += 1;
@@ -2411,9 +2411,10 @@ class LoadController extends Controller
         } else {
             $load->numOfSms += 1;
             $this->sendSmsForNearDriver($load, $radius);
+            Log::warning("send sms");
         }
         $load->save();
-        return back()->with('success', 'ارسال اعلان انجام شد!');
+        return back()->with('success', 'ارسال انجام شد!');
     }
 
     public function sendSmsForNearDriver($load, $radius)
