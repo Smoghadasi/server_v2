@@ -202,20 +202,18 @@
                                                             </div>
                                                             <div class="col-md-6 col-sm-12 mb-0">
                                                                 <label for="type" class="form-label">نوع</label>
-                                                                <select class="form-control form-select" name="type"
-                                                                    required>
+                                                                <select class="form-control form-select"
+                                                                    name="type-{{ $key }}"
+                                                                    id="type-{{ $key }}" required>
                                                                     <option
                                                                         @if ($transactionManual->type == 'cardToCard') selected @endif
-                                                                        value="cardToCard">کارت به کارت
-                                                                    </option>
+                                                                        value="cardToCard">کارت به کارت</option>
                                                                     <option
                                                                         @if ($transactionManual->type == 'online') selected @endif
-                                                                        value="online">آنلاین
-                                                                    </option>
-                                                                    <option id="gift"
+                                                                        value="online">آنلاین</option>
+                                                                    <option id="gift-{{ $key }}"
                                                                         @if ($transactionManual->type == 'gift') selected @endif
-                                                                        value="gift">هدیه
-                                                                    </option>
+                                                                        value="gift">هدیه</option>
                                                                 </select>
                                                             </div>
                                                             @php
@@ -236,11 +234,12 @@
                                                                     type="time" id="time" name="time" required
                                                                     placeholder="ساعت" autocomplete="off" />
                                                             </div>
-                                                            <div class="col-md-6 col-sm-12 mb-0" id="reagent">
-                                                                <label for="reagent" class="form-label">تلفن تماس
-                                                                    معرف</label>
-                                                                <input name="reagent" value="{{ $transactionManual->reagent }}" class="form-control"
-                                                                    type="text">
+                                                            <div class="col-md-6 col-sm-12 mb-0"
+                                                                id="reagent-{{ $key }}">
+                                                                <label for="reagent-{{ $key }}"
+                                                                    class="form-label">تلفن تماس معرف</label>
+                                                                <input name="reagent-{{ $key }}"
+                                                                    class="form-control" value="{{ $transactionManual->reagent }}" type="text">
                                                             </div>
                                                             <div class="col-md-12">
                                                                 <label for="description"
@@ -292,22 +291,30 @@
 
 
         $(document).ready(function() {
-            $('select[name="type"]').change(function() {
-                var selectedValue = $(this).val();
+            // Function to handle the visibility of the div based on the select value
+            function handleVisibility(id) {
+                var selectedValue = $('#type-' + id).val();
                 if (selectedValue === 'gift') {
-                    $('#reagent').show();
+                    $('#reagent-' + id).show();
                 } else {
-                    $('#reagent').hide();
+                    $('#reagent-' + id).hide();
                 }
-            });
-
-            // Check the initial value and show/hide the div accordingly
-            var initialType = $('select[name="type"]').val();
-            if (initialType === 'gift') {
-                $('#reagent').show();
-            } else {
-                $('#reagent').hide();
             }
+
+            // Initial setup for each transaction
+            @php
+                $transactionCount = count($transactionManuals);
+            @endphp
+
+            for (let i = 0; i < {{ $transactionCount }}; i++) {
+                handleVisibility(i);
+            }
+
+            // Event listener for change event
+            $('select[name^="type-"]').change(function() {
+                var id = $(this).attr('id').split('-')[1];
+                handleVisibility(id);
+            });
         });
     </script>
 @endsection

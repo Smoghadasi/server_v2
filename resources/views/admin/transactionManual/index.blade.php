@@ -397,13 +397,17 @@
                                                                 <div class="col-md-6 col-sm-12 mb-0">
                                                                     <label for="type" class="form-label">نوع</label>
                                                                     <select class="form-control form-select"
-                                                                        name="type" required>
+                                                                        name="type-{{ $key }}"
+                                                                        id="type-{{ $key }}" required>
                                                                         <option
                                                                             @if ($transactionManual->type == 'cardToCard') selected @endif
                                                                             value="cardToCard">کارت به کارت</option>
                                                                         <option
                                                                             @if ($transactionManual->type == 'online') selected @endif
                                                                             value="online">آنلاین</option>
+                                                                        <option id="gift-{{ $key }}"
+                                                                            @if ($transactionManual->type == 'gift') selected @endif
+                                                                            value="gift">هدیه</option>
                                                                     </select>
                                                                 </div>
                                                                 @php
@@ -425,6 +429,15 @@
                                                                         class="form-control" type="time"
                                                                         id="time" name="time" required
                                                                         placeholder="ساعت" autocomplete="off" />
+                                                                </div>
+                                                                <div class="col-md-6 col-sm-12 mb-0"
+                                                                    id="reagent-{{ $key }}">
+                                                                    <label for="reagent-{{ $key }}"
+                                                                        class="form-label">تلفن تماس معرف</label>
+                                                                    <input name="reagent-{{ $key }}"
+                                                                        class="form-control"
+                                                                        value="{{ $transactionManual->reagent }}"
+                                                                        type="text">
                                                                 </div>
                                                                 <div class="col-md-12">
                                                                     <label for="description"
@@ -502,6 +515,31 @@
 
             // Initially hide the div
             $('#reagent').hide();
+
+            // Function to handle the visibility of the div based on the select value
+            function handleVisibility(id) {
+                var selectedValue = $('#type-' + id).val();
+                if (selectedValue === 'gift') {
+                    $('#reagent-' + id).show();
+                } else {
+                    $('#reagent-' + id).hide();
+                }
+            }
+
+            // Initial setup for each transaction
+            @php
+                $transactionCount = count($transactionManuals);
+            @endphp
+
+            for (let i = 0; i < {{ $transactionCount }}; i++) {
+                handleVisibility(i);
+            }
+
+            // Event listener for change event
+            $('select[name^="type-"]').change(function() {
+                var id = $(this).attr('id').split('-')[1];
+                handleVisibility(id);
+            });
         });
     </script>
 @endsection
