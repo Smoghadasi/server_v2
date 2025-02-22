@@ -54,8 +54,10 @@
 
                                 <td>{{ $transactionManual->date }}</td>
 
-                                <td>{{ $transactionManual->description ? Str::limit($transactionManual->description, 20, '...') : '-' }}</td>
-                                <td>{{ $transactionManual->result ? Str::limit($transactionManual->result, 20, '...') : '-' }}</td>
+                                <td>{{ $transactionManual->description ? Str::limit($transactionManual->description, 20, '...') : '-' }}
+                                </td>
+                                <td>{{ $transactionManual->result ? Str::limit($transactionManual->result, 20, '...') : '-' }}
+                                </td>
 
                                 <td class="text-center">
                                     @if ($transactionManual->status == 1)
@@ -75,13 +77,15 @@
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title" id="modalCenterTitle">فعال سازی اشتراک های
+                                                            <h5 class="modal-title" id="modalCenterTitle">فعال سازی اشتراک
+                                                                های
                                                                 دستی
                                                             </h5>
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                                 aria-label="Close"></button>
                                                         </div>
-                                                        <form action="{{ route('transactionManual.change.status', $transactionManual) }}"
+                                                        <form
+                                                            action="{{ route('transactionManual.change.status', $transactionManual) }}"
                                                             method="POST">
                                                             @csrf
                                                             @method('put')
@@ -98,7 +102,8 @@
                                                                     <div class="col-md-6">
                                                                         <label for="description"
                                                                             class="form-label">وضعیت</label>
-                                                                        <select name="status" class="form-select" id="">
+                                                                        <select name="status" class="form-select"
+                                                                            id="">
                                                                             <option selected value="1">فعال</option>
                                                                             <option value="0">غیر فعال</option>
                                                                         </select>
@@ -154,8 +159,7 @@
                                                         @method('delete')
                                                         <button type="submit" class="btn btn-danger">حذف</button>
                                                     </form>
-                                                    <button type="button" class="btn btn-primary"
-                                                        data-bs-dismiss="modal">
+                                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
                                                         انصراف
                                                     </button>
                                                 </div>
@@ -174,8 +178,7 @@
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                         aria-label="Close"></button>
                                                 </div>
-                                                <form
-                                                    action="{{ route('transaction-manual.update', $transactionManual) }}"
+                                                <form action="{{ route('transaction-manual.update', $transactionManual) }}"
                                                     method="POST">
                                                     @csrf
                                                     @method('put')
@@ -203,10 +206,16 @@
                                                                     required>
                                                                     <option
                                                                         @if ($transactionManual->type == 'cardToCard') selected @endif
-                                                                        value="cardToCard">کارت به کارت</option>
+                                                                        value="cardToCard">کارت به کارت
+                                                                    </option>
                                                                     <option
                                                                         @if ($transactionManual->type == 'online') selected @endif
-                                                                        value="online">آنلاین</option>
+                                                                        value="online">آنلاین
+                                                                    </option>
+                                                                    <option id="gift"
+                                                                        @if ($transactionManual->type == 'gift') selected @endif
+                                                                        value="gift">هدیه
+                                                                    </option>
                                                                 </select>
                                                             </div>
                                                             @php
@@ -227,6 +236,12 @@
                                                                     type="time" id="time" name="time" required
                                                                     placeholder="ساعت" autocomplete="off" />
                                                             </div>
+                                                            <div class="col-md-6 col-sm-12 mb-0" id="reagent">
+                                                                <label for="reagent" class="form-label">تلفن تماس
+                                                                    معرف</label>
+                                                                <input name="reagent" value="{{ $transactionManual->reagent }}" class="form-control"
+                                                                    type="text">
+                                                            </div>
                                                             <div class="col-md-12">
                                                                 <label for="description"
                                                                     class="form-label">توضیحات</label>
@@ -234,8 +249,8 @@
                                                             </div>
                                                             @if (Auth::user()->role == 'admin')
                                                                 <div class="col-md-12">
-                                                                    <label for="result"
-                                                                        class="form-label">جواب ادمین</label>
+                                                                    <label for="result" class="form-label">جواب
+                                                                        ادمین</label>
                                                                     <textarea class="form-control" name="result">{{ $transactionManual->result }}</textarea>
                                                                 </div>
                                                             @endif
@@ -273,6 +288,26 @@
     <script>
         $("#fromDate").persianDatepicker({
             formatDate: "YYYY/MM/DD",
+        });
+
+
+        $(document).ready(function() {
+            $('select[name="type"]').change(function() {
+                var selectedValue = $(this).val();
+                if (selectedValue === 'gift') {
+                    $('#reagent').show();
+                } else {
+                    $('#reagent').hide();
+                }
+            });
+
+            // Check the initial value and show/hide the div accordingly
+            var initialType = $('select[name="type"]').val();
+            if (initialType === 'gift') {
+                $('#reagent').show();
+            } else {
+                $('#reagent').hide();
+            }
         });
     </script>
 @endsection

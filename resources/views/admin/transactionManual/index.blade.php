@@ -493,10 +493,10 @@
                 var selectedValue = $(this).val();
                 if (selectedValue === 'gift') {
                     $('#reagent').show();
-                    $('input[name="reagent"]').attr('required', true);
+                    // $('input[name="reagent"]').attr('required', true);
                 } else {
                     $('#reagent').hide();
-                    $('input[name="reagent"]').removeAttr('required');
+                    // $('input[name="reagent"]').removeAttr('required');
                 }
             });
 
