@@ -2411,7 +2411,6 @@ class LoadController extends Controller
         } else {
             $load->numOfSms += 1;
             $this->sendSmsForNearDriver($load, $radius);
-            Log::warning("send sms");
         }
         $load->save();
         return back()->with('success', 'ارسال انجام شد!');
@@ -2434,7 +2433,7 @@ class LoadController extends Controller
 
         $drivers = Driver::select('drivers.*')
             ->where('location_at', '!=', null)
-            ->where('location_at', '>=', Carbon::now()->subMinutes(120))
+            ->where('location_at', '>=', Carbon::now()->subMinutes(360))
             ->whereIn('fleet_id', $fleets)
             // ->where('sendMessage', 0)
             // ->where('version', '<', 67)
@@ -2443,6 +2442,7 @@ class LoadController extends Controller
             ->whereRaw("{$haversine} < ?", $radius)
             // ->take(15)
             ->get();
+            Log::warning($drivers);
 
 
         if (count($drivers) != 0) {
