@@ -161,9 +161,10 @@
                                         </div>
                                     </div>
                                     @if ($track->status == 1)
-                                        <button data-bs-toggle="modal" data-bs-target="#submitClose"
+                                        <button data-bs-toggle="modal" data-bs-target="#submitClose_{{ $track->id }}"
                                             class="btn btn-sm btn-outline-danger">بستن</button>
-                                        <div class="modal fade" id="submitClose" tabindex="-1" aria-hidden="true">
+
+                                        <div class="modal fade" id="submitClose_{{ $track->id }}" tabindex="-1" aria-hidden="true">
                                             <div class="modal-dialog modal-dialog-centered" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
