@@ -2442,8 +2442,6 @@ class LoadController extends Controller
             ->whereRaw("{$haversine} < ?", $radius)
             // ->take(15)
             ->get();
-            Log::warning($drivers);
-
 
         if (count($drivers) != 0) {
             foreach ($drivers as $driver) {
