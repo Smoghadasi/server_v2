@@ -12,6 +12,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Log;
 
 class TransactionManualController extends Controller
 {
@@ -94,6 +95,7 @@ class TransactionManualController extends Controller
             $transactionManual->driver_id = $driver->id;
             $transactionManual->type = $request->type;
             $transactionManual->description = $request->description;
+            $transactionManual->reagent = $request->reagent;
             $transactionManual->status = 2;
             $transactionManual->date = $request->date . " " . $request->time;
             $transactionManual->miladiDate = persianDateToGregorian(str_replace('/', '-', $request->date), '-') . ' ' . $request->time;
@@ -120,11 +122,11 @@ class TransactionManualController extends Controller
             }
 
             if ($transactionManual->amount == MONTHLY) {
-                $this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, 1);
+                $this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, 1, $transactionManual->type == 'gift' ? true : false);
             } elseif ($transactionManual->amount == TRIMESTER) {
-                $this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, 3);
+                $this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, 3, $transactionManual->type == 'gift' ? true : false);
             } elseif ($transactionManual->amount == SIXMONTHS) {
-                $this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, 6);
+                $this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, 6, $transactionManual->type == 'gift' ? true : false);
             }
         }
 
@@ -139,7 +141,7 @@ class TransactionManualController extends Controller
      * @return void
      * @throws Exception
      */
-    public function updateActivationDateAndFreeCallsAndFreeAcceptLoads(Driver $driver, $month): bool
+    public function updateActivationDateAndFreeCallsAndFreeAcceptLoads(Driver $driver, $month, $gift): bool
     {
         try {
 
@@ -189,13 +191,14 @@ class TransactionManualController extends Controller
                     $transaction->user_id = $driver->id;
                     $transaction->userType = ROLE_DRIVER;
                     $transaction->authority = $driver->id . time();
-                    $transaction->amount = $amount;
+                    $transaction->amount = $gift ? 0 : $amount;
                     $transaction->status = 100;
-                    $transaction->payment_type = 'cardToCard';
+                    $transaction->payment_type = $gift ? 'gift' : 'cardToCard';
                     $transaction->monthsOfThePackage = $month;
                     $transaction->save();
                 }
             } catch (Exception $e) {
+                Log::error($e);
             }
 
             return true;
