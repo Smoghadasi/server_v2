@@ -159,7 +159,7 @@
                                             </span>
                                         </td>
                                         <td>
-                                            @if ($load->userType == 'owner' && $load->userType == 'operator' && $load->isBot == 0)
+                                            @if (($load->userType == 'owner' || $load->userType == 'operator') && $load->isBot == 0)
                                                 -
                                             @else
                                                 @foreach ($operators as $operator)
