@@ -2435,19 +2435,17 @@ class LoadController extends Controller
             ->where('location_at', '!=', null)
             ->where('location_at', '>=', Carbon::now()->subMinutes(120))
             ->whereIn('fleet_id', $fleets)
-            ->where('sendMessage', 0)
+            // ->where('sendMessage', 0)
             // ->where('version', '<', 67)
             ->where('province_id', $cityFrom->parent_id)
             ->selectRaw("{$haversine} AS distance")
             ->whereRaw("{$haversine} < ?", $radius)
-            ->take(15)
+            // ->take(15)
             ->get();
 
 
         if (count($drivers) != 0) {
             foreach ($drivers as $driver) {
-                $driver->sendMessage = 1;
-                $driver->save();
                 $sms = new Driver();
                 $sms->subscriptionLoadSmsIr(
                     $driver->mobileNumber,
@@ -2455,40 +2453,6 @@ class LoadController extends Controller
                     $cityFrom->name,
                     $cityTo->name
                 );
-            }
-        } else {
-            Driver::where('province_id', $cityFrom->parent_id)
-                ->where('location_at', '!=', null)
-                ->where('location_at', '>=', Carbon::now()->subMinutes(120))
-                ->whereIn('fleet_id', $fleets)
-                ->where('version', '<', 67)
-                ->selectRaw("{$haversine} AS distance")
-                ->whereRaw("{$haversine} < ?", $radius)
-                ->where('sendMessage', 1)
-                ->update(['sendMessage' => 0]);
-
-            $drivers = Driver::where('province_id', $cityFrom->parent_id)
-                ->where('location_at', '!=', null)
-                ->where('location_at', '>=', Carbon::now()->subMinutes(120))
-                ->whereIn('fleet_id', $fleets)
-                ->where('version', '<', 67)
-                ->selectRaw("{$haversine} AS distance")
-                ->whereRaw("{$haversine} < ?", $radius)
-                ->where('sendMessage', 0)
-                ->take(15)
-                ->get();
-            if (count($drivers) != 0) {
-                foreach ($drivers as $driver) {
-                    $driver->sendMessage = 1;
-                    $driver->save();
-                    $sms = new Driver();
-                    $sms->subscriptionLoadSmsIr(
-                        $driver->mobileNumber,
-                        $driver->name,
-                        $cityFrom->name,
-                        $cityTo->name
-                    );
-                }
             }
         }
     }
