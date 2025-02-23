@@ -519,21 +519,22 @@ class DriverController extends Controller
         //        $driver->activeDate = $activeDate;
         $driver->freeAcceptLoads = DRIVER_FREE_ACCEPT_LOAD;
         // خاور و نیسان
-        if ($fleet_id == '82' || $fleet_id == '83' || $fleet_id == '84' || $fleet_id == '85' || $fleet_id == '86' || $fleet_id == '87') {
+        $fleet7 = ['82', '83', '84', '85', '86', '87'];
+        $fleet10 = ['55', '56', '57', '58', '49', '50', '51', '52', '53'];
+        $fleet12 = ['42', '43', '45', '46', '47', '48'];
+        $fleet15 = ['54', '66'];
+
+        if (in_array($fleet_id, $fleet7)) {
             $driver->freeCalls = 7;
-        } elseif ($fleet_id == '42' || $fleet_id == '43' || $fleet_id == '45' || $fleet_id == '46' || $fleet_id == '47' || $fleet_id == '48') {
-            $driver->freeCalls = 7;
-        } elseif ($fleet_id == '55' || $fleet_id == '56' || $fleet_id == '57' || $fleet_id == '58' || $fleet_id == '49' || $fleet_id == '50' || $fleet_id == '51' || $fleet_id == '52' || $fleet_id == '53') {
+        } elseif (in_array($fleet_id, $fleet12)) {
+            $driver->freeCalls = 12;
+        } elseif (in_array($fleet_id, $fleet10)) {
             $driver->freeCalls = 10;
-        } elseif ($fleet_id == '54' || $fleet_id == '66') {
+        } elseif (in_array($fleet_id, $fleet15)) {
             $driver->freeCalls = 15;
         } else {
             $driver->freeCalls = DRIVER_FREE_CALLS;
         }
-
-
-
-
 
         $driver->save();
 
