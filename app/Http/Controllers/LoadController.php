@@ -690,22 +690,22 @@ class LoadController extends Controller
 
         try {
             $senderMobileNumber = isset($request->mobileNumberForCoordination) ? $request->mobileNumberForCoordination : $request->senderMobileNumber;
-            if (BlockPhoneNumber::where('phoneNumber', $senderMobileNumber)->count()) {
-                $message[1] = 'شماره تلفن وارد شده در لیست ممنوعه می باشد، و امکان ثبت بار با شماره تلفن ' . $senderMobileNumber .
-                    ' امکان پذیر نمی باشد. لطفا برای دلیل آن با ایران ترابر تماس بگیرید';
-                return [
-                    'result' => UN_SUCCESS,
-                    'message' => $message
-                ];
-            }
+            // if (BlockPhoneNumber::where('phoneNumber', $senderMobileNumber)->count()) {
+            //     $message[1] = 'شماره تلفن وارد شده در لیست ممنوعه می باشد، و امکان ثبت بار با شماره تلفن ' . $senderMobileNumber .
+            //         ' امکان پذیر نمی باشد. لطفا برای دلیل آن با ایران ترابر تماس بگیرید';
+            //     return [
+            //         'result' => UN_SUCCESS,
+            //         'message' => $message
+            //     ];
+            // }
 
-            if (BlockedIp::where('ip', request()->ip())->count()) {
-                $message[1] = 'عدم ثبت بار به دلیل مسدود شدن IP';
-                return [
-                    'result' => UN_SUCCESS,
-                    'message' => $message
-                ];
-            }
+            // if (BlockedIp::where('ip', request()->ip())->count()) {
+            //     $message[1] = 'عدم ثبت بار به دلیل مسدود شدن IP';
+            //     return [
+            //         'result' => UN_SUCCESS,
+            //         'message' => $message
+            //     ];
+            // }
 
 
             // ثبت ip کاربر
