@@ -2870,7 +2870,7 @@ class LoadController extends Controller
                     'description',
                     'origin_city_id',
                     'destination_city_id',
-                    // 'created_at',
+                    'created_at',
                     // 'storeFor'
                     // 'weight',
                     // 'numOfTrucks',
@@ -2882,8 +2882,8 @@ class LoadController extends Controller
                 ->skip(0)
                 ->take($page)
 
-                ->orderBy('urgent', 'desc')
-                ->orderBy('id', 'desc')
+                ->orderByDesc('urgent')
+                ->orderByDesc('created_at')
                 ->get();
             $setting = Setting::first();
 
