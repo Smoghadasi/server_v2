@@ -27,6 +27,7 @@ use App\Models\Load;
 use App\Models\LoadBackup;
 use App\Models\LoadStatus;
 use App\Models\LoadType;
+use App\Models\Notification;
 use App\Models\Owner;
 use App\Models\PackingType;
 use App\Models\ProvinceCity;
@@ -118,7 +119,7 @@ class LoadController extends Controller
         $operators = User::where('status', 1)
             ->whereIn('role', ['admin', 'operator'])
             ->get();
-        return view('admin.load.operators', compact('loads', 'loadsCount', 'loadsToday' , 'operators'));
+        return view('admin.load.operators', compact('loads', 'loadsCount', 'loadsToday', 'operators'));
     }
 
     // نمایش فرم ویرایش نوع بار
@@ -840,16 +841,6 @@ class LoadController extends Controller
                 $load->status = 4;
                 $load->storeFor = $request->storeFor;
 
-                // if (isset($request->storeFor)) {
-
-
-                //     if ($request->storeFor == ROLE_DRIVER) {
-                //         $load->status = ON_SELECT_DRIVER;
-                //         //                    $load->userType = ROLE_CARGo_OWNER;
-                //     } else if ($request->storeFor == ROLE_TRANSPORTATION_COMPANY) {
-                //     }
-                // }
-
                 $load->deliveryTime = isset($request->deliveryTime) && $request->deliveryTime > 0 ? $request->deliveryTime : 24;
 
                 if ($load->operator_id == NO_OPERATOR)
@@ -877,29 +868,6 @@ class LoadController extends Controller
 
                 if (isset($load->id) && isset($request->fleetList)) {
 
-                    // if ($request->userType == ROLE_TRANSPORTATION_COMPANY) {
-                    //     try {
-                    //         $tender = new Tender();
-                    //         $tender->load_id = $load->id;
-                    //         $tender->bearing_id = $request->user_id;
-                    //         $tender->suggestedPrice = $request->suggestedPrice;
-                    //         $tender->status = 0;
-                    //         $tender->save();
-                    //     } catch (\Exception $e) {
-                    //         Log::emergency($e->getMessage());
-                    //     }
-                    // } else if ($request->userType == "customer") {
-                    //     try {
-                    //         $customer = Customer::find($request->user_id);
-                    //         if (isset($customer->freeLoads)) {
-                    //             $customer->freeLoads--;
-                    //             $customer->save();
-                    //         }
-                    //     } catch (\Exception $e) {
-                    //         Log::emergency("Error Save Load for customer: " . $e->getMessage());
-                    //     }
-                    // }
-
                     foreach ($request->fleetList as $item) {
 
                         $fleetLoad = new FleetLoad();
@@ -908,6 +876,15 @@ class LoadController extends Controller
                         $fleetLoad->numOfFleets = $item['numOfFleets'];
                         $fleetLoad->userType = $load->userType;
                         $fleetLoad->save();
+
+
+                        $fleet_khavar = ['45', '47', '46', '64'];
+                        if (in_array($fleetLoad->fleet_id, $fleet_khavar)) {
+                            $notification = new Notification();
+                            $notification->message = 'یک بار جدید با ناوگان خاور ایجاد شده است';
+                            $notification->link = route('loadInfo', $fleetLoad->load_id);
+                            $notification->save();
+                        }
 
                         try {
                             $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
