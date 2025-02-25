@@ -61,7 +61,7 @@
                         </div>
                     </td>
                 </tr>
-                @if (in_array('paidSixDays', auth()->user()->userAccess))
+                @if (auth()->user()->role == 'admin')
                     <tr>
                         <td>
                             <div class="text-center h6"> هزینه وایزی توسط راننده ها از 60 روز قبل</div>
