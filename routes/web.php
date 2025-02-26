@@ -46,6 +46,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\VacationController;
 use App\Http\Controllers\VacationHourController;
 use App\Http\Controllers\WarehouseController;
+use App\Http\Controllers\WebNotificationController;
 use App\Models\City;
 use App\Models\Driver;
 use App\Models\Load;
@@ -856,6 +857,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('contactingWithDrivers', [OperatorContactingController::class, 'contactingWithDrivers'])->middleware('operator');
 
         Route::resource('freeSubscription', FreeSubscriptionController::class)->middleware('operator');
+
+        // اعلان ها
+        Route::resource('web-notification', WebNotificationController::class)->middleware('operator');
 
         Route::post('searchFreeSubscription', [FreeSubscriptionController::class, 'search'])->name('search.free.subscription')->middleware('operator');
 

@@ -64,9 +64,9 @@
                             <span class="align-middle">پروفایل من</span>
                         </a>
                         <li>
-                            <a class="dropdown-item" href="#">
-                                <i class="bx bx-cog me-2"></i>
-                                <span class="align-middle">تنظیمات</span>
+                            <a class="dropdown-item" href="{{ route('web-notification.index') }}">
+                                <i class="bx bx-bell me-2"></i>
+                                <span class="align-middle">اعلان</span>
                             </a>
                         </li>
                     </li>
