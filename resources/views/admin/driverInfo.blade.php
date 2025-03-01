@@ -104,13 +104,20 @@
                         <input class="form-control" type="text" id="email" name="email"
                             value="{{ $driver->mobileNumber }}" disabled />
                     </div>
-                    <div class="mb-3 col-md-6">
-                        <label class="form-label" for="city_id">شهرستان</label>
-                        <div class="input-group input-group-merge">
-                            <input type="text" id="city_id" name="city_id" class="form-control" disabled
-                                value="{{ \App\Http\Controllers\AddressController::geCityName($driver->city_id) }}" />
+                    @php
+                        $createdAt = \Carbon\Carbon::parse($driver->created_at);
+                    @endphp
+
+                    @if ($createdAt->diffInDays(now()) <= 5)
+                        <div class="mb-3 col-md-6">
+                            <label class="form-label" for="city_id">شهرستان</label>
+                            <div class="input-group input-group-merge">
+                                <input type="text" id="city_id" name="city_id" class="form-control" disabled
+                                    value="{{ \App\Http\Controllers\AddressController::geCityName($driver->city_id) }}" />
+                            </div>
                         </div>
-                    </div>
+                    @endif
+
                     <div class="mb-3 col-md-6">
                         <label for="fleet_id" class="form-label">نوع ناوگان</label>
                         <input type="text" class="form-control" id="fleet_id" name="fleet_id" disabled
@@ -157,6 +164,7 @@
                                                         @case(AUTH_CARGO)
                                                             <span class="badge bg-label-primary"> بار رایگان</span>
                                                         @break
+
                                                         @case(AUTH_VALIDITY_DELETED)
                                                             <span class="badge bg-label-primary"> حذف اشتراک</span>
                                                         @break
@@ -338,8 +346,8 @@
                 @endif
             @endif
             {{-- @if (in_array('contactReportWithCargoOwners', auth()->user()->userAccess)) --}}
-                <a class="btn btn-primary" href="{{ route('contactingWithDriverResult', $driver->id) }}">پیام
-                    ها</a>
+            <a class="btn btn-primary" href="{{ route('contactingWithDriverResult', $driver->id) }}">پیام
+                ها</a>
             {{-- @endif --}}
             @if (in_array('detailDriver', auth()->user()->userAccess))
                 <a class="btn btn-primary" href="{{ url('admin/editDriver') }}/{{ $driver->id }}">ویرایش</a>
