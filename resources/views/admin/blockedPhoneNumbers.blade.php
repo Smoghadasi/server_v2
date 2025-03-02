@@ -107,6 +107,7 @@
                             <th>نام و نام خانوادگی</th>
                             <th>توضیحات</th>
                             <th>اپراتور</th>
+                            <th>نوع</th>
                             <th>تاریخ</th>
                             <th>عملیات</th>
                         </tr>
@@ -130,6 +131,9 @@
                                 </td>
                                 <td>
                                     {{ $blockedPhoneNumber->operator ? $blockedPhoneNumber->operator->name . ' ' . $blockedPhoneNumber->operator->lastName : '-' }}
+                                </td>
+                                <td>
+                                    {{ $blockedPhoneNumber->type ?? '-' }}
                                 </td>
                                 @php
                                     $pieces = explode(' ', $blockedPhoneNumber->created_at);
