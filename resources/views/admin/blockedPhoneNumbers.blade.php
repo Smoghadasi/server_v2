@@ -29,20 +29,33 @@
                             <h4 class="modal-title">وارد کردن شماره تلفن به لیست ممنوعه</h4>
                         </div>
                         <div class="modal-body text-right">
+                            <div class="row">
+                                <div class="form-group col-lg-6 col-sm-12">
+                                    <label class="form-label">تلفن</label>
+                                    <input class="m-1 form-control" name="phoneNumber" type="text">
+                                </div>
+                                <div class="form-group col-lg-6 col-sm-12">
+                                    <label class="form-label">کد ملی</label>
+                                    <input class="m-1 form-control" name="nationalCode" type="text">
+                                </div>
+                                <div class="form-group col-lg-6 col-sm-12">
+                                    <label class="form-label">نام و نام خانوادگی</label>
+                                    <input class="m-1 form-control" name="name" type="text">
+                                </div>
+                                <div class="form-group col-lg-6 col-sm-12">
+                                    <label class="form-label">نوع</label>
+                                    <select class="form-control form-select" name="type" id="">
+                                        <option value="operator">اپراتور</option>
+                                        <option value="owner">صاحب بار</option>
+                                        <option value="both" selected>هر دو</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-lg-12 col-sm-12">
+                                    <label class="form-label">توضیحات</label>
+                                    <textarea class=" m-1 form-control" rows="5" name="description"></textarea>
+                                </div>
+                            </div>
 
-                            <div class="form-group col-lg-12">
-                                <input class="m-1 form-control" name="phoneNumber" type="text" placeholder="شماره تلفن">
-                            </div>
-                            <div class="form-group col-lg-12">
-                                <input class="m-1 form-control" name="nationalCode" type="text" placeholder="کد ملی">
-                            </div>
-                            <div class="form-group col-lg-12">
-                                <input class="m-1 form-control" name="name" type="text"
-                                    placeholder="نام و نام خانوادگی">
-                            </div>
-                            <div class="form-group col-lg-12">
-                                <textarea class=" m-1 form-control" name="description" placeholder="توضیحات"></textarea>
-                            </div>
                         </div>
                         <div class="modal-footer text-left">
                             <button type="submit" class="btn btn-primary mr-1">ثبت در لیست ممنوعه</button>
@@ -58,20 +71,20 @@
                 <div class="col-lg-12 border rounded mt-2 mb-2 p-2">
                     {{-- <h6>جستجو : </h6> --}}
                     <div class="container">
-                        <div class="row row-cols-4">
-                            <div class="col">
+                        <div class="row">
+                            <div class="col-lg-4 col-sm-12 mb-2">
                                 <div class="form-group">
                                     <label>شماره تلفن</label>
                                     <input type="text" name="mobileNumber" class="form-control">
                                 </div>
                             </div>
-                            <div class="col">
+                            <div class="col-lg-4 col-sm-12 mb-2">
                                 <div class="form-group">
                                     <label>کدملی</label>
                                     <input type="text" name="nationalCode" class="form-control">
                                 </div>
                             </div>
-                            <div class="col">
+                            <div class="col-lg-4 col-sm-12 mb-2">
                                 <div class="form-group">
                                     <label>نام نام خانوادگی</label>
                                     <input type="text" name="name" class="form-control">
@@ -84,59 +97,61 @@
                     </div>
                 </div>
             </form>
-
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>شماره</th>
-                        <th>کد ملی</th>
-                        <th>نام و نام خانوادگی</th>
-                        <th>توضیحات</th>
-                        <th>اپراتور</th>
-                        <th>تاریخ</th>
-                        <th>عملیات</th>
-                    </tr>
-                </thead>
-                <tbody class="small text-right">
-                    <?php $i = 1; ?>
-                    @foreach ($blockedPhoneNumbers as $blockedPhoneNumber)
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
                         <tr>
-                            <td>{{ $i++ }}</td>
-                            <td>
-                                {{ $blockedPhoneNumber->phoneNumber ?? '-' }}
-                            </td>
-                            <td>
-                                {{ $blockedPhoneNumber->nationalCode ?? '-' }}
-                            </td>
-                            <td>
-                                {{ $blockedPhoneNumber->name ?? '-' }}
-                            </td>
-                            <td>
-                                {{ $blockedPhoneNumber->description ?? '-' }}
-                            </td>
-                            <td>
-                                {{ $blockedPhoneNumber->operator ? $blockedPhoneNumber->operator->name . ' ' . $blockedPhoneNumber->operator->lastName : '-' }}
-                            </td>
-
-                            @php
-                                $pieces = explode(' ', $blockedPhoneNumber->created_at);
-                            @endphp
-                            <td dir="ltr">
-                                {{ gregorianDateToPersian($blockedPhoneNumber->created_at, '-', true) . ' ' . $pieces[1] }}
-                            </td>
-                            <td>
-                                <form action="{{ route('blockedPhoneNumber.destroy', $blockedPhoneNumber->phoneNumber) }}"
-                                    method="POST">
-                                    @csrf
-                                    @method('delete')
-                                    <button type="submit" class="btn btn-danger btn-sm">حذف</button>
-                                </form>
-                            </td>
+                            <th>#</th>
+                            <th>شماره</th>
+                            <th>کد ملی</th>
+                            <th>نام و نام خانوادگی</th>
+                            <th>توضیحات</th>
+                            <th>اپراتور</th>
+                            <th>تاریخ</th>
+                            <th>عملیات</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody class="small text-right">
+                        <?php $i = 1; ?>
+                        @foreach ($blockedPhoneNumbers as $blockedPhoneNumber)
+                            <tr>
+                                <td>{{ $i++ }}</td>
+                                <td>
+                                    {{ $blockedPhoneNumber->phoneNumber ?? '-' }}
+                                </td>
+                                <td>
+                                    {{ $blockedPhoneNumber->nationalCode ?? '-' }}
+                                </td>
+                                <td>
+                                    {{ $blockedPhoneNumber->name ?? '-' }}
+                                </td>
+                                <td>
+                                    {{ $blockedPhoneNumber->description ?? '-' }}
+                                </td>
+                                <td>
+                                    {{ $blockedPhoneNumber->operator ? $blockedPhoneNumber->operator->name . ' ' . $blockedPhoneNumber->operator->lastName : '-' }}
+                                </td>
+                                @php
+                                    $pieces = explode(' ', $blockedPhoneNumber->created_at);
+                                @endphp
+                                <td dir="ltr">
+                                    {{ gregorianDateToPersian($blockedPhoneNumber->created_at, '-', true) . ' ' . $pieces[1] }}
+                                </td>
+                                <td>
+                                    <form
+                                        action="{{ route('blockedPhoneNumber.destroy', $blockedPhoneNumber->phoneNumber) }}"
+                                        method="POST">
+                                        @csrf
+                                        @method('delete')
+                                        <button type="submit" class="btn btn-danger btn-sm">حذف</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
 
             <div class="mt-3">
                 {{ $blockedPhoneNumbers }}

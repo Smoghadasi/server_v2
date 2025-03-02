@@ -49,6 +49,7 @@ class BlockPhoneNumberController extends Controller
         $blockedPhoneNumber->phoneNumber = $request->phoneNumber;
         $blockedPhoneNumber->nationalCode = $request->nationalCode;
         $blockedPhoneNumber->name = $request->name;
+        $blockedPhoneNumber->type = $request->type;
         $blockedPhoneNumber->description = $request->description;
         $blockedPhoneNumber->operator_id = Auth::id();
         $blockedPhoneNumber->save();
@@ -62,7 +63,7 @@ class BlockPhoneNumberController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(BlockPhoneNumber $blockedPhoneNumber)
     {
         //
     }

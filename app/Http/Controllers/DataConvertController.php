@@ -625,6 +625,13 @@ class DataConvertController extends Controller
                     $load->userType = ROLE_OWNER;
                     $load->operator_id = auth()->id();
                     $load->isBot = 1;
+                    if ((BlockPhoneNumber::where('nationalCode', $owner->nationalCode)
+                        ->where(function ($query) {
+                            $query->where('type', 'operator')
+                                ->orWhere('type', 'both');
+                        })->count() > 0)) {
+                        return;
+                    }
                 } else {
                     $load->user_id = auth()->id();
                     $load->userType = ROLE_OPERATOR;

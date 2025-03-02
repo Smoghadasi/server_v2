@@ -691,14 +691,21 @@ class LoadController extends Controller
 
         try {
             $senderMobileNumber = isset($request->mobileNumberForCoordination) ? $request->mobileNumberForCoordination : $request->senderMobileNumber;
-            // if (BlockPhoneNumber::where('phoneNumber', $senderMobileNumber)->count()) {
-            //     $message[1] = 'شماره تلفن وارد شده در لیست ممنوعه می باشد، و امکان ثبت بار با شماره تلفن ' . $senderMobileNumber .
-            //         ' امکان پذیر نمی باشد. لطفا برای دلیل آن با ایران ترابر تماس بگیرید';
-            //     return [
-            //         'result' => UN_SUCCESS,
-            //         'message' => $message
-            //     ];
-            // }
+            $owner = Owner::where('mobileNumber', $senderMobileNumber)->first();
+
+            if ((BlockPhoneNumber::where('nationalCode', $owner->nationalCode)
+                ->where(function ($query) {
+                    $query->where('type', 'owner')
+                        ->orWhere('type', 'both');
+                })->count() > 0)) {
+                $message[1] = 'شماره تلفن وارد شده در لیست ممنوعه می باشد، و امکان ثبت بار با شماره تلفن ' . $senderMobileNumber .
+                    ' امکان پذیر نمی باشد. لطفا برای دلیل آن با ایران ترابر تماس بگیرید';
+
+                return [
+                    'result' => UN_SUCCESS,
+                    'message' => $message
+                ];
+            }
 
             // if (BlockedIp::where('ip', request()->ip())->count()) {
             //     $message[1] = 'عدم ثبت بار به دلیل مسدود شدن IP';
@@ -712,7 +719,6 @@ class LoadController extends Controller
             // ثبت ip کاربر
             try {
                 if ($request->userType == ROLE_OWNER) {
-                    $owner = Owner::where('mobileNumber', $senderMobileNumber)->first();
 
                     if (isset($owner->id)) {
                         $owner->ip = request()->ip();
