@@ -12,9 +12,34 @@
                         class="btn btn-primary btn-sm">
                         ارسال نوتیفیکشن ({{ $load->numOfNotif }})
                     </a>
-                    <a href="{{ route('admin.sendNearLoadDrivers', ['load_id' => $load->id, 'type' => 'sms']) }}" class="btn btn-primary btn-sm">
+                    <button data-bs-toggle="modal" data-bs-target="#driverNearOwnerCount" class="btn btn-primary btn-sm">
                         ارسال پیامک ({{ $load->numOfSms }})
-                    </a>
+                    </button>
+                    <div id="driverNearOwnerCount" class="modal fade" role="dialog">
+                        <div class="modal-dialog modal-dialog-centered">
+
+                            <!-- Modal content-->
+                            <form action="{{ route('admin.sendNearLoadDrivers', ['load_id' => $load->id, 'type' => 'sms']) }}" method="get" class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">تعداد ارسال بار</h4>
+                                </div>
+                                <div class="modal-body text-right">
+                                    <div class="row">
+                                        <div class="form-group col-lg-12 col-sm-12">
+                                            <input class="m-1 form-control" placeholder="تعداد" value="{{ $load->numOfSms }}" name="count" type="text">
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer text-left">
+                                    <button type="submit" class="btn btn-primary mr-1">ثبت</button>
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                                        انصراف
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </h5>

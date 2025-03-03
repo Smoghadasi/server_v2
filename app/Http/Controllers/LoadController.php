@@ -2383,7 +2383,7 @@ class LoadController extends Controller
         return view('admin.driver.driverNearOwner', compact('drivers', 'load'));
     }
 
-    public function sendMessageNearLoadDrivers($load_id, $type = null)
+    public function sendMessageNearLoadDrivers(Request $request, $load_id, $type = null)
     {
         $load = Load::findOrFail($load_id);
         $radius = 120;
@@ -2393,50 +2393,79 @@ class LoadController extends Controller
             $this->sendNotificationForNearDriver($load, $radius);
         } else {
             $load->numOfSms += 1;
-            $this->sendSmsForNearDriver($load, $radius);
+            $this->sendSmsForNearDriver($load, $radius, $request->count);
         }
         $load->save();
         return back()->with('success', 'ارسال انجام شد!');
     }
 
-    public function sendSmsForNearDriver($load, $radius)
+    public function sendSmsForNearDriver($load, $radius, $count)
     {
         $latitude = $load->latitude;
         $longitude = $load->longitude;
         $fleets = FleetLoad::where('load_id', $load->id)->pluck('fleet_id');
-        $cityFrom = ProvinceCity::where('id', $load->origin_city_id)->first();
-        $cityTo = ProvinceCity::where('id', $load->destination_city_id)->first();
+        $cityFrom = ProvinceCity::find($load->origin_city_id);
+        $cityTo = ProvinceCity::find($load->destination_city_id);
 
-        $haversine = "(6371 * acos(cos(radians(" . $latitude . "))
-            * cos(radians(`latitude`))
-            * cos(radians(`longitude`)
-            - radians(" . $longitude . "))
-            + sin(radians(" . $latitude . "))
-            * sin(radians(`latitude`))))";
+        $haversine = "(6371 * acos(cos(radians($latitude))
+        * cos(radians(`latitude`))
+        * cos(radians(`longitude`)
+        - radians($longitude))
+        + sin(radians($latitude))
+        * sin(radians(`latitude`))))";
 
-        $drivers = Driver::select('drivers.*')
+        $drivers = $this->getDrivers($cityFrom, $fleets, $haversine, $radius, $count);
+
+        foreach ($drivers as $driver) {
+            $this->sendMessage($driver, $cityFrom, $cityTo);
+        }
+
+        if ($drivers->isEmpty()) {
+            $this->resetSendMessage($cityFrom, $fleets, $haversine, $radius);
+            $drivers = $this->getDrivers($cityFrom, $fleets, $haversine, $radius, $count, 0);
+            foreach ($drivers as $driver) {
+                $this->sendMessage($driver, $cityFrom, $cityTo);
+            }
+        }
+    }
+
+    private function getDrivers($cityFrom, $fleets, $haversine, $radius, $count, $sendMessageStatus = 1)
+    {
+        return Driver::select('drivers.*')
             ->where('location_at', '!=', null)
             ->where('location_at', '>=', Carbon::now()->subMinutes(360))
             ->whereIn('fleet_id', $fleets)
-            // ->where('sendMessage', 0)
-            // ->where('version', '<', 67)
+            ->where('sendMessage', $sendMessageStatus)
             ->where('province_id', $cityFrom->parent_id)
             ->selectRaw("{$haversine} AS distance")
             ->whereRaw("{$haversine} < ?", $radius)
-            // ->take(15)
+            ->take($count)
             ->get();
+    }
 
-        if (count($drivers) != 0) {
-            foreach ($drivers as $driver) {
-                $sms = new Driver();
-                $sms->subscriptionLoadSmsIr(
-                    $driver->mobileNumber,
-                    $driver->name,
-                    $cityFrom->name,
-                    $cityTo->name
-                );
-            }
-        }
+    private function resetSendMessage($cityFrom, $fleets, $haversine, $radius)
+    {
+        Driver::where('province_id', $cityFrom->parent_id)
+            ->where('location_at', '!=', null)
+            ->where('location_at', '>=', Carbon::now()->subMinutes(360))
+            ->whereIn('fleet_id', $fleets)
+            ->selectRaw("{$haversine} AS distance")
+            ->whereRaw("{$haversine} < ?", $radius)
+            ->where('sendMessage', 1)
+            ->update(['sendMessage' => 0]);
+    }
+
+    private function sendMessage($driver, $cityFrom, $cityTo)
+    {
+        $driver->sendMessage = 1;
+        $driver->save();
+        $sms = new Driver();
+        $sms->subscriptionLoadSmsIr(
+            $driver->mobileNumber,
+            $driver->name,
+            $cityFrom->name,
+            $cityTo->name
+        );
     }
 
     public function sendNotificationForNearDriver($load, $radius)
