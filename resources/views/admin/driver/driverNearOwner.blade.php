@@ -26,7 +26,7 @@
                                 <div class="modal-body text-right">
                                     <div class="row">
                                         <div class="form-group col-lg-12 col-sm-12">
-                                            <input class="m-1 form-control" placeholder="تعداد" value="{{ $load->numOfSms }}" name="count" type="text">
+                                            <input class="m-1 form-control" placeholder="تعداد" value="{{ $drivers->count() }}" name="count" type="text">
                                         </div>
                                     </div>
 
