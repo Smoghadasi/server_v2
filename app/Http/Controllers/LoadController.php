@@ -2340,6 +2340,8 @@ class LoadController extends Controller
             'longitude'
         ])->first();
 
+
+
         $latitude = $load->latitude;
         $longitude = $load->longitude;
         $radius = 120;
@@ -2379,6 +2381,16 @@ class LoadController extends Controller
             ->orderBy('distance', 'asc')
             ->orderByDesc('created_at')
             ->get();
+
+        $sendSmsDriverCount = Driver::select('drivers.*')
+            ->where('location_at', '!=', null)
+            ->where('location_at', '>=', Carbon::now()->subMinutes(360))
+            ->whereIn('fleet_id', $fleets)
+            ->where('sendMessage', 1)
+            ->selectRaw("{$haversine} AS distance")
+            ->whereRaw("{$haversine} < ?", $radius)
+            ->count();
+
         return view('admin.driver.driverNearOwner', compact('drivers', 'load'));
     }
 

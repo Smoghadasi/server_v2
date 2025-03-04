@@ -203,7 +203,7 @@
                                                             <div class="col-md-6 col-sm-12 mb-0">
                                                                 <label for="type" class="form-label">نوع</label>
                                                                 <select class="form-control form-select"
-                                                                    name="type-{{ $key }}"
+                                                                    name="type"
                                                                     id="type-{{ $key }}" required>
                                                                     <option
                                                                         @if ($transactionManual->type == 'cardToCard') selected @endif
