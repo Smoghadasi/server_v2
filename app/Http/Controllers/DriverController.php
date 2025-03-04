@@ -601,7 +601,7 @@ class DriverController extends Controller
             ->orderByDesc('created_at')
             ->where('value', '!=', 0)
             ->where('driver_id', $driver->id)
-            ->whereIn('type', ['AuthCalls', 'AuthValidity'])
+            ->whereIn('type', ['AuthCalls', 'AuthValidity', 'AuthValidityDeleted'])
             ->get();
 
         $supports = Support::with('driver', 'owner', 'user')
