@@ -6,6 +6,7 @@
             <div class="row justify-content-between">
                 <div class="col-6">
                     رانندگان
+                    ( {{ $sendSmsDriverCount }} )
                 </div>
                 <div class="col-6 text-end">
                     <a href="{{ route('admin.sendNearLoadDrivers', ['load_id' => $load->id, 'type' => 'notification']) }}"
@@ -19,14 +20,16 @@
                         <div class="modal-dialog modal-dialog-centered">
 
                             <!-- Modal content-->
-                            <form action="{{ route('admin.sendNearLoadDrivers', ['load_id' => $load->id, 'type' => 'sms']) }}" method="get" class="modal-content">
+                            <form action="{{ route('admin.sendNearLoadDrivers', ['load_id' => $load->id, 'type' => 'sms']) }}"
+                                method="get" class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title">تعداد ارسال بار</h4>
                                 </div>
                                 <div class="modal-body text-right">
                                     <div class="row">
                                         <div class="form-group col-lg-12 col-sm-12">
-                                            <input class="m-1 form-control" placeholder="تعداد" value="{{ $drivers->count() }}" name="count" type="text">
+                                            <input class="m-1 form-control" placeholder="تعداد"
+                                                value="{{ $drivers->count() }}" name="count" type="text">
                                         </div>
                                     </div>
 

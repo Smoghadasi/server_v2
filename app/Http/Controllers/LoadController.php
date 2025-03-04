@@ -2391,7 +2391,7 @@ class LoadController extends Controller
             ->whereRaw("{$haversine} < ?", $radius)
             ->count();
 
-        return view('admin.driver.driverNearOwner', compact('drivers', 'load'));
+        return view('admin.driver.driverNearOwner', compact('drivers', 'load', 'sendSmsDriverCount'));
     }
 
     public function sendMessageNearLoadDrivers(Request $request, $load_id, $type = null)
