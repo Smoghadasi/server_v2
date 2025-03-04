@@ -664,14 +664,14 @@ class PayController extends Controller
         }
 
         switch ($driverPackagesInfo['data'][$packageName]['price']) {
-            case '79000':
-                $amount = '790000';
+            case MONTHLY:
+                $amount = '1350000';
                 break;
-            case '199000':
-                $amount = '1990000';
+            case TRIMESTER:
+                $amount = '3500000';
                 break;
-            case '399000':
-                $amount = '3990000';
+            case SIXMONTHS:
+                $amount = '7000000';
                 break;
         }
         $amountOrginal = $driverPackagesInfo['data'][$packageName]['price'];
@@ -764,14 +764,14 @@ class PayController extends Controller
         }
 
         switch ($driverPackagesInfo['data'][$packageName]['price']) {
-            case '79000':
-                $amount = '790000';
+            case MONTHLY:
+                $amount = '1350000';
                 break;
-            case '199000':
-                $amount = '1990000';
+            case TRIMESTER:
+                $amount = '3500000';
                 break;
-            case '399000':
-                $amount = '3990000';
+            case SIXMONTHS:
+                $amount = '7000000';
                 break;
         }
         $amountOrginal = $driverPackagesInfo['data'][$packageName]['price'];

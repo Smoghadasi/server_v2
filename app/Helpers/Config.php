@@ -210,9 +210,9 @@ function getCustomerPackagesInfo()
     ];
 }
 
-const MONTHLY = 79000;
-const TRIMESTER = 199000;
-const SIXMONTHS = 399000;
+const MONTHLY = 135000;
+const TRIMESTER = 350000;
+const SIXMONTHS = 700000;
 
 function getCustomerCallPackagesInfo()
 {
@@ -245,15 +245,15 @@ function getDriverPackagesInfo()
             'calls' => DRIVER_FREE_CALLS,
             'acceptLoads' => DRIVER_FREE_ACCEPT_LOAD,
             'monthly' => [
-                'price' => 79000,
+                'price' => MONTHLY,
                 'calls' => DRIVER_FREE_CALLS
             ],
             'trimester' => [
-                'price' => 199000,
+                'price' => TRIMESTER,
                 'calls' => DRIVER_FREE_CALLS
             ],
             'sixMonths' => [
-                'price' => 399000,
+                'price' => SIXMONTHS,
                 'calls' => DRIVER_FREE_CALLS
             ],
             'payMessage' => ' یا مبلغ اشتراک را به شماره حساب زیر واریز نموده و پس از واریز با شماره '  . TELL . ' تماس حاصل فرمایید. '
