@@ -67,7 +67,7 @@
                                             آنلاین
                                         @break
 
-                                        @case('payment_type')
+                                        @case('cardToCard')
                                             کارت به کارت
                                         @break
 
