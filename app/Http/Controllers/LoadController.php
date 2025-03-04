@@ -2440,7 +2440,7 @@ class LoadController extends Controller
         }
     }
 
-    private function getDrivers($cityFrom, $fleets, $haversine, $radius, $count, $sendMessageStatus = 1)
+    private function getDrivers($cityFrom, $fleets, $haversine, $radius, $count, $sendMessageStatus = 0)
     {
         return Driver::select('drivers.*')
             ->where('location_at', '!=', null)
