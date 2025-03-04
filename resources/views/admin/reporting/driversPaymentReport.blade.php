@@ -61,23 +61,41 @@
                                     @endif
                                 </td>
                                 <td>{{ $transaction->bank_name }}</td>
-                                <td>{{ $transaction->payment_type == 'online' ? 'آنلاین' : 'کارت به کارت' }}</td>
+                                <td>
+                                    @switch($transaction->payment_type)
+                                        @case('online')
+                                            آنلاین
+                                        @break
+
+                                        @case('payment_type')
+                                            کارت به کارت
+                                        @break
+
+                                        @default
+                                            هدیه
+                                    @endswitch
+
+                                </td>
+                                @php
+                                    $pieces = explode(' ', $transaction->created_at);
+                                @endphp
                                 <td>{{ gregorianDateToPersian(str_replace('-', '/', $transaction->created_at), '/', true) }}
+                                    {{ $pieces[1] }}
                                 </td>
                             </tr>
-                        @empty
-                            <tr class="text-center">
-                                <td colspan="10">فیلد مورد نظر خالی می باشد</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                            @empty
+                                <tr class="text-center">
+                                    <td colspan="10">فیلد مورد نظر خالی می باشد</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
 
-                @if ($transactions != [])
-                    {{ $transactions }}
+                    @if ($transactions != [])
+                        {{ $transactions }}
+                    @endif
                 @endif
-            @endif
+            </div>
         </div>
-    </div>
 
-@stop
+    @stop

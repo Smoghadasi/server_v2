@@ -4128,7 +4128,7 @@ class LoadController extends Controller
             //            if ($load->loadPic)
             //                unlink($load->loadPic);
 
-            Tender::where('load_id', $load_id)->delete();
+            // Tender::where('load_id', $load_id)->delete();
 
             $message = 'بار مورد نظر حذف شد';
             $alert = 'alert-success';
