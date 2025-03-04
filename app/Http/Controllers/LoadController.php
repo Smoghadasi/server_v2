@@ -1969,15 +1969,14 @@ class LoadController extends Controller
             ->get();
 
 
-        $tenders = Tender::join('bearings', 'bearings.id', 'tenders.bearing_id')
-            ->where('tenders.load_id', $id)
-            ->select('tenders.suggestedPrice', 'bearings.title', 'bearings.id')
-            ->orderBy('suggestedPrice', 'asc')
-            ->get();
+        // $tenders = Tender::join('bearings', 'bearings.id', 'tenders.bearing_id')
+        //     ->where('tenders.load_id', $id)
+        //     ->select('tenders.suggestedPrice', 'bearings.title', 'bearings.id')
+        //     ->orderBy('suggestedPrice', 'asc')
+        //     ->get();
 
-        $bearings = Bearing::select('id', 'title')->get();
-
-        return view('admin.loadInfo', compact('load', 'path', 'drivers', 'tenders', 'bearings', 'fleetLoads'));
+        // $bearings = Bearing::select('id', 'title')->get();
+        return view('admin.loadInfo', compact('load', 'path', 'drivers', 'fleetLoads'));
     }
 
     public function requestLoadStatus($id)

@@ -22,6 +22,11 @@
                             <div class="row">
                                 <div class="col-6">
                                     اطلاعات بار
+                                    @if ($load->deleted_at)
+                                        <span class="text-danger">
+                                            (حذف شد)
+                                        </span>
+                                    @endif
                                 </div>
                                 <div class="col-6 text-end">
                                     {{ $load->dateTime }} | {{ $load->loadingDate }}
@@ -131,8 +136,27 @@
                                         </tr>
 
                                         <tr>
-                                            <td colspan="2" class="font-weight-bold">توضیحات</td>
-                                            <td colspan="2">{{ $load->description ?? '-' }}</td>
+                                            <td class="font-weight-bold">توضیحات</td>
+                                            <td>{{ $load->description ?? '-' }}</td>
+                                            <td>دلیل حذف</td>
+                                            <td>
+                                                @switch($load->reasonDelete)
+                                                    @case(1)
+                                                        {{ REASON_DELETE_1 }}
+                                                    @break
+
+                                                    @case(2)
+                                                        {{ REASON_DELETE_2 }}
+                                                    @break
+
+                                                    @case(3)
+                                                        {{ REASON_DELETE_3 }}
+                                                    @break
+
+                                                    @default
+                                                        -
+                                                @endswitch
+                                            </td>
                                         </tr>
 
                                     </tbody>

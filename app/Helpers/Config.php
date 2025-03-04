@@ -37,6 +37,10 @@ const NO_ONE = 1;
 const YOUR_SELF = 2;
 const ANOTHER = 3;
 
+const REASON_DELETE_1 = 'بار از طریق ایران ترابر';
+const REASON_DELETE_2 = 'حمل از طریق سایر ';
+const REASON_DELETE_3 = 'از انتشار بار منصرف شدم';
+
 const SELECT_DRIVER = 3;
 const DELIVERY = 3;
 // بار رد شده
