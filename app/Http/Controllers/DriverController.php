@@ -527,7 +527,7 @@ class DriverController extends Controller
         if (in_array($fleet_id, $fleet7)) {
             $driver->freeCalls = 7;
         } elseif (in_array($fleet_id, $fleet12)) {
-            $driver->freeCalls = 12;
+            $driver->freeCalls = 15;
         } elseif (in_array($fleet_id, $fleet10)) {
             $driver->freeCalls = 10;
         } elseif (in_array($fleet_id, $fleet15)) {
