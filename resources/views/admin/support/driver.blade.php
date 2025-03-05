@@ -99,12 +99,9 @@
                     @endforelse
                 </tbody>
             </table>
-            @if (Auth::user()->role_id == 'admin')
                 <div class="mt-3">
                     {{ $supports }}
                 </div>
-            @endif
-
         </div>
     </div>
 
