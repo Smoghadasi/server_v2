@@ -2521,13 +2521,24 @@ class LoadController extends Controller
     {
         $loads = Load::orderByDesc('created_at')
             ->with('owner')
-            ->withTrashed()
             ->when($request->fleet_id !== null, function ($query) use ($request) {
                 return $query->where('fleets', 'Like', '%fleet_id":' . $request->fleet_id . ',%');
             })
+            ->withTrashed()
             ->where('userType', ROLE_OWNER)
             ->where('isBot', 0)
+            ->when($request->loadBy !== null, function ($query) use ($request) {
+                if ($request->loadBy == 0) {
+                    return $query->withTrashed();
+                } elseif ($request->loadBy == 1) {
+                    return $query->withoutTrashed();
+                } elseif ($request->loadBy == 2) {
+                    return $query->onlyTrashed();
+                }
+            })
             ->paginate(20);
+
+
         $fleets = Fleet::select('id', 'title', 'parent_id')
             ->where('parent_id', '!=', 0)
             ->get();

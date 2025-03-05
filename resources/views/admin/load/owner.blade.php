@@ -34,6 +34,13 @@
             <form method="get" action="{{ route('admin.load.owner') }}">
                 <div class="form-group row">
                     <div class="col-md-2 mt-3">
+                        <select class="form-select" name="loadBy">
+                            <option value="0">همه</option>
+                            <option value="1">فعال</option>
+                            <option value="2">بایگانی</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mt-3">
                         <select class="form-select" name="fleet_id">
                             <option disabled selected>انتخاب ناوگان</option>
                             @foreach ($fleets as $fleet)
@@ -54,13 +61,12 @@
                             <th>عنوان بار</th>
                             <th>شماره موبایل</th>
                             <th>صاحب بار</th>
-                            {{-- <th>باربری یا صاحب بار</th> --}}
                             <th>ناوگان</th>
                             <th>مبدا</th>
                             <th>مقصد</th>
                             <th>تعداد</th>
                             <th>تاریخ ثبت</th>
-                            <th>تاریخ حذف</th>
+                            {{-- <th>تاریخ حذف</th> --}}
                             <th>عملیات</th>
                         </tr>
                     </thead>
@@ -69,8 +75,13 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>
+                                    @php
+                                        $pieces = explode(' ', $load->deleted_at);
+                                    @endphp
                                     @if ($load->deleted_at != null)
-                                        <i class="menu-icon tf-icons bx bx-trash text-danger"></i>
+                                        <i class="menu-icon tf-icons bx bx-trash text-danger" data-bs-toggle="tooltip"
+                                            data-bs-placement="bottom"
+                                            title="{{ $load->deleted_at ? gregorianDateToPersian($load->deleted_at, '-', true) . ' ' . $pieces[1] : '-' }}"></i>
                                     @endif
                                     @if ($load->isBot != null)
                                         <i class="menu-icon tf-icons bx bx-check text-success"></i>
@@ -78,20 +89,12 @@
                                     {{ $load->title }}
                                 </td>
                                 <td>{{ $load->senderMobileNumber }}</td>
-                                {{-- @if (Auth::user()->role == 'admin') --}}
                                 <td class="{{ $load->owner->isAccepted == 1 ? 'text-success' : '' }}">
                                     <a class="{{ $load->owner->isAccepted == 1 ? 'text-success' : '' }}"
                                         href="{{ route('owner.show', $load->owner->id) }}">
                                         {{ $load->owner->name }} {{ $load->owner->lastName }}
                                     </a>
                                 </td>
-                                {{-- @else --}}
-                                {{-- <td>
-                                        {{ $load->owner->name }} {{ $load->owner->lastName }}
-                                    </td>
-                                @endif --}}
-
-                                {{--                        <td>{{ $load->userType == ROLE_CUSTOMER ? 'صاحب بار' : 'باربری' }}</td> --}}
                                 <td>
                                     @php
                                         $fleets = json_decode($load->fleets, true);
@@ -123,15 +126,12 @@
                                         </a>
                                     </span>
                                 </td>
-                                @php
-                                    $pieces = explode(' ', $load->deleted_at);
-                                @endphp
 
                                 <td>{{ $load->date }} {{ $load->dateTime }}</td>
-                                <td dir="ltr" class="text-center">
+                                {{-- <td dir="ltr" class="text-center">
                                     {{ $load->deleted_at ? gregorianDateToPersian($load->deleted_at, '-', true) . ' ' . $pieces[1] : '-' }}
-                                    {{-- {{ gregorianDateToPersian($load->deleted_at, '-', true) . ' ' . $pieces[1] }} --}}
-                                </td>
+                                    {{ gregorianDateToPersian($load->deleted_at, '-', true) . ' ' . $pieces[1] }}
+                                </td> --}}
                                 <td>
                                     <a class="btn btn-info btn-sm" href="{{ route('loadInfo', $load->id) }}">جزئیات</a>
                                 </td>
@@ -150,7 +150,7 @@
                             <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
                         @else
                             <li class="page-item"><a class="page-link"
-                                    href="{{ $loads->previousPageUrl() }}&fleet_id={{ request('fleet_id') }}"
+                                    href="{{ $loads->previousPageUrl() }}&fleet_id={{ request('fleet_id') }}&loadBy={{ request('loadBy') }}"
                                     rel="prev">&laquo;</a></li>
                         @endif
 
@@ -164,7 +164,7 @@
                                     <li class="page-item active"><span class="page-link">{{ $page }}</span></li>
                                 @else
                                     <li class="page-item"><a class="page-link"
-                                            href="{{ $url }}&fleet_id={{ request('fleet_id') }}">{{ $page }}</a>
+                                            href="{{ $url }}&fleet_id={{ request('fleet_id') }}&loadBy={{ request('loadBy') }}">{{ $page }}</a>
                                     </li>
                                 @endif
                             @elseif ($page == $loads->currentPage() - 3 || $page == $loads->currentPage() + 3)
@@ -175,7 +175,7 @@
                         {{-- Next Page Link --}}
                         @if ($loads->hasMorePages())
                             <li class="page-item"><a class="page-link"
-                                    href="{{ $loads->nextPageUrl() }}&fleet_id={{ request('fleet_id') }}"
+                                    href="{{ $loads->nextPageUrl() }}&fleet_id={{ request('fleet_id') }}&loadBy={{ request('loadBy') }}"
                                     rel="next">&raquo;</a></li>
                         @else
                             <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
@@ -184,10 +184,7 @@
                 </nav>
             @endif
 
-
-
-
         </div>
     </div>
 
-@stop
+@endsection
