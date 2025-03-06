@@ -58,7 +58,7 @@ class DriverController extends Controller
             })->paginate(50);
         }
         if ($type == 'todayOnline') {
-            $drivers = Driver::with(['cargo' => function ($query) {
+            $drivers = Driver::with(['transactions' => function ($query) {
                 $query->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00');
                 $query->where('status', '>', 2);
                 $query->where('payment_type', 'online');
@@ -69,7 +69,7 @@ class DriverController extends Controller
             })->paginate(50);
         }
         if ($type == 'todayCartToCart') {
-            $drivers = Driver::with(['cargo' => function ($query) {
+            $drivers = Driver::with(['transactions' => function ($query) {
                 $query->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00');
                 $query->where('status', '>', 2);
                 $query->where('payment_type', 'cardToCard');
