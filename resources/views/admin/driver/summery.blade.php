@@ -26,6 +26,7 @@
                             <th>کد ملی</th>
                             <th>نوع ناوگان</th>
                             <th>تاریخ ثبت نام</th>
+                            <th>تاریخ واریزی</th>
                             <th>کد نسخه</th>
                             <th>شماره تلفن همراه</th>
                             <th class="text-center">عملیات</th>
@@ -87,6 +88,12 @@
                                     {{ gregorianDateToPersian($driver->created_at, '-', true) }}
                                     @if (isset(explode(' ', $driver->created_at)[1]))
                                         {{ explode(' ', $driver->created_at)[1] }}
+                                    @endif
+                                </td>
+                                <td>
+                                    {{ gregorianDateToPersian($driver->transactions[0]->created_at, '-', true) }}
+                                    @if (isset(explode(' ', $driver->transactions[0]->created_at)[1]))
+                                        {{ explode(' ', $driver->transactions[0]->created_at)[1] }}
                                     @endif
                                 </td>
                                 <td>{{ $driver->version ?? '-' }}</td>

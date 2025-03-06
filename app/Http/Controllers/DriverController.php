@@ -52,7 +52,12 @@ class DriverController extends Controller
     public function driverSummery($type)
     {
         if ($type == 'todayPayment') {
-            $drivers = Driver::whereHas('transactions', function ($q) {
+            $drivers = Driver::with(['transactions' => function ($query) {
+                $query->orderByDesc('created_at');
+                $query->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00');
+                $query->where('status', '>', 2);
+                $query->first();
+            }])->whereHas('transactions', function ($q) {
                 $q->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00');
                 $q->where('status', '>', 2);
             })->paginate(20);
