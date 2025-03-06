@@ -55,14 +55,14 @@
                         <td>درآمد هفته : {{ number_format($incomes['week']) }}</td>
                     </tr>
                     <tr>
-                        <td>اشتراک فعال : {{ number_format($drivers['numOfActiveDate']) }}</td>
+                        <td>تعداد پرداختی امروز : {{ number_format($drivers['todayPayment']) }}</td>
                         <td>تعداد بار ثبت شده امروز : {{ number_format($owners['toDayLoads']) }}</td>
                         <td>تعداد بار ثبت شده امروز : {{ number_format($cargoOwners['toDayLoads']) }}</td>
                         <td></td>
                         <td>درآمد ماه : {{ number_format($incomes['month']) }}</td>
                     </tr>
                     <tr>
-                        <td></td>
+                        <td>پرداختی کارت به کارت : {{ number_format($drivers['todayCartToCart']) }}</td>
                         <td>تعداد بار ثبت شده دیروز : {{ number_format($owners['yesterdayLoads']) }}</td>
                         <td>تعداد بار ثبت شده دیروز : {{ number_format($cargoOwners['yesterdayLoads']) }}</td>
                         <td></td>
@@ -70,7 +70,7 @@
 
                     </tr>
                     <tr>
-                        <td></td>
+                        <td>پرداختی آنلاین : {{ number_format($drivers['todayOnline']) }}</td>
                         <td> بار ثبت شده هفته : {{ number_format($owners['weekLoads']) }}</td>
                         <td> بار ثبت شده هفته : {{ number_format($cargoOwners['weekLoads']) }}</td>
                         <td></td>

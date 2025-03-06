@@ -45,7 +45,16 @@ class ReportingController extends Controller
 
         $drivers = [
             'total' => Driver::count(),
-            'numOfActiveDate' => Driver::where('activeDate', '>', date("Y-m-d H:i:s", time()))->count(),
+            'todayPayment' => Transaction::where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')->where('status', '>', 2)->count(),
+            'todayCartToCart' => Transaction::where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
+                ->where('status', '>', 2)
+                ->where('payment_type', 'cardToCard')
+                ->count(),
+            'todayOnline' => Transaction::where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
+                ->where('status', '>', 2)
+                ->where('payment_type', 'online')
+                ->count(),
+            'todayPayment' => Transaction::where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')->where('status', '>', 2)->count(),
             'toDay' => Driver::where('created_at', '>', $todayDate)->count(),
             'yesterday' => Driver::where([
                 ['created_at', '>', $yesterdayDate],
