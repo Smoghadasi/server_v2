@@ -38,7 +38,15 @@
                         <td>افزایش امروز : {{ number_format($owners['toDay']) }}</td>
                         <td>افزایش امروز : {{ number_format($cargoOwners['toDay']) }}</td>
                         <td>تعداد بار ثبت شده دیروز : {{ number_format($operators['yesterdayLoads']) }}</td>
-                        <td>درآمد امروز : {{ number_format($incomes['toDay']) }}</td>
+                        <td>
+                            درآمد امروز : {{ number_format($incomes['toDay']) }}
+                            <hr>
+                            تعداد کل : {{ number_format($drivers['todayPayment']) }}
+                            <br>
+                            کارت به کارت : {{ number_format($drivers['todayCartToCart']) }}
+                            <br>
+                            آنلاین : {{ number_format($drivers['todayOnline']) }}
+                        </td>
                     </tr>
                     <tr>
                         <td>افزایش دیروز : {{ number_format($drivers['yesterday']) }}</td>
@@ -55,14 +63,14 @@
                         <td>درآمد هفته : {{ number_format($incomes['week']) }}</td>
                     </tr>
                     <tr>
-                        <td>تعداد پرداختی امروز : {{ number_format($drivers['todayPayment']) }}</td>
+                        <td></td>
                         <td>تعداد بار ثبت شده امروز : {{ number_format($owners['toDayLoads']) }}</td>
                         <td>تعداد بار ثبت شده امروز : {{ number_format($cargoOwners['toDayLoads']) }}</td>
                         <td></td>
                         <td>درآمد ماه : {{ number_format($incomes['month']) }}</td>
                     </tr>
                     <tr>
-                        <td>پرداختی کارت به کارت : {{ number_format($drivers['todayCartToCart']) }}</td>
+                        <td></td>
                         <td>تعداد بار ثبت شده دیروز : {{ number_format($owners['yesterdayLoads']) }}</td>
                         <td>تعداد بار ثبت شده دیروز : {{ number_format($cargoOwners['yesterdayLoads']) }}</td>
                         <td></td>
@@ -70,7 +78,7 @@
 
                     </tr>
                     <tr>
-                        <td>پرداختی آنلاین : {{ number_format($drivers['todayOnline']) }}</td>
+                        <td></td>
                         <td> بار ثبت شده هفته : {{ number_format($owners['weekLoads']) }}</td>
                         <td> بار ثبت شده هفته : {{ number_format($cargoOwners['weekLoads']) }}</td>
                         <td></td>
