@@ -45,11 +45,11 @@
                                 تعداد کل : {{ number_format($drivers['todayPayment']) }}
                             </a>
                             <br>
-                            <a href="#">
+                            <a href="{{ route('driverSummery', ['type' => 'todayOnline']) }}">
                                 آنلاین : {{ number_format($drivers['todayOnline']) }}
                             </a>
                             <br>
-                            <a href="#">
+                            <a href="{{ route('driverSummery', ['type' => 'todayCartToCart']) }}">
                                 کارت به کارت : {{ number_format($drivers['todayCartToCart']) }}
                             </a>
                         </td>

@@ -57,6 +57,28 @@ class DriverController extends Controller
                 $q->where('status', '>', 2);
             })->paginate(50);
         }
+        if ($type == 'todayOnline') {
+            $drivers = Driver::with(['cargo' => function ($query) {
+                $query->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00');
+                $query->where('status', '>', 2);
+                $query->where('payment_type', 'online');
+            }])->whereHas('transactions', function ($q) {
+                $q->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00');
+                $q->where('status', '>', 2);
+                $q->where('payment_type', 'online');
+            })->paginate(50);
+        }
+        if ($type == 'todayCartToCart') {
+            $drivers = Driver::with(['cargo' => function ($query) {
+                $query->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00');
+                $query->where('status', '>', 2);
+                $query->where('payment_type', 'cardToCard');
+            }])->whereHas('transactions', function ($q) {
+                $q->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00');
+                $q->where('status', '>', 2);
+                $q->where('payment_type', 'cardToCard');
+            })->paginate(50);
+        }
         return view('admin.driver.summery', compact('drivers'));
     }
 
