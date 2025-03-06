@@ -485,6 +485,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // نمایش لیست رانندگان برای ادمین
         Route::get('adminDrivers', [DriverController::class, 'adminDrivers'])->middleware('operator')->name('adminDrivers');
 
+
+        Route::get('drivers/{type}', [DriverController::class, 'driverSummery'])->middleware('operator')->name('driverSummery');
+
         // فرم ثبت راننده جدید
         Route::get('addNewDriverForm', [DriverController::class, 'addNewDriverForm'])->middleware('operator');
 

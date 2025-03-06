@@ -41,11 +41,17 @@
                         <td>
                             درآمد امروز : {{ number_format($incomes['toDay']) }}
                             <hr>
-                            تعداد کل : {{ number_format($drivers['todayPayment']) }}
+                            <a href="{{ route('driverSummery', ['type' => 'todayPayment']) }}">
+                                تعداد کل : {{ number_format($drivers['todayPayment']) }}
+                            </a>
                             <br>
-                            کارت به کارت : {{ number_format($drivers['todayCartToCart']) }}
+                            <a href="#">
+                                آنلاین : {{ number_format($drivers['todayOnline']) }}
+                            </a>
                             <br>
-                            آنلاین : {{ number_format($drivers['todayOnline']) }}
+                            <a href="#">
+                                کارت به کارت : {{ number_format($drivers['todayCartToCart']) }}
+                            </a>
                         </td>
                     </tr>
                     <tr>
@@ -97,7 +103,7 @@
                         <td></td>
                         <td colspan="3" class="text-center h4">
                             جمع کل بارهای دیروز :
-                            {{ number_format($owners['yesterdayLoads'] + $cargoOwners['yesterdayLoads']+$operators['yesterdayLoads']) }}
+                            {{ number_format($owners['yesterdayLoads'] + $cargoOwners['yesterdayLoads'] + $operators['yesterdayLoads']) }}
                         </td>
                         <td></td>
                     </tr>
@@ -116,14 +122,13 @@
 
 
     <script>
-
         var label = [
-            @foreach($countOfLoadsInPrevious30Days as $item)
+            @foreach ($countOfLoadsInPrevious30Days as $item)
                 "{{ $item['label'] }}",
             @endforeach
         ];
         var data = [
-            @foreach($countOfLoadsInPrevious30Days as $item)
+            @foreach ($countOfLoadsInPrevious30Days as $item)
                 "{{ $item['value'] }}",
             @endforeach
 
@@ -139,14 +144,12 @@
                 }]
             },
             options: {
-                legend: {display: false}
+                legend: {
+                    display: false
+                }
             }
         });
-
     </script>
 
 
 @stop
-
-
-

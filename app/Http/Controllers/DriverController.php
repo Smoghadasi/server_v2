@@ -49,6 +49,18 @@ class DriverController extends Controller
         return view('admin.drivers', compact('drivers', 'showSearchResult', 'fleets'));
     }
 
+    public function driverSummery($type)
+    {
+        if ($type == 'todayPayment') {
+            $drivers = Driver::whereHas('transactions', function ($q) {
+                $q->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00');
+                $q->where('status', '>', 2);
+            })->paginate(50);
+            return $drivers;
+
+        }
+    }
+
     // لیست رانندگان برای ادمین
     public function adminDrivers($drivers = [], $showSearchResult = false)
     {
@@ -881,7 +893,7 @@ class DriverController extends Controller
     public function checkDriverStatusForCalling(Driver $driver, $phoneNumber = '0', $load_id = 0, $latitude = 0, $longitude = 0)
     {
         try {
-            $load = Load::where('id', '=', $load_id)->first();
+            $load = Load::findOrFail($load_id);
 
             if ($load === null) {
                 return ['result' => 2];

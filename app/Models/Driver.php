@@ -24,6 +24,11 @@ class Driver extends Authenticatable
         return $this->hasOne(ProvinceCity::class, 'city_id');
     }
 
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class, 'user_id')->where('userType', 'driver');
+    }
+
     public function cityOwner()
     {
         return $this->belongsTo(ProvinceCity::class, 'city_id');
