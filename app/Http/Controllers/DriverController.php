@@ -55,10 +55,9 @@ class DriverController extends Controller
             $drivers = Driver::whereHas('transactions', function ($q) {
                 $q->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00');
                 $q->where('status', '>', 2);
-            })->paginate(50);
-            return $drivers;
-
+            })->paginate(20);
         }
+        return view('admin.driver.summery', compact('drivers'));
     }
 
     // لیست رانندگان برای ادمین
