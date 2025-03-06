@@ -60,8 +60,9 @@ class DriverController extends Controller
             }])->whereHas('transactions', function ($q) {
                 $q->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00');
                 $q->where('status', '>', 2);
-            })->paginate(20);
+            })->get();
         }
+        return $drivers;
         return view('admin.driver.summery', compact('drivers'));
     }
 
