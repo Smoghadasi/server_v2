@@ -55,7 +55,7 @@
                         <td>درآمد هفته : {{ number_format($incomes['week']) }}</td>
                     </tr>
                     <tr>
-                        <td></td>
+                        <td>اشتراک فعال : {{ number_format($drivers['numOfActiveDate']) }}</td>
                         <td>تعداد بار ثبت شده امروز : {{ number_format($owners['toDayLoads']) }}</td>
                         <td>تعداد بار ثبت شده امروز : {{ number_format($cargoOwners['toDayLoads']) }}</td>
                         <td></td>

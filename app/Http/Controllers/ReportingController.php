@@ -45,6 +45,7 @@ class ReportingController extends Controller
 
         $drivers = [
             'total' => Driver::count(),
+            'numOfActiveDate' => Driver::where('activeDate', '>', date("Y-m-d H:i:s", time()))->count(),
             'toDay' => Driver::where('created_at', '>', $todayDate)->count(),
             'yesterday' => Driver::where([
                 ['created_at', '>', $yesterdayDate],
