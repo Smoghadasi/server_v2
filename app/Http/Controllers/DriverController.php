@@ -57,7 +57,7 @@ class DriverController extends Controller
                 $q->where('status', '>', 2);
             })->get();
         }
-        return $drivers->transactions;
+        return $drivers[0]->transactions->latest();
         return view('admin.driver.summery', compact('drivers'));
     }
 
