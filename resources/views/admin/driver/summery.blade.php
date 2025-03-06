@@ -91,7 +91,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    {{ gregorianDateToPersian($driver->transactions[0]->created_at, '-', true) }}
+                                    {{ gregorianDateToPersian($driver->transactions?[0]->created_at, '-', true) }}
                                     @if (isset(explode(' ', $driver->transactions[0]->created_at)[1]))
                                         {{ explode(' ', $driver->transactions[0]->created_at)[1] }}
                                     @endif
