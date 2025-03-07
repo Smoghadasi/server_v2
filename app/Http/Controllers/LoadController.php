@@ -697,7 +697,7 @@ class LoadController extends Controller
                 ->where(function ($query) {
                     $query->where('type', 'owner')
                         ->orWhere('type', 'both');
-                })->count() > 0)) {
+                })->orWhere('phoneNumber', $senderMobileNumber)->count() > 0)) {
                 $message[1] = 'شماره تلفن وارد شده در لیست ممنوعه می باشد، و امکان ثبت بار با شماره تلفن ' . $senderMobileNumber .
                     ' امکان پذیر نمی باشد. لطفا برای دلیل آن با ایران ترابر تماس بگیرید';
 
