@@ -693,11 +693,13 @@ class LoadController extends Controller
             $senderMobileNumber = isset($request->mobileNumberForCoordination) ? $request->mobileNumberForCoordination : $request->senderMobileNumber;
             $owner = Owner::where('mobileNumber', $senderMobileNumber)->first();
 
-            if ((BlockPhoneNumber::where('nationalCode', $owner->nationalCode)
-                ->where(function ($query) {
-                    $query->where('type', 'owner')
-                        ->orWhere('type', 'both');
-                })->orWhere('phoneNumber', $senderMobileNumber)->count() > 0)) {
+            if (BlockPhoneNumber::where(function ($query) use ($owner, $senderMobileNumber) {
+                $query->where('nationalCode', $owner->nationalCode)
+                    ->orWhere('phoneNumber', $senderMobileNumber);
+            })->where(function ($query) {
+                $query->where('type', 'owner')
+                    ->orWhere('type', 'both');
+            })->exists()) {
                 $message[1] = 'شماره تلفن وارد شده در لیست ممنوعه می باشد، و امکان ثبت بار با شماره تلفن ' . $senderMobileNumber .
                     ' امکان پذیر نمی باشد. لطفا برای دلیل آن با ایران ترابر تماس بگیرید';
 
@@ -706,6 +708,7 @@ class LoadController extends Controller
                     'message' => $message
                 ];
             }
+
 
             // if (BlockedIp::where('ip', request()->ip())->count()) {
             //     $message[1] = 'عدم ثبت بار به دلیل مسدود شدن IP';
