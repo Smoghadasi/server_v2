@@ -5046,7 +5046,14 @@ class LoadController extends Controller
     public function repeatOwnerLoad(string $load)
     {
         $task = Load::withTrashed()->find($load);
-        if (BlockPhoneNumber::where('phoneNumber', $task->senderMobileNumber)->count()) {
+        $owner = Owner::where('mobileNumber', $task->senderMobileNumber)->first();
+        if (BlockPhoneNumber::where(function ($query) use ($owner) {
+            $query->where('nationalCode', $owner->nationalCode)
+                ->orWhere('phoneNumber', $owner->mobileNumber);
+        })->where(function ($query) {
+            $query->where('type', 'owner')
+                ->orWhere('type', 'both');
+        })->exists()) {
             $message[1] = 'شماره تلفن وارد شده در لیست ممنوعه می باشد، و امکان ثبت بار با شماره تلفن ' . $task->senderMobileNumber .
                 ' امکان پذیر نمی باشد. لطفا برای دلیل آن با ایران ترابر تماس بگیرید';
             return [
