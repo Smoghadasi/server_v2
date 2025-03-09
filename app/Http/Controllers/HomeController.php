@@ -165,7 +165,7 @@ class HomeController extends Controller
             ->orWhere('nationalCode', $request->title)
             ->orWhere('name', 'like', '%' . $request->title . '%')
             ->orWhere('lastName', 'like', '%' . $request->title . '%')
-            ->paginate(20);
+            ->get();
 
         // شکایات راننده
         $drivers = Driver::with('provinceOwner')
@@ -173,7 +173,7 @@ class HomeController extends Controller
             ->orWhere('nationalCode', $request->title)
             ->orWhere('name', 'like', '%' . $request->title . '%')
             ->orWhere('lastName', 'like', '%' . $request->title . '%')
-            ->paginate(20);
+            ->get();
 
         // شکایات راننده
         $reportDrivers = Report::with(['cargo' => function ($query) {
@@ -185,7 +185,7 @@ class HomeController extends Controller
                 $q->orWhere('name', 'like', '%' . $request->title . '%');
                 $q->orWhere('lastName', 'like', '%' . $request->title . '%');
             })
-            ->orderByDesc('created_at')->paginate(20);
+            ->orderByDesc('created_at')->get();
 
         // شکایات صاحب بار
         $reportOwners = Report::with(['cargo' => function ($query) {
@@ -197,27 +197,27 @@ class HomeController extends Controller
                 $q->orWhere('name', 'like', '%' . $request->title . '%');
                 $q->orWhere('lastName', 'like', '%' . $request->title . '%');
             })
-            ->orderByDesc('created_at')->paginate(20);
+            ->orderByDesc('created_at')->get();
 
         // شماره های مسدودی
         $blockedPhoneNumbers = BlockPhoneNumber::orderByDesc('created_at')
             ->where('phoneNumber', 'like', '%' . $request->title . '%')
             ->orWhere('nationalCode', $request->title)
             ->orWhere('name', 'like', '%' . $request->title . '%')
-            ->paginate(20);
+            ->get();
 
         // پیام ها
         $messages = ContactUs::orderby('id', 'desc')
             ->where('mobileNumber', $request->title)
             ->orWhere('name', 'like', '%' . $request->title . '%')
             ->orWhere('lastName', 'like', '%' . $request->title . '%')
-            ->paginate(20);
+            ->get();
 
         // تماس با صاحب بار و باربری
         $contactReportWithCargoOwners = ContactReportWithCargoOwner::orderby('id', 'desc')
             ->where('mobileNumber', $request->title)
             ->orWhere('nameAndLastName', $request->title)
-            ->paginate(20);
+            ->get();
 
         return view('admin.searchAll', compact([
             'drivers',

@@ -28,7 +28,7 @@
 
                         @forelse ($drivers as $driver)
                             <tr>
-                                <td>{{ ($drivers->currentPage() - 1) * $drivers->perPage() + ++$i }}</td>
+                                <td>{{ $loop->iteration }}</td>
                                 <td>
                                     @if ($driver->bookmark)
                                         <form style="display: contents" action="{{ route('bookmark.store') }}" method="post">
@@ -122,7 +122,7 @@
                         <?php $i = 0; ?>
                         @forelse($owners as $owner)
                             <tr>
-                                <td>{{ ($owners->currentPage() - 1) * $owners->perPage() + ++$i }}</td>
+                                <td>{{ $loop->iteration }}</td>
                                 <td>
                                     @if ($owner->bookmark)
                                         <form style="display: contents" action="{{ route('bookmark.store') }}"
@@ -239,7 +239,7 @@
                         <tbody>
                             @forelse($reportDrivers as $key => $report)
                                 <tr>
-                                    <td>{{ ($reportDrivers->currentPage() - 1) * $reportDrivers->perPage() + ($key + 1) }}</td>
+                                    <td>{{ $loop->iteration }}</td>
                                     <td><a href="{{ route('driver.detail', $report->driver_id) }}">{{ $report->driver->name }}
                                             {{ $report->driver->lastName }}</a></td>
                                     <td>
@@ -312,12 +312,7 @@
                                     </tr>
                                 @endforelse
                             </tbody>
-
                         </table>
-
-                        <div class="mt-3">
-                            {{ $reportDrivers }}
-                        </div>
                     </div>
 
                 </div>
@@ -348,7 +343,7 @@
                             <tbody>
                                 @forelse($reportOwners as $key => $report)
                                     <tr>
-                                        <td>{{ ($reportOwners->currentPage() - 1) * $reportDrivers->perPage() + ($key + 1) }}</td>
+                                        <td>{{ $loop->iteration }}</td>
                                         <td><a href="{{ route('driver.detail', $report->driver_id) }}">{{ $report->driver->name }}
                                                 {{ $report->driver->lastName }}</a></td>
                                         <td>
@@ -421,12 +416,7 @@
                                         </tr>
                                     @endforelse
                                 </tbody>
-
                             </table>
-
-                            <div class="mt-3">
-                                {{ $reportOwners }}
-                            </div>
                         </div>
 
                     </div>
@@ -456,7 +446,7 @@
                                 <tbody>
                                     @forelse($reportDrivers as $key => $report)
                                         <tr>
-                                            <td>{{ ($reportDrivers->currentPage() - 1) * $reportDrivers->perPage() + ($key + 1) }}</td>
+                                            <td>{{ $loop->iteration }}</td>
                                             <td><a href="{{ route('driver.detail', $report->driver_id) }}">{{ $report->driver->name }}
                                                     {{ $report->driver->lastName }}</a></td>
                                             <td>
@@ -529,12 +519,7 @@
                                             </tr>
                                         @endforelse
                                     </tbody>
-
                                 </table>
-
-                                <div class="mt-3">
-                                    {{ $reportDrivers }}
-                                </div>
                             </div>
 
                         </div>
@@ -730,10 +715,9 @@
                                             </tr>
                                         </thead>
                                         <tbody class="small text-right">
-                                            <?php $i = 1; ?>
                                             @forelse ($blockedPhoneNumbers as $blockedPhoneNumber)
                                                 <tr>
-                                                    <td>{{ $i++ }}</td>
+                                                    <td>{{ $loop->iteration }}</td>
                                                     <td>
                                                         {{ $blockedPhoneNumber->phoneNumber ?? '-' }}
                                                     </td>
@@ -770,14 +754,6 @@
                                             @endforelse
                                         </tbody>
                                     </table>
-
-                                    <div class="mt-3">
-                                        {{ $blockedPhoneNumbers }}
-                                    </div>
-
-                                    <div class="mt-3">
-                                        {{ $reportOwners }}
-                                    </div>
                                 </div>
 
                             </div>
@@ -808,7 +784,7 @@
                                             <?php $i = 0; ?>
                                             @forelse ($messages as $key => $message)
                                                 <tr @if ($message->status == true) style="background: #f1f1f1" @endif>
-                                                    <td>{{ ($messages->currentPage() - 1) * $messages->perPage() + ($key + 1) }}</td>
+                                                    <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $message->title }}</td>
                                                     <td>{{ $message->message }}</td>
                                                     <td>
@@ -964,7 +940,7 @@
                                             @forelse ($contactReportWithCargoOwners as $key => $contactReportWithCargoOwner)
                                                 <tr>
                                                     <td>
-                                                        {{ ($contactReportWithCargoOwners->currentPage() - 1) * $contactReportWithCargoOwners->perPage() + ($key + 1) }}
+                                                        {{ $loop->iteration }}
                                                     </td>
                                                     <td>{{ $contactReportWithCargoOwner->mobileNumber }}</td>
                                                     <td>
