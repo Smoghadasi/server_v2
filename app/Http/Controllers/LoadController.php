@@ -5046,7 +5046,7 @@ class LoadController extends Controller
     public function repeatOwnerLoad(string $load)
     {
         $task = Load::withTrashed()->find($load);
-        $owner = Owner::where('mobileNumber', $task->senderMobileNumber)->first();
+        $owner = Owner::find($task->user_id);
         if (BlockPhoneNumber::where(function ($query) use ($owner) {
             $query->where('nationalCode', $owner->nationalCode)
                 ->orWhere('phoneNumber', $owner->mobileNumber);
@@ -5075,7 +5075,7 @@ class LoadController extends Controller
         $load->urgent = 1;
         $load->save();
 
-        $ownerLoadCount = Owner::where('mobileNumber', $load->mobileNumberForCoordination)->first();
+        $ownerLoadCount = Owner::find($task->user_id);
         if ($ownerLoadCount) {
             $ownerLoadCount->loadCount += 1;
             $ownerLoadCount->save();

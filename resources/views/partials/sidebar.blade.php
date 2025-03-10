@@ -2,7 +2,7 @@
     <div class="app-brand demo">
         <a href="{{ url('/dashboard') }}" class="app-brand-link">
             <span class="app-brand-logo demo">
-                <img src="{{ asset('icons/irt.png') }}" width="50" height="50" />
+                <img src="{{ asset('img/7sin.png') }}" width="50" height="50" />
             </span>
             <span class="app-brand-text demo menu-text fw-bolder ms-2">ایران ترابر</span>
 
