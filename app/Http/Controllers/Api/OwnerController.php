@@ -175,6 +175,9 @@ class OwnerController extends Controller
             $owner = Owner::with('operatorMessages')
                 ->where('id', $id)
                 ->first();
+            if ($owner->isAuth == 1) {
+                $owner->makeHidden(['nationalCardImage', 'nationalFaceImage', 'profileImage', 'sanaImage', 'activityLicense', 'nationalCode']);
+            }
             return [
                 'result' => SUCCESS,
                 'data' => $owner
