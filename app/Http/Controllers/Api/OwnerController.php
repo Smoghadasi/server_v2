@@ -176,7 +176,16 @@ class OwnerController extends Controller
                 ->where('id', $id)
                 ->first();
             if ($owner->isAuth == 1) {
-                $owner->makeHidden(['nationalCardImage', 'nationalFaceImage', 'profileImage', 'sanaImage', 'activityLicense', 'nationalCode']);
+                $owner->makeHidden([
+                    'nationalCardImage',
+                    'nationalFaceImage',
+                    'profileImage',
+                    'sanaImage',
+                    'activityLicense',
+                    'nationalCode',
+                    'ip',
+                    'FCM_token'
+                ]);
             }
             return [
                 'result' => SUCCESS,
