@@ -65,6 +65,9 @@
                             <td>{{ $key + 1 }}</td>
                             <td>
                                 {{ $city->name }}
+                                @if ($city->centerOfProvince == 1)
+                                    <span class="alert alert-primary small d-inline-block p-1">مرکز استان</span>
+                                @endif
                             </td>
                             <td>{{ $city->latitude }} , {{ $city->longitude }}</td>
                             <td>
@@ -133,6 +136,11 @@
 
                                         </div>
                                     </div>
+                                    @if ($city->centerOfProvince == 0)
+                                        <a class="btn btn-sm btn-info"
+                                            href="{{ route('centerOfProvinceCities', ['provinceCity' => $city]) }}">انتخاب
+                                            به عنوان مرکز استان</a>
+                                    @endif
                                 @endif
                             </td>
                         </tr>

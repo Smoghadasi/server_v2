@@ -214,7 +214,6 @@ class AddressController extends Controller
         $city->name = $request->name;
         $city->save();
         return back()->with('success', 'شهر ' . $city->name . ' ویرایش.');
-
     }
 
     // ثبت شهر جدید
@@ -238,6 +237,18 @@ class AddressController extends Controller
             ]);
             $city->centerOfProvince = true;
             $city->save();
+
+            return back()->with('success', 'مرکز استان انتخاب شد');
+        } catch (\Exception $exception) {
+        }
+        return back()->with('danger', 'خطا در انتخاب مرکز استان');
+    }
+
+    public function centerOfProvinceCities(ProvinceCity $provinceCity)
+    {
+        try {
+            $provinceCity->centerOfProvince = true;
+            $provinceCity->save();
 
             return back()->with('success', 'مرکز استان انتخاب شد');
         } catch (\Exception $exception) {
