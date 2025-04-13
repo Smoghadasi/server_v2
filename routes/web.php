@@ -172,6 +172,11 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         Route::get('centerOfProvince/{city}', [AddressController::class, 'centerOfProvince'])->middleware('admin');
 
+        // centerOfProvinceCities
+        Route::get('centerOfProvinceCities/{provinceCity}', [AddressController::class, 'centerOfProvinceCities'])
+        ->middleware('admin')
+        ->name('centerOfProvinceCities');
+
         /***************************************************************************************************/
         /***************************************************************************************************/
 
