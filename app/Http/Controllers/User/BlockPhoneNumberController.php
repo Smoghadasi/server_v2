@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\BlockPhoneNumber;
+use App\Models\Load;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -53,6 +54,7 @@ class BlockPhoneNumberController extends Controller
         $blockedPhoneNumber->description = $request->description;
         $blockedPhoneNumber->operator_id = Auth::id();
         $blockedPhoneNumber->save();
+        Load::where('mobileNumberForCoordination', $request->phoneNumber)->delete();
 
         return back()->with('success', 'شماره تلفن ' . $request->phoneNumber . ' به لیست ممنوعه اضافه شد.');
     }

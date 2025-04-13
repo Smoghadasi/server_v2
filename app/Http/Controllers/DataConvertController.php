@@ -100,7 +100,6 @@ class DataConvertController extends Controller
         ])
             ->orderby('id', 'desc')
             ->first();
-
         $operatorCargoListAccess = OperatorCargoListAccess::where('user_id', auth()->id())
             ->select('fleet_id')
             ->pluck('fleet_id')
@@ -119,7 +118,7 @@ class DataConvertController extends Controller
                     $conditions[] = ['cargo', 'LIKE', '%' . $item . '%'];
 
                     $cargo = CargoConvertList::where(function ($q) use ($conditions) {
-                        return $q->orwhere($conditions);
+                        return $q->orWhere($conditions);
                     })
                         ->where('operator_id', 0)
                         ->orderby('id', 'asc')
@@ -763,6 +762,29 @@ class DataConvertController extends Controller
 
 
             if (isset($load->id)) {
+                // تبدیل کل داده‌های $load به JSON
+                $data = json_encode($load);
+
+                // تنظیم URL API
+                $url = 'https://dashboard.elambar-sarasari.ir/api/storeLoad';
+
+                // مقداردهی اولیه cURL
+                $ch = curl_init($url);
+
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+
+                $response = curl_exec($ch);
+                curl_close($ch);
+
+                // بررسی پاسخ API
+                if ($response) {
+                    Log::warning('ارسال شد');
+                } else {
+                    Log::warning('خطا');
+                }
 
                 $counter++;
 
