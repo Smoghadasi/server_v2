@@ -5322,7 +5322,10 @@ class LoadController extends Controller
         if ($request->mobileNumber != "0" && $request->mobileNumber != null)
             $condition[] = ['mobileNumberForCoordination', $request->mobileNumber];
 
-        $loads = Load::where($condition)->withTrashed()->get();
+        $loads = Load::where($condition)
+            ->withTrashed()
+            ->orderByDesc('created_at')
+            ->paginate(20);
         $firstDateLoad = LoadBackup::where('mobileNumberForCoordination', $request->mobileNumber)
             ->orderBy('created_at', 'ASC')->first();
         $cities = ProvinceCity::where('parent_id', '!=', 0)->get();

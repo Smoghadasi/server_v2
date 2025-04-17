@@ -9,9 +9,8 @@
         <div class="card-body">
 
             <div class="text-right">
-                <form method="post" action="{{ url('admin/searchLoads') }}" class="mt-3 mb-3 card card-body">
+                <form method="get" action="{{ url('admin/searchLoads') }}" class="mt-3 mb-3 card card-body">
                     <h5>جستجو :</h5>
-                    @csrf
                     <div class="form-group">
                         <div class="col-md-12 row">
                             <div class="col-md-3">
@@ -112,14 +111,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php $i = 0; ?>
                                 @foreach ($loads as $key => $load)
                                     <tr>
                                         <td><input type="checkbox" name="loads[]" id="loads[]"
                                                 value="{{ $load->id }}">
                                         </td>
                                         <td>
-                                            {{ $key + 1 }}
+                                            {{ ($loads->currentPage() - 1) * $loads->perPage() + ($key + 1) }}
                                         </td>
                                         <td>
                                             @if ($load->deleted_at != null)
@@ -243,6 +241,57 @@
                                 @endforeach
                             </tbody>
                         </table>
+                    </div>
+                    <div class="mt-2">
+                        @if (is_array($loads))
+                            @foreach ($loads as $load)
+                                {{ htmlspecialchars($load) }}
+                            @endforeach
+                        @else
+                            @if ($loads->hasPages())
+                                <nav aria-label="Page navigation">
+                                    <ul class="pagination">
+                                        {{-- Previous Page Link --}}
+                                        @if ($loads->onFirstPage())
+                                            <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                                        @else
+                                            <li class="page-item"><a class="page-link"
+                                                    href="{{ $loads->previousPageUrl() }}&origin_city_id={{ request('origin_city_id') }}&destination_city_id={{ request('destination_city_id') }}&fleet_id={{ request('fleet_id') }}&operator_id={{ request('operator_id') }}&mobileNumber={{ request('mobileNumber') }}"
+                                                    rel="prev">&laquo;</a></li>
+                                        @endif
+
+                                        {{-- Pagination Elements --}}
+                                        @foreach ($loads->getUrlRange(1, $loads->lastPage()) as $page => $url)
+                                            @if (
+                                                $page == 1 ||
+                                                    $page == $loads->lastPage() ||
+                                                    ($page >= $loads->currentPage() - 2 && $page <= $loads->currentPage() + 2))
+                                                @if ($page == $loads->currentPage())
+                                                    <li class="page-item active"><span
+                                                            class="page-link">{{ $page }}</span></li>
+                                                @else
+                                                    <li class="page-item"><a class="page-link"
+                                                            href="{{ $url }}&fleet_id={{ request('fleet_id') }}&origin_city_id={{ request('origin_city_id') }}&destination_city_id={{ request('destination_city_id') }}&mobileNumber={{ request('mobileNumber') }}&operator_id={{ request('operator_id') }}">{{ $page }}</a>
+                                                    </li>
+                                                @endif
+                                            @elseif ($page == $loads->currentPage() - 3 || $page == $loads->currentPage() + 3)
+                                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                            @endif
+                                        @endforeach
+
+                                        {{-- Next Page Link --}}
+                                        @if ($loads->hasMorePages())
+                                            <li class="page-item"><a class="page-link"
+                                                    href="{{ $loads->nextPageUrl() }}&origin_city_id={{ request('origin_city_id') }}&destination_city_id={{ request('destination_city_id') }}&fleet_id={{ request('fleet_id') }}&operator_id={{ request('operator_id') }}&mobileNumber={{ request('mobileNumber') }}""
+                                                    rel="next">&raquo;</a></li>
+                                        @else
+                                            <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                                        @endif
+                                    </ul>
+                                </nav>
+                            @endif
+                        @endif
+
                     </div>
                     <div class="form-group mt-2">
                         <input type="submit" name="submit" class="btn btn-danger" value="حذف دسته جمعی">

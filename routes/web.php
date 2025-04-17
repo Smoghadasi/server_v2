@@ -420,7 +420,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         // جستجوی بارها
         Route::get('searchLoadsForm', [LoadController::class, 'searchLoadsForm'])->middleware('operator')->name('search.load.form');
-        Route::post('searchLoads', [LoadController::class, 'searchLoads'])->middleware('operator');
+        Route::get('searchLoads', [LoadController::class, 'searchLoads'])->middleware('operator');
 
         // نمایش اطلاعات بار
         Route::get('loadInfo/{load_id}', [LoadController::class, 'loadInfo'])->middleware('operator')->name('loadInfo');
