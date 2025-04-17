@@ -4,7 +4,7 @@
 
     <div class="card">
         <h5 class="card-header">
-            لیست بارها ({{ $countLoads }})
+            لیست بارها
         </h5>
         <div class="card-body">
 
