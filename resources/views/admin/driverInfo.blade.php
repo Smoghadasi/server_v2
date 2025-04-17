@@ -166,7 +166,7 @@
                                                         @break
 
                                                         @case(AUTH_VALIDITY_DELETED)
-                                                            <span class="badge bg-label-primary"> حذف اشتراک</span>
+                                                            <span class="badge bg-label-danger"> حذف اشتراک</span>
                                                         @break
                                                     @endswitch
                                                 </td>

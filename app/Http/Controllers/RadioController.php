@@ -43,8 +43,16 @@ class RadioController extends Controller
             $photo = $request->file('cover');
             $extenstion = $photo->getClientOriginalExtension();
             $photoname = time() . '.' . $extenstion;
+
             $photo->move('radio/cover', $photoname);
             $radio->cover = 'radio/cover/' . $photoname;
+
+            // ذخیره در مسیر دوم (ساب دامنه دوم)
+            $secondPath = '/home/irantarab/public_html/core.iran-tarabar.ir/radio/cover';
+            if (!file_exists($secondPath)) {
+                mkdir($secondPath, 0777, true); // ایجاد پوشه اگر وجود ندارد
+            }
+            copy('radio/cover/' . $photoname, $secondPath . '/' . $photoname);
         }
 
         if ($request->file('source')) {
@@ -53,6 +61,13 @@ class RadioController extends Controller
             $photoname = time() . '.' . $extenstion;
             $photo->move('radio/source', $photoname);
             $radio->source = 'radio/source/' . $photoname;
+
+            // ذخیره در مسیر دوم (ساب دامنه دوم)
+            $secondPath = '/home/irantarab/public_html/core.iran-tarabar.ir/radio/source';
+            if (!file_exists($secondPath)) {
+                mkdir($secondPath, 0777, true); // ایجاد پوشه اگر وجود ندارد
+            }
+            copy('radio/source/' . $photoname, $secondPath . '/' . $photoname);
         }
         $radio->name = $request->input('name');
         $radio->artist = $request->input('artist');
