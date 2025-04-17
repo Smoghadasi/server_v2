@@ -658,38 +658,22 @@
                                                                 <div class="form-group">
                                                                     <label>
                                                                         <input type="checkbox"
-                                                                            name="listOfOwners"
-                                                                            @if (in_array('listOfOwners', $user->userAccess)) checked @endif>
-                                                                        لیست صاحبان بار
+                                                                            name="registeredLoadsByOperators"
+                                                                            @if (in_array('registeredLoadsByOperators', $user->userAccess)) checked @endif>
+                                                                        اپراتور
                                                                     </label>
                                                                 </div>
                                                             </li>
-                                                            <ul id="myUL">
-                                                                <li><span class="caret">بار های ثبت شده</span>
-                                                                    <ul class="nested">
-                                                                        <li>
-                                                                            <div class="form-group">
-                                                                                <label>
-                                                                                    <input type="checkbox"
-                                                                                        name="registeredLoadsByOperators"
-                                                                                        @if (in_array('registeredLoadsByOperators', $user->userAccess)) checked @endif>
-                                                                                    اپراتور
-                                                                                </label>
-                                                                            </div>
-                                                                        </li>
-                                                                        <li>
-                                                                            <div class="form-group">
-                                                                                <label>
-                                                                                    <input type="checkbox"
-                                                                                        name="registeredLoadsByOwners"
-                                                                                        @if (in_array('registeredLoadsByOwners', $user->userAccess)) checked @endif>
-                                                                                    صاحب بار
-                                                                                </label>
-                                                                            </div>
-                                                                        </li>
-                                                                    </ul>
-                                                                </li>
-                                                            </ul>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="registeredLoadsByOwners"
+                                                                            @if (in_array('registeredLoadsByOwners', $user->userAccess)) checked @endif>
+                                                                        صاحب بار
+                                                                    </label>
+                                                                </div>
+                                                            </li>
                                                         </ul>
                                                     </li>
                                                 </ul>
@@ -968,6 +952,16 @@
                                                                             name="drivers"
                                                                             @if (in_array('drivers', $user->userAccess)) checked @endif>
                                                                         رانندگان
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox"
+                                                                            name="listOfOwners"
+                                                                            @if (in_array('listOfOwners', $user->userAccess)) checked @endif>
+                                                                        صاحبان بار
                                                                     </label>
                                                                 </div>
                                                             </li>
