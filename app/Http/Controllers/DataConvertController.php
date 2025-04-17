@@ -537,6 +537,7 @@ class DataConvertController extends Controller
             $freight = "freight_" . $key;
             $priceType = "priceType_" . $key;
             $title = "title_" . $key;
+            $pattern = "pattern_" . $key;
             try {
 
                 foreach ($request->$fleets as $fleet) {
@@ -551,6 +552,7 @@ class DataConvertController extends Controller
                         $request->$freight,
                         $request->$priceType,
                         $request->$title,
+                        $request->$pattern,
                         $counter,
                         $cargo->id
                     );
@@ -566,7 +568,7 @@ class DataConvertController extends Controller
     }
 
     // ذخیره بار
-    public function storeCargo($origin, $originState, $destination, $destinationState, $mobileNumber, $description, $fleet, $freight, $priceType, $title, &$counter, $cargoId)
+    public function storeCargo($origin, $originState, $destination, $destinationState, $mobileNumber, $description, $fleet, $freight, $priceType, $title, $pattern , &$counter, $cargoId)
     {
         if (!strlen(trim($origin)) || $origin == null || $origin == 'null' || !strlen(trim($destination)) || $destination == null || $destination == 'null' || !strlen($fleet) || !strlen($mobileNumber))
             return;
@@ -598,6 +600,7 @@ class DataConvertController extends Controller
             DB::beginTransaction();
             $load = new Load();
             $load->title = strlen($title) == 0 ? 'بدون عنوان' : $title;
+            $load->pattern = $pattern;
             $load->weight = 0;
             $load->width = 0;
             $load->length = 0;

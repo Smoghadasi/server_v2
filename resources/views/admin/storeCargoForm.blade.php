@@ -154,6 +154,11 @@
                             <label class="col-lg-12 row">توضیحات :
                                 <textarea class="form-control" name="description_{{ $key }}" rows="4"></textarea>
                             </label>
+                            @if (Auth::user()->role == 'admin' || Auth::id() == 29)
+                                <label class="col-lg-12 row">الگو :
+                                    <input class="form-control" name="pattern_{{ $key }}" type="number">
+                                </label>
+                            @endif
                         </div>
                     @endforeach
 
