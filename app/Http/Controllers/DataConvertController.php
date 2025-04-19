@@ -568,7 +568,7 @@ class DataConvertController extends Controller
     }
 
     // ذخیره بار
-    public function storeCargo($origin, $originState, $destination, $destinationState, $mobileNumber, $description, $fleet, $freight, $priceType, $title, $pattern , &$counter, $cargoId)
+    public function storeCargo($origin, $originState, $destination, $destinationState, $mobileNumber, $description, $fleet, $freight, $priceType, $title, $pattern, &$counter, $cargoId)
     {
         if (!strlen(trim($origin)) || $origin == null || $origin == 'null' || !strlen(trim($destination)) || $destination == null || $destination == 'null' || !strlen($fleet) || !strlen($mobileNumber))
             return;
@@ -765,29 +765,8 @@ class DataConvertController extends Controller
 
 
             if (isset($load->id)) {
-                // تبدیل کل داده‌های $load به JSON
-                $data = json_encode($load);
-
-                // تنظیم URL API
-                $url = 'https://dashboard.elambar-sarasari.ir/api/storeLoad';
-
-                // مقداردهی اولیه cURL
-                $ch = curl_init($url);
-
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-
-                $response = curl_exec($ch);
-                curl_close($ch);
-
-                // بررسی پاسخ API
-                if ($response) {
-                    Log::warning('ارسال شد');
-                } else {
-                    Log::warning('خطا');
-                }
+                // ارسال بار به سایت
+                // $this->sendLoadToOtherWeb($load);
 
                 $counter++;
 
@@ -938,6 +917,33 @@ class DataConvertController extends Controller
             Log::emergency("----------------------ثبت بار جدید-----------------------");
             Log::emergency($exception);
             Log::emergency("---------------------------------------------------------");
+        }
+    }
+
+    public function sendLoadToOtherWeb($load)
+    {
+        // تبدیل کل داده‌های $load به JSON
+        $data = json_encode($load);
+
+        // تنظیم URL API
+        $url = 'https://dashboard.elambar-sarasari.ir/api/storeLoad';
+
+        // مقداردهی اولیه cURL
+        $ch = curl_init($url);
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        // بررسی پاسخ API
+        if ($response) {
+            Log::warning('ارسال شد');
+        } else {
+            Log::warning('خطا');
         }
     }
 
