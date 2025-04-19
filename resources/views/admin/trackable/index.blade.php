@@ -151,7 +151,7 @@
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-outline-secondary"
                                                             data-bs-dismiss="modal">
-                                                            بستن
+                                                            ثبت
                                                         </button>
                                                         <button type="submit" class="btn btn-primary">ثبت</button>
                                                     </div>
@@ -242,7 +242,47 @@
             </div>
 
             <div class="mt-3">
-                {{ $tracks }}
+                @if ($tracks->hasPages())
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        {{-- Previous Page Link --}}
+                        @if ($tracks->onFirstPage())
+                            <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                        @else
+                            <li class="page-item"><a class="page-link"
+                                    href="{{ $tracks->previousPageUrl() }}&status={{ request('status') }}&parent_id={{ request('parent_id') }}"
+                                    rel="prev">&laquo;</a></li>
+                        @endif
+
+                        {{-- Pagination Elements --}}
+                        @foreach ($tracks->getUrlRange(1, $tracks->lastPage()) as $page => $url)
+                            @if (
+                                $page == 1 ||
+                                    $page == $tracks->lastPage() ||
+                                    ($page >= $tracks->currentPage() - 2 && $page <= $tracks->currentPage() + 2))
+                                @if ($page == $tracks->currentPage())
+                                    <li class="page-item active"><span class="page-link">{{ $page }}</span></li>
+                                @else
+                                    <li class="page-item"><a class="page-link"
+                                            href="{{ $url }}&parent_id={{ request('parent_id') }}&status={{ request('status') }}">{{ $page }}</a>
+                                    </li>
+                                @endif
+                            @elseif ($page == $tracks->currentPage() - 3 || $page == $tracks->currentPage() + 3)
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            @endif
+                        @endforeach
+
+                        {{-- Next Page Link --}}
+                        @if ($tracks->hasMorePages())
+                            <li class="page-item"><a class="page-link"
+                                    href="{{ $tracks->nextPageUrl() }}&status={{ request('status') }}&parent_id={{ request('parent_id') }}"
+                                    rel="next">&raquo;</a></li>
+                        @else
+                            <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                        @endif
+                    </ul>
+                </nav>
+            @endif
             </div>
 
         </div>

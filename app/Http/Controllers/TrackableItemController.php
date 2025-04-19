@@ -16,13 +16,14 @@ class TrackableItemController extends Controller
     public function index(Request $request)
     {
         if ($request->has('parentId')) {
-            $tracks = TrackableItems::where('parent_id', $request->parentId)->with('user')->paginate(100);
+            $tracks = TrackableItems::where('parent_id', $request->parentId)->with('user')->paginate(40);
         } elseif ($request->has('status')) {
             $tracks = TrackableItems::with('user')->where('status', $request->status)->where('parent_id', 0)->paginate(40);
         } else {
             $tracks = TrackableItems::with('childrenRecursive', 'user')
                 ->where('parent_id', 0)
                 ->where('status', 1)
+                ->orderByDesc('created_at')
                 ->orderByDesc('status')
                 ->paginate(40);
         }
