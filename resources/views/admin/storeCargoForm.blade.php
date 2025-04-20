@@ -25,15 +25,15 @@
                     <div class="col-lg-12 mb-1">کاربران :</div>
                     @foreach ($users as $user)
                         <span class="table-bordered border-info rounded bg-white p-1 m-1">
-                            {{ $user->name }} {{ $user->lastName }}
+
                             @if (Cache::has('user-is-online-' . $user->id))
                                 @if (Cache::has('user-is-active-' . $user->id))
-                                    <span class="text-primary">فعال</span>
+                                    <span class="text-primary">{{ $user->name }} {{ $user->lastName }}</span>
                                 @else
-                                    <span class="text-success">آنلاین</span>
+                                    <span class="text-success">{{ $user->name }} {{ $user->lastName }}</span>
                                 @endif
                             @else
-                                <span class="text-secondary">آفلاین</span>
+                                <span class="text-secondary">{{ $user->name }} {{ $user->lastName }}</span>
                             @endif
                         </span>
                     @endforeach
