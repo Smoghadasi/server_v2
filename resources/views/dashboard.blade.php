@@ -19,10 +19,15 @@
                     <span class="table-bordered border-info rounded bg-white p-1 m-1">
                         {{ $user->name }} {{ $user->lastName }}
                         @if (Cache::has('user-is-online-' . $user->id))
-                            <span class="text-success">آنلاین</span>
+                            @if (Cache::has('user-is-active-' . $user->id))
+                                <span class="text-primary">فعال</span>
+                            @else
+                                <span class="text-success">آنلاین</span>
+                            @endif
                         @else
                             <span class="text-secondary">آفلاین</span>
                         @endif
+
                     </span>
                 @endforeach
                 @if (auth()->user()->id == 21 || auth()->user()->id == 40)

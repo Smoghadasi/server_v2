@@ -30,7 +30,7 @@ class CheckOperatorRole
 
                 Cache::put('user-is-online-' . \auth()->user()->id, true, $expiresAt);
 
-                User::where('id', \auth()->user()->id)->update(['last_seen' => now()]);
+                User::whereId(Auth::id())->update(['last_seen' => now()]);
 
 
             } catch (Exception $e) {

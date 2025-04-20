@@ -31,6 +31,7 @@ use App\Models\UserActivityReport;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -494,6 +495,19 @@ class DataConvertController extends Controller
     // ذخیره دسته ای بارها
     public function storeMultiCargo(Request $request, CargoConvertList $cargo)
     {
+        try {
+            $expiresAt = now()->addMinutes(3);
+
+            Cache::put('user-is-active-' . \auth()->user()->id, true, $expiresAt);
+
+            User::whereId(Auth::id())->update(['last_active' => now()]);
+        } catch (Exception $e) {
+            Log::emergency("-------------------------- UserActivityActiveOnlineReport ----------------------------------------");
+            Log::emergency($e->getMessage());
+            Log::emergency("------------------------------------------------------------------");
+        }
+
+
         $keys = $request->input('key'); // لیست کلیدهای موجود در درخواست
         $rules = [];
         $messages = [];
