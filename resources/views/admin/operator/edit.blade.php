@@ -69,7 +69,7 @@
                     </div>
                     <div class="mb-3 col-md-6">
                         <label for="address" class="form-label">آدرس</label>
-                        <textarea class="form-control" rows="5" name="" id="">{{ $user->address }}</textarea>
+                        <textarea class="form-control" rows="5" name="address" id="">{{ $user->address }}</textarea>
                     </div>
                 </div>
 

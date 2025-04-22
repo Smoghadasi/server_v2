@@ -109,7 +109,7 @@ class OperatorController extends Controller
             $message = 'اپراتور جدید ذخیره شد';
             $roles = Role::all();
 
-            return view('admin/addNewOperatorForm', compact('message', 'roles'));
+            return view('admin.operator.create', compact('message', 'roles'));
         } catch (\Exception $exception) {
         }
     }

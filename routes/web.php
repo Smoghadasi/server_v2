@@ -2,7 +2,8 @@
 
 use App\Http\Controllers\AccountingController;
 use App\Http\Controllers\AddressController;
-use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\SalaryController;
+// use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AuthorizeController;
 use App\Http\Controllers\BankController;
@@ -30,7 +31,7 @@ use App\Http\Controllers\ParameterController;
 use App\Http\Controllers\PayController;
 use App\Http\Controllers\ProvinceCityController;
 use App\Http\Controllers\RadioController;
-use App\Http\Controllers\RegisterController;
+// use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReportingController;
 use App\Http\Controllers\ServiceController;
@@ -49,7 +50,7 @@ use App\Http\Controllers\VacationHourController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\WebNotificationController;
 use App\Models\City;
-use App\Models\Driver;
+// use App\Models\Driver;
 use App\Models\Load;
 use App\Models\State;
 
@@ -202,6 +203,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
 
         Route::resource('operators', OperatorController::class)->middleware('operator');
+
+        Route::resource('salary', SalaryController::class)->middleware('operator');
 
 
         Route::get('operator/vacationDay/{user_id}', [VacationController::class, 'vacationDay'])
