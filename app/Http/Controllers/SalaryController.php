@@ -18,7 +18,10 @@ class SalaryController extends Controller
     public function index(Request $request)
     {
         $user = User::findOrFail($request->user_id);
-        $salaries = Salary::with('user')->where('user_id', $request->user_id)->paginate(40);
+        $salaries = Salary::with('user')
+            ->where('user_id', $request->user_id)
+            ->orderByDesc('created_at')
+            ->paginate(40);
         return view('admin.salary.index', compact('salaries', 'user'));
     }
 
@@ -104,8 +107,10 @@ class SalaryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Salary $salary)
     {
-        //
+        $salary->delete();
+        return redirect()->route('salary.index', ['user_id' => $salary->user_id])->with('success', 'حقوق مورد نظر اضافه شد');
+
     }
 }
