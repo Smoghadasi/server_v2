@@ -70,6 +70,41 @@
                 <a href="#" class="btn btn-primary me-2">حقوق دریافتی</a>
                 <a href="{{ route('vacation.day', $user->id) }}" class="btn btn-primary me-2">مرخصی روزانه</a>
                 <a href="{{ route('vacation.hour', $user->id) }}" class="btn btn-primary me-2">مرخصی ساعتی</a>
+                <a href="{{ route('operators.edit', $user) }}" class="btn btn-danger me-2">ویرایش اطلاعات</a>
+                <button type="button" class="btn btn-danger me-2" data-bs-toggle="modal"
+                    data-bs-target="#changePassOperator_{{ $user->id }}">تغییر رمز عبور
+                </button>
+                 <!-- Modal -->
+                 <div id="changePassOperator_{{ $user->id }}" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form method="POST" action="{{ route('user.resetPass', $user->id) }}">
+                                @csrf
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modalTopTitle">تغییر رمز عبور :
+                                        {{ $user->name }} {{ $user->lastName }}</h5>
+
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col mb-3">
+                                            <label for="password" class="form-label">رمز عبور</label>
+                                            <input type="text" id="password" name="password"
+                                                class="form-control" placeholder="" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                        انصراف
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">ذخیره</button>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
                 @if (auth()->user()->role == 'admin')
                     @if ($user->status == 0)
                         <a class="btn btn-primary me-2"
@@ -85,43 +120,9 @@
                     <button type="button" class="btn btn-danger me-2" data-bs-toggle="modal"
                         data-bs-target="#removeOperator_{{ $user->id }}">حذف
                     </button>
-                    <button type="button" class="btn btn-danger me-2" data-bs-toggle="modal"
-                        data-bs-target="#changePassOperator_{{ $user->id }}">تغییر رمز عبور
-                    </button>
-                    <a href="{{ route('operators.edit', $user) }}" class="btn btn-danger me-2">ویرایش اطلاعات</a>
 
-                    <!-- Modal -->
-                    <div id="changePassOperator_{{ $user->id }}" class="modal fade" role="dialog">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <form method="POST" action="{{ route('user.resetPass', $user->id) }}">
-                                    @csrf
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="modalTopTitle">تغییر رمز عبور :
-                                            {{ $user->name }} {{ $user->lastName }}</h5>
 
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="row">
-                                            <div class="col mb-3">
-                                                <label for="password" class="form-label">رمز عبور</label>
-                                                <input type="text" id="password" name="password"
-                                                    class="form-control" placeholder="" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-outline-secondary"
-                                            data-bs-dismiss="modal">
-                                            انصراف
-                                        </button>
-                                        <button type="submit" class="btn btn-primary">ذخیره</button>
-                                    </div>
-                                </form>
-                            </div>
 
-                        </div>
-                    </div>
                     <!-- Modal -->
                     <div id="removeOperator_{{ $user->id }}" class="modal fade" role="dialog">
                         <div class="modal-dialog">
