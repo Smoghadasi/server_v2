@@ -35,41 +35,8 @@ class UserController extends Controller
         return redirect(url('/'));
     }
 
-    // نمایش لیست اپراتور ها
-    public function operators()
-    {
-        $users = User::all();
-        $fleets = Fleet::where('parent_id', '>', 0)->get();
-        return view('admin.operators', compact('users', 'fleets'));
-    }
 
-    // فرم افزودن اپراتور
-    public function addNewOperatorForm()
-    {
-        $roles = Role::all();
-        return view('admin.addNewOperatorForm', compact('roles'));
-    }
 
-    // اطلاعات اپراتور
-    public function operatorInfo($id)
-    {
-        $user = User::where('id', $id)->first();
-
-        return view('admin/operatorInfo', compact('user'));
-    }
-
-    // تغییر وضعیت اپراتور
-    public function changeOperatorStatus(User $user)
-    {
-        if ($user->status == ACTIVE)
-            $user->status = DE_ACTIVE;
-        else
-            $user->status = ACTIVE;
-
-        $user->save();
-
-        return back()->with('success', 'تغییر وضعیت اپراتور انجام شد');
-    }
 
     // چک کردن نقش ادمین
     public static function checkAdminRole($id)
@@ -153,14 +120,6 @@ class UserController extends Controller
         }
 
         return ['result' => 1];
-    }
-
-    // حذف اپراتور
-    public function removeOperator(User $user)
-    {
-        $user->delete();
-
-        return back()->with('success', 'اپراتور مورد نظر حذف شد');
     }
 
     // پروفایل ادمین و پراتور

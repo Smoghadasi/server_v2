@@ -50,7 +50,7 @@
         </h5>
         <div class="card-body">
             <p>
-                <a class="btn btn-primary" href="{{ url('admin/addNewOperatorForm') }}"> + افزودن اپراتور</a>
+                <a class="btn btn-primary" href="{{ route('operators.create') }}"> + افزودن اپراتور</a>
                 <a class="btn btn-primary" href="{{ route('vacations.index') }}"> + مرخصی روزانه</a>
                 <a class="btn btn-primary" href="{{ route('vacationHour.index') }}"> + مرخصی ساعتی</a>
             </p>
@@ -76,7 +76,9 @@
                             <td><img class="img-thumbnail" width="64" height="64"
                                     src="{{ url('pictures/users') }}/{{ $user->pic }}"></td>
                             <td>
-                                {{ $user->name }} {{ $user->lastName }}
+                                <a href="{{ route('operators.show', ['operator' => $user->id]) }}">
+                                    {{ $user->name }} {{ $user->lastName }}
+                                </a>
                                 @if ($user->status == 0)
                                     <span class="alert small alert-warning p-1">مسدود</span>
                                 @else
@@ -105,26 +107,6 @@
                                         </button>
                                         <ul class="dropdown-menu">
                                             @if (auth()->user()->role == 'admin')
-                                                @if ($user->status == 0)
-                                                    <li>
-                                                        <a class="dropdown-item"
-                                                            href="{{ url('admin/changeOperatorStatus') }}/{{ $user->id }}">
-                                                            تغییر به فعال
-                                                        </a>
-                                                    </li>
-                                                @else
-                                                    <li>
-                                                        <a class="dropdown-item"
-                                                            href="{{ url('admin/changeOperatorStatus') }}/{{ $user->id }}">
-                                                            تغییر به غیرفعال
-                                                        </a>
-                                                    </li>
-                                                @endif
-                                                <li>
-                                                    <button type="button" class="dropdown-item" data-bs-toggle="modal"
-                                                        data-bs-target="#removeOperator_{{ $user->id }}">حذف
-                                                    </button>
-                                                </li>
                                                 <li>
                                                     <button type="button" class="dropdown-item" data-bs-toggle="modal"
                                                         data-bs-target="#operatorAccess_{{ $user->id }}">
@@ -132,20 +114,7 @@
                                                     </button>
                                                 </li>
                                             @endif
-                                            <li>
-                                                <button type="button" class="dropdown-item" data-bs-toggle="modal"
-                                                    data-bs-target="#changePassOperator_{{ $user->id }}">تغییر رمز عبور
-                                                </button>
-                                            </li>
 
-                                            <li>
-                                                <a class="dropdown-item" href="{{ route('vacation.day', $user->id) }}">
-                                                    مرخصی روزانه</a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item" href="{{ route('vacation.hour', $user->id) }}">
-                                                    مرخصی ساعتی</a>
-                                            </li>
                                             <li>
                                                 <button type="button" class="dropdown-item" data-bs-toggle="modal"
                                                     data-bs-target="#operatorCargoListAccess_{{ $user->id }}">
@@ -157,66 +126,9 @@
                                 </div>
 
 
-                                <!-- Modal -->
-                                <div id="removeOperator_{{ $user->id }}" class="modal fade" role="dialog">
-                                    <div class="modal-dialog">
 
-                                        <!-- Modal content-->
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h4 class="modal-title">حذف اپراتور</h4>
-                                            </div>
-                                            <div class="modal-body">
-                                                <p>آیا مایل به حذف اپراتور
-                                                    <span class="text-primary"> {{ $user->name }}
-                                                        {{ $user->lastName }}</span>
-                                                    هستید؟
-                                                </p>
-                                            </div>
-                                            <div class="modal-footer text-left">
-                                                <a class="btn btn-primary"
-                                                    href="{{ url('admin/removeOperator') }}/{{ $user->id }}">حذف
-                                                    اپراتور</a>
-                                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
-                                                    انصراف
-                                                </button>
-                                            </div>
-                                        </div>
 
-                                    </div>
-                                </div>
 
-                                <!-- Modal -->
-                                <div id="changePassOperator_{{ $user->id }}" class="modal fade" role="dialog">
-                                    <div class="modal-dialog">
-                                        <form method="POST" action="{{ route('user.resetPass', $user->id) }}"
-                                            class="modal-content">
-                                            @csrf
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="modalTopTitle">تغییر رمز عبور :
-                                                    {{ $user->name }} {{ $user->lastName }}</h5>
-
-                                            </div>
-                                            <div class="modal-body">
-                                                <div class="row">
-                                                    <div class="col mb-3">
-                                                        <label for="password" class="form-label">رمز عبور</label>
-                                                        <input type="text" id="password" name="password"
-                                                            class="form-control" placeholder="" />
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-outline-secondary"
-                                                    data-bs-dismiss="modal">
-                                                    انصراف
-                                                </button>
-                                                <button type="submit" class="btn btn-primary">ذخیره</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
 
 
                                 <div id="operatorAccess_{{ $user->id }}" class="modal fade" role="dialog">

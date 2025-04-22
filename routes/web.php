@@ -22,6 +22,7 @@ use App\Http\Controllers\LoadController;
 use App\Http\Controllers\LoginHistoryController;
 use App\Http\Controllers\MarketerController;
 use App\Http\Controllers\OperatorContactingController;
+use App\Http\Controllers\OperatorController;
 use App\Http\Controllers\Owner\AuthController as OwnerAuthController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\PackingTypeController;
@@ -174,8 +175,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         // centerOfProvinceCities
         Route::get('centerOfProvinceCities/{provinceCity}', [AddressController::class, 'centerOfProvinceCities'])
-        ->middleware('admin')
-        ->name('centerOfProvinceCities');
+            ->middleware('admin')
+            ->name('centerOfProvinceCities');
 
         /***************************************************************************************************/
         /***************************************************************************************************/
@@ -199,8 +200,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // خروج از بخش کاربری
         Route::get('logout', [UserController::class, 'logout'])->middleware('operator');
 
-        // نمایش لیست اپراتور ها
-        Route::get('operators', [UserController::class, 'operators'])->middleware('operator');
+
+        Route::resource('operators', OperatorController::class)->middleware('operator');
+
 
         Route::get('operator/vacationDay/{user_id}', [VacationController::class, 'vacationDay'])
             ->middleware('operator')
@@ -210,28 +212,14 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
             ->middleware('operator')
             ->name('vacation.hour');
 
+        // تغییر وضعیت اپراتور
+        Route::get('changeOperatorStatus/{user}', [OperatorController::class, 'changeOperatorStatus'])->middleware('admin');;
 
         //  مرخصی روزانه
         Route::resource('vacations', VacationController::class);
 
         //  مرخصی ساعتی
         Route::resource('vacationHour', VacationHourController::class);
-
-
-        // فرم افزودن اپراتور جدید
-        Route::get('addNewOperatorForm', [UserController::class, 'addNewOperatorForm'])->middleware('operator');
-
-        // افزودن اپراتور جدید
-        Route::post('addNewOperator', [RegisterController::class, 'addNewOperator'])->middleware('operator');
-
-        // اطلاعات اپراتور
-        Route::get('operatorInfo/{user_id}', [UserController::class, 'operatorInfo'])->middleware('admin');;
-
-        // تغییر وضعیت اپراتور
-        Route::get('changeOperatorStatus/{user}', [UserController::class, 'changeOperatorStatus'])->middleware('admin');;
-
-        // حذف اپراتور
-        Route::get('removeOperator/{user}', [UserController::class, 'removeOperator'])->middleware('admin');
 
         // دسترسی ها
         Route::post('operatorAccess/{user}', [UserController::class, 'operatorAccess']);

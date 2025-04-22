@@ -217,7 +217,7 @@
         {{-- شکایات و انتقادات راننده --}}
         <div class="card my-4">
             <h5 class="card-header">
-                شکایات و انتقادات راننده
+                گزارش تخلف راننده
             </h5>
             <div class="card-body">
 

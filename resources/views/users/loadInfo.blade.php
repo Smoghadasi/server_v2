@@ -21,7 +21,7 @@
         @if(auth('customer')->check())
             <div class="col-md-12">
                 <div class="text-right">
-                    {{--<p><a class="btn btn-primary" href="{{ url('admin/addNewOperatorForm') }}"> + افزودن اپراتور</a></p>--}}
+                    {{--<p><a class="btn btn-primary" href="{{ route('operators.create') }}"> + افزودن اپراتور</a></p>--}}
                     <div class="table-responsive col-md-9">
                         <table class="table table-striped" cellspacing="0">
                             <tbody>

@@ -7,7 +7,7 @@
             افزودن اپراتور
         </h5>
         <div class="card-body">
-            <form method="POST" action="{{ url('admin/addNewOperator') }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('operators.store') }}" enctype="multipart/form-data">
                 @csrf
 
                 <div class="mb-3 row">
