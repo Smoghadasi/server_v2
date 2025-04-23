@@ -780,7 +780,6 @@ class DataConvertController extends Controller
 
             if (isset($load->id)) {
                 // ارسال بار به سایت
-                $this->sendLoadToOtherWeb($load);
 
                 $counter++;
 
@@ -839,6 +838,8 @@ class DataConvertController extends Controller
 
                     // if ($loadDuplicate === null) {
                     $load->save();
+                $this->sendLoadToOtherWeb($load);
+
                     // }
                 } catch (\Exception $exception) {
                     Log::emergency("---------------------------------------------------------");
