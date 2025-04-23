@@ -780,7 +780,7 @@ class DataConvertController extends Controller
 
             if (isset($load->id)) {
                 // ارسال بار به سایت
-                // $this->sendLoadToOtherWeb($load);
+                $this->sendLoadToOtherWeb($load);
 
                 $counter++;
 
@@ -953,12 +953,12 @@ class DataConvertController extends Controller
         $response = curl_exec($ch);
         curl_close($ch);
 
-        // بررسی پاسخ API
-        if ($response) {
-            Log::warning('ارسال شد');
-        } else {
-            Log::warning('خطا');
-        }
+        // // بررسی پاسخ API
+        // if ($response) {
+        //     Log::warning('ارسال شد');
+        // } else {
+        //     Log::warning('خطا');
+        // }
     }
 
     private function getCityId($cityName)
