@@ -955,11 +955,11 @@ class DataConvertController extends Controller
         curl_close($ch);
 
         // بررسی پاسخ API
-        if ($response) {
-            Log::warning('ارسال شد');
-        } else {
-            Log::warning('خطا');
-        }
+        // if ($response) {
+        //     Log::warning('ارسال شد');
+        // } else {
+        //     Log::warning('خطا');
+        // }
     }
 
     private function getCityId($cityName)
