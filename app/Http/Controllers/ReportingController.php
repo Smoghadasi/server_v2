@@ -27,6 +27,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class ReportingController extends Controller
@@ -35,35 +36,22 @@ class ReportingController extends Controller
     private $persianDateList;
 
 
-    public function driverActivityNonRepeate()
+    public function getDriverActivityData()
     {
-        // $driverActivities = DriverActivity::select('driver_id')
-        //     ->distinct()
-        //     ->whereBetween('created_at', [now()->subDays(30), now()])
-        //     ->get()
-        //     ->makeHidden(['driverInfo']);
+        $driverActivities = Cache::remember('driver_activity_report', now()->addHours(1), function () {
+            return DriverActivity::selectRaw("DATE(created_at) as date, COUNT(DISTINCT driver_id) as count")
+                ->whereBetween('created_at', [now()->subDays(30)->startOfDay(), now()->endOfDay()])
+                ->groupBy('date')
+                ->orderBy('date')
+                ->get();
+        });
 
-        // $drivers = Driver::whereIn('id', $driverActivities)->paginate(10);
-
-        // گزارش فعالیت راننده ها از ماه قبل
-        $activityReportOfDriversFromPreviousMonth = [];
-
-        for ($index = 30; $index >= 0; $index--) {
-            $day = date('Y-m-d', strtotime('-' . $index . ' day', time()));
-
-            $activityReportOfDriversFromPreviousMonth[] = [
-                'label' => str_replace('-', '/', convertEnNumberToFa(gregorianDateToPersian($day, '-'))),
-                'value' => DriverActivity::whereBetween('created_at', ["$day 00:00:00", "$day 23:59:59"])
-                    ->select('driver_id')
-                    ->distinct()
-                    ->count()
-            ];
-        }
-
-        return view('admin.reporting.nonRepeate', compact('activityReportOfDriversFromPreviousMonth'));
-
-        // return $activityReportOfDriversFromPreviousMonth;
+        return response()->json([
+            'labels' => $driverActivities->pluck('date')->map(fn($date) => str_replace('-', '/', convertEnNumberToFa(gregorianDateToPersian($date, '-')))),
+            'values' => $driverActivities->pluck('count')
+        ]);
     }
+
 
     // خلاصه گزارش روز
     public function summaryOfDaysReport()
