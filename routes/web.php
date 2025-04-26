@@ -14,6 +14,8 @@ use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\FreeSubscriptionController;
 use App\Http\Controllers\ContactUsController;
+use App\Http\Controllers\ContractCollaborationController;
+use App\Http\Controllers\ContractController;
 use App\Http\Controllers\DataConvertController;
 use App\Http\Controllers\DiscrepancyController;
 use App\Http\Controllers\DriverController;
@@ -201,10 +203,17 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // خروج از بخش کاربری
         Route::get('logout', [UserController::class, 'logout'])->middleware('operator');
 
-
+        // کاربران
         Route::resource('operators', OperatorController::class)->middleware('operator');
 
+        // حقوق دریافتی
         Route::resource('salary', SalaryController::class)->middleware('operator');
+
+        // قرارداد ها
+        Route::resource('contract', ContractController::class)->middleware('operator');
+
+        // لیست قرارداد ها
+        Route::resource('collaboration', ContractCollaborationController::class)->middleware('operator');
 
 
         Route::get('operator/vacationDay/{user_id}', [VacationController::class, 'vacationDay'])

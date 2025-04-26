@@ -66,7 +66,7 @@
         </div>
         <div class="card-footer">
             <div class="mt-2">
-                <a href="#" class="btn btn-primary me-2">قرارداد ها</a>
+                <a href="{{ route('contract.index', ['user_id' => $user->id]) }}" class="btn btn-primary me-2">قرارداد ها</a>
                 <a href="{{ route('salary.index', ['user_id' => $user->id]) }}" class="btn btn-primary me-2">حقوق دریافتی</a>
                 <a href="{{ route('vacation.day', $user->id) }}" class="btn btn-primary me-2">مرخصی روزانه</a>
                 <a href="{{ route('vacation.hour', $user->id) }}" class="btn btn-primary me-2">مرخصی ساعتی</a>
