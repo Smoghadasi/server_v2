@@ -733,11 +733,11 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
 
         // گزارش فعالیت رانندگان
-        Route::get('driverActivityReport', [ReportingController::class, 'driverActivityReport'])
+        Route::get('driverActivityReport', [ReportingController::class, 'driverActivityReport'])->middleware('operator');
+
+        Route::get('getDriverActivityData', [ReportingController::class, 'getDriverActivityData'])
             ->name('admin.reporting.nonRepeate.data')
             ->middleware('operator');
-
-        Route::get('driverActivityReportNonRepeat', [ReportingController::class, 'driverActivityReportNonRepeat'])->middleware('operator');
 
         // گزارش فعالیت غیر تکراری
         Route::get('driverActivityNonRepeate', [ReportingController::class, 'driverActivityNonRepeate'])->middleware('operator');
