@@ -837,7 +837,7 @@ class DataConvertController extends Controller
 
                     // if ($loadDuplicate === null) {
                     $load->save();
-                $this->sendLoadToOtherWeb($load);
+                    $this->sendLoadToOtherWeb($load);
 
                     // }
                 } catch (\Exception $exception) {
@@ -857,10 +857,9 @@ class DataConvertController extends Controller
 
                 if ($load->isBot == 1) {
                     $firstLoad = FirstLoad::where('mobileNumberForCoordination', $load->mobileNumberForCoordination)->first();
-                    if ($firstLoad == null) {
-                        $load->status = BEFORE_APPROVAL;
-                        $load->save();
-                    }else{
+                    if (is_null($firstLoad) && !Owner::where('isAccepted', 1)->where('mobileNumber', $load->mobileNumberForCoordination)->exists()) {
+                        $load->update(['status' => BEFORE_APPROVAL]);
+                    } else {
                         try {
                             $first = new FirstLoad();
                             $first->title = $load->title;
