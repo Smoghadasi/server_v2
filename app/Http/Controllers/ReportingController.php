@@ -37,14 +37,32 @@ class ReportingController extends Controller
 
     public function driverActivityNonRepeate()
     {
-        $driverActivities = DriverActivity::select('driver_id')
-            ->distinct()
-            ->whereBetween('created_at', [now()->subDays(30), now()])
-            ->get()
-            ->makeHidden(['driverInfo']);
+        // $driverActivities = DriverActivity::select('driver_id')
+        //     ->distinct()
+        //     ->whereBetween('created_at', [now()->subDays(30), now()])
+        //     ->get()
+        //     ->makeHidden(['driverInfo']);
 
-        $drivers = Driver::whereIn('id', $driverActivities)->paginate(10);
-        return view('admin.reporting.nonRepeate', compact('drivers'));
+        // $drivers = Driver::whereIn('id', $driverActivities)->paginate(10);
+
+        // گزارش فعالیت راننده ها از ماه قبل
+        $activityReportOfDriversFromPreviousMonth = [];
+
+        for ($index = 30; $index >= 0; $index--) {
+            $day = date('Y-m-d', strtotime('-' . $index . ' day', time()));
+
+            $activityReportOfDriversFromPreviousMonth[] = [
+                'label' => str_replace('-', '/', convertEnNumberToFa(gregorianDateToPersian($day, '-'))),
+                'value' => DriverActivity::whereBetween('created_at', ["$day 00:00:00", "$day 23:59:59"])
+                    ->select('driver_id')
+                    ->distinct()
+                    ->count()
+            ];
+        }
+
+        return view('admin.reporting.nonRepeate', compact('activityReportOfDriversFromPreviousMonth'));
+
+        // return $activityReportOfDriversFromPreviousMonth;
     }
 
     // خلاصه گزارش روز
