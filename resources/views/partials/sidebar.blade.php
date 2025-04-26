@@ -297,6 +297,11 @@
                             <div data-i18n="Without menu">فعالیت رانندگان</div>
                         </a>
                     </li>
+                    <li class="menu-item">
+                        <a class="menu-link" href="{{ route('admin.driverActivityNonRepeate') }}">
+                            <div data-i18n="Without menu">فعالیت رانندگان غیر تکراری</div>
+                        </a>
+                    </li>
                 @endif
                 @if (in_array('paymentOfDrivers', auth()->user()->userAccess))
                     <li class="menu-item">

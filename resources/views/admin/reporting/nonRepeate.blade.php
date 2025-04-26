@@ -13,6 +13,7 @@
 @section('script')
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            console.log('awdawd');
             fetch("{{ route('admin.reporting.nonRepeate.data') }}")
                 .then(response => response.json())
                 .then(data => {
