@@ -487,7 +487,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // نمایش لیست رانندگان برای ادمین
         Route::get('adminDrivers', [DriverController::class, 'adminDrivers'])->middleware('operator')->name('adminDrivers');
 
-
         Route::get('drivers/{type}', [DriverController::class, 'driverSummery'])->middleware('operator')->name('driverSummery');
 
         // فرم ثبت راننده جدید
@@ -735,6 +734,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         // گزارش فعالیت رانندگان
         Route::get('driverActivityReport', [ReportingController::class, 'driverActivityReport'])->middleware('operator');
+
+        // گزارش فعالیت غیر تکراری
+        Route::get('driverActivityNonRepeate', [ReportingController::class, 'driverActivityNonRepeate'])->middleware('operator');
 
 
         Route::get('searchDriverActivityReport', [ReportingController::class, 'searchDriverActivityReport'])->name('home.searchDriverActivityReport')->middleware('operator');

@@ -34,6 +34,19 @@ class ReportingController extends Controller
 
     private $persianDateList;
 
+
+    public function driverActivityNonRepeate()
+    {
+        $driverActivities = DriverActivity::select('driver_id')
+            ->distinct()
+            ->whereBetween('created_at', [now()->subDays(30), now()])
+            ->get()
+            ->makeHidden(['driverInfo']);
+
+        $drivers = Driver::whereIn('id', $driverActivities)->paginate(10);
+        return view('admin.reporting.nonRepeate', compact('drivers'));
+    }
+
     // خلاصه گزارش روز
     public function summaryOfDaysReport()
     {
