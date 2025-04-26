@@ -737,6 +737,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
             ->name('admin.reporting.nonRepeate.data')
             ->middleware('operator');
 
+        Route::get('driverActivityReportNonRepeat', [ReportingController::class, 'driverActivityReportNonRepeat'])->middleware('operator');
+
         // گزارش فعالیت غیر تکراری
         Route::get('driverActivityNonRepeate', [ReportingController::class, 'driverActivityNonRepeate'])->middleware('operator');
 

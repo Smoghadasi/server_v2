@@ -36,7 +36,7 @@ class ReportingController extends Controller
     private $persianDateList;
 
 
-    public function driverActivityNonRepeate()
+    public function getDriverActivityData()
     {
         $driverActivities = Cache::remember('driver_activity_report', now()->addHours(1), function () {
             return DriverActivity::selectRaw("DATE(created_at) as date, COUNT(DISTINCT driver_id) as count")
@@ -50,6 +50,11 @@ class ReportingController extends Controller
             'labels' => $driverActivities->pluck('date')->map(fn($date) => str_replace('-', '/', convertEnNumberToFa(gregorianDateToPersian($date, '-')))),
             'values' => $driverActivities->pluck('count')
         ]);
+    }
+
+    public function driverActivityReportNonRepeat()
+    {
+        return view('admin.reporting.nonRepeate');
     }
 
 
