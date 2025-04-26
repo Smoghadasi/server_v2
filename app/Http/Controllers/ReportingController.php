@@ -36,7 +36,7 @@ class ReportingController extends Controller
     private $persianDateList;
 
 
-    public function getDriverActivityData()
+    public function driverActivityNonRepeate()
     {
         $driverActivities = Cache::remember('driver_activity_report', now()->addHours(1), function () {
             return DriverActivity::selectRaw("DATE(created_at) as date, COUNT(DISTINCT driver_id) as count")
