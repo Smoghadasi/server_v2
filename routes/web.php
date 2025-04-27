@@ -848,9 +848,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         /*******************************************************************************************************************/
         // گزارش تماس با صاحبان بار و باربری ها
-        Route::get('contactReportWithCargoOwners', [OperatorContactingController::class, 'contactReportWithCargoOwners'])
-            ->name('admin.contactReportWithCargoOwners')
-            ->middleware('operator');
+        Route::get('contactReportWithCargoOwners/{mobileNumber?}', [OperatorContactingController::class, 'contactReportWithCargoOwners'])->middleware('operator');
+
 
         // ثبت شماره جدید
         Route::post('soreNewMobileNumberOfCargoOwner', [OperatorContactingController::class, 'soreNewMobileNumberOfCargoOwner'])->middleware('operator');

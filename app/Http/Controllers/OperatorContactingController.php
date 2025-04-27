@@ -16,14 +16,11 @@ class OperatorContactingController extends Controller
 {
     /**************************************************************************************************************/
     // ثبت گزارش تماس با صاحبان بار و باربری ها برای جذب و پشتیبانی
-    public function contactReportWithCargoOwners(Request $request)
+    public function contactReportWithCargoOwners($mobileNumber = null)
     {
-        if ($request->has('mobileNumber') || $request->has('date')) {
-            $date = persianDateToGregorian(str_replace('/', '-', $request->date), '-');
-            $contactReportWithCargoOwner = ContactReportWithCargoOwner::where('mobileNumber', $request->mobileNumber)->first();
-            if ($contactReportWithCargoOwner) {
-                return view('admin.contact.contactReportWithCargoOwnersResult', compact('contactReportWithCargoOwner'));
-            }
+        if ($mobileNumber != null) {
+            $contactReportWithCargoOwner = ContactReportWithCargoOwner::where('mobileNumber', $mobileNumber)->first();
+            return view('admin.contact.contactReportWithCargoOwnersResult', compact('contactReportWithCargoOwner'));
         }
 
         $countOfCals = ContactReportWithCargoOwnerResult::where([
