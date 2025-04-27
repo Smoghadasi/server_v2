@@ -20,25 +20,57 @@
 
         <div class="card-body row">
 
-            @if (in_array('onlineUsers', auth()->user()->userAccess))
-                <div class="col-lg-12 m-2 p-2 text-right bg-light">
+            @php
+                /**
+                 * بررسی وضعیت کاربر و برگرداندن کلاس CSS و متن وضعیت متناسب.
+                 *
+                 * اگر کاربر آنلاین باشد:
+                 *   - اگر اکتیو باشد: متن "اکتیو" با کلاس text-primary
+                 *   - در غیر این صورت: متن "آنلاین" با کلاس text-success
+                 * در غیر این صورت (آفلاین): متن "آفلاین" با کلاس text-secondary
+                 *
+                 * @param  \App\Models\User  $user
+                 * @return array
+                 */
+                function getUserStatusHint($user) {
+                    if (Cache::has('user-is-online-' . $user->id)) {
+                        if (Cache::has('user-is-active-' . $user->id)) {
+                            return ['class' => 'text-primary', 'text' => 'اکتیو'];
+                        }
+                        return ['class' => 'text-success', 'text' => 'آنلاین'];
+                    }
+                    return ['class' => 'text-secondary', 'text' => 'آفلاین'];
+                }
+            @endphp
+
+            <div class="col-lg-12 m-2 p-2 text-right bg-light">
+                <div class="col-lg-12 mb-1">وضعیت :</div>
+                @if (in_array('onlineUsers', auth()->user()->userAccess))
                     <div class="col-lg-12 mb-1">کاربران :</div>
                     @foreach ($users as $user)
                         <span class="table-bordered border-info rounded bg-white p-1 m-1">
-
-                            @if (Cache::has('user-is-online-' . $user->id))
-                                @if (Cache::has('user-is-active-' . $user->id))
-                                    <span class="text-primary">{{ $user->name }} {{ $user->lastName }}</span>
-                                @else
-                                    <span class="text-success">{{ $user->name }} {{ $user->lastName }}</span>
-                                @endif
-                            @else
-                                <span class="text-secondary">{{ $user->name }} {{ $user->lastName }}</span>
-                            @endif
+                            @php
+                                $status = getUserStatusHint($user);
+                            @endphp
+                            <span class="{{ $status['class'] }}">
+                                {{ $user->name }} {{ $user->lastName }}
+                            </span>
                         </span>
                     @endforeach
-                </div>
-            @endif
+                @else
+                    <span class="table-bordered border-info rounded bg-white p-1 m-1">
+                        @php
+                            $status = getUserStatusHint(auth()->user());
+                        @endphp
+                        {{ auth()->user()->name }} {{ auth()->user()->lastName }}
+                        <span class="{{ $status['class'] }}">
+                            {{ $status['text'] }}
+                        </span>
+                    </span>
+                @endif
+            </div>
+
+
 
             <form method="post" action="{{ url('admin/updateCargoInfo') }}/{{ $cargo->id }}" class="col-lg-6"
                 style="height: 100vh;overflow-y: auto;">
@@ -82,13 +114,13 @@
                             </label>
                             @if (isset($item['originProvince']))
                                 <input type="hidden" class="form-control" name="origin_{{ $key }}"
-                                value="{{ $item['origin'] }}">
+                                    value="{{ $item['origin'] }}">
 
                                 <label class="col-lg-6 mb-2">مبدا :
                                     <select class="form-select" name="originState_{{ $key }}" id="">
                                         @foreach ($item['originProvince'] as $province)
                                             <option value="{{ $province->parent_id }}">
-                                                {{$item['origin']}} - {{ $province->state }}
+                                                {{ $item['origin'] }} - {{ $province->state }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -101,7 +133,7 @@
                             @endif
 
                             <input type="hidden" class="form-control" name="destination_{{ $key }}"
-                                    value="{{ $item['destination'] }}">
+                                value="{{ $item['destination'] }}">
 
                             <label class="col-lg-6 mb-2">مقصد :
                                 <select class="form-select" name="destinationState_{{ $key }}" id="">
@@ -114,8 +146,9 @@
                             </label>
 
                             <label class="col-lg-12 mb-2">شماره تلفن :
-                                <input type="number" class="form-control @if($item['mobileNumber'] == null) is-invalid @else is-valid @endif" name="mobileNumber_{{ $key }}"
-                                    value="{{ $item['mobileNumber'] }}">
+                                <input type="number"
+                                    class="form-control @if ($item['mobileNumber'] == null) is-invalid @else is-valid @endif"
+                                    name="mobileNumber_{{ $key }}" value="{{ $item['mobileNumber'] }}">
                             </label>
 
                             <div class="col-lg-12 row mb-2">
@@ -151,8 +184,8 @@
                             <label class="col-lg-12 row mb-2">
                                 <lable class="col-lg-12">ناوگان :</lable>
                                 @foreach ($item['fleets'] as $fleet)
-                                    <input type="text" class="form-control col-lg-4" name="fleets_{{ $key }}[]"
-                                        value="{{ $fleet }}">
+                                    <input type="text" class="form-control col-lg-4"
+                                        name="fleets_{{ $key }}[]" value="{{ $fleet }}">
                                 @endforeach
                             </label>
                             <label class="col-lg-12 row">توضیحات :
