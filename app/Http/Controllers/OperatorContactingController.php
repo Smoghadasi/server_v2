@@ -16,11 +16,14 @@ class OperatorContactingController extends Controller
 {
     /**************************************************************************************************************/
     // ثبت گزارش تماس با صاحبان بار و باربری ها برای جذب و پشتیبانی
-    public function contactReportWithCargoOwners($mobileNumber = null)
+    public function contactReportWithCargoOwners(Request $request)
     {
-        if ($mobileNumber != null) {
-            $contactReportWithCargoOwner = ContactReportWithCargoOwner::where('mobileNumber', $mobileNumber)->first();
-            return view('admin.contact.contactReportWithCargoOwnersResult', compact('contactReportWithCargoOwner'));
+        if ($request->has('mobileNumber') || $request->has('date')) {
+            $date = persianDateToGregorian(str_replace('/', '-', $request->date), '-');
+            $contactReportWithCargoOwner = ContactReportWithCargoOwner::where('mobileNumber', $request->mobileNumber)->first();
+            if ($contactReportWithCargoOwner) {
+                return view('admin.contact.contactReportWithCargoOwnersResult', compact('contactReportWithCargoOwner'));
+            }
         }
 
         $countOfCals = ContactReportWithCargoOwnerResult::where([
@@ -56,7 +59,6 @@ class OperatorContactingController extends Controller
             }
 
             return redirect('admin/contactReportWithCargoOwners/' . $contactReportWithCargoOwner->mobileNumber);
-
         } catch (\Exception $exception) {
             Log::emergency("-------------------------- ذخیره شماره تلفن صاحب بار ------------------------------");
             Log::emergency($exception->getMessage());
@@ -78,6 +80,7 @@ class OperatorContactingController extends Controller
     // ذخیره نتیجه تماس
     public function storeContactReportWithCargoOwnerResult(Request $request)
     {
+        return $request;
         $contactReportWithCargoOwnerResult = new ContactReportWithCargoOwnerResult();
         $contactReportWithCargoOwnerResult->result = $request->result;
         $contactReportWithCargoOwnerResult->contact_report_with_cargo_owner_id = $request->contactReportWithCargoOwnerId;
