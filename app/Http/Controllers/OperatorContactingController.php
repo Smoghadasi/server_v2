@@ -77,7 +77,6 @@ class OperatorContactingController extends Controller
     // ذخیره نتیجه تماس
     public function storeContactReportWithCargoOwnerResult(Request $request)
     {
-        return $request;
         $contactReportWithCargoOwnerResult = new ContactReportWithCargoOwnerResult();
         $contactReportWithCargoOwnerResult->result = $request->result;
         $contactReportWithCargoOwnerResult->contact_report_with_cargo_owner_id = $request->contactReportWithCargoOwnerId;

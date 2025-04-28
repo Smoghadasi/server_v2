@@ -46,7 +46,6 @@
             <div class="col-lg-12 m-2 p-2 text-right bg-light">
                 <div class="col-lg-12 mb-1">وضعیت :</div>
                 @if (in_array('onlineUsers', auth()->user()->userAccess))
-                    <div class="col-lg-12 mb-1">کاربران :</div>
                     @foreach ($users as $user)
                         <span class="table-bordered border-info rounded bg-white p-1 m-1">
                             @php
