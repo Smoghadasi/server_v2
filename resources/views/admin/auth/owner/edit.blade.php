@@ -39,7 +39,7 @@
                                     value="{{ $ownerAuth->mobileNumber }}" id="mobileNumber">
                             </div>
                         </div>
-                        @if (auth()->user()->role == 'admin' || auth()->user()->id == 29)
+                        @if (auth()->user()->role == 'admin' || auth()->user()->id == 29 || auth()->user()->id == 69)
                             <div class="mb-3 row">
                                 <label for="isOwner" class="col-md-2 col-form-label">نوع</label>
                                 <div class="col-md-10">
