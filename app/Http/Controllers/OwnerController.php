@@ -201,7 +201,6 @@ class OwnerController extends Controller
                         return $query->where('isAccepted', $request->isAccepted);
                     })
                     ->paginate(20);
-                return $owners;
             } elseif (auth()->user()->role == 'operator') {
                 $owners = Owner::whereHas('loads', function ($q) use ($request) {
                     $q->when($request->fleet_id !== null, function ($query) use ($request) {
