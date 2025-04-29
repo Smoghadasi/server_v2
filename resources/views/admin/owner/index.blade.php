@@ -173,7 +173,7 @@
                                         <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
                                     @else
                                         <li class="page-item"><a class="page-link"
-                                                href="{{ $owners->previousPageUrl() }}&fleet_id={{ request('fleet_id') }}"
+                                                href="{{ $owners->previousPageUrl() }}&fleet_id={{ request('fleet_id') }}&isAccepted={{ request('isAccepted') }}"
                                                 rel="prev">&laquo;</a></li>
                                     @endif
 
@@ -188,7 +188,7 @@
                                                 </li>
                                             @else
                                                 <li class="page-item"><a class="page-link"
-                                                        href="{{ $url }}&fleet_id={{ request('fleet_id') }}">{{ $page }}</a>
+                                                        href="{{ $url }}&fleet_id={{ request('fleet_id') }}&isAccepted={{ request('isAccepted') }}">{{ $page }}</a>
                                                 </li>
                                             @endif
                                         @elseif ($page == $owners->currentPage() - 3 || $page == $owners->currentPage() + 3)
@@ -199,7 +199,7 @@
                                     {{-- Next Page Link --}}
                                     @if ($owners->hasMorePages())
                                         <li class="page-item"><a class="page-link"
-                                                href="{{ $owners->nextPageUrl() }}&fleet_id={{ request('fleet_id') }}"
+                                                href="{{ $owners->nextPageUrl() }}&fleet_id={{ request('fleet_id') }}&isAccepted={{ request('isAccepted') }}"
                                                 rel="next">&raquo;</a></li>
                                     @else
                                         <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
