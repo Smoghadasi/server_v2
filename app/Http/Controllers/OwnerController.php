@@ -188,7 +188,7 @@ class OwnerController extends Controller
         $fleetId = $request->fleet_id;
         $ownerBookmarkCount = Bookmark::where('type', 'owner')->count();
 
-        if ($request->has('fleet_id') || $request->has('fleet_id')) {
+        if ($request->has('fleet_id') || $request->has('isAccepted')) {
             if (auth()->user()->role == 'admin' || Auth::id() == 29) {
                 $owners = Owner::whereHas('loads', function ($q) use ($request) {
                     $q->when($request->fleet_id !== null, function ($query) use ($request) {

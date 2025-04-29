@@ -43,7 +43,7 @@
                         </select>
                     </div>
                     <div class="col-md-2 mt-3">
-                        <select class="form-select" name="status">
+                        <select class="form-select" name="isAccepted">
                             <option disabled selected>وضعیت</option>
                             <option value="1">تایید شده</option>
                             <option value="0">تایید نشده</option>
