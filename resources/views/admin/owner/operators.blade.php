@@ -42,6 +42,13 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="col-md-2 mt-3">
+                        <select class="form-select" name="status">
+                            <option disabled selected>وضعیت</option>
+                            <option value="1">تایید شده</option>
+                            <option value="0">تایید نشده</option>
+                        </select>
+                    </div>
                     <div class="col-md-4 mt-3">
                         <button type="submit" class="btn btn-primary mr-2">جستجو</button>
                     </div>

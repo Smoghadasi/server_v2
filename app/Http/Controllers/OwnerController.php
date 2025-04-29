@@ -62,7 +62,7 @@ class OwnerController extends Controller
         $ownerRejectCounts = Owner::where('isAuth', 0)->count();
         $ownerAcceptCounts = Owner::where('isAuth', 1)->count();
         $ownerRejectedCounts = Owner::where('isRejected', 1)->count();
-        $fleets = Fleet::all();
+        $fleets = Fleet::where('parent_id', '!=', 0)->get();
         return view('admin.owner.operators', compact([
             'ownerPenddingCounts',
             'ownerRejectCounts',
@@ -188,19 +188,33 @@ class OwnerController extends Controller
         $fleetId = $request->fleet_id;
         $ownerBookmarkCount = Bookmark::where('type', 'owner')->count();
 
-        if ($request->has('fleet_id')) {
+        if ($request->has('fleet_id') || $request->has('fleet_id')) {
             if (auth()->user()->role == 'admin' || Auth::id() == 29) {
                 $owners = Owner::whereHas('loads', function ($q) use ($request) {
-                    $q->where('fleets', 'Like', '%fleet_id":' . $request->fleet_id . ',%');
+                    $q->when($request->fleet_id !== null, function ($query) use ($request) {
+                        return $query->where('fleets', 'Like', '%fleet_id":' . $request->fleet_id . ',%');
+                    });
                     $q->where('userType', 'owner');
                     $q->withTrashed();
-                })->paginate(20);
+                })
+                    ->when($request->isAccepted !== null, function ($query) use ($request) {
+                        return $query->where('isAccepted', $request->isAccepted);
+                    })
+                    ->paginate(20);
+                return $owners;
             } elseif (auth()->user()->role == 'operator') {
                 $owners = Owner::whereHas('loads', function ($q) use ($request) {
-                    $q->where('fleets', 'Like', '%fleet_id":' . $request->fleet_id . ',%');
+                    $q->when($request->fleet_id !== null, function ($query) use ($request) {
+                        return $query->where('fleets', 'Like', '%fleet_id":' . $request->fleet_id . ',%');
+                    });
                     $q->where('userType', 'owner');
                     $q->withTrashed();
-                })->inRandomOrder()->paginate(1);
+                })
+                    ->when($request->isAccepted !== null, function ($query) use ($request) {
+                        return $query->where('isAccepted', $request->isAccepted);
+                    })
+                    ->inRandomOrder()
+                    ->paginate(1);
             }
         } else {
             $owners = Owner::where('nationalCode', 'LIKE', "%$request->searchWord%")
