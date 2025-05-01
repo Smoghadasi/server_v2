@@ -67,39 +67,39 @@
                             <tr>
                                 <td>{{ ($driverCalls->currentPage() - 1) * $driverCalls->perPage() + ++$i }}</td>
                                 <td>
-                                    {{ $driverCall->driver->name }} {{ $driverCall->driver->lastName }}
+                                    {{ $driverCall->name }} {{ $driverCall->lastName }}
 
-                                    @if ($driverCall->driver->status == 0)
+                                    @if ($driverCall->status == 0)
                                         <span class="alert alert-danger p-1">غیرفعال</span>
                                     @else
                                         <span class="alert alert-success p-1">فعال</span>
                                     @endif
                                 </td>
                                 <td>
-                                    @if ($driverCall->driver->authLevel == DRIVER_AUTH_UN_AUTH)
+                                    @if ($driverCall->authLevel == DRIVER_AUTH_UN_AUTH)
                                         <span class="badge bg-label-danger"> انجام نشده</span>
-                                    @elseif ($driverCall->driver->authLevel == DRIVER_AUTH_SILVER_PENDING)
+                                    @elseif ($driverCall->authLevel == DRIVER_AUTH_SILVER_PENDING)
                                         <span class="badge bg-label-secondary border border-danger"><span
                                                 class="badge bg-label-secondary">سطح نقره ای : </span> در حال بررسی</span>
-                                    @elseif ($driverCall->driver->authLevel == DRIVER_AUTH_SILVER)
+                                    @elseif ($driverCall->authLevel == DRIVER_AUTH_SILVER)
                                         <span class="badge bg-label-secondary">سطح نقره ای</span>
-                                    @elseif ($driverCall->driver->authLevel == DRIVER_AUTH_GOLD_PENDING)
+                                    @elseif ($driverCall->authLevel == DRIVER_AUTH_GOLD_PENDING)
                                         <span class="badge bg-label-warning border border-danger"><span
                                                 class="badge bg-label-warning">سطح طلایی ای: </span> در حال بررسی</span>
-                                    @elseif ($driverCall->driver->authLevel == DRIVER_AUTH_GOLD)
+                                    @elseif ($driverCall->authLevel == DRIVER_AUTH_GOLD)
                                         <span class="badge bg-label-warning">سطح طلایی</span>
                                     @endif
                                 </td>
-                                <td>{{ $driverCall->driver->nationalCode }}</td>
-                                <td>{{ \App\Http\Controllers\FleetController::getFleetName($driverCall->driver->fleet_id) }}</td>
+                                <td>{{ $driverCall->nationalCode }}</td>
+                                <td>{{ \App\Http\Controllers\FleetController::getFleetName($driverCall->fleet_id) }}</td>
                                 <td>
-                                    {{ gregorianDateToPersian($driverCall->driver->created_at, '-', true) }}
-                                    @if (isset(explode(' ', $driverCall->driver->created_at)[1]))
-                                        {{ explode(' ', $driverCall->driver->created_at)[1] }}
+                                    {{ gregorianDateToPersian($driverCall->created_at, '-', true) }}
+                                    @if (isset(explode(' ', $driverCall->created_at)[1]))
+                                        {{ explode(' ', $driverCall->created_at)[1] }}
                                     @endif
                                 </td>
-                                <td>{{ $driverCall->driver->version ?? '-' }}</td>
-                                <td>{{ $driverCall->driver->mobileNumber }}</td>
+                                <td>{{ $driverCall->version ?? '-' }}</td>
+                                <td>{{ $driverCall->mobileNumber }}</td>
                                 @php
                                     $pieces = explode(' ', $driverCall->created_at);
                                 @endphp
@@ -108,7 +108,7 @@
 
                                 <td>
                                     <a class="btn btn-primary"
-                                        href="{{ url('admin/driverInfo') }}/{{ $driverCall->driver->id }}">جزئیات</a>
+                                        href="{{ url('admin/driverInfo') }}/{{ $driverCall->id }}">جزئیات</a>
                                 </td>
                             </tr>
                         @endforeach

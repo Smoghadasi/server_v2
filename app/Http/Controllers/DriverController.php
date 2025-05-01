@@ -837,9 +837,10 @@ class DriverController extends Controller
         if (isset($request->version) && strlen($request->version))
             $condition[] = ['version', 'like', '%' . $request->version . '%'];
         if (count($condition)) {
-            $drivers = Driver::where($condition)->orderBy('id', 'desc')->paginate(500);
-            if (count($drivers))
-                return view('admin.driver.searchDriver', compact('drivers'));
+            $driverCalls = Driver::where($condition)->orderBy('id', 'desc')->paginate(500);
+            if (count($driverCalls))
+            // return $driverCalls;
+                return view('admin.driver.searchDriver', compact('driverCalls'));
         }
 
         return back()->with('danger', 'راننده ای پیدا نشد!');
