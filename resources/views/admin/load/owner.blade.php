@@ -86,9 +86,7 @@
                                     @if ($load->isBot != null)
                                         <i class="menu-icon tf-icons bx bx-check text-success"></i>
                                     @endif
-                                    @if ($load->firstLoad == true)
-                                        (+1)
-                                    @endif
+
                                     {{ $load->title }}
                                 </td>
                                 <td>{{ $load->senderMobileNumber }}</td>
