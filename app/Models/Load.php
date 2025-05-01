@@ -12,6 +12,7 @@ class Load extends Model
 
     use SoftDeletes;
     private static $transportationCompany_id;
+    protected $guarded = [];
     protected $appends = [
         'numOfRequestedDrivers',
         'numOfSelectedDrivers',
