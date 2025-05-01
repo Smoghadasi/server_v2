@@ -2334,74 +2334,74 @@ class LoadController extends Controller
     }
 
     public function nearLoadDrivers($load_id)
-{
-    // دریافت اطلاعات بار و بررسی مقدار null
-    $load = Load::whereId($load_id)->select([
-        'id',
-        'numOfSms',
-        'numOfNotif',
-        'latitude',
-        'longitude'
-    ])->first();
+    {
+        // دریافت اطلاعات بار و بررسی مقدار null
+        $load = Load::whereId($load_id)->select([
+            'id',
+            'numOfSms',
+            'numOfNotif',
+            'latitude',
+            'longitude'
+        ])->first();
 
-    if (!$load) {
-        return response()->json(['error' => 'Load not found'], 404);
-    }
+        if (!$load) {
+            return response()->json(['error' => 'Load not found'], 404);
+        }
 
-    $latitude = $load->latitude;
-    $longitude = $load->longitude;
-    $radius = 120;
-    $fleets = FleetLoad::where('load_id', $load->id)->pluck('fleet_id');
+        $latitude = $load->latitude;
+        $longitude = $load->longitude;
+        $radius = 120;
+        $fleets = FleetLoad::where('load_id', $load->id)->pluck('fleet_id');
 
-    // محاسبه فاصله با فرمول هاروسین
-    $haversine = "(6371 * acos(cos(radians(" . $latitude . "))
+        // محاسبه فاصله با فرمول هاروسین
+        $haversine = "(6371 * acos(cos(radians(" . $latitude . "))
         * cos(radians(`latitude`))
         * cos(radians(`longitude`)
         - radians(" . $longitude . "))
         + sin(radians(" . $latitude . "))
         * sin(radians(`latitude`))))";
 
-    // دریافت رانندگان نزدیک
-    $drivers = Driver::select(
-        'drivers.id',
-        'drivers.name',
-        'drivers.lastName',
-        'drivers.nationalCode',
-        'drivers.mobileNumber',
-        'drivers.province_id',
-        'drivers.city_id',
-        'drivers.fleet_id',
-        'drivers.version',
-        'drivers.freeCalls',
-        'drivers.activeDate',
-        'drivers.status',
-        'drivers.authLevel',
-        'drivers.location_at',
-        'drivers.latitude',
-        'drivers.longitude',
-        'drivers.created_at',
-    )
-        ->whereNotNull('location_at')
-        ->where('location_at', '>=', Carbon::now()->subMinutes(360))
-        ->whereIn('fleet_id', $fleets)
-        ->selectRaw("{$haversine} AS distance")
-        ->whereRaw("{$haversine} < ?", [$radius])
-        ->orderBy('distance', 'asc')
-        ->orderByDesc('created_at')
-        ->get();
+        // دریافت رانندگان نزدیک
+        $drivers = Driver::select(
+            'drivers.id',
+            'drivers.name',
+            'drivers.lastName',
+            'drivers.nationalCode',
+            'drivers.mobileNumber',
+            'drivers.province_id',
+            'drivers.city_id',
+            'drivers.fleet_id',
+            'drivers.version',
+            'drivers.freeCalls',
+            'drivers.activeDate',
+            'drivers.status',
+            'drivers.authLevel',
+            'drivers.location_at',
+            'drivers.latitude',
+            'drivers.longitude',
+            'drivers.created_at',
+        )
+            ->whereNotNull('location_at')
+            ->where('location_at', '>=', Carbon::now()->subMinutes(360))
+            ->whereIn('fleet_id', $fleets)
+            ->selectRaw("{$haversine} AS distance")
+            ->whereRaw("{$haversine} < ?", [$radius])
+            ->orderBy('distance', 'asc')
+            ->orderByDesc('created_at')
+            ->get();
 
-    // شمارش رانندگان ارسال پیامک
-    $sendSmsDriverCount = Driver::select('drivers.*')
-        ->whereNotNull('location_at')
-        ->where('location_at', '>=', Carbon::now()->subMinutes(360))
-        ->whereIn('fleet_id', $fleets)
-        ->where('sendMessage', 1)
-        ->selectRaw("{$haversine} AS distance")
-        ->whereRaw("{$haversine} < ?", [$radius])
-        ->count();
+        // شمارش رانندگان ارسال پیامک
+        $sendSmsDriverCount = Driver::select('drivers.*')
+            ->whereNotNull('location_at')
+            ->where('location_at', '>=', Carbon::now()->subMinutes(360))
+            ->whereIn('fleet_id', $fleets)
+            ->where('sendMessage', 1)
+            ->selectRaw("{$haversine} AS distance")
+            ->whereRaw("{$haversine} < ?", [$radius])
+            ->count();
 
-    return view('admin.driver.driverNearOwner', compact('drivers', 'load', 'sendSmsDriverCount'));
-}
+        return view('admin.driver.driverNearOwner', compact('drivers', 'load', 'sendSmsDriverCount'));
+    }
 
 
     public function sendMessageNearLoadDrivers(Request $request, $load_id, $type = null)
@@ -3110,7 +3110,7 @@ class LoadController extends Controller
     public function acceptCargo()
     {
         $cargoAccepts = Load::where('status', BEFORE_APPROVAL)
-            ->whereIn('userType', ['customer', 'owner'])
+            ->whereIn('userType', ['operator', 'owner'])
             // ->select(['id', 'title', 'toCity', 'fromCity', 'mobileNumberForCoordination', 'created_at'])
             ->paginate(15);
         return view('admin.load.cargo_accept', compact('cargoAccepts'));
