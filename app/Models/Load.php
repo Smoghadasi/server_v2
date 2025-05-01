@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
 
 class Load extends Model
 {
@@ -26,6 +27,7 @@ class Load extends Model
         'ownerAuthenticated',
         'numOfRateDriver',
         'avarageRateOwner',
+        'firstLoad',
     ];
 
     public function driver()
@@ -72,6 +74,20 @@ class Load extends Model
     public function getNumOfInquiryDriversAttribute()
     {
         return Inquiry::where('load_id', $this->id)->count();
+    }
+
+    public function getFirstLoadAttribute()
+    {
+        try {
+            if ($this->userType === 'owner' && $owner = Owner::find($this->user_id)) {
+                return Load::where('user_id', $owner->id)
+                    ->whereDate('created_at', now()->toDateString())
+                    ->exists();
+            }
+        } catch (\Exception $e) {
+            Log::warning($e);
+        }
+        return false;
     }
 
 
