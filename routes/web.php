@@ -99,7 +99,9 @@ Route::get('/conf', function () {
 });
 
 Route::get('hourClear', function () {
-    Load::where('urgent', 1)->update(['urgent' => 0]);
+    DB::table('loads')
+        ->where('created_at', '<', now()->subHours(1))
+        ->update(['urgent' => 0]);
 });
 
 Route::get('/cache', function () {
