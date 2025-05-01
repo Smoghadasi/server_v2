@@ -854,9 +854,10 @@ class DataConvertController extends Controller
                 } catch (\Exception $th) {
                     //throw $th;
                 }
-
                 // if ($load->isBot == 1) {
+
                     // $firstLoad = FirstLoad::where('mobileNumberForCoordination', $load->mobileNumberForCoordination)->first();
+
                     // if (is_null($firstLoad) && !Owner::where('isAccepted', 1)->where('mobileNumber', $load->mobileNumberForCoordination)->exists()) {
                     //     $load->update(['status' => BEFORE_APPROVAL]);
                     // } else {
@@ -918,6 +919,7 @@ class DataConvertController extends Controller
                     //         Log::emergency("==============================================================");
                     //     }
                     // }
+
                 // }
             }
 
