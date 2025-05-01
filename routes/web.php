@@ -100,7 +100,7 @@ Route::get('/conf', function () {
 
 Route::get('hourClear', function () {
     DB::table('loads')
-        ->where('created_at', '<', now()->subMinutes(90))
+        ->where('created_at', '<', now()->subMinutes(60))
         ->update(['urgent' => 0]);
 });
 
