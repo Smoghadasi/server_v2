@@ -283,9 +283,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         // لیست صاحبان بار
         Route::resource('owner', OwnerController::class)->middleware("operator");
+
         // علامت گذاری
         Route::resource('bookmark', BookmarkController::class)->middleware("operator");
-
 
         Route::resource('trackableItems', TrackableItemController::class)->middleware("operator");
 

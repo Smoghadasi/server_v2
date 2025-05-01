@@ -855,7 +855,7 @@ class DataConvertController extends Controller
                     //throw $th;
                 }
 
-                if ($load->isBot == 1) {
+                // if ($load->isBot == 1) {
                     $firstLoad = FirstLoad::where('mobileNumberForCoordination', $load->mobileNumberForCoordination)->first();
                     if (is_null($firstLoad) && !Owner::where('isAccepted', 1)->where('mobileNumber', $load->mobileNumberForCoordination)->exists()) {
                         $load->update(['status' => BEFORE_APPROVAL]);
@@ -918,7 +918,7 @@ class DataConvertController extends Controller
                             Log::emergency("==============================================================");
                         }
                     }
-                }
+                // }
             }
 
 
@@ -1830,6 +1830,202 @@ class DataConvertController extends Controller
         $res = $client->request('POST', 'http://5.78.107.150:8000/channel/' . $request->channelName . '/create');
         return back()->with('success', 'کانال ' . $request->channelName . ' اضافه شد');
     }
+
+    public function extractData(Request $request)
+    {
+        $text = $request->input('text');
+
+        // حذف فاصله‌های اضافی و نرمال‌سازی متن
+        $text = $request->input('text');
+
+        // 1. حذف ایموجی‌ها و کاراکترهای یونیکد خاص
+        $text = preg_replace('/[\x{1F600}-\x{1F6FF}\x{1F300}-\x{1F5FF}\x{2600}-\x{26FF}\x{2700}-\x{27BF}]/u', '', $text);
+
+        // 2. حذف فاصله‌های اضافی و نرمال‌سازی متن
+        $text = preg_replace('/\s+/', ' ', $text);
+        // دریافت لیست ناوگان‌ها از دیتابیس
+        $fleets = DB::table('fleets')->pluck('title', 'id')->toArray();
+        $fleetNames = array_values($fleets);
+        $fleetPattern = implode('|', array_map('preg_quote', $fleetNames));
+
+        // دریافت لیست شهرها از دیتابیس
+        $cities = DB::table('province_cities')->pluck('name', 'id')->toArray();
+
+        // خروجی نهایی
+        $allResults = [];
+
+        // بررسی ناوگان و مسیرهای ساده
+        if (preg_match('/^(' . $fleetPattern . ')\s+(\S+)\s+(?:ب|به)\s+(\S+)/mu', $text, $fleetMatch)) {
+            $fleetName = $fleetMatch[1];
+            $fleetId = array_search($fleetName, $fleets);
+
+            // حذف ناوگان از متن برای جستجوی مبدا و مقصد
+            $textWithoutFleet = str_replace($fleetName, '', $text);
+
+            // استخراج مسیرها
+            if (preg_match_all('/(\S+)\s+(?:ب|به)\s+(\S+)/u', $textWithoutFleet, $routeMatches, PREG_SET_ORDER)) {
+                foreach ($routeMatches as $route) {
+                    $origin = $route[1] ?? null;
+                    $destination = $route[2] ?? null;
+
+                    // اضافه کردن خروجی برای هر مسیر
+                    $allResults[] = [
+                        'type' => 'الگوی 4+',
+                        'vehicle' => $fleetName,
+                        'vehicle_id' => array_search($fleetName, $fleets) !== false ? array_search($fleetName, $fleets) : null,
+                        'origin' => $origin,
+                        'origin_id' => array_search($origin, $cities) ?: null,
+                        'destination' => $destination,
+                        'destination_id' => array_search($destination, $cities) ?: null,
+                    ];
+                }
+            }
+        }
+
+        // الگویی برای شناسایی اگر یک مبدا و چند مقصد داریم
+        if (preg_match('/^(' . $fleetPattern . ')\s+(\S+)\s+(?:ب|به)\s+([\S\s]+?)\s*(\d{11})/mu', $text, $fleetMatch)) {
+            $fleetName = $fleetMatch[1];
+            $fleetId = array_search($fleetName, $fleets);
+            $origin = $fleetMatch[2];
+            $destinationString = $fleetMatch[3];
+            $phone = $fleetMatch[4];
+
+            // پردازش مقاصد مختلف
+            $destinations = explode(' ', $destinationString);
+            foreach ($destinations as $destination) {
+                $allResults[] = [
+                    'type' => 'الگوی 4+ چندمسیره',
+                    'vehicle' => $fleetName,
+                    'vehicle_id' => $fleetId !== false ? $fleetId : null,
+                    'origin' => $origin,
+                    'origin_id' => array_search($origin, $cities) ?: null,
+                    'destination' => $destination,
+                    'destination_id' => array_search($destination, $cities) ?: null,
+                    'phone' => $phone
+                ];
+            }
+        }
+
+        // بررسی سایر الگوها
+        $patterns = [
+            // الگوی 1
+            [
+                'type' => 'الگوی 1',
+                'regex' => '/بارگیری\s+(.*?)\s+از\s+(\S+)\s+به\s+(\S+)\s*(\d{11})/su',
+                'fields' => ['cargo', 'origin', 'destination', 'phone']
+            ],
+            // الگوی 2
+            [
+                'type' => 'الگوی 2',
+                'regex' => '/ناوگان[:：]\s*(.*?)\s+مبدا[:：]\s*(.*?)\s+(?:به\s+)?مقصد[:：]\s*(.*?)\s+(\d{11})/su',
+                'fields' => ['vehicle', 'origin', 'destination', 'phone']
+            ],
+            // الگوی 3 - ناوگان، مبدا، مقصد، نوع بار و وزن بار
+            [
+                'type' => 'الگوی جدید 3',
+                'regex' => '/(\S+)\s+[\s\S]*?مبدا[:：]\s*(\S+)\s+مقصد[:：]\s*(\S+)\s+نوع\s+بار[:：]\s*(\S+)\s*(\d{11})(?:\s*(\d{11}))?(?:\s*(\d{11}))?/mu',
+                'fields' => ['vehicle', 'origin', 'destination', 'cargo', 'phone']
+            ],
+            // الگوی 4+ چندمسیره
+            [
+                'type' => 'الگوی جدید 4',
+                'regex' => '/(\S+)\s+(?:از)\s+(\S+)\s+(?:به)\s+(\S+)\s*(\d{11})/mu',
+                'fields' => ['vehicle', 'origin', 'destination', 'phone']
+            ],
+            [
+                'type' => 'الگوی 4+ چندمسیره',
+                'regex' => '/(\S+)\s+از\s+(\S+)\s+(?:به|ب)\s+([\S\s]+?)\s*(\d{11})/mu',
+                'fields' => ['vehicle', 'origin', 'destination', 'phone']
+            ],
+            // الگوی 5 - بارگیری و تخلیه
+            [
+                'type' => 'الگوی 5',
+                'regex' => '/بارگیری\s+(.*?)\s+از\s+(\S+)\s+به\s+(\S+)\s+بارگیری\s+امروز\s+(.*)\s+تخلیه\s+فردا\s+(.*)/su',
+                'fields' => ['cargo', 'origin', 'destination', 'loading_time', 'unloading_time']
+            ],
+            // الگوی 6 - بار و نوع آن (سبک، سنگین)
+            [
+                'type' => 'الگوی 6',
+                'regex' => '/(\S+)\s+از\s+(\S+)\s+به\s+(\S+)\s+نوع\s+بار\s+(سبک|سنگین)/su',
+                'fields' => ['vehicle', 'origin', 'destination', 'cargo_type']
+            ],
+            // الگوی 7 - تماس و شماره
+            [
+                'type' => 'الگوی 7',
+                'regex' => '/تماس\s+با\s+(\S+)\s+در\s+نوبت\s+مراجعه\s+به\s+(\S+)\s+با\s+شماره\s+(\d{11})/su',
+                'fields' => ['contact_person', 'office_location', 'phone']
+            ],
+            // الگوی 8 - نوع بار و تاریخ
+            [
+                'type' => 'الگوی 8',
+                'regex' => '/(\S+)\s+از\s+(\S+)\s+به\s+(\S+)\s+بار\s+نوع\s+(.+)\s+تاریخ\s+مراجعه\s+(\d{4}-\d{2}-\d{2})/su',
+                'fields' => ['vehicle', 'origin', 'destination', 'cargo_type', 'date']
+            ],
+            // الگوی 9 - نوع بار و زمان تخلیه
+            [
+                'type' => 'الگوی 9',
+                'regex' => '/(\S+)\s+از\s+(\S+)\s+به\s+(\S+)\s+بار\s+نوع\s+(.+)\s+زمان\s+تخلیه\s+(\d{2}:\d{2})/su',
+                'fields' => ['vehicle', 'origin', 'destination', 'cargo_type', 'unloading_time']
+            ],
+            // الگوی 10 - ارسال از مبدأ به مقصد
+            [
+                'type' => 'الگوی 10',
+                'regex' => '/(\S+)\s+از\s+(\S+)\s+به\s+(\S+)\s+بار\s+اندازه\s+(\d+)\s+کیلوگرم/su',
+                'fields' => ['vehicle', 'origin', 'destination', 'cargo_weight']
+            ],
+            // الگوی 11 - زمان بارگیری و تخلیه
+            [
+                'type' => 'الگوی 11',
+                'regex' => '/(\S+)\s+از\s+(\S+)\s+به\s+(\S+)\s+زمان\s+بارگیری\s+(\d{2}:\d{2})\s+زمان\s+تخلیه\s+(\d{2}:\d{2})/su',
+                'fields' => ['vehicle', 'origin', 'destination', 'loading_time', 'unloading_time']
+            ],
+            // الگوی 12 - تماس مستقیم و هماهنگی
+            [
+                'type' => 'الگوی 12',
+                'regex' => '/(\S+)\s+از\s+(\S+)\s+(?:ب|به)\s+(\S+)\s*(\d{11})/mu',
+                'fields' => ['vehicle', 'origin', 'destination', 'phone']
+            ],
+            [
+                'type' => 'الگوی 13',
+                'regex' => '/(\S+)\s+از\s+(\S+)\s+به\s+(\S+)\s+بارگیری\s+(.+?)\s*(\d{11})/su',
+                'fields' => ['vehicle', 'origin', 'destination', 'cargo', 'phone']
+            ]
+        ];
+
+        // بررسی الگوهای مختلف
+        foreach ($patterns as $pattern) {
+            if (preg_match_all($pattern['regex'], $text, $matches, PREG_SET_ORDER)) {
+                foreach ($matches as $match) {
+                    $result = ['type' => $pattern['type']];
+                    foreach ($pattern['fields'] as $index => $field) {
+                        $value = trim($match[$index + 1]);
+                        if ($field === 'origin' || $field === 'destination') {
+                            $cityId = array_search($value, $cities);
+                            $result[$field] = $value;
+                            $result[$field . '_id'] = $cityId !== false ? $cityId : null;
+                        } elseif ($field === 'vehicle') {
+                            $fleetId = array_search($value, $fleets);
+                            $result[$field] = $value;
+                            $result[$field . '_id'] = $fleetId !== false ? $fleetId : null;
+                        } else {
+                            $result[$field] = $value;
+                        }
+                    }
+                    $allResults[] = $result;
+                }
+            }
+        }
+
+        // در صورتی که نتیجه‌ای پیدا شد، برگردانده می‌شود
+        if (!empty($allResults)) {
+            return response()->json($allResults);
+        }
+
+        // در صورتی که هیچ الگویی پیدا نشد
+        return response()->json(['error' => 'هیچ الگویی شناسایی نشد.']);
+    }
+
+
 
     public function channelsData()
     {
