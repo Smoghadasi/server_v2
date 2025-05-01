@@ -647,7 +647,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::resource('discrepancy', DiscrepancyController::class)->middleware('operator');
 
         // انبار بار
-        // Route::resource('warehouse', WarehouseController::class)->middleware('operator');
+        Route::resource('warehouse', WarehouseController::class)->middleware('operator');
 
         // رادیو
         Route::resource('radio', RadioController::class)->middleware('operator');
