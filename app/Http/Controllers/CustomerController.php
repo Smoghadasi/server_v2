@@ -138,7 +138,7 @@ class CustomerController extends Controller
 
     public function acceptCustomer(string $id)
     {
-        $loads = Load::whereIn('userType', ['owner', 'customer'])
+        $loads = Load::whereIn('userType', ['owner', 'operator'])
             ->where('user_id', $id)
             ->get();
 
