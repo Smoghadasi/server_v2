@@ -3463,12 +3463,13 @@ class LoadController extends Controller
 
     private function sendNotification($FCM_token, $title, $body)
     {
-        $serviceAccountPath = asset('assets/zarin-tarabar-firebase-adminsdk-9x6c3-7dbc939cac.json');
-        $serviceAccount = json_decode($this->getFileContents($serviceAccountPath), true);
+        $serviceAccountPath = public_path('assets/zarin-tarabar-firebase-adminsdk-9x6c3-7dbc939cac.json');
+        $serviceAccountJson = file_get_contents($serviceAccountPath);
+        $serviceAccount = json_decode($serviceAccountJson, true);
+
 
         $clientEmail = $serviceAccount['client_email'];
         $privateKey = $serviceAccount['private_key'];
-
         $header = json_encode(['alg' => 'RS256', 'typ' => 'JWT']);
         $now = time();
         $expiration = $now + 3600;
