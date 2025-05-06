@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivationCode;
 use App\Models\AppVersion;
 use App\Models\Bearing;
 use App\Models\BlockPhoneNumber;
@@ -219,6 +220,8 @@ class HomeController extends Controller
             ->orWhere('nameAndLastName', $request->title)
             ->get();
 
+        $activationCode = ActivationCode::where('mobileNumber', $request->title)->value('code');
+
         return view('admin.searchAll', compact([
             'drivers',
             'owners',
@@ -227,7 +230,8 @@ class HomeController extends Controller
             'blockedPhoneNumbers',
             'messages',
             'contactReportWithCargoOwners',
-            'tracks'
+            'tracks',
+            'activationCode'
         ]));
     }
 }

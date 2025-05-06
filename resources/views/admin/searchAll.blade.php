@@ -1,6 +1,9 @@
 @extends('layouts.dashboard')
 
 @section('content')
+    @if (Auth::user()->role == 'admin' || Auth::id() == 29)
+        <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">کد فعال سازی: </span> {{ $activationCode }}</h4>
+    @endif
     <div class="card mb-4">
         <h5 class="card-header">
             راننده
