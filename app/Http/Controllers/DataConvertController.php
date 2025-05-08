@@ -497,15 +497,14 @@ class DataConvertController extends Controller
     {
         try {
             $expiresAt = now()->addMinutes(3);
+            $userId = Auth::id();
 
-            Cache::put('user-is-active-' . \auth()->user()->id, true, $expiresAt);
-
-            User::whereId(Auth::id())->update(['last_active' => now()]);
+            Cache::put("user-is-active-$userId", true, $expiresAt);
+            User::whereId($userId)->update(['last_active' => now()]);
         } catch (Exception $e) {
-            Log::emergency("-------------------------- UserActivityActiveOnlineReport ----------------------------------------");
-            Log::emergency($e->getMessage());
-            Log::emergency("------------------------------------------------------------------");
+            Log::emergency("UserActivityActiveOnlineReport - Error: " . $e->getMessage());
         }
+
 
 
         $keys = $request->input('key'); // لیست کلیدهای موجود در درخواست
@@ -529,7 +528,6 @@ class DataConvertController extends Controller
                 ['created_at', '>', date('Y-m-d H:i:s', strtotime('-5 minute', time()))],
                 ['user_id', \auth()->id()]
             ])->count() == 0)
-
                 UserActivityReport::create(['user_id' => \auth()->id()]);
         } catch (Exception $e) {
             Log::emergency("-------------------------- UserActivityReport ----------------------------------------");
@@ -595,19 +593,23 @@ class DataConvertController extends Controller
 
         try {
             $cargoPattern = $origin . $destination . $mobileNumber . $fleet;
+
             if (
-                BlockPhoneNumber::where('phoneNumber', $mobileNumber)->count() ||
-                Load::where([['cargoPattern', $cargoPattern], ['created_at', '>', date('Y-m-d h:i:s', strtotime('-180 minute', time()))]])->count()
+                BlockPhoneNumber::where('phoneNumber', $mobileNumber)->exists() ||
+                Load::where('cargoPattern', $cargoPattern)
+                    ->where('created_at', '>', now()->subMinutes(180))
+                    ->exists()
             ) {
                 return;
             }
         } catch (\Exception $exception) {
-            Log::emergency("---------------------------------------------------------------------------");
+            Log::emergency(str_repeat("-", 75));
             Log::emergency("خطای جستجوی تکراری");
             Log::emergency($exception->getMessage());
-            Log::emergency("---------------------------------------------------------------------------");
+            Log::emergency(str_repeat("-", 75));
             return;
         }
+
 
         try {
 
@@ -615,25 +617,25 @@ class DataConvertController extends Controller
             $load = new Load();
             $load->title = strlen($title) == 0 ? 'بدون عنوان' : $title;
             $load->pattern = $pattern;
-            $load->weight = 0;
-            $load->width = 0;
-            $load->length = 0;
-            $load->height = 0;
+            // $load->weight = 0;
+            // $load->width = 0;
+            // $load->length = 0;
+            // $load->height = 0;
             $load->cargo_convert_list_id = $cargoId;
-            $load->loadingAddress = '';
-            $load->dischargeAddress = '';
+            // $load->loadingAddress = '';
+            // $load->dischargeAddress = '';
             $load->senderMobileNumber = $mobileNumber;
-            $load->receiverMobileNumber = '';
-            $load->insuranceAmount = 0;
-            $load->suggestedPrice = 0;
-            $load->marketing_price = 0;
+            // $load->receiverMobileNumber = '';
+            // $load->insuranceAmount = 0;
+            // $load->suggestedPrice = 0;
+            // $load->marketing_price = 0;
             $load->emergencyPhone = $mobileNumber;
-            $load->dischargeTime = '';
-            $load->fleet_id = 0;
+            // $load->dischargeTime = '';
+            // $load->fleet_id = 0;
             $load->load_type_id = 0;
             $load->tenderTimeDuration = 0;
             $load->packing_type_id = 0;
-            $load->loadPic = "noImage";
+            // $load->loadPic = "noImage";
             $owner = Owner::where('mobileNumber', $mobileNumber)->first();
             if (isSendBotLoadOwner() == true) {
                 if ($owner != null) {
@@ -660,11 +662,11 @@ class DataConvertController extends Controller
                 $load->userType = ROLE_OPERATOR;
                 $load->operator_id = auth()->id();
             }
-            $load->urgent = 0;
+            // $load->urgent = 0;
             $load->loadMode = 'outerCity';
             $load->loadingHour = 0;
             $load->loadingMinute = 0;
-            $load->numOfTrucks = 1;
+            // $load->numOfTrucks = 1;
             $load->cargoPattern = $cargoPattern;
 
             $origin = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $origin)));
@@ -856,70 +858,70 @@ class DataConvertController extends Controller
                 }
                 // if ($load->isBot == 1) {
 
-                    // $firstLoad = FirstLoad::where('mobileNumberForCoordination', $load->mobileNumberForCoordination)->first();
+                // $firstLoad = FirstLoad::where('mobileNumberForCoordination', $load->mobileNumberForCoordination)->first();
 
-                    // if (is_null($firstLoad) && !Owner::where('isAccepted', 1)->where('mobileNumber', $load->mobileNumberForCoordination)->exists()) {
+                // if (is_null($firstLoad) && !Owner::where('isAccepted', 1)->where('mobileNumber', $load->mobileNumberForCoordination)->exists()) {
 
-                    //     $load->update(['status' => BEFORE_APPROVAL]);
-                    // } else {
-                    //     try {
-                    //         $first = new FirstLoad();
-                    //         $first->title = $load->title;
-                    //         $first->weight = $load->weight;
-                    //         $first->width = $load->width;
-                    //         $first->length = $load->length;
-                    //         $first->height = $load->height;
-                    //         $first->loadingAddress = $load->loadingAddress;
-                    //         $first->dischargeAddress = $load->dischargeAddress;
-                    //         $first->senderMobileNumber = $load->senderMobileNumber;
-                    //         $first->receiverMobileNumber = $load->receiverMobileNumber;
-                    //         $first->insuranceAmount = $load->insuranceAmount;
-                    //         $first->suggestedPrice = $load->suggestedPrice;
-                    //         $first->marketing_price = 0;
-                    //         $first->emergencyPhone = $load->emergencyPhone;
-                    //         $first->dischargeTime = $load->dischargeTime;
-                    //         $first->fleet_id = $load->fleet_id;
-                    //         $first->load_type_id = $load->load_type_id;
-                    //         $first->tenderTimeDuration = $load->tenderTimeDuration;
-                    //         $first->packing_type_id = $load->packing_type_id;
-                    //         $first->loadPic = $load->loadPic;
-                    //         $first->user_id = $load->user_id;
-                    //         $first->loadMode = $load->loadMode;
-                    //         $first->loadingHour = $load->loadingHour;
-                    //         $first->loadingMinute = $load->loadingMinute;
-                    //         $first->numOfTrucks = $load->numOfTrucks;
-                    //         $first->origin_city_id = $load->origin_city_id;
-                    //         $first->destination_city_id = $load->destination_city_id;
-                    //         $first->fromCity = $load->fromCity;
-                    //         $first->toCity = $load->toCity;
-                    //         $first->loadingDate = $load->loadingDate;
-                    //         $first->time = $load->time;
-                    //         $first->latitude = $load->latitude;
-                    //         $first->longitude = $load->longitude;
-                    //         $first->weightPerTruck = $load->weightPerTruck;
-                    //         $first->bulk = $load->bulk;
-                    //         $first->dangerousProducts = $load->dangerousProducts;
-                    //         $first->origin_state_id = $load->origin_state_id;
-                    //         $first->description = $load->description;
-                    //         $first->priceBased = $load->priceBased;
-                    //         $first->bearing_id = $load->bearing_id;
-                    //         $first->proposedPriceForDriver = $load->proposedPriceForDriver;
-                    //         $first->operator_id = $load->operator_id;
-                    //         $first->userType = $load->userType;
-                    //         $first->origin_longitude = $load->origin_longitude;
-                    //         $first->destination_longitude = $load->destination_longitude;
-                    //         $first->mobileNumberForCoordination = $load->mobileNumberForCoordination;
-                    //         $first->storeFor = $load->storeFor;
-                    //         $first->status = $load->status;
-                    //         $first->fleets = $load->fleets;
-                    //         $first->deliveryTime = $load->deliveryTime;
-                    //         $first->save();
-                    //     } catch (\Exception $e) {
-                    //         Log::emergency("========================= first load ==================================");
-                    //         Log::emergency($e->getMessage());
-                    //         Log::emergency("==============================================================");
-                    //     }
-                    // }
+                //     $load->update(['status' => BEFORE_APPROVAL]);
+                // } else {
+                //     try {
+                //         $first = new FirstLoad();
+                //         $first->title = $load->title;
+                //         $first->weight = $load->weight;
+                //         $first->width = $load->width;
+                //         $first->length = $load->length;
+                //         $first->height = $load->height;
+                //         $first->loadingAddress = $load->loadingAddress;
+                //         $first->dischargeAddress = $load->dischargeAddress;
+                //         $first->senderMobileNumber = $load->senderMobileNumber;
+                //         $first->receiverMobileNumber = $load->receiverMobileNumber;
+                //         $first->insuranceAmount = $load->insuranceAmount;
+                //         $first->suggestedPrice = $load->suggestedPrice;
+                //         $first->marketing_price = 0;
+                //         $first->emergencyPhone = $load->emergencyPhone;
+                //         $first->dischargeTime = $load->dischargeTime;
+                //         $first->fleet_id = $load->fleet_id;
+                //         $first->load_type_id = $load->load_type_id;
+                //         $first->tenderTimeDuration = $load->tenderTimeDuration;
+                //         $first->packing_type_id = $load->packing_type_id;
+                //         $first->loadPic = $load->loadPic;
+                //         $first->user_id = $load->user_id;
+                //         $first->loadMode = $load->loadMode;
+                //         $first->loadingHour = $load->loadingHour;
+                //         $first->loadingMinute = $load->loadingMinute;
+                //         $first->numOfTrucks = $load->numOfTrucks;
+                //         $first->origin_city_id = $load->origin_city_id;
+                //         $first->destination_city_id = $load->destination_city_id;
+                //         $first->fromCity = $load->fromCity;
+                //         $first->toCity = $load->toCity;
+                //         $first->loadingDate = $load->loadingDate;
+                //         $first->time = $load->time;
+                //         $first->latitude = $load->latitude;
+                //         $first->longitude = $load->longitude;
+                //         $first->weightPerTruck = $load->weightPerTruck;
+                //         $first->bulk = $load->bulk;
+                //         $first->dangerousProducts = $load->dangerousProducts;
+                //         $first->origin_state_id = $load->origin_state_id;
+                //         $first->description = $load->description;
+                //         $first->priceBased = $load->priceBased;
+                //         $first->bearing_id = $load->bearing_id;
+                //         $first->proposedPriceForDriver = $load->proposedPriceForDriver;
+                //         $first->operator_id = $load->operator_id;
+                //         $first->userType = $load->userType;
+                //         $first->origin_longitude = $load->origin_longitude;
+                //         $first->destination_longitude = $load->destination_longitude;
+                //         $first->mobileNumberForCoordination = $load->mobileNumberForCoordination;
+                //         $first->storeFor = $load->storeFor;
+                //         $first->status = $load->status;
+                //         $first->fleets = $load->fleets;
+                //         $first->deliveryTime = $load->deliveryTime;
+                //         $first->save();
+                //     } catch (\Exception $e) {
+                //         Log::emergency("========================= first load ==================================");
+                //         Log::emergency($e->getMessage());
+                //         Log::emergency("==============================================================");
+                //     }
+                // }
 
                 // }
             }
