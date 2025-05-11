@@ -2546,7 +2546,7 @@ class LoadController extends Controller
                     return $query->onlyTrashed();
                 }
             })
-            ->paginate(20);
+            ->paginate(3);
 
 
         $fleets = Fleet::select('id', 'title', 'parent_id')
@@ -3462,7 +3462,7 @@ class LoadController extends Controller
 
     private function sendNotificationWeb($FCM_token, $title, $body)
     {
-        $serviceAccountPath = asset('assets/zarin-tarabar-firebase-adminsdk-9x6c3-7dbc939cac.json');
+        $serviceAccountPath = base_path('public/assets/zarin-tarabar-firebase-adminsdk-9x6c3-7dbc939cac.json');
         $serviceAccountJson = file_get_contents($serviceAccountPath);
         $serviceAccount = json_decode($serviceAccountJson, true);
 
@@ -3535,7 +3535,7 @@ class LoadController extends Controller
 
     private function sendNotification($FCM_token, $title, $body)
     {
-        $serviceAccountPath = public_path('assets/zarin-tarabar-firebase-adminsdk-9x6c3-7dbc939cac.json');
+        $serviceAccountPath = base_path('public/assets/zarin-tarabar-firebase-adminsdk-9x6c3-7dbc939cac.json');
         $serviceAccountJson = file_get_contents($serviceAccountPath);
         $serviceAccount = json_decode($serviceAccountJson, true);
 
