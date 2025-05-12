@@ -40,6 +40,7 @@ use App\Models\UserActivityReport;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use PHPUnit\Exception;
@@ -2529,14 +2530,11 @@ class LoadController extends Controller
 
     public function loadOwner(Request $request)
     {
-        $loads = Load::orderByDesc('created_at')
-            ->with('owner')
+        $loads = Load::query()
+            ->with(['owner:id,isAccepted,name,lastName']) // فیلدهای مورد نیاز
             ->when($request->fleet_id !== null, function ($query) use ($request) {
-                return $query->where('fleets', 'Like', '%fleet_id":' . $request->fleet_id . ',%');
+                return $query->whereJsonContains('fleets->fleet_id', $request->fleet_id);
             })
-            ->withTrashed()
-            ->where('userType', ROLE_OWNER)
-            ->where('isBot', 0)
             ->when($request->loadBy !== null, function ($query) use ($request) {
                 if ($request->loadBy == 0) {
                     return $query->withTrashed();
@@ -2545,25 +2543,37 @@ class LoadController extends Controller
                 } elseif ($request->loadBy == 2) {
                     return $query->onlyTrashed();
                 }
+            }, function ($query) {
+                return $query->withTrashed(); // پیش‌فرض
             })
-            ->paginate(12);
-
-
-        $fleets = Fleet::select('id', 'title', 'parent_id')
-            ->where('parent_id', '!=', 0)
-            ->get();
-
-        $loadsCount = Load::orderByDesc('created_at')
             ->where('userType', ROLE_OWNER)
             ->where('isBot', 0)
-            ->withTrashed()
-            ->count();
+            ->orderByDesc('created_at')
+            ->paginate(12);
 
-        $loadsToday = Load::where('userType', ROLE_OWNER)
-            ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
-            ->withTrashed()
-            ->where('isBot', 0)
-            ->count();
+        $fleets = Cache::remember('filtered_fleets', 86400, function () {
+            return Fleet::select('id', 'title', 'parent_id')
+                ->where('parent_id', '!=', 0)
+                ->orderBy('title', 'asc')
+                ->get()
+                ->makeHidden(['numOfDrivers']);
+        });
+
+        $loadsCount = Cache::remember('loads_count', 600, function () {
+            return Load::where('userType', ROLE_OWNER)
+                ->where('isBot', 0)
+                ->withTrashed()
+                ->count();
+        });
+
+        $loadsToday = Cache::remember('loads_today', 300, function () {
+            return Load::where('userType', ROLE_OWNER)
+                ->where('created_at', '>=', now()->startOfDay())
+                ->where('isBot', 0)
+                ->withTrashed()
+                ->count();
+        });
+
         return view('admin.load.owner', compact([
             'loads',
             'loadsCount',
@@ -2571,6 +2581,7 @@ class LoadController extends Controller
             'fleets'
         ]));
     }
+
 
     public function loadOperators()
     {
