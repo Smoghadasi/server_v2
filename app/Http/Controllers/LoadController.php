@@ -2551,6 +2551,7 @@ class LoadController extends Controller
             ->orderByDesc('created_at')
             ->select([
                 'id',
+                'title',
                 'isBot',
                 'user_id',
                 'userType',
