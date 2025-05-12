@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class Load extends Model
@@ -107,55 +106,35 @@ class Load extends Model
     {
         return DriverCall::where('load_id', $this->id)->count();
     }
-
-
     public function getNumOfNearDriverAttribute()
     {
-        if ($this->deleted_at) {
+        if ($this->deleted_at != null) {
             return 0;
         }
-
         try {
             $latitude = $this->latitude;
             $longitude = $this->longitude;
+            $radius = 100;
             $fleets = FleetLoad::where('load_id', $this->id)->pluck('fleet_id');
 
-            $haversine = "(6371 * acos(
-                cos(radians(?)) * cos(radians(latitude)) *
-                cos(radians(longitude) - radians(?)) +
-                sin(radians(?)) * sin(radians(latitude))
-            ))";
+            $haversine = "(6371 * acos(cos(radians(" . $latitude . "))
+                * cos(radians(`latitude`))
+                * cos(radians(`longitude`)
+                - radians(" . $longitude . "))
+                + sin(radians(" . $latitude . "))
+                * sin(radians(`latitude`))))";
 
-            // شعاع‌های جستجو به ترتیب
-            $searchRadiuses = [50, 100, 120];
-
-            foreach ($searchRadiuses as $radius) {
-                // کلید یکتا برای هر مرحله از جستجو
-                $cacheKey = "near_drivers_count_{$this->id}_{$latitude}_{$longitude}_{$radius}";
-
-                // کش به مدت 5 دقیقه
-                $count = Cache::remember($cacheKey, now()->addMinutes(5), function () use ($latitude, $longitude, $radius, $fleets, $haversine) {
-                    return Driver::whereNotNull('location_at')
-                        ->where('location_at', '>=', now()->subMinutes(360))
-                        ->whereIn('fleet_id', $fleets)
-                        ->whereRaw("{$haversine} < ?", [$latitude, $longitude, $latitude, $radius])
-                        ->count();
-                });
-
-                if ($count > 0) {
-                    return $count;
-                }
-            }
-
-            // اگر در هیچ شعاعی راننده‌ای پیدا نشد
-            return 0;
+            return Driver::where('location_at', '!=', null)
+                ->where('location_at', '>=', Carbon::now()->subMinutes(360))
+                ->whereIn('fleet_id', $fleets)
+                ->selectRaw("{$haversine} AS distance")
+                ->whereRaw("{$haversine} < ?", $radius)
+                ->count();
         } catch (\Exception $e) {
-            return 0;
+            //throw $th;
         }
+        return 0;
     }
-
-
-
 
     public function getNumOfSelectedDriversAttribute()
     {
