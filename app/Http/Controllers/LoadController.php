@@ -2546,7 +2546,7 @@ class LoadController extends Controller
                     return $query->onlyTrashed();
                 }
             })
-            ->paginate(20);
+            ->paginate(12);
 
 
         $fleets = Fleet::select('id', 'title', 'parent_id')
