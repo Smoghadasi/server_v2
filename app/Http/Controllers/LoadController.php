@@ -2334,9 +2334,9 @@ class LoadController extends Controller
         return view('admin.loadBackup', compact('loads'));
     }
 
+
     public function nearLoadDrivers($load_id)
     {
-        // دریافت اطلاعات بار و بررسی مقدار null
         $load = Load::whereId($load_id)->select([
             'id',
             'numOfSms',
@@ -2351,58 +2351,75 @@ class LoadController extends Controller
 
         $latitude = $load->latitude;
         $longitude = $load->longitude;
-        $radius = 120;
         $fleets = FleetLoad::where('load_id', $load->id)->pluck('fleet_id');
 
-        // محاسبه فاصله با فرمول هاروسین
-        $haversine = "(6371 * acos(cos(radians(" . $latitude . "))
-        * cos(radians(`latitude`))
-        * cos(radians(`longitude`)
-        - radians(" . $longitude . "))
-        + sin(radians(" . $latitude . "))
-        * sin(radians(`latitude`))))";
+        $haversine = "(6371 * acos(
+        cos(radians(?)) * cos(radians(latitude)) *
+        cos(radians(longitude) - radians(?)) +
+        sin(radians(?)) * sin(radians(latitude))
+    ))";
 
-        // دریافت رانندگان نزدیک
-        $drivers = Driver::select(
-            'drivers.id',
-            'drivers.name',
-            'drivers.lastName',
-            'drivers.nationalCode',
-            'drivers.mobileNumber',
-            'drivers.province_id',
-            'drivers.city_id',
-            'drivers.fleet_id',
-            'drivers.version',
-            'drivers.freeCalls',
-            'drivers.activeDate',
-            'drivers.status',
-            'drivers.authLevel',
-            'drivers.location_at',
-            'drivers.latitude',
-            'drivers.longitude',
-            'drivers.created_at',
-        )
-            ->whereNotNull('location_at')
-            ->where('location_at', '>=', Carbon::now()->subMinutes(360))
-            ->whereIn('fleet_id', $fleets)
-            ->selectRaw("{$haversine} AS distance")
-            ->whereRaw("{$haversine} < ?", [$radius])
-            ->orderBy('distance', 'asc')
-            ->orderByDesc('created_at')
-            ->get();
+        $searchRadii = [50, 100, 120];
+        $drivers = collect();
+        $sendSmsDriverCount = 0;
+        $usedRadius = null;
 
-        // شمارش رانندگان ارسال پیامک
-        $sendSmsDriverCount = Driver::select('drivers.*')
-            ->whereNotNull('location_at')
-            ->where('location_at', '>=', Carbon::now()->subMinutes(360))
-            ->whereIn('fleet_id', $fleets)
-            ->where('sendMessage', 1)
-            ->selectRaw("{$haversine} AS distance")
-            ->whereRaw("{$haversine} < ?", [$radius])
-            ->count();
+        foreach ($searchRadii as $radius) {
+            $cacheKeyDrivers = "near_drivers_list_{$load->id}_{$latitude}_{$longitude}_{$radius}";
+            $cacheKeyCount = "near_drivers_send_sms_count_{$load->id}_{$latitude}_{$longitude}_{$radius}";
 
-        return view('admin.driver.driverNearOwner', compact('drivers', 'load', 'sendSmsDriverCount'));
+            // کش رانندگان
+            $drivers = Cache::remember($cacheKeyDrivers, now()->addMinutes(5), function () use ($latitude, $longitude, $radius, $fleets, $haversine) {
+                return Driver::select(
+                    'drivers.id',
+                    'drivers.name',
+                    'drivers.lastName',
+                    'drivers.nationalCode',
+                    'drivers.mobileNumber',
+                    'drivers.province_id',
+                    'drivers.city_id',
+                    'drivers.fleet_id',
+                    'drivers.version',
+                    'drivers.freeCalls',
+                    'drivers.activeDate',
+                    'drivers.status',
+                    'drivers.authLevel',
+                    'drivers.location_at',
+                    'drivers.latitude',
+                    'drivers.longitude',
+                    'drivers.created_at',
+                )
+                    ->whereNotNull('location_at')
+                    ->where('location_at', '>=', now()->subMinutes(360))
+                    ->whereIn('fleet_id', $fleets)
+                    ->selectRaw("{$haversine} AS distance", [$latitude, $longitude, $latitude])
+                    ->whereRaw("{$haversine} < ?", [$latitude, $longitude, $latitude, $radius])
+                    ->orderBy('distance', 'asc')
+                    ->orderByDesc('created_at')
+                    ->get();
+            });
+
+            if ($drivers->isNotEmpty()) {
+                // اگر لیست رانندگان پیدا شد، فقط آن مرحله را ادامه بده
+                $usedRadius = $radius;
+
+                $sendSmsDriverCount = Cache::remember($cacheKeyCount, now()->addMinutes(5), function () use ($latitude, $longitude, $radius, $fleets, $haversine) {
+                    return Driver::whereNotNull('location_at')
+                        ->where('location_at', '>=', now()->subMinutes(360))
+                        ->whereIn('fleet_id', $fleets)
+                        ->where('sendMessage', 1)
+                        ->selectRaw("{$haversine} AS distance", [$latitude, $longitude, $latitude])
+                        ->whereRaw("{$haversine} < ?", [$latitude, $longitude, $latitude, $radius])
+                        ->count();
+                });
+
+                break;
+            }
+        }
+
+        return view('admin.driver.driverNearOwner', compact('drivers', 'load', 'sendSmsDriverCount', 'usedRadius'));
     }
+
 
 
     public function sendMessageNearLoadDrivers(Request $request, $load_id, $type = null)
