@@ -108,33 +108,36 @@ class Load extends Model
     }
     public function getNumOfNearDriverAttribute()
     {
-        if ($this->deleted_at != null) {
+        if ($this->deleted_at !== null) {
             return 0;
         }
+
         try {
             $latitude = $this->latitude;
             $longitude = $this->longitude;
             $radius = 120;
-            $fleets = FleetLoad::where('load_id', $this->id)->pluck('fleet_id');
 
-            $haversine = "(6371 * acos(cos(radians(" . $latitude . "))
-                * cos(radians(`latitude`))
-                * cos(radians(`longitude`)
-                - radians(" . $longitude . "))
-                + sin(radians(" . $latitude . "))
-                * sin(radians(`latitude`))))";
+            // Fetch fleet IDs in a more efficient way
+            $fleetIds = FleetLoad::where('load_id', $this->id)->pluck('fleet_id')->toArray();
 
-            return Driver::where('location_at', '!=', null)
+            // Haversine calculation using bindings
+            $haversine = "(6371 * acos(cos(radians(?)) * cos(radians(latitude))
+                      * cos(radians(longitude) - radians(?))
+                      + sin(radians(?)) * sin(radians(latitude))))";
+
+            return Driver::whereNotNull('location_at')
                 ->where('location_at', '>=', Carbon::now()->subMinutes(360))
-                ->whereIn('fleet_id', $fleets)
-                ->selectRaw("{$haversine} AS distance")
-                ->whereRaw("{$haversine} < ?", $radius)
+                ->whereIn('fleet_id', $fleetIds)
+                ->selectRaw("$haversine AS distance", [$latitude, $longitude, $latitude])
+                ->whereRaw("$haversine < ?", [$radius])
                 ->count();
         } catch (\Exception $e) {
-            //throw $th;
+            Log::error("Error calculating nearby drivers: " . $e->getMessage());
         }
+
         return 0;
     }
+
 
     public function getNumOfSelectedDriversAttribute()
     {

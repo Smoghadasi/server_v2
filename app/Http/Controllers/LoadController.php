@@ -2549,7 +2549,23 @@ class LoadController extends Controller
             ->where('userType', ROLE_OWNER)
             ->where('isBot', 0)
             ->orderByDesc('created_at')
-            ->paginate(12);
+            ->select([
+                'id',
+                'isBot',
+                'user_id',
+                'userType',
+                'senderMobileNumber',
+                'fleets',
+                'fromCity',
+                'toCity',
+                'driverVisitCount',
+                'date',
+                'dateTime',
+                'latitude',
+                'longitude',
+                'deleted_at'
+            ])
+            ->paginate(10);
 
         $fleets = Cache::remember('filtered_fleets', 86400, function () {
             return Fleet::select('id', 'title', 'parent_id')
