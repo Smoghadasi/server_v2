@@ -1033,7 +1033,7 @@ class LoadController extends Controller
     public function sendNotifLoad(Load $load)
     {
         try {
-            // event(new PostCargoSmsEvent($load));
+            event(new PostCargoSmsEvent($load));
         } catch (\Exception $exception) {
             Log::emergency("******************************** send sms load by driver ******************************");
             Log::emergency($exception->getMessage());
@@ -4711,85 +4711,88 @@ class LoadController extends Controller
     }
 
     // جستجوی بارهای نزدیک من
-    public function searchTheNearestCargo(Request $request, Driver $driver, $city = null, $radius = 1000)
-    {
-        $rows = 150;
+   public function searchTheNearestCargo(Request $request, Driver $driver, $city = null, $radius = 1000)
+{
 
-        try {
-            if (isset($city->latitude) && $city->longitude) {
-                $latitude = $city->latitude;
-                $longitude = $city->longitude;
-            } else {
-                $latitude = $request->latitude;
-                $longitude = $request->longitude;
-            }
+    $rows = 150;
 
-            $fleet_id = $driver->fleet_id;
+    $driver->location_at = now();
+    $driver->save();
 
-            // اگر جستجو براساس فیلتر بود
-            // if (isset($request->filter) && $request->filter)
-            //     $fleet_id = $request->fleet_id;
+    try {
+        $latitude = $city->latitude ?? $request->latitude;
+        $longitude = $city->longitude ?? $request->longitude;
 
-            $conditions[] = ['fleet_loads.fleet_id', $fleet_id];
-            $conditions[] = ['loads.status', ON_SELECT_DRIVER];
-            $conditions[] = ['loads.created_at', '>', \date('Y-m-d h:i:s', strtotime('-1 day', time()))];
-            $conditions[] = ['loads.driverCallCounter', '>', 0];
+        $fleet_id = $driver->fleet_id;
 
-            if (isset($request->lastLoadId)) {
-                $rows = 25;
-                if ($request->lastLoadId > 0) {
-                    $conditions[] = ['loads.id', '<', $request->lastLoadId];
-                }
-            }
-            $haversine = "(6371 * acos(cos(radians(" . $latitude . "))
-                    * cos(radians(`latitude`))
-                    * cos(radians(`longitude`)
-                    - radians(" . $longitude . "))
-                    + sin(radians(" . $latitude . "))
-                    * sin(radians(`latitude`))))";
+        $conditions = [
+            ['fleet_loads.fleet_id', '=', $fleet_id],
+            ['loads.status', '=', ON_SELECT_DRIVER],
+            ['loads.created_at', '>', date('Y-m-d H:i:s', strtotime('-22 hours'))],
+            ['loads.driverCallCounter', '>', 0]
+        ];
 
-            $loads = Load::join('fleet_loads', 'fleet_loads.load_id', 'loads.id')
-                ->select(
-                    'loads.id',
-                    'loads.suggestedPrice',
-                    'loads.title',
-                    'loads.priceBased',
-                    'loads.userType',
-                    'loads.urgent',
-                    'loads.mobileNumberForCoordination',
-                    'loads.origin_city_id',
-                    'loads.destination_city_id',
-                    'loads.time',
-                    'loads.fromCity',
-                    'loads.toCity',
-                    'loads.fleets',
-                    'loads.created_at',
-                )
-                ->where($conditions)
-                ->selectRaw("{$haversine} AS distance")
-                ->whereRaw("{$haversine} < ?", $radius)
-                ->orderBy('distance', 'asc')
-                ->orderByDesc('created_at')
-                ->take($rows)
-                ->get();
-
-            return [
-                'result' => SUCCESS,
-                'loads' => $loads
-                // 'currentTime' => time(),
-            ];
-        } catch (\Exception $exception) {
-            Log::emergency("-------------------------------------------------------------------------");
-            Log::emergency("LoadController : searchTheNearestCargo");
-            Log::emergency($exception);
-            Log::emergency("-------------------------------------------------------------------------");
+        if ($request->has('lastLoadId') && $request->lastLoadId > 0) {
+            $rows = 25;
+            $conditions[] = ['loads.id', '<', $request->lastLoadId];
         }
+
+        $haversine = "(6371 * acos(
+            cos(radians(?)) *
+            cos(radians(latitude)) *
+            cos(radians(longitude) - radians(?)) +
+            sin(radians(?)) *
+            sin(radians(latitude))
+        ))";
+
+        $loads = Load::join('fleet_loads', 'fleet_loads.load_id', '=', 'loads.id')
+            ->select(
+                'loads.id',
+                'loads.suggestedPrice',
+                'loads.title',
+                'loads.priceBased',
+                'loads.userType',
+                'loads.urgent',
+                'loads.mobileNumberForCoordination',
+                'loads.origin_city_id',
+                'loads.destination_city_id',
+                'loads.time',
+                'loads.fromCity',
+                'loads.toCity',
+                'loads.fleets',
+                'loads.created_at'
+            )
+            ->selectRaw("{$haversine} AS distance", [$latitude, $longitude, $latitude])
+            ->where($conditions)
+            ->whereRaw("{$haversine} < ?", [$latitude, $longitude, $latitude, $radius])
+            ->orderBy('distance', 'asc')             // نزدیک‌ترین‌ها اول
+            ->orderBy('loads.created_at', 'desc')    // جدیدترین‌ها اول
+            ->take($rows)
+            ->get();
+
+        return [
+            'result' => SUCCESS,
+            'loads' => $loads,
+            'freeCalls' => $driver->freeCallsDriver,
+        ];
+    } catch (\Exception $exception) {
+        Log::emergency("-------------------------------------------------------------------------");
+        Log::emergency("LoadController : searchTheNearestCargo");
+        Log::emergency($exception);
+        Log::emergency("-------------------------------------------------------------------------");
 
         return [
             'result' => UN_SUCCESS,
             'message' => 'درحال حاضر باری در محدوده شما موجود نیست'
         ];
     }
+}
+
+
+
+
+
+
 
     // درخواست اطلاعات رانندگان درحال حمل بار
     public function requestDriversInfoOfCargo(Driver $driver)
