@@ -645,6 +645,11 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::post('sendCustomNotificationOwner', [NotificationController::class, 'sendCustomNotificationOwner']);
 
     });
+
+    Route::prefix('test')->group(function () {
+        Route::get('sendNotifLoad/{load}', [LoadController::class, 'sendNotifLoadTest']);
+
+    });
 });
 
 
