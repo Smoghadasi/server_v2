@@ -30,36 +30,40 @@ class PostCargoSms implements ShouldQueue
      */
     public function handle(PostCargoSmsEvent $event)
     {
-        $load = $event->load;
+        try {
+            $load = $event->load;
 
-        $latitude = $load->latitude;
-        $longitude = $load->longitude;
+            $latitude = $load->latitude;
+            $longitude = $load->longitude;
 
-        $fleets = FleetLoad::where('load_id', $load->id)->pluck('fleet_id');
-        $cityFrom = ProvinceCity::where('id', $load->origin_city_id)->first();
-        $cityTo = ProvinceCity::where('id', $load->destination_city_id)->first();
+            $fleets = FleetLoad::where('load_id', $load->id)->pluck('fleet_id');
+            $cityFrom = ProvinceCity::whereId($load->origin_city_id)->first();
+            $cityTo = ProvinceCity::whereId($load->destination_city_id)->first();
 
-        $haversine = "(6371 * acos(cos(radians($latitude))
-            * cos(radians(`latitude`))
-            * cos(radians(`longitude`)
-            - radians($longitude))
-            + sin(radians($latitude))
-            * sin(radians(`latitude`))))";
-        $count = 7;
-        $radius = 120;
+            $haversine = "(6371 * acos(cos(radians($latitude))
+                * cos(radians(`latitude`))
+                * cos(radians(`longitude`)
+                - radians($longitude))
+                + sin(radians($latitude))
+                * sin(radians(`latitude`))))";
+            $count = 7;
+            $radius = 120;
 
-        $drivers = $this->getDrivers($cityFrom, $fleets, $haversine, $radius, $count);
+            $drivers = $this->getDrivers($cityFrom, $fleets, $haversine, $radius, $count);
 
-        foreach ($drivers as $driver) {
-            $this->sendMessage($driver, $cityFrom, $cityTo);
-        }
-
-        if ($drivers->isEmpty()) {
-            $this->resetSendMessage($cityFrom, $fleets, $haversine, $radius);
-            $drivers = $this->getDrivers($cityFrom, $fleets, $haversine, $radius, $count, 0);
             foreach ($drivers as $driver) {
                 $this->sendMessage($driver, $cityFrom, $cityTo);
             }
+
+            if ($drivers->isEmpty()) {
+                $this->resetSendMessage($cityFrom, $fleets, $haversine, $radius);
+                $drivers = $this->getDrivers($cityFrom, $fleets, $haversine, $radius, $count, 0);
+                foreach ($drivers as $driver) {
+                    $this->sendMessage($driver, $cityFrom, $cityTo);
+                }
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
         }
     }
     private function resetSendMessage($cityFrom, $fleets, $haversine, $radius)
@@ -97,6 +101,7 @@ class PostCargoSms implements ShouldQueue
             ->where('province_id', $cityFrom->parent_id)
             ->selectRaw("{$haversine} AS distance")
             ->whereRaw("{$haversine} < ?", $radius)
+            ->orderBy('distance', 'asc')
             ->take($count)
             ->get();
     }

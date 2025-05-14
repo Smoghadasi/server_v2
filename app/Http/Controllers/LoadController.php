@@ -1074,29 +1074,29 @@ class LoadController extends Controller
             Log::emergency("*******************************************************************************************");
         }
 
-        try {
-            $fleets = FleetLoad::where('load_id', $load->id)->get();
-            $cityFrom = ProvinceCity::where('id', $load->origin_city_id)->first();
-            $cityTo = ProvinceCity::where('id', $load->destination_city_id)->first();
+        // try {
+        //     $fleets = FleetLoad::where('load_id', $load->id)->get();
+        //     $cityFrom = ProvinceCity::where('id', $load->origin_city_id)->first();
+        //     $cityTo = ProvinceCity::where('id', $load->destination_city_id)->first();
 
-            foreach ($fleets as $fleet) {
-                $driverFCM_tokens = Driver::whereNotNull('FCM_token')
-                    ->where('province_id', $cityFrom->parent_id)
-                    ->where('fleet_id', $fleet->fleet_id)
-                    ->where('version', '>', 58)
-                    ->where('notification', 'enable')
-                    ->pluck('FCM_token');
-                $title = 'ایران ترابر رانندگان';
-                $body = ' بار ' . $fleet->fleet->title . ':' . ' از ' . $cityFrom->name . ' به ' . $cityTo->name;
-                foreach ($driverFCM_tokens as $driverFCM_token) {
-                    $this->sendNotification($driverFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
-                }
-            }
-        } catch (\Exception $exception) {
-            Log::emergency("----------------------send notification load by driver-----------------------");
-            Log::emergency($exception);
-            Log::emergency("---------------------------------------------------------");
-        }
+        //     foreach ($fleets as $fleet) {
+        //         $driverFCM_tokens = Driver::whereNotNull('FCM_token')
+        //             ->where('province_id', $cityFrom->parent_id)
+        //             ->where('fleet_id', $fleet->fleet_id)
+        //             ->where('version', '>', 58)
+        //             ->where('notification', 'enable')
+        //             ->pluck('FCM_token');
+        //         $title = 'ایران ترابر رانندگان';
+        //         $body = ' بار ' . $fleet->fleet->title . ':' . ' از ' . $cityFrom->name . ' به ' . $cityTo->name;
+        //         foreach ($driverFCM_tokens as $driverFCM_token) {
+        //             $this->sendNotification($driverFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
+        //         }
+        //     }
+        // } catch (\Exception $exception) {
+        //     Log::emergency("----------------------send notification load by driver-----------------------");
+        //     Log::emergency($exception);
+        //     Log::emergency("---------------------------------------------------------");
+        // }
     }
 
     // تبدیل اعداد فارسی به انگلیسی
