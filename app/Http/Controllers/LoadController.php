@@ -5190,6 +5190,13 @@ class LoadController extends Controller
     {
         $task = Load::withTrashed()->find($load);
         $owner = Owner::find($task->user_id);
+        if ($owner->isAuth !== 1) {
+            $message[1] = 'برای ثبت بار احراز هویت خود را تکمیل کنید';
+            return [
+                'result' => UN_SUCCESS,
+                'message' => $message
+            ];
+        }
         if (BlockPhoneNumber::where(function ($query) use ($owner) {
             $query->where('nationalCode', $owner->nationalCode)
                 ->orWhere('phoneNumber', $owner->mobileNumber);
