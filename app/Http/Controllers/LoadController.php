@@ -2600,7 +2600,7 @@ class LoadController extends Controller
                 'longitude',
                 'deleted_at'
             ])
-            ->paginate(2);
+            ->paginate(10);
 
         $fleets = Cache::remember('filtered_fleets', 86400, function () {
             return Fleet::select('id', 'title', 'parent_id')
@@ -2954,7 +2954,7 @@ class LoadController extends Controller
                 }
             }
             $conditions[] = ['status', ON_SELECT_DRIVER];
-            $conditions[] = ['created_at', '>', $toDate];
+            // $conditions[] = ['created_at', '>', $toDate];
             $conditions[] = ['fleets', 'Like', '%fleet_id":' . $driver->fleet_id . ',%'];
             $conditions[] = ['driverCallCounter', '>', 0];
 
@@ -4747,7 +4747,7 @@ class LoadController extends Controller
     // جستجوی بارهای نزدیک من
     public function searchTheNearestCargo(Request $request, Driver $driver, $city = null, $radius = 1000)
     {
-        $rows = 70;
+        $rows = 40;
 
         $driver->location_at = now();
         $driver->save();
