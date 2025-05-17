@@ -1033,7 +1033,7 @@ class LoadController extends Controller
     public function sendNotifLoad(Load $load)
     {
         try {
-            // event(new PostCargoSmsEvent($load));
+            event(new PostCargoSmsEvent($load));
         } catch (\Exception $exception) {
             Log::emergency("******************************** send sms load by driver ******************************");
             Log::emergency($exception->getMessage());
@@ -2600,7 +2600,7 @@ class LoadController extends Controller
                 'longitude',
                 'deleted_at'
             ])
-            ->paginate(10);
+            ->paginate(2);
 
         $fleets = Cache::remember('filtered_fleets', 86400, function () {
             return Fleet::select('id', 'title', 'parent_id')
@@ -2936,7 +2936,7 @@ class LoadController extends Controller
         try {
 
             $page = 15;
-
+            $toDate = \date('Y-m-d h:i:s', strtotime('-1 day', time()));
             $conditions = [];
             if ($lastLoadId > 0) {
                 $conditions[] = ['id', '<', $lastLoadId];
@@ -2954,7 +2954,7 @@ class LoadController extends Controller
                 }
             }
             $conditions[] = ['status', ON_SELECT_DRIVER];
-            $conditions[] = ['created_at', '>', \date('Y-m-d h:i:s', strtotime('-1 day', time()))];
+            $conditions[] = ['created_at', '>', $toDate];
             $conditions[] = ['fleets', 'Like', '%fleet_id":' . $driver->fleet_id . ',%'];
             $conditions[] = ['driverCallCounter', '>', 0];
 
@@ -4747,7 +4747,7 @@ class LoadController extends Controller
     // جستجوی بارهای نزدیک من
     public function searchTheNearestCargo(Request $request, Driver $driver, $city = null, $radius = 1000)
     {
-        $rows = 150;
+        $rows = 70;
 
         $driver->location_at = now();
         $driver->save();
@@ -4757,11 +4757,11 @@ class LoadController extends Controller
             $longitude = $city->longitude ?? $request->longitude;
 
             $fleet_id = $driver->fleet_id;
-
+            $toDate = date('Y-m-d H:i:s', strtotime('-22 hours'));
             $conditions = [
                 ['fleet_loads.fleet_id', '=', $fleet_id],
                 ['loads.status', '=', ON_SELECT_DRIVER],
-                ['loads.created_at', '>', date('Y-m-d H:i:s', strtotime('-22 hours'))],
+                ['loads.created_at', '>', $toDate],
                 ['loads.driverCallCounter', '>', 0]
             ];
 
