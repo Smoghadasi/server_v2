@@ -113,91 +113,96 @@ class DataConvertPlusController extends Controller
     public function dataConvertSmart($cargo)
     {
         $text = $cargo->cargo;
-        $flatText = preg_replace('/\s+/', ' ', str_replace(["\r\n", "\r"], "\n", trim($text)));
-        $lines = array_values(array_filter(array_map('trim', explode("\n", $text))));
 
-        // کش کردن دیتاها برای افزایش سرعت
+        // نرمال‌سازی و آماده‌سازی
+        $normalizedText = str_replace(["\r\n", "\r"], "\n", trim($text));
+        $flatText = preg_replace('/\s+/', ' ', $normalizedText);
+        $flatText = preg_replace('/\b(کرایه|2|وزن|بار|تخلیه|نوع بار|کل)\b/u', '', $flatText);
+        $lines = array_values(array_filter(array_map('trim', explode("\n", $normalizedText))));
+
+        // کش دیتاهای ثابت
         $fleetMap = cache()->remember('fleet_map', 60, fn() => DB::table('fleets')->pluck('id', 'title')->toArray());
         $cityMap = cache()->remember('city_map', 60, fn() => DB::table('province_cities')->pluck('id', 'name')->toArray());
-        $equivalentWordsMap = $this->getEquivalentWords();
+        $parentCityMap = cache()->remember('parent_city_map', 60, fn() => DB::table('province_cities')->pluck('parent_id', 'name')->toArray());
 
-        // لیست همه عنوان‌ها شامل معادل‌ها
-        $fleetTitles = array_unique(array_merge(array_keys($fleetMap), array_keys($equivalentWordsMap)));
+        $equivalentWordsMap = method_exists($this, 'getEquivalentWords') ? $this->getEquivalentWords() : [];
+
+        // آماده‌سازی لیست ناوگان‌ها
+        $fleetTitles = array_unique(array_merge(array_keys($fleetMap), array_keys($equivalentWordsMap), ['کفی', 'تریلی', 'نیسان', 'ترانزیت']));
         usort($fleetTitles, fn($a, $b) => mb_strlen($b) <=> mb_strlen($a));
         $fleetPattern = implode('|', array_map('preg_quote', $fleetTitles));
 
+        // لیست شهرها
         $cityTitles = array_keys($cityMap);
         usort($cityTitles, fn($a, $b) => mb_strlen($b) <=> mb_strlen($a));
         $cityPattern = implode('|', array_map('preg_quote', $cityTitles));
 
-        // استخراج شماره تلفن
-        preg_match('/\b09\d{9}\b/u', $text, $phoneMatch);
-        $phone = $phoneMatch[0] ?? null;
+        // شماره تماس
+        preg_match_all('/\b09\d{9}\b/u', $text, $phoneMatches);
+        $phone = $phoneMatches[0][0] ?? null;
 
-        $results = [];
+        preg_match_all("/\b($cityPattern)\b/u", $flatText, $cityMatches);
+        $allCities = $cityMatches[0] ?? [];
+
+        // استخراج مبدا اولیه
         $origin = null;
-        $lastFleets = [];
-
-        preg_match_all("/\b($cityPattern)\b/u", $flatText, $citiesMatch);
-        $allCities = $citiesMatch[0] ?? [];
-
-        // شناسایی مبدا از متن
-        if (preg_match("/(?:از|بارگیری)\s*(?:در\s*)?($cityPattern)/u", $flatText, $match)) {
+        if (preg_match("/(?:از|بارگیری(?:\s+از)?|مبدا)\s*(?:در\s*)?($cityPattern)/u", $flatText, $match)) {
             $origin = $match[1];
         } elseif (count($allCities) >= 2) {
             $origin = $allCities[0];
         }
 
+        $results = [];
+        $lastOrigin = $origin;
+
         foreach ($lines as $line) {
-            $fleet = null;
-            $org = null;
-            $dst = null;
+            $line = preg_replace('/\b(کرایه|وزن|بار|تخلیه|نوع بار|کل)\b/u', '', $line);
 
-            // تشخیص نوع ماشین با در نظر گرفتن معادل‌ها
-            foreach ($fleetTitles as $f) {
-                if (Str::contains($line, $f)) {
-                    $fleet = $equivalentWordsMap[$f] ?? $f; // جایگزینی معادل با عنوان اصلی
-                    $lastFleets[] = $fleet;
-                    break;
-                }
+            // شماره تماس در خط
+            if (preg_match('/\b09\d{9}\b/u', $line, $m)) {
+                $phone = $m[0];
+                $line = preg_replace('/\b09\d{9}\b/u', '', $line);
             }
 
-            // تشخیص مبدا و مقصد
-            foreach ($cityTitles as $c) {
-                if (Str::contains($line, $c)) {
-                    if (!$org) $org = $c;
-                    elseif (!$dst && $org !== $c) $dst = $c;
-                }
-            }
+            // تشخیص ناوگان
+            preg_match_all("/\b($fleetPattern)\b/u", $line, $fleetMatches);
+            $fleets = array_unique(array_map(fn($f) => $equivalentWordsMap[$f] ?? $f, $fleetMatches[0]));
 
-            // اگر داده کافی موجود باشد
-            if ($fleet && $org && $dst) {
-                $results[] = [
-                    'fleet' => $fleet,
-                    'fleet_id' => $fleetMap[$fleet] ?? null,
-                    'origin' => $org,
-                    'origin_id' => $cityMap[$org] ?? null,
-                    'destination' => $dst,
-                    'destination_id' => $cityMap[$dst] ?? null,
-                    'phone' => $phone,
-                ];
-            }
-        }
-
-        // اگر هیچ رکوردی پیدا نشد، از fallback استفاده کن
-        if (empty($results) && $origin && count($allCities) >= 2) {
-            $destinations = array_filter($allCities, fn($c) => $c !== $origin);
-            foreach ($fleetTitles as $f) {
-                if (Str::contains($flatText, $f)) {
-                    $fleetTitle = $equivalentWordsMap[$f] ?? $f;
-                    foreach ($destinations as $d) {
+            // مسیر "شهر به شهر"
+            if (preg_match_all("/\b($cityPattern)\b\s+به\s+\b($cityPattern)\b/u", $line, $routeMatches, PREG_SET_ORDER)) {
+                foreach ($routeMatches as $match) {
+                    foreach ($fleets ?: [null] as $fleet) {
                         $results[] = [
-                            'fleet' => $fleetTitle,
-                            'fleet_id' => $fleetMap[$fleetTitle] ?? null,
-                            'origin' => $origin,
-                            'origin_id' => $cityMap[$origin] ?? null,
-                            'destination' => $d,
-                            'destination_id' => $cityMap[$d] ?? null,
+                            'fleet' => $fleet,
+                            'fleet_id' => $fleetMap[$fleet] ?? null,
+                            'origin' => $match[1],
+                            'origin_id' => $cityMap[$match[1]] ?? null,
+                            'origin_state_id' => $parentCityMap[$match[1]] ?? null,
+                            'destination' => $match[2],
+                            'destination_id' => $cityMap[$match[2]] ?? null,
+                            'destination_state_id' => $parentCityMap[$match[2]] ?? null,
+                            'phone' => $phone,
+                        ];
+                    }
+                    $lastOrigin = $match[1];
+                }
+                continue;
+            }
+
+            // حالت مقصد بدون مبدا (مبدا از قبل ذخیره شده)
+            if ($lastOrigin && !empty($fleets)) {
+                preg_match_all("/\b($cityPattern)\b/u", $line, $citiesInLine);
+                foreach ($citiesInLine[0] ?? [] as $dest) {
+                    foreach ($fleets as $fleet) {
+                        $results[] = [
+                            'fleet' => $fleet,
+                            'fleet_id' => $fleetMap[$fleet] ?? null,
+                            'origin' => $lastOrigin,
+                            'origin_id' => $cityMap[$lastOrigin] ?? null,
+                            'origin_state_id' => $parentCityMap[$lastOrigin] ?? null,
+                            'destination' => $dest,
+                            'destination_id' => $cityMap[$dest] ?? null,
+                            'destination_state_id' => $parentCityMap[$dest] ?? null,
                             'phone' => $phone,
                         ];
                     }
@@ -205,9 +210,31 @@ class DataConvertPlusController extends Controller
             }
         }
 
-        // حذف موارد تکراری
-        $uniqueResults = collect($results)->unique(fn($item) => $item['fleet'] . '-' . $item['origin'] . '-' . $item['destination'])->values()->all();
+        // fallback
+        if (empty($results) && $origin && count($allCities) >= 2) {
+            $destinations = array_filter($allCities, fn($c) => $c !== $origin);
+            foreach ($fleetTitles as $f) {
+                if (Str::contains($flatText, $f)) {
+                    $fleet = $equivalentWordsMap[$f] ?? $f;
+                    foreach ($destinations as $dest) {
+                        $results[] = [
+                            'fleet' => $fleet,
+                            'fleet_id' => $fleetMap[$fleet] ?? null,
+                            'origin' => $origin,
+                            'origin_id' => $cityMap[$origin] ?? null,
+                            'origin_state_id' => $parentCityMap[$origin] ?? null,
+                            'destination' => $dest,
+                            'destination_id' => $cityMap[$dest] ?? null,
+                            'destination_state_id' => $parentCityMap[$dest] ?? null,
+                            'phone' => $phone,
+                        ];
+                    }
+                }
+            }
+        }
 
+        // حذف تکراری‌ها
+        $uniqueResults = collect($results)->unique(fn($item) => ($item['fleet'] ?? '') . '-' . $item['origin'] . '-' . $item['destination'] . '-' . ($item['phone'] ?? ''))->values()->all();
         // اطلاعات تکمیلی برای نمایش
         $countOfCargos = CargoConvertList::where('operator_id', 0)->count();
         $users = UserController::getOnlineAndOfflineUsers();
@@ -218,7 +245,7 @@ class DataConvertPlusController extends Controller
     // ذخیره دسته ای بارها
     public function storeMultiCargoSmart(Request $request, CargoConvertList $cargo)
     {
-        return $request;
+        // return $request;
         try {
             $expiresAt = now()->addMinutes(3);
             $userId = Auth::id();
@@ -260,20 +287,24 @@ class DataConvertPlusController extends Controller
         // return dd($request);
         $counter = 0;
         foreach ($request->key as $key) {
-            $origin = "originId_" . $key;
-            $destination = "destinationId_" . $key;
+            $origin = "origin_" . $key;
+            $originState = "origin_state_id_" . $key;
+            $destination = "destination_" . $key;
+            $destinationState = "destination_state_id_" . $key;
             $mobileNumber = "mobileNumber_" . $key;
             $description = "description_" . $key;
-            $fleet = "fleetId_" . $key;
+            $fleet = "fleets_" . $key;
             $title = "title_" . $key;
             // $pattern = "pattern_" . $key;
             try {
                 $this->storeCargoSmart(
                     $request->$origin,
+                    $request->$originState,
                     $request->$destination,
+                    $request->$destinationState,
                     $request->$mobileNumber,
                     $request->$description,
-                    $fleet,
+                    $request->$fleet,
                     $request->$title,
                     // $request->$pattern,
                     $counter,
@@ -287,21 +318,19 @@ class DataConvertPlusController extends Controller
 
         $cargo->status = true;
         $cargo->save();
-        return back()->with('success', 'بار ثبت شد');
+        return back()->with('success', $counter . 'بار ثبت شد');
     }
-    public function storeCargoSmart($origin, $destination, $mobileNumber, $description, $fleet, $title, &$counter, $cargoId)
+    public function storeCargoSmart($origin, $originState, $destination, $destinationState, $mobileNumber, $description, $fleet, $title, &$counter, $cargoId)
     {
         if (!strlen(trim($origin)) || $origin == null || $origin == 'null' || !strlen(trim($destination)) || $destination == null || $destination == 'null' || !strlen($fleet) || !strlen($mobileNumber))
             return;
-
-        $freight = convertFaNumberToEn(str_replace(',', '', $freight));
 
         substr($mobileNumber, 0, 1) !== '0' ? $mobileNumber = '0' . $mobileNumber : $mobileNumber;
 
         $cargoPattern = '';
 
         try {
-            $cargoPattern = $origin . $destination . $mobileNumber . $fleet;
+            $cargoPattern = $origin .$destination . $mobileNumber . $fleet;
 
             if (
                 BlockPhoneNumber::where('phoneNumber', $mobileNumber)->exists() ||
@@ -325,7 +354,6 @@ class DataConvertPlusController extends Controller
             DB::beginTransaction();
             $load = new Load();
             $load->title = strlen($title) == 0 ? 'بدون عنوان' : $title;
-            $load->pattern = $pattern;
             $load->cargo_convert_list_id = $cargoId;
             $load->senderMobileNumber = $mobileNumber;
             $load->emergencyPhone = $mobileNumber;
@@ -377,20 +405,12 @@ class DataConvertPlusController extends Controller
             $destinationCity = ProvinceCity::where('name', 'like', '%' . $destination)
                 ->where('parent_id', $destinationState)
                 ->first();
+            Log::alert($destinationState);
+            Log::alert($destinationState);
 
-            // Log::emergency($origin);
-            // Log::emergency($originState);
-            if (isset($originCity->id)) {
-                $load->origin_city_id = $originCity->id;
-            } else {
-                $load->origin_city_id = $this->getCityId($origin);
-            }
+            $load->origin_city_id = $originCity->id;
+            $load->destination_city_id = $destinationCity->id;
 
-            if (isset($destinationCity->id)) {
-                $load->destination_city_id = $destinationCity->id;
-            } else {
-                $load->origin_city_id = $this->getCityId($destination);
-            }
             $load->fromCity = $this->getCityName($load->origin_city_id);
             $load->toCity = $this->getCityName($load->destination_city_id);
 
@@ -414,9 +434,6 @@ class DataConvertPlusController extends Controller
             $load->origin_state_id = AddressController::geStateIdFromCityId($load->origin_city_id);
             $load->description = $description ?? '';
 
-            $load->priceBased = $priceType;
-            $load->proposedPriceForDriver = $freight;
-            $load->suggestedPrice = $freight;
             $load->mobileNumberForCoordination = $mobileNumber;
             $load->storeFor = ROLE_DRIVER;
             $load->status = ON_SELECT_DRIVER;
@@ -552,74 +569,6 @@ class DataConvertPlusController extends Controller
                 } catch (\Exception $th) {
                     //throw $th;
                 }
-                // if ($load->isBot == 1) {
-
-                // $firstLoad = FirstLoad::where('mobileNumberForCoordination', $load->mobileNumberForCoordination)->first();
-
-                // if (is_null($firstLoad) && !Owner::where('isAccepted', 1)->where('mobileNumber', $load->mobileNumberForCoordination)->exists()) {
-
-                //     $load->update(['status' => BEFORE_APPROVAL]);
-                // } else {
-                //     try {
-                //         $first = new FirstLoad();
-                //         $first->title = $load->title;
-                //         $first->weight = $load->weight;
-                //         $first->width = $load->width;
-                //         $first->length = $load->length;
-                //         $first->height = $load->height;
-                //         $first->loadingAddress = $load->loadingAddress;
-                //         $first->dischargeAddress = $load->dischargeAddress;
-                //         $first->senderMobileNumber = $load->senderMobileNumber;
-                //         $first->receiverMobileNumber = $load->receiverMobileNumber;
-                //         $first->insuranceAmount = $load->insuranceAmount;
-                //         $first->suggestedPrice = $load->suggestedPrice;
-                //         $first->marketing_price = 0;
-                //         $first->emergencyPhone = $load->emergencyPhone;
-                //         $first->dischargeTime = $load->dischargeTime;
-                //         $first->fleet_id = $load->fleet_id;
-                //         $first->load_type_id = $load->load_type_id;
-                //         $first->tenderTimeDuration = $load->tenderTimeDuration;
-                //         $first->packing_type_id = $load->packing_type_id;
-                //         $first->loadPic = $load->loadPic;
-                //         $first->user_id = $load->user_id;
-                //         $first->loadMode = $load->loadMode;
-                //         $first->loadingHour = $load->loadingHour;
-                //         $first->loadingMinute = $load->loadingMinute;
-                //         $first->numOfTrucks = $load->numOfTrucks;
-                //         $first->origin_city_id = $load->origin_city_id;
-                //         $first->destination_city_id = $load->destination_city_id;
-                //         $first->fromCity = $load->fromCity;
-                //         $first->toCity = $load->toCity;
-                //         $first->loadingDate = $load->loadingDate;
-                //         $first->time = $load->time;
-                //         $first->latitude = $load->latitude;
-                //         $first->longitude = $load->longitude;
-                //         $first->weightPerTruck = $load->weightPerTruck;
-                //         $first->bulk = $load->bulk;
-                //         $first->dangerousProducts = $load->dangerousProducts;
-                //         $first->origin_state_id = $load->origin_state_id;
-                //         $first->description = $load->description;
-                //         $first->priceBased = $load->priceBased;
-                //         $first->bearing_id = $load->bearing_id;
-                //         $first->proposedPriceForDriver = $load->proposedPriceForDriver;
-                //         $first->operator_id = $load->operator_id;
-                //         $first->userType = $load->userType;
-                //         $first->origin_longitude = $load->origin_longitude;
-                //         $first->destination_longitude = $load->destination_longitude;
-                //         $first->mobileNumberForCoordination = $load->mobileNumberForCoordination;
-                //         $first->storeFor = $load->storeFor;
-                //         $first->status = $load->status;
-                //         $first->fleets = $load->fleets;
-                //         $first->deliveryTime = $load->deliveryTime;
-                //         $first->save();
-                //     } catch (\Exception $e) {
-                //         Log::emergency("========================= first load ==================================");
-                //         Log::emergency($e->getMessage());
-                //         Log::emergency("==============================================================");
-                //     }
-                // }
-
-                // }
             }
 
 
@@ -634,12 +583,37 @@ class DataConvertPlusController extends Controller
         }
     }
 
-    // دریافت لیست کلمات اصلی
-    private function getOriginWords()
+    private function getCityName($city_id)
     {
-        return Equivalent::get()->pluck('originalWord')
-            ->map(fn($item) => preg_quote(trim($item)))
-            ->toArray();
+        try {
+            $city = ProvinceCity::where('id', $city_id)->where('parent_id', '!=', 0)->select('name', 'parent_id')->first();
+            $state = ProvinceCity::where('id', $city->parent_id)->first();
+            if (isset($city->name))
+                return $state->name . ', ' . $city->name;
+        } catch (\Exception $e) {
+        }
+        return '';
+    }
+    private function getCityId($cityName)
+    {
+        try {
+            $city = ProvinceCity::where('name', $cityName)->where('parent_id', '!=', 0)->select('id')->first();
+            if (!isset($city->id)) {
+                $city = ProvinceCity::where('name', str_replace('ک', 'ك', $cityName))->where('parent_id', '!=', 0)->select('id')->first();
+            }
+            if (!isset($city->id)) {
+                $city = ProvinceCity::where('name', str_replace('ی', 'ي', $cityName))->where('parent_id', '!=', 0)->select('id')->first();
+            }
+            if (!isset($city->id)) {
+                $city = ProvinceCity::where('name', str_replace('ی', 'ي', str_replace('ک', 'ك', $cityName)))->where('parent_id', '!=', 0)->select('id')->first();
+            }
+            if (isset($city->id))
+                return $city->id;
+        } catch (\Exception $e) {
+        }
+
+
+        return 0;
     }
 
     private function getEquivalentWords(): array
