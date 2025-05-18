@@ -17,6 +17,7 @@ use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\ContractCollaborationController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\DataConvertController;
+use App\Http\Controllers\DataConvertPlusController;
 use App\Http\Controllers\DiscrepancyController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\FleetController as AdminFleetController;
@@ -813,6 +814,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         Route::get('finalApprovalAndStoreCargo', [DataConvertController::class, 'finalApprovalAndStoreCargo'])->middleware('operator');
 
+        Route::get('smartStoreCargo', [DataConvertPlusController::class, 'smartStoreCargo'])->name('admin.smartStoreCargo')->middleware('operator');
+
         Route::get('removeCargoFromCargoList/{cargo}', [DataConvertController::class, 'removeCargoFromCargoList'])->middleware('operator');
 
 
@@ -824,6 +827,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::post('dataConvert', [DataConvertController::class, 'dataConvert'])->middleware('operator');
 
         Route::post('storeMultiCargo/{cargo}', [DataConvertController::class, 'storeMultiCargo'])->middleware('operator');
+
+        Route::post('storeMultiCargoSmart/{cargo}', [DataConvertPlusController::class, 'storeMultiCargoSmart'])->middleware('operator');
 
         // دیکشنری کلمات معادل در ثبت بار
         Route::get('dictionary', [DataConvertController::class, 'dictionary'])->middleware('operator');

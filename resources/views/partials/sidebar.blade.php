@@ -31,6 +31,14 @@
                     <div data-i18n="Without menu">تایید و ثبت دسته ای بار</div>
                 </a>
             </li>
+            @if (Auth::user()->role == 'admin'|| Auth::id() == 29)
+                <li class="menu-item">
+                    <a class="menu-link" href="{{ route('admin.smartStoreCargo') }}">
+                        <i class="menu-icon tf-icons bx bx-box"></i>
+                        <div data-i18n="Without menu">ثبت بار (پلاس)</div>
+                    </a>
+                </li>
+            @endif
         @endif
 
         <li class="menu-item {{ request()->is('admin/support*') ? 'active open' : '' }}">
