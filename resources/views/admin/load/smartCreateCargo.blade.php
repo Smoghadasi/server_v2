@@ -5,7 +5,7 @@
 
     <div class="card">
         <h5 class="card-header">
-            ثبت بار
+            ثبت بار پلاس
             -
             تعداد بار در صف : {{ $countOfCargos }}
         </h5>
@@ -110,12 +110,14 @@
 
                             <input type="hidden" class="form-control" name="originId_{{ $key }}" value="{{ $item['origin_id'] }}">
                             <label class="col-lg-6 mb-2">مبدا :
-                                <input type="text" class="form-control" name="originState_{{ $key }}" value="{{ $item['origin'] }}">
+                                <input type="text" class="form-control" name="origin_{{ $key }}" value="{{ $item['origin'] }}">
+                                <input type="hidden" class="form-control" name="origin_state_id_{{ $key }}" value="{{ $item['origin_state_id'] }}">
                             </label>
 
                             <input type="hidden" class="form-control" name="destinationId_{{ $key }}" value="{{ $item['destination_id'] }}">
                             <label class="col-lg-6 mb-2">مقصد :
-                                <input type="text" class="form-control" name="destinationState_{{ $key }}" value="{{ $item['destination'] }}">
+                                <input type="text" class="form-control" name="destination_{{ $key }}" value="{{ $item['destination'] }}">
+                                <input type="hidden" class="form-control" name="destination_state_id_{{ $key }}" value="{{ $item['destination_state_id'] }}">
                             </label>
 
                             <label class="col-lg-12 mb-2">شماره تلفن :
