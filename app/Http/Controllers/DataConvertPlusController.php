@@ -128,7 +128,7 @@ class DataConvertPlusController extends Controller
         $equivalentWordsMap = method_exists($this, 'getEquivalentWords') ? $this->getEquivalentWords() : [];
 
         // آماده‌سازی لیست ناوگان‌ها
-        $fleetTitles = array_unique(array_merge(array_keys($fleetMap), array_keys($equivalentWordsMap), ['کفی', 'تریلی', 'نیسان', 'ترانزیت']));
+        $fleetTitles = array_unique(array_merge(array_keys($fleetMap), array_keys($equivalentWordsMap)));
         usort($fleetTitles, fn($a, $b) => mb_strlen($b) <=> mb_strlen($a));
         $fleetPattern = implode('|', array_map('preg_quote', $fleetTitles));
 
