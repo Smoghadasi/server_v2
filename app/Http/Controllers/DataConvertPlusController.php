@@ -114,10 +114,10 @@ class DataConvertPlusController extends Controller
     {
         $text = $cargo->cargo;
 
-        // نرمال‌سازی و آماده‌سازی
+        // نرمال‌سازی و آماده‌سازی متن
         $normalizedText = str_replace(["\r\n", "\r"], "\n", trim($text));
         $flatText = preg_replace('/\s+/', ' ', $normalizedText);
-        $flatText = preg_replace('/\b(کرایه|2|وزن|بار|تخلیه|نوع بار|کل)\b/u', '', $flatText);
+        $flatText = preg_replace('/\b(کرایه|وزن|بار|تخلیه|نوع بار|کل)\b/u', '', $flatText);
         $lines = array_values(array_filter(array_map('trim', explode("\n", $normalizedText))));
 
         // کش دیتاهای ثابت
@@ -149,7 +149,7 @@ class DataConvertPlusController extends Controller
         if (preg_match("/(?:از|بارگیری(?:\s+از)?|مبدا)\s*(?:در\s*)?($cityPattern)/u", $flatText, $match)) {
             $origin = $match[1];
         } elseif (count($allCities) >= 2) {
-            $origin = $allCities[0];
+            $origin = reset($allCities); // اولین شهر را به عنوان مبدا قرار دهید
         }
 
         $results = [];
@@ -175,10 +175,10 @@ class DataConvertPlusController extends Controller
                         $results[] = [
                             'fleet' => $fleet,
                             'fleet_id' => $fleetMap[$fleet] ?? null,
-                            'origin' => $match[1],
+                            'origin' => $match[1], // مبدا
                             'origin_id' => $cityMap[$match[1]] ?? null,
                             'origin_state_id' => $parentCityMap[$match[1]] ?? null,
-                            'destination' => $match[2],
+                            'destination' => $match[2], // مقصد
                             'destination_id' => $cityMap[$match[2]] ?? null,
                             'destination_state_id' => $parentCityMap[$match[2]] ?? null,
                             'phone' => $phone,
@@ -193,18 +193,20 @@ class DataConvertPlusController extends Controller
             if ($lastOrigin && !empty($fleets)) {
                 preg_match_all("/\b($cityPattern)\b/u", $line, $citiesInLine);
                 foreach ($citiesInLine[0] ?? [] as $dest) {
-                    foreach ($fleets as $fleet) {
-                        $results[] = [
-                            'fleet' => $fleet,
-                            'fleet_id' => $fleetMap[$fleet] ?? null,
-                            'origin' => $lastOrigin,
-                            'origin_id' => $cityMap[$lastOrigin] ?? null,
-                            'origin_state_id' => $parentCityMap[$lastOrigin] ?? null,
-                            'destination' => $dest,
-                            'destination_id' => $cityMap[$dest] ?? null,
-                            'destination_state_id' => $parentCityMap[$dest] ?? null,
-                            'phone' => $phone,
-                        ];
+                    if ($dest !== $lastOrigin) { // جلوگیری از ثبت مجدد مبدا به عنوان مقصد
+                        foreach ($fleets as $fleet) {
+                            $results[] = [
+                                'fleet' => $fleet,
+                                'fleet_id' => $fleetMap[$fleet] ?? null,
+                                'origin' => $lastOrigin,
+                                'origin_id' => $cityMap[$lastOrigin] ?? null,
+                                'origin_state_id' => $parentCityMap[$lastOrigin] ?? null,
+                                'destination' => $dest,
+                                'destination_id' => $cityMap[$dest] ?? null,
+                                'destination_state_id' => $parentCityMap[$dest] ?? null,
+                                'phone' => $phone,
+                            ];
+                        }
                     }
                 }
             }
@@ -235,6 +237,7 @@ class DataConvertPlusController extends Controller
 
         // حذف تکراری‌ها
         $uniqueResults = collect($results)->unique(fn($item) => ($item['fleet'] ?? '') . '-' . $item['origin'] . '-' . $item['destination'] . '-' . ($item['phone'] ?? ''))->values()->all();
+
         // اطلاعات تکمیلی برای نمایش
         $countOfCargos = CargoConvertList::where('operator_id', 0)->count();
         $users = UserController::getOnlineAndOfflineUsers();
@@ -245,7 +248,6 @@ class DataConvertPlusController extends Controller
     // ذخیره دسته ای بارها
     public function storeMultiCargoSmart(Request $request, CargoConvertList $cargo)
     {
-        // return $request;
         try {
             $expiresAt = now()->addMinutes(3);
             $userId = Auth::id();
@@ -330,7 +332,7 @@ class DataConvertPlusController extends Controller
         $cargoPattern = '';
 
         try {
-            $cargoPattern = $origin .$destination . $mobileNumber . $fleet;
+            $cargoPattern = $origin . $destination . $mobileNumber . $fleet;
 
             if (
                 BlockPhoneNumber::where('phoneNumber', $mobileNumber)->exists() ||
