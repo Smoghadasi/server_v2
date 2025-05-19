@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Event\PostCargoNotificationEvent;
 use App\Event\PostCargoSmsEvent;
 use App\Http\Requests\NewLoadRequest;
+use App\Jobs\SendNotificationForNearDriver;
 use App\Jobs\SendSmsJob;
 use App\Models\Bearing;
 use App\Models\BlockedIp;
@@ -2446,7 +2447,9 @@ class LoadController extends Controller
 
         if ($type == 'notification') {
             $load->numOfNotif += 1;
-            $this->sendNotificationForNearDriver($load, $radius);
+            SendNotificationForNearDriver::dispatch($load, $radius);
+
+            // $this->sendNotificationForNearDriver($load, $radius);
         } else {
             $load->numOfSms += 1;
             $this->sendSmsForNearDriver($load, $radius, $request->count);
