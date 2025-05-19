@@ -2447,9 +2447,9 @@ class LoadController extends Controller
 
         if ($type == 'notification') {
             $load->numOfNotif += 1;
-            // SendNotificationForNearDriver::dispatch($load, $radius);
+            SendNotificationForNearDriver::dispatch($load, $radius);
 
-            $this->sendNotificationForNearDriver($load, $radius);
+            // $this->sendNotificationForNearDriver($load, $radius);
         } else {
             $load->numOfSms += 1;
             $this->sendSmsForNearDriver($load, $radius, $request->count);
