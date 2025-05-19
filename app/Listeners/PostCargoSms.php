@@ -46,7 +46,7 @@ class PostCargoSms implements ShouldQueue
                 - radians($longitude))
                 + sin(radians($latitude))
                 * sin(radians(`latitude`))))";
-            $count = 7;
+            $count = 5;
             $radius = 120;
 
             $drivers = $this->getDrivers($cityFrom, $fleets, $haversine, $radius, $count);

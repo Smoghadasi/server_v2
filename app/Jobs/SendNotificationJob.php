@@ -2,72 +2,40 @@
 
 namespace App\Jobs;
 
-use App\Models\Driver;
-use App\Models\FleetLoad;
-use App\Models\ProvinceCity;
-use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
-// use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 
-class SendNotificationForNearDriver implements ShouldQueue
+class SendNotificationJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $load;
-    protected $radius;
+    protected $driverFCM_token;
+    protected $title;
+    protected $body;
 
-    public function __construct($load, $radius)
+    public function __construct($driverFCM_token, $title, $body)
     {
-        $this->load = $load;
-        $this->radius = $radius;
+        $this->driverFCM_token = $driverFCM_token;
+        $this->title = $title;
+        $this->body = $body;
     }
 
+    /**
+     * Execute the job.
+     *
+     * @return void
+     */
     public function handle()
     {
-        $load = $this->load;
-        $radius = $this->radius;
-        $latitude = $load->latitude;
-        $longitude = $load->longitude;
-        $fleets = FleetLoad::where('load_id', $load->id)->pluck('fleet_id');
-        $cityFrom = ProvinceCity::where('id', $load->origin_city_id)->first();
-        $cityTo = ProvinceCity::where('id', $load->destination_city_id)->first();
+        $FCM_token = $this->driverFCM_token;
+        $title = $this->title;
+        $body = $this->body;
 
-        $haversine = "(6371 * acos(cos(radians({$latitude}))
-            * cos(radians(latitude))
-            * cos(radians(longitude) - radians({$longitude}))
-            + sin(radians({$latitude}))
-            * sin(radians(latitude))))";
 
-        try {
-            $driverFCM_tokens = Driver::select('FCM_token')
-                ->whereNotNull('location_at')
-                ->where('location_at', '>=', Carbon::now()->subMinutes(120))
-                ->whereIn('fleet_id', $fleets)
-                ->where('version', '>', 58)
-                ->where('province_id', $cityFrom->parent_id)
-                ->havingRaw("{$haversine} < ?", [$radius])
-                ->pluck('FCM_token');
-
-            $title = 'ایران ترابر رانندگان';
-            $body = ' بار ' . ' از ' . $cityFrom->name . ' به ' . $cityTo->name;
-            foreach ($driverFCM_tokens as $driverFCM_token) {
-                dispatch(new SendNotificationJob($driverFCM_token, $title, $body));
-                // $this->sendNotificationWeb($driverFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
-            }
-        } catch (\Exception $exception) {
-            Log::emergency("----------------------send notification load by driver-----------------------");
-            Log::emergency($exception);
-            Log::emergency("---------------------------------------------------------");
-        }
-    }
-
-    private function sendNotificationWeb($FCM_token, $title, $body)
-    {
         $serviceAccountPath = base_path('public/assets/zarin-tarabar-firebase-adminsdk-9x6c3-7dbc939cac.json');
         $serviceAccountJson = file_get_contents($serviceAccountPath);
         $serviceAccount = json_decode($serviceAccountJson, true);
