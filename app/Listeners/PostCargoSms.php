@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class PostCargoSms implements ShouldQueue
+class PostCargoSms
 {
     /**
      * Create the event listener.
