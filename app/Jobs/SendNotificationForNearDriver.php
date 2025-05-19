@@ -56,8 +56,8 @@ class SendNotificationForNearDriver implements ShouldQueue
             $title = 'ایران ترابر رانندگان';
             $body = ' بار ' . ' از ' . $cityFrom->name . ' به ' . $cityTo->name;
             foreach ($driverFCM_tokens as $driverFCM_token) {
-                dispatch(new SendNotificationJob($driverFCM_token, $title, $body));
-                // $this->sendNotificationWeb($driverFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
+                // dispatch(new SendNotificationJob($driverFCM_token, $title, $body));
+                $this->sendNotificationWeb($driverFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
             }
         } catch (\Exception $exception) {
             Log::emergency("----------------------send notification load by driver-----------------------");
