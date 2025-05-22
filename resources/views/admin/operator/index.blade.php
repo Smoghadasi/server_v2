@@ -925,6 +925,13 @@
                                                         تایید و ثبت دسته ای بار
                                                     </label>
                                                 </div>
+                                                <div class="form-group">
+                                                    <label>
+                                                        <input type="checkbox" name="storeCargoPlus"
+                                                            @if (in_array('storeCargoPlus', $user->userAccess)) checked @endif>
+                                                        ثبت بار پلاس
+                                                    </label>
+                                                </div>
 
 
 
