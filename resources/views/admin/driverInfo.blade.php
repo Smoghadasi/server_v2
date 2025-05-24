@@ -409,7 +409,7 @@
                 </div>
             </div>
 
-            @if (auth()->user()->role == ROLE_ADMIN)
+            @if (auth()->user()->role == ROLE_ADMIN || Auth::id() == 29)
                 <div id="removeDriver_{{ $driver->id }}" class="modal fade" role="dialog">
                     <div class="modal-dialog">
 
