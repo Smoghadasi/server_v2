@@ -24,6 +24,7 @@ use App\Http\Controllers\FleetController as AdminFleetController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoadController;
 use App\Http\Controllers\LoginHistoryController;
+use App\Http\Controllers\ManualNotificationController;
 use App\Http\Controllers\MarketerController;
 use App\Http\Controllers\OperatorContactingController;
 use App\Http\Controllers\OperatorController;
@@ -645,6 +646,12 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('profile', [UserController::class, 'adminProfile'])->middleware('operator')->name('user.edit');
 
         Route::resource('setting', SettingController::class)->middleware('operator');
+
+        Route::resource('manualNotification', ManualNotificationController::class)->middleware('operator');
+
+        Route::post('sendManualNotification', [ManualNotificationController::class, 'sendManualNotification'])
+            ->name('manualNotification.sendNotification')
+            ->middleware('operator');
 
         // صورت مغایرت
         Route::resource('discrepancy', DiscrepancyController::class)->middleware('operator');
