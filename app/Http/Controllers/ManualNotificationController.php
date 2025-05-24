@@ -110,9 +110,11 @@ class ManualNotificationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(ManualNotificationRecipient $manualNotification)
     {
-        //
+        $manualNotification->delete();
+        return back()->with('danger', 'با موفقیت حذف شد');
+
     }
 
     public function sendManualNotification(Request $request)

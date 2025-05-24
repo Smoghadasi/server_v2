@@ -98,6 +98,7 @@
                         <th scope="col">کاربر</th>
                         <th scope="col">موبایل</th>
                         <th scope="col">نوع</th>
+                        <th scope="col">عملیات</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -111,6 +112,15 @@
                             <td>{{ $manualNotification->userable->mobileNumber }}</td>
                             <td>
                                 {{ $manualNotification->userable instanceof App\Models\Driver ? 'راننده' : 'صاحب بار' }}
+                            </td>
+                            <td>
+                                <form
+                                    action="{{ route('manualNotification.destroy', $manualNotification) }}"
+                                    method="POST">
+                                    @csrf
+                                    @method('delete')
+                                    <button type="submit" class="btn btn-danger btn-sm">حذف</button>
+                                </form>
                             </td>
                         </tr>
                     @empty
