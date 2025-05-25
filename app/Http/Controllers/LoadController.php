@@ -2543,6 +2543,7 @@ class LoadController extends Controller
 
     public function sendNotificationForNearDriver($load, $radius)
     {
+        Log::warning($load);
         $latitude = $load->latitude;
         $longitude = $load->longitude;
         $fleets = FleetLoad::where('load_id', $load->id)->pluck('fleet_id');
