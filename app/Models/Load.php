@@ -118,23 +118,41 @@ class Load extends Model
             $fleets = FleetLoad::where('load_id', $this->id)->pluck('fleet_id');
 
             $haversine = "(6371 * acos(cos(radians(" . $latitude . "))
-                * cos(radians(`latitude`))
-                * cos(radians(`longitude`)
-                - radians(" . $longitude . "))
-                + sin(radians(" . $latitude . "))
-                * sin(radians(`latitude`))))";
+            * cos(radians(`latitude`))
+            * cos(radians(`longitude`) - radians(" . $longitude . "))
+            + sin(radians(" . $latitude . "))
+            * sin(radians(`latitude`))))";
 
-            return Driver::where('location_at', '!=', null)
-                ->where('location_at', '>=', Carbon::now()->subMinutes(360))
+            // بازه زمانی ۶ ساعته
+            $timeLimit = Carbon::now()->subMinutes(360);
+
+            $count = Driver::whereNotNull('location_at')
+                ->where('location_at', '>=', $timeLimit)
                 ->whereIn('fleet_id', $fleets)
                 ->selectRaw("{$haversine} AS distance")
-                ->whereRaw("{$haversine} < ?", $radius)
+                ->whereRaw("{$haversine} < ?", [$radius])
                 ->count();
+
+            // اگر کمتر از ۳۰ راننده بود، بازه زمانی به ۱۲ ساعت افزایش یابد
+            if ($count < 30) {
+                $timeLimit = Carbon::now()->subMinutes(720);
+
+                $count = Driver::whereNotNull('location_at')
+                    ->where('location_at', '>=', $timeLimit)
+                    ->whereIn('fleet_id', $fleets)
+                    ->selectRaw("{$haversine} AS distance")
+                    ->whereRaw("{$haversine} < ?", [$radius])
+                    ->count();
+            }
+
+            return $count;
         } catch (\Exception $e) {
-            //throw $th;
+            // اگر خطایی رخ داد، مقدار پیش‌فرض بازگردانده شود
         }
+
         return 0;
     }
+
 
     public function getNumOfSelectedDriversAttribute()
     {

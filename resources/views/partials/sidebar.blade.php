@@ -369,11 +369,7 @@
                         </a>
                     </li>
                 @endif
-                <li class="menu-item">
-                    <a class="menu-link" href="{{ route('manualNotification.index') }}">
-                        <div data-i18n="Without menu"> ارسال اعلان</div>
-                    </a>
-                </li>
+
                 @if (in_array('combinedReport', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/combinedReports') }}">
@@ -596,6 +592,11 @@
                         </a>
                     </li>
                 @endif
+                <li class="menu-item">
+                    <a class="menu-link" href="{{ route('manualNotification.index') }}">
+                        <div data-i18n="Without menu"> ارسال اعلان</div>
+                    </a>
+                </li>
 
                 @if (in_array('searchLoads', auth()->user()->userAccess))
                     <li class="menu-item">

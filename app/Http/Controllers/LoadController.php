@@ -2389,13 +2389,27 @@ class LoadController extends Controller
         $radius = 100;
         $fleets = FleetLoad::where('load_id', $load->id)->pluck('fleet_id');
 
-        // محاسبه فاصله با فرمول هاروسین
+        // فرمول هاروسین
         $haversine = "(6371 * acos(cos(radians(" . $latitude . "))
             * cos(radians(`latitude`))
-            * cos(radians(`longitude`)
-            - radians(" . $longitude . "))
+            * cos(radians(`longitude`) - radians(" . $longitude . "))
             + sin(radians(" . $latitude . "))
             * sin(radians(`latitude`))))";
+
+        $locationTimeLimit = Carbon::now()->subMinutes(360);
+
+        // شمارش اولیه برای بررسی شرط تعداد رانندگان
+        $initialDriverCount = Driver::whereNotNull('location_at')
+            ->where('location_at', '>=', $locationTimeLimit)
+            ->whereIn('fleet_id', $fleets)
+            ->selectRaw("{$haversine} AS distance")
+            ->whereRaw("{$haversine} < ?", [$radius])
+            ->count();
+
+        // اگر تعداد کمتر از ۳۰ بود، مدت زمان به ۱۲ ساعت تغییر یابد
+        if ($initialDriverCount < 30) {
+            $locationTimeLimit = Carbon::now()->subMinutes(720);
+        }
 
         // دریافت رانندگان نزدیک
         $drivers = Driver::select(
@@ -2418,7 +2432,7 @@ class LoadController extends Controller
             'drivers.created_at',
         )
             ->whereNotNull('location_at')
-            ->where('location_at', '>=', Carbon::now()->subMinutes(360))
+            ->where('location_at', '>=', $locationTimeLimit)
             ->whereIn('fleet_id', $fleets)
             ->selectRaw("{$haversine} AS distance")
             ->whereRaw("{$haversine} < ?", [$radius])
@@ -2427,9 +2441,8 @@ class LoadController extends Controller
             ->get();
 
         // شمارش رانندگان ارسال پیامک
-        $sendSmsDriverCount = Driver::select('drivers.*')
-            ->whereNotNull('location_at')
-            ->where('location_at', '>=', Carbon::now()->subMinutes(360))
+        $sendSmsDriverCount = Driver::whereNotNull('location_at')
+            ->where('location_at', '>=', $locationTimeLimit)
             ->whereIn('fleet_id', $fleets)
             ->where('sendMessage', 1)
             ->selectRaw("{$haversine} AS distance")
@@ -2438,6 +2451,7 @@ class LoadController extends Controller
 
         return view('admin.driver.driverNearOwner', compact('drivers', 'load', 'sendSmsDriverCount'));
     }
+
 
 
     public function sendMessageNearLoadDrivers(Request $request, $load_id, $type = null)
