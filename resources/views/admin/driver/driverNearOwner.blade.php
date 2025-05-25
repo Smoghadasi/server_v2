@@ -6,7 +6,6 @@
             <div class="row justify-content-between">
                 <div class="col-6">
                     رانندگان
-                    ( {{ $sendSmsDriverCount }} )
                 </div>
                 <div class="col-6 text-end">
                     <a href="{{ route('admin.sendNearLoadDrivers', ['load_id' => $load->id, 'type' => 'notification']) }}"

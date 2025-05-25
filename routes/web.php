@@ -21,6 +21,7 @@ use App\Http\Controllers\DataConvertPlusController;
 use App\Http\Controllers\DiscrepancyController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\FleetController as AdminFleetController;
+use App\Http\Controllers\GroupNotificationController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoadController;
 use App\Http\Controllers\LoginHistoryController;
@@ -646,6 +647,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('profile', [UserController::class, 'adminProfile'])->middleware('operator')->name('user.edit');
 
         Route::resource('setting', SettingController::class)->middleware('operator');
+
+        Route::resource('groupNotification', GroupNotificationController::class)->middleware('operator');
 
         Route::resource('manualNotification', ManualNotificationController::class)->middleware('operator');
 

@@ -17,4 +17,9 @@ class ManualNotificationRecipient extends Model
     {
         return $this->morphTo();
     }
+
+    public function groupNotification(): BelongsTo
+    {
+        return $this->belongsTo(GroupNotification::class, 'group_id');
+    }
 }

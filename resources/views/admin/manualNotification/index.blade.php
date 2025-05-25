@@ -5,7 +5,12 @@
         <h5 class="card-header">
             <div class="row justify-content-between">
                 <div class="col-6">
-                    نوتیفیکیشن دستی
+                    {{ $groupNotification->title }}
+                </div>
+                <div class="col-6" style="text-align: left">
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCenter">
+                        جدید
+                    </button>
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#notification">
                         ارسال اعلان
                     </button>
@@ -43,12 +48,6 @@
                             </div>
                         </div>
                     </div>
-
-                </div>
-                <div class="col-6" style="text-align: left">
-                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCenter">
-                        جدید
-                    </button>
                     <!-- Modal -->
                     <div class="modal fade" id="modalCenter" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -60,7 +59,7 @@
                                 </div>
                                 <form action="{{ route('manualNotification.store') }}" method="POST">
                                     @csrf
-
+                                    <input type="hidden" name="group_id" value="{{ $groupNotification->id }}">
                                     <div class="modal-body">
                                         <div class="row g-2">
                                             <div class="col mb-0">

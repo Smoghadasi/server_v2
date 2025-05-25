@@ -16,16 +16,16 @@ class ManualNotificationController extends Controller
      */
     public function index(Request $request)
     {
-        try {
-            $manualNotifications = ManualNotificationRecipient::with(['userable' => function ($query) {
-                $query->select(['id', 'name', 'lastName', 'mobileNumber']);
-            }])
-                ->where('userable_type', 'LIKE', "%$request->type%")
-                ->paginate(20);
-            return view('admin.manualNotification.index', compact('manualNotifications'));
-        } catch (\Exception $e) {
-            return view('errors.404');
-        }
+        // try {
+        //     $manualNotifications = ManualNotificationRecipient::with(['userable' => function ($query) {
+        //         $query->select(['id', 'name', 'lastName', 'mobileNumber']);
+        //     }])
+        //         ->where('userable_type', 'LIKE', "%$request->type%")
+        //         ->paginate(20);
+        //     return view('admin.manualNotification.index', compact('manualNotifications'));
+        // } catch (\Exception $e) {
+        //     return view('errors.404');
+        // }
     }
 
     /**
@@ -64,6 +64,7 @@ class ManualNotificationController extends Controller
         ManualNotificationRecipient::create([
             'userable_id' => $user->id,
             'userable_type' => $model,
+            'group_id' => $request->group_id,
         ]);
 
         return back()->with('success', 'کاربر مورد نظر ثبت شد');
