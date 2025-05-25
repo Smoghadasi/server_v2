@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Fleet;
 use App\Models\GroupNotification;
 use App\Models\ManualNotificationRecipient;
+use App\Models\ProvinceCity;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class GroupNotificationController extends Controller
 {
@@ -58,7 +61,14 @@ class GroupNotificationController extends Controller
         }])
             ->where('group_id', $groupNotification->id)
             ->paginate(20);
-        return view('admin.manualNotification.index', compact('manualNotifications', 'groupNotification'));
+        $cities = Cache::remember('cities', now()->addMinutes(60), function () {
+            return ProvinceCity::where('parent_id', '!=', 0)->get();
+        });
+
+        $fleets = Cache::remember('fleets', now()->addMinutes(60), function () {
+            return Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
+        });
+        return view('admin.manualNotification.index', compact('manualNotifications', 'groupNotification', 'cities', 'fleets'));
     }
 
     /**
@@ -93,8 +103,10 @@ class GroupNotificationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(GroupNotification $groupNotification)
     {
-        //
+        ManualNotificationRecipient::where('group_id', $groupNotification->id)->delete();
+        $groupNotification->delete();
+        return back()->with('danger', 'گروه مورد نظر حذف شد');
     }
 }

@@ -82,11 +82,18 @@
                             <td>
                                 {{ $group->description ?? '-' }}
                             </td>
-                            <td>
+                            <td class="d-flex">
                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                     data-bs-target="#modalCenter_{{ $group->id }}">
                                     ویرایش
                                 </button>
+                                <form
+                                    action="{{ route('groupNotification.destroy', $group) }}"
+                                    method="POST">
+                                    @csrf
+                                    @method('delete')
+                                    <button type="submit" class="btn btn-danger">حذف</button>
+                                </form>
                                 <!-- Modal -->
                                 <div class="modal fade" id="modalCenter_{{ $group->id }}" tabindex="-1" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered" role="document">

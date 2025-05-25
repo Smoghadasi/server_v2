@@ -47,10 +47,22 @@ class ManualNotificationController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request;
         $group = GroupNotification::find($request->group_id);
         $model = $group->groupType === 'owner' ? Owner::class : Driver::class;
 
+        if ($group->groupType === 'driver' && $request->mobileNumber == null) {
+            $IdsDriver = Driver::where('fleet_id', $request->fleet_id)->take($request->count)->pluck('id');
+            foreach ($IdsDriver as $IdDriver) {
+                if (ManualNotificationRecipient::where('userable_id', $IdDriver)->count() > 0) {
+                    ManualNotificationRecipient::create([
+                        'userable_id' => $IdDriver,
+                        'userable_type' => $model,
+                        'group_id' => $request->group_id,
+                    ]);
+                }
+            }
+            return back()->with('success', 'کاربران مورد نظر ثبت شد');
+        }
         $user = $model::where('mobileNumber', $request->mobileNumber)->first();
         if (!$user) {
             return back()->with('danger', 'کاربر مورد نظر یافت نشد');
@@ -63,11 +75,14 @@ class ManualNotificationController extends Controller
             return back()->with('danger', 'کاربر مورد نظر تکراری است');
         }
 
-        ManualNotificationRecipient::create([
-            'userable_id' => $user->id,
-            'userable_type' => $model,
-            'group_id' => $request->group_id,
-        ]);
+        if (ManualNotificationRecipient::where('userable_id', $user->id)->where('userable_type', $model)->count() == 0) {
+            ManualNotificationRecipient::create([
+                'userable_id' => $user->id,
+                'userable_type' => $model,
+                'group_id' => $request->group_id,
+            ]);
+        }
+
 
         return back()->with('success', 'کاربر مورد نظر ثبت شد');
     }
@@ -117,7 +132,6 @@ class ManualNotificationController extends Controller
     {
         $manualNotification->delete();
         return back()->with('danger', 'با موفقیت حذف شد');
-
     }
 
     public function sendManualNotification(Request $request)
@@ -132,7 +146,6 @@ class ManualNotificationController extends Controller
             $this->sendNotificationWeb($fcm_token, $request->title, $request->body);
         }
         return back()->with('success', 'با موفقیت ارسال شد');
-
     }
 
     private function sendNotificationWeb($FCM_token, $title, $body)

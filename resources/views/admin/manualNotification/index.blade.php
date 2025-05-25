@@ -5,7 +5,8 @@
         <h5 class="card-header">
             <div class="row justify-content-between">
                 <div class="col-6">
-                    گروه {{ $groupNotification->title }} ({{ $groupNotification->groupType == 'driver' ? 'رانندگان' : 'صاحبین بار' }})
+                    گروه {{ $groupNotification->title }}
+                    ({{ $groupNotification->groupType == 'driver' ? 'رانندگان' : 'صاحبین بار' }})
                 </div>
                 <div class="col-6" style="text-align: left">
                     <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCenter">
@@ -58,18 +59,53 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
+
                                 <form action="{{ route('manualNotification.store') }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="group_id" value="{{ $groupNotification->id }}">
                                     <div class="modal-body">
-                                        <div class="row g-2">
+                                        @if ($groupNotification->groupType == 'driver')
+                                            <select class="form-control form-select mb-2" name="" id="changeType">
+                                                <option value="single">تکی</option>
+                                                <option value="multi">چندتایی</option>
+                                            </select>
+                                        @endif
+                                        <div class="row g-2" id="single">
                                             <div class="col mb-0">
-                                                <label for="mobileNumber" class="form-label">شماره موبایل</label>
-                                                <input type="text" id="mobileNumber" name="mobileNumber"
+                                                <input type="text" id="mobileNumberGroup" name="mobileNumber"
                                                     class="form-control" placeholder="شماره موبایل..." />
                                             </div>
-
                                         </div>
+                                        @if ($groupNotification->groupType == 'driver')
+                                            <div class="row g-2" id="multi">
+                                                <div class="col-6">
+                                                    <select class="form-control form-select" name="city_id">
+                                                        <option value="0">شهر مبدا</option>
+                                                        @foreach ($cities as $city)
+                                                            <option value="{{ $city->id }}">
+                                                                <?php echo str_replace('ك', 'ک', str_replace('ي', 'ی', $city->name)); ?>
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="col-6">
+                                                    <select class="form-control col-md-4" name="fleet_id">
+                                                        <option value="0">نوع ناوگان</option>
+                                                        @foreach ($fleets as $fleet)
+                                                            <option value="{{ $fleet->id }}">
+                                                                {{ \App\Http\Controllers\FleetController::getFleetName($fleet->parent_id) }}
+                                                                -
+                                                                {{ $fleet->title }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="col-12">
+                                                    <input name="count" type="number" value="10" class="form-control"
+                                                        placeholder="تعداد">
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
@@ -96,9 +132,12 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <?php $i = 0; ?>
+
                     @forelse ($manualNotifications as $manualNotification)
                         <tr>
-                            <th scope="row">1</th>
+                            <td>{{ ($manualNotifications->currentPage() - 1) * $manualNotifications->perPage() + ++$i }}
+                            </td>
                             <td>
                                 {{ $manualNotification->userable->name }}
                                 {{ $manualNotification->userable->lastName }}
@@ -108,8 +147,7 @@
                                 {{ $manualNotification->userable instanceof App\Models\Driver ? 'راننده' : 'صاحب بار' }}
                             </td>
                             <td>
-                                <form
-                                    action="{{ route('manualNotification.destroy', $manualNotification) }}"
+                                <form action="{{ route('manualNotification.destroy', $manualNotification) }}"
                                     method="POST">
                                     @csrf
                                     @method('delete')
@@ -126,4 +164,23 @@
             </table>
             {{ $manualNotifications }}
         </div>
+    @endsection
+
+    @section('script')
+        <script>
+            $(document).ready(function() {
+                $('#multi').hide();
+                $('#changeType').change(function() {
+                    if ($(this).val() === 'multi') {
+                        $('#single').hide();
+                        $('#multi').show();
+                        $('#mobileNumberGroup').val(''); // Reset input field
+                    }
+                    if ($(this).val() === 'single') {
+                        $('#single').show();
+                        $('#multi').hide();
+                    }
+                });
+            });
+        </script>
     @endsection
