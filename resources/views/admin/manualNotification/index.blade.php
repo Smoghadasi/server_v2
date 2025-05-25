@@ -5,7 +5,7 @@
         <h5 class="card-header">
             <div class="row justify-content-between">
                 <div class="col-6">
-                    {{ $groupNotification->title }}
+                    گروه: {{ $groupNotification->title }}
                 </div>
                 <div class="col-6" style="text-align: left">
                     <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCenter">
