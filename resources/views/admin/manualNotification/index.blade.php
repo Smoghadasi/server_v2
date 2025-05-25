@@ -80,7 +80,7 @@
                                             <div class="row g-2" id="multi">
                                                 <div class="col-6">
                                                     <select class="form-control form-select" name="city_id">
-                                                        <option value="0">شهر مبدا</option>
+                                                        <option value="">شهر مبدا</option>
                                                         @foreach ($cities as $city)
                                                             <option value="{{ $city->id }}">
                                                                 <?php echo str_replace('ك', 'ک', str_replace('ي', 'ی', $city->name)); ?>
@@ -90,7 +90,7 @@
                                                 </div>
                                                 <div class="col-6">
                                                     <select class="form-control col-md-4" name="fleet_id">
-                                                        <option value="0">نوع ناوگان</option>
+                                                        <option value="">نوع ناوگان</option>
                                                         @foreach ($fleets as $fleet)
                                                             <option value="{{ $fleet->id }}">
                                                                 {{ \App\Http\Controllers\FleetController::getFleetName($fleet->parent_id) }}

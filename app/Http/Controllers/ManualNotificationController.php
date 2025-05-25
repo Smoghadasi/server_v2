@@ -51,7 +51,19 @@ class ManualNotificationController extends Controller
         $model = $group->groupType === 'owner' ? Owner::class : Driver::class;
 
         if ($group->groupType === 'driver' && $request->mobileNumber == null) {
-            $IdsDriver = Driver::where('fleet_id', $request->fleet_id)->take($request->count)->pluck('id');
+
+            $IdsDriver = Driver::query()
+                ->where(function ($query) use ($request) {
+                    if ($request->fleet_id !== null) {
+                        $query->where('fleet_id', $request->fleet_id);
+                    }
+                    if ($request->city_id !== null) {
+                        $query->where('city_id', $request->city_id);
+                    }
+                })
+                ->take($request->count)
+                ->pluck('id');
+
             foreach ($IdsDriver as $IdDriver) {
                 if (ManualNotificationRecipient::where('userable_id', $IdDriver)->count() > 0) {
                     ManualNotificationRecipient::create([
