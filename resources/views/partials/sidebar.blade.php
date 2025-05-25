@@ -593,7 +593,7 @@
                     </li>
                 @endif
                 <li class="menu-item">
-                    <a class="menu-link" href="{{ route('manualNotification.index') }}">
+                    <a class="menu-link" href="{{ route('groupNotification.index') }}">
                         <div data-i18n="Without menu"> کمپین اعلان</div>
                     </a>
                 </li>
