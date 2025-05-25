@@ -2549,12 +2549,11 @@ class LoadController extends Controller
         $cityFrom = ProvinceCity::where('id', $load->origin_city_id)->first();
         $cityTo = ProvinceCity::where('id', $load->destination_city_id)->first();
 
-        $haversine = "(6371 * acos(cos(radians(" . $latitude . "))
-            * cos(radians(`latitude`))
-            * cos(radians(`longitude`)
-            - radians(" . $longitude . "))
-            + sin(radians(" . $latitude . "))
-            * sin(radians(`latitude`))))";
+        $haversine = "(6371 * acos(cos(radians({$latitude}))
+            * cos(radians(latitude))
+            * cos(radians(longitude) - radians({$longitude}))
+            + sin(radians({$latitude}))
+            * sin(radians(latitude))))";
 
         try {
             $driverFCM_tokens = Driver::select('drivers.FCM_token')
