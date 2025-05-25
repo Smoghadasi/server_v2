@@ -39,6 +39,7 @@ class GroupNotificationController extends Controller
     {
         $group = new GroupNotification();
         $group->title = $request->title;
+        $group->groupType = $request->groupType;
         $group->description = $request->description;
         $group->save();
         return back()->with('success', 'گروه مورد نظر ثبت شد');

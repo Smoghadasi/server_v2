@@ -5,7 +5,7 @@
         <h5 class="card-header">
             <div class="row justify-content-between">
                 <div class="col-6">
-                    گروه: {{ $groupNotification->title }}
+                    گروه {{ $groupNotification->title }} ({{ $groupNotification->groupType == 'driver' ? 'رانندگان' : 'صاحبین بار' }})
                 </div>
                 <div class="col-6" style="text-align: left">
                     <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCenter">
@@ -27,6 +27,7 @@
                                     <input type="hidden" name="type" value="driver">
                                     <div class="modal-body">
                                         <div class="row g-2">
+                                            <input type="hidden" value="{{ $groupNotification->id }}" name="group_id">
                                             <div class="col-12 mb-0">
                                                 <label for="mobileNumber" class="form-label">Title</label>
                                                 <input type="text" id="mobileNumber" required name="title"
@@ -67,13 +68,7 @@
                                                 <input type="text" id="mobileNumber" name="mobileNumber"
                                                     class="form-control" placeholder="شماره موبایل..." />
                                             </div>
-                                            <div class="col mb-0">
-                                                <label for="type" class="form-label">نوع</label>
-                                                <select name="type" class="form-control form-select">
-                                                    <option value="driver">راننده</option>
-                                                    <option value="owner">صاحب بار</option>
-                                                </select>
-                                            </div>
+
                                         </div>
                                     </div>
                                     <div class="modal-footer">

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Driver;
+use App\Models\GroupNotification;
 use App\Models\ManualNotificationRecipient;
 use App\Models\Owner;
 use Illuminate\Http\Request;
@@ -47,7 +48,8 @@ class ManualNotificationController extends Controller
     public function store(Request $request)
     {
         // return $request;
-        $model = $request->type === 'owner' ? Owner::class : Driver::class;
+        $group = GroupNotification::find($request->group_id);
+        $model = $group->groupType === 'owner' ? Owner::class : Driver::class;
 
         $user = $model::where('mobileNumber', $request->mobileNumber)->first();
         if (!$user) {
@@ -120,11 +122,11 @@ class ManualNotificationController extends Controller
 
     public function sendManualNotification(Request $request)
     {
-        $type = $request->type === 'driver' ? 'App\Models\Driver' : 'App\Models\Owner';
+        $group = GroupNotification::find($request->group_id);
 
-        $userIds = ManualNotificationRecipient::where('userable_type', $type)->pluck('userable_id');
+        $userIds = ManualNotificationRecipient::where('group_id', $request->group_id)->pluck('userable_id');
 
-        $fcm_tokens = ($request->type === 'driver' ? Driver::class : Owner::class)::whereIn('id', $userIds)->pluck('FCM_token');
+        $fcm_tokens = ($group->groupType === 'driver' ? Driver::class : Owner::class)::whereIn('id', $userIds)->pluck('FCM_token');
 
         foreach ($fcm_tokens as $fcm_token) {
             $this->sendNotificationWeb($fcm_token, $request->title, $request->body);

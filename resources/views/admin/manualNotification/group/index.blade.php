@@ -25,10 +25,17 @@
 
                                     <div class="modal-body">
                                         <div class="row g-2">
-                                            <div class="col-12 mb-0">
+                                            <div class="col-6 mb-0">
                                                 {{-- <label for="title" class="form-label">نام گروه</label> --}}
                                                 <input type="text" id="title" name="title" class="form-control"
                                                     placeholder="نام گروه..." />
+                                            </div>
+                                            <div class="col-6 mb-0">
+                                                {{-- <label for="title" class="form-label">نام گروه</label> --}}
+                                                <select class="form-control form-select" name="groupType" id="">
+                                                    <option value="driver">رانندگان</option>
+                                                    <option value="owner">صاحبین بار</option>
+                                                </select>
                                             </div>
                                             <div class="col-12 mb-0">
                                                 {{-- <label for="description" class="form-label">توضیحات</label> --}}
@@ -54,7 +61,8 @@
                 <thead>
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">نام گروه</th>
+                        <th scope="col">نام</th>
+                        <th scope="col">نوع گروه</th>
                         <th scope="col">توضیحات</th>
                         <th scope="col">عملیات</th>
                     </tr>
@@ -67,6 +75,9 @@
                                 <a href="{{ route('groupNotification.show', $group) }}">
                                     {{ $group->title }} ({{ $group->manual_notification_recipients_count }})
                                 </a>
+                            </td>
+                            <td>
+                                {{ $group->groupType == 'driver' ? 'رانندگان' : 'صاحبین بار' }}
                             </td>
                             <td>
                                 {{ $group->description ?? '-' }}
