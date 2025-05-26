@@ -13,7 +13,7 @@
 
     <div class="card-body">
         <form method="POST" id="createNewLoad" action="{{ route('admin.editLoadInfo', $load->id) }}"
-            enctype="multipart/form-data">
+            enctype="multipart/form-data" novalidate>
             @csrf
             <div class="row">
                 <div class="col-lg-12">
@@ -358,8 +358,8 @@
                                 </label>
 
                                 <input id="loadingDate" type="text" placeholder="تاریخ ارسال بار"
-                                    class="form-control datepicker"
-                                    value="{{ persianDateToGregorian($load->loadingDate) }}" name="loadingDate"
+                                    class="form-control"
+                                    value="{{ $load->loadingDate }}" name="loadingDate"
                                     required>
                             </div>
 
