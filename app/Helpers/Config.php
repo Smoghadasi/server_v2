@@ -142,6 +142,8 @@ const DRIVERS_TENDER_TIME = 1800;
 
 const PERCENT = 3;
 
+
+
 const REAL_PERSONALITY = "realPersonality";
 const LEGAL_PERSONALITY = "legalPersonality";
 
