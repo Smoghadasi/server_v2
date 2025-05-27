@@ -52,7 +52,7 @@
                                 $status = getUserStatusHint($user);
                             @endphp
                             <span class="{{ $status['class'] }}">
-                                {{ $user->name }} {{ $user->lastName }} - <span class="device-info" data-user-id="{{ $user->id }}"></span>
+                                {{ $user->name }} {{ $user->lastName }}
                             </span>
                         </span>
                     @endforeach
