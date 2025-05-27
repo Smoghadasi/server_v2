@@ -52,7 +52,7 @@
                                 $status = getUserStatusHint($user);
                             @endphp
                             <span class="{{ $status['class'] }}">
-                                {{ $user->name }} {{ $user->lastName }}
+                                {{ $user->name }} {{ $user->lastName }} - <span class="device-info" data-user-id="{{ $user->id }}"></span>
                             </span>
                         </span>
                     @endforeach
@@ -215,6 +215,7 @@
 
 
     <script>
+
         function separate(freight) {
             document.getElementById(freight).value = document.getElementById(freight).value.replace(/\D/g, "")
                 .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -229,4 +230,20 @@
         }
     </script>
 
-@stop
+@endsection
+@section('script')
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mobile-detect/1.4.5/mobile-detect.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let md = new MobileDetect(window.navigator.userAgent);
+            console.log(window.navigator.userAgent);
+            let deviceType = md.mobile() ? "موبایل" : md.tablet() ? "تبلت" : "دسکتاپ";
+
+            document.querySelectorAll(".device-info").forEach(function (element) {
+                console.log(element);
+                element.innerText = deviceType;
+            });
+        });
+    </script>
+@endsection
