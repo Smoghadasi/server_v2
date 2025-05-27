@@ -498,11 +498,11 @@ class DataConvertController extends Controller
         $device = '';
         // بررسی نوع دستگاه
         if ($agent->isMobile()) {
-            $device = "موبایل";
+            $device = "Mobile";
         } elseif ($agent->isTablet()) {
-            $device = "تبلت";
+            $device = "Tablet";
         } else {
-            $device =  "دسکتاپ";
+            $device =  "Desktop";
         }
         try {
             $expiresAt = now()->addMinutes(3);
