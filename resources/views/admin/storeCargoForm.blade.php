@@ -52,7 +52,7 @@
                                 $status = getUserStatusHint($user);
                             @endphp
                             <span class="{{ $status['class'] }}">
-                                {{ $user->name }} {{ $user->lastName }} ({{ $user->numOfTodayLoads }})
+                                {{ $user->name }} {{ $user->lastName }}
                             </span>
                         </span>
                     @endforeach
