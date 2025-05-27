@@ -142,7 +142,7 @@ const DRIVERS_TENDER_TIME = 1800;
 
 const PERCENT = 3;
 
-
+const LIMIT_OWNER_CALL = 2;
 
 const REAL_PERSONALITY = "realPersonality";
 const LEGAL_PERSONALITY = "legalPersonality";
