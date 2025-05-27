@@ -178,7 +178,8 @@ return [
         App\Providers\JetstreamServiceProvider::class,
         // Anhskohbo\NoCaptcha\NoCaptchaServiceProvider::class,
         Mews\Captcha\CaptchaServiceProvider::class,
-        TimeHunter\LaravelGoogleReCaptchaV3\Providers\GoogleReCaptchaV3ServiceProvider::class
+        TimeHunter\LaravelGoogleReCaptchaV3\Providers\GoogleReCaptchaV3ServiceProvider::class,
+        Jenssegers\Agent\AgentServiceProvider::class,
     ],
 
     /*
@@ -235,7 +236,8 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         // 'NoCaptcha' => Anhskohbo\NoCaptcha\Facades\NoCaptcha::class,
         'Captcha' => Mews\Captcha\Facades\Captcha::class,
-        'GoogleReCaptchaV3'=> TimeHunter\LaravelGoogleReCaptchaV3\Facades\GoogleReCaptchaV3::class
+        'GoogleReCaptchaV3'=> TimeHunter\LaravelGoogleReCaptchaV3\Facades\GoogleReCaptchaV3::class,
+        'Agent' => Jenssegers\Agent\Facades\Agent::class,
         // 'Gateway' => \Larabookir\Gateway\Gateway::class, // <-- add this line at the end of aliases array
 
     ],

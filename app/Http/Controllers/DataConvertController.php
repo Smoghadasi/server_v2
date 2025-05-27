@@ -37,7 +37,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use PHPUnit\Exception;
-
+use Jenssegers\Agent\Agent;
 
 class DataConvertController extends Controller
 {
@@ -94,7 +94,6 @@ class DataConvertController extends Controller
 
     public function finalApprovalAndStoreCargo()
     {
-
         $cargo = CargoConvertList::where([
             ['operator_id', auth()->id()],
             ['status', 0]
@@ -495,12 +494,25 @@ class DataConvertController extends Controller
     // ذخیره دسته ای بارها
     public function storeMultiCargo(Request $request, CargoConvertList $cargo)
     {
+        $agent = new Agent();
+        $device = '';
+        // بررسی نوع دستگاه
+        if ($agent->isMobile()) {
+            $device = "موبایل";
+        } elseif ($agent->isTablet()) {
+            $device = "تبلت";
+        } else {
+            $device =  "دسکتاپ";
+        }
         try {
             $expiresAt = now()->addMinutes(3);
             $userId = Auth::id();
 
             Cache::put("user-is-active-$userId", true, $expiresAt);
-            User::whereId($userId)->update(['last_active' => now()]);
+            User::whereId($userId)->update([
+                'last_active' => now(),
+                'device' => $device
+            ]);
         } catch (Exception $e) {
             Log::emergency("UserActivityActiveOnlineReport - Error: " . $e->getMessage());
         }
@@ -597,8 +609,8 @@ class DataConvertController extends Controller
             if (
                 BlockPhoneNumber::where('phoneNumber', $mobileNumber)->exists() ||
                 Load::where('cargoPattern', $cargoPattern)
-                    ->where('created_at', '>', now()->subMinutes(180))
-                    ->exists()
+                ->where('created_at', '>', now()->subMinutes(180))
+                ->exists()
             ) {
                 return;
             }
