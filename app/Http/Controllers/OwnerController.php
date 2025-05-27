@@ -16,7 +16,7 @@ class OwnerController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $loadsToday = Load::where('userType', ROLE_OWNER)
             ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
@@ -32,12 +32,15 @@ class OwnerController extends Controller
         $ownerAcceptCounts = Owner::where('isAuth', 1)->count();
         $ownerRejectedCounts = Owner::where('isRejected', 1)->count();
         $ownerBookmarkCount = Bookmark::where('type', 'owner')->count();
+        $ownerLimitLoadCount = Owner::where('isLimitLoad', 1)->count();
 
         // if (auth()->user()->role == 'admin') {
-        $owners = Owner::orderByDesc('created_at')->paginate(10);
-        // } elseif (auth()->user()->role == 'operator') {
-        // $owners = collect();
-        // }
+        $owners = Owner::orderByDesc('created_at')
+        ->when($request->isLimitLoad !== null, function ($query) use ($request) {
+            return $query->where('isLimitLoad', 1);
+        })
+            ->paginate(10)
+            ->through(fn($owner) => $owner->makeHidden(['numOfLoads', 'moreDayLoad', 'ratingOwner']));
 
 
         $fleets = Fleet::all();
@@ -50,7 +53,8 @@ class OwnerController extends Controller
             'loadsToday',
             'loadsTodayOwner',
             'fleets',
-            'ownerBookmarkCount'
+            'ownerBookmarkCount',
+            'ownerLimitLoadCount'
         ]));
     }
 
