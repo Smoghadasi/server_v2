@@ -64,7 +64,7 @@ class ServiceController extends Controller
         $rules = [
             'title' => 'required',
             'link' => 'required',
-            'icon' => 'required|mimes:png,jpg,jpeg|max:2048'
+            'icon' => 'required|mimes:png,jpg,jpeg,svg'
         ];
         $messages = [
             'title' => 'عنوان خدمت را وارد کنید.',
@@ -169,7 +169,7 @@ class ServiceController extends Controller
         $iconName = 'user.png';
         if (strlen($icon)) {
             $fileType = $icon->guessClientExtension();
-            if ($icon->isValid() && ($fileType == 'jpg' || $fileType == 'jpeg' || $fileType == 'gif' || $fileType == 'png' || $fileType == 'bmp')) {
+            if ($icon->isValid() && ($fileType == 'jpg' || $fileType == 'jpeg' || $fileType == 'gif' || $fileType == 'png' || $fileType == 'bmp' || $fileType == 'svg')) {
                 $iconName = sha1(time()) . "." . $fileType;
                 $icon->move('pictures/services', $iconName);
             }
