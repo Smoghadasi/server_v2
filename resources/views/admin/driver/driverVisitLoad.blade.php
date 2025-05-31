@@ -5,7 +5,7 @@
         <h5 class="card-header">
             <div class="row justify-content-between">
                 <div class="col-6">
-                    رانندگان ({{ $drivers->total() }}) - {{ $load->driverVisitCounts }}
+                    رانندگان ({{ $drivers->total() }}) - {{ $load->driverVisitCount }}
                 </div>
 
             </div>
@@ -34,8 +34,8 @@
                                 <td>{{ $loop->iteration }}</td>
                                 <td>
                                     {{ $driver->name }} {{ $driver->lastName }}
-                                    @if (\App\Http\Controllers\LoadController::driverCallLoadExists($driver->id, $load->id))
-                                    <i class="menu-icon tf-icons bx bx-support"></i>
+                                    @if (\App\Http\Controllers\LoadController::driverCallLoadExists($driver->id, $load->id) == 1)
+                                        <i class="menu-icon tf-icons bx bx-support"></i>
                                     @endif
 
                                 </td>

@@ -2468,7 +2468,8 @@ class LoadController extends Controller
 
     public static function driverCallLoadExists($driverId, $loadId)
     {
-        DriverCall::where('load_id', $loadId)->where('driver_id', $driverId)->exists();
+        $driverCall = DriverCall::where('load_id', $loadId)->where('driver_id', $driverId)->first();
+        return $driverCall ? 1 : 0;
     }
 
 
