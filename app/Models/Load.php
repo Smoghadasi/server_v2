@@ -5,7 +5,6 @@ namespace App\Models;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Log;
 
@@ -268,8 +267,15 @@ class Load extends Model
         return true;
     }
 
-    public function driverVisitLoads(): HasMany
-    {
-        return $this->hasMany(DriverVisitLoad::class);
-    }
+       public function getDriverVisitLoadCountAttribute(): int
+       {
+           try {
+               return DriverVisitLoad::where('load_id', $this->id)->count();
+           } catch (\Exception $exception) {
+
+           }
+
+           return 0;
+       }
+
 }
