@@ -43,7 +43,7 @@
                                 <td>{{ $driver->city_id ? \App\Http\Controllers\AddressController::geCityName($driver->city_id) : '-'  }}</td>
                                 <td>{{ $driver->driverVisitLoad->count }}</td>
                                 <td>{{ gregorianDateToPersian($driver->driverVisitLoad->created_at, '-', true) }} {{ $time[1] }}</td>
-                                <td>{{ gregorianDateToPersian($driver->activeDate, '-', true) }}</td>
+                                <td>{{ $driver->activeDate ? gregorianDateToPersian($driver->activeDate, '-', true) : 'ندارد' }}</td>
                                 <td>{{ $driver->freeCalls }}</td>
 
                                 <td>
