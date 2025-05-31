@@ -1895,8 +1895,23 @@ class LoadController extends Controller
         }
         try {
             $loadInfo = Load::findOrFail($load_id);
-            $loadInfo->driverVisitCount++;
-            $loadInfo->save();
+
+            DriverVisitLoad::updateOrCreate(
+                [
+                    'load_id' => $loadInfo->id,
+                    'driver_id' => Auth::id(),
+                ],
+                [
+                    'count' => DB::raw('COALESCE(count, 0) + 1'),
+                ]
+            );
+
+        } catch (Exception $exception) {
+            Log::emergency("******************************** DriverVisitLoad loads ******************************");
+            Log::emergency($exception->getMessage());
+            Log::emergency("*******************************************************************************************");
+        }
+        try {
 
             $loadInfo = Load::where('id', $load_id)
                 ->select(
@@ -2583,6 +2598,7 @@ class LoadController extends Controller
     {
         $loads = Load::query()
             ->with(['owner:id,isAccepted,name,lastName']) // فیلدهای مورد نیاز
+            ->withCount('driverVisitLoads')
             ->when($request->fleet_id !== null, function ($query) use ($request) {
                 return $query->whereJsonContains('fleets->fleet_id', $request->fleet_id);
             })
