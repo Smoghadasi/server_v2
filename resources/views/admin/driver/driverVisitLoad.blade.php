@@ -23,6 +23,8 @@
                             <th>شهر</th>
                             <th>تعداد بازدید</th>
                             <th>زمان بازدید</th>
+                            <th>تاریخ آخرین اشتراک</th>
+                            <th>تماس رایگان</th>
                             <th class="text-center">عملیات</th>
                         </tr>
                     </thead>
@@ -41,6 +43,8 @@
                                 <td>{{ $driver->city_id ? \App\Http\Controllers\AddressController::geCityName($driver->city_id) : '-'  }}</td>
                                 <td>{{ $driver->driverVisitLoad->count }}</td>
                                 <td>{{ gregorianDateToPersian($driver->driverVisitLoad->created_at, '-', true) }} {{ $time[1] }}</td>
+                                <td>{{ gregorianDateToPersian($driver->activeDate, '-', true) }}</td>
+                                <td>{{ $driver->freeCalls }}</td>
 
                                 <td>
                                     <a class="btn btn-primary"

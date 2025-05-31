@@ -2485,6 +2485,8 @@ class LoadController extends Controller
                 'created_at',
                 'city_id',
                 'updated_at',
+                'activeDate',
+                'freeCalls',
 
             ])
             ->orderByDesc('created_at')
