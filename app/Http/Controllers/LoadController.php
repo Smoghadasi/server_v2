@@ -2598,7 +2598,6 @@ class LoadController extends Controller
     {
         $loads = Load::query()
             ->with(['owner:id,isAccepted,name,lastName']) // فیلدهای مورد نیاز
-            ->withCount('driverVisitLoads')
             ->when($request->fleet_id !== null, function ($query) use ($request) {
                 return $query->whereJsonContains('fleets->fleet_id', $request->fleet_id);
             })
