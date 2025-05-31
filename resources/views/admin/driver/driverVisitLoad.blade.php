@@ -20,9 +20,9 @@
                             <th>نام و نام خانوادگی</th>
                             <th>نوع ناوگان</th>
                             <th>شماره تلفن همراه</th>
-                            <th>زمان آنلاین</th>
                             <th>شهر</th>
                             <th>تعداد بازدید</th>
+                            <th>زمان بازدید</th>
                             <th class="text-center">عملیات</th>
                         </tr>
                     </thead>
@@ -35,12 +35,13 @@
                                 <td>{{ $driver->mobileNumber }}</td>
 
                                 @php
-                                    $time = explode(' ', $driver->location_at);
+                                    $time = explode(' ', $driver->driverVisitLoad->created_at);
                                 @endphp
 
-                                <td>{{ gregorianDateToPersian($driver->location_at, '-', true) }} {{ $time[1] }}</td>
                                 <td>{{ $driver->city_id ? \App\Http\Controllers\AddressController::geCityName($driver->city_id) : '-'  }}</td>
                                 <td>{{ $driver->driverVisitLoad->count }}</td>
+                                <td>{{ gregorianDateToPersian($driver->driverVisitLoad->created_at, '-', true) }} {{ $time[1] }}</td>
+
                                 <td>
                                     <a class="btn btn-primary"
                                         href="{{ url('admin/driverInfo') }}/{{ $driver->id }}">جزئیات</a>
