@@ -23,6 +23,7 @@ use App\Http\Controllers\DriverController;
 use App\Http\Controllers\FleetController as AdminFleetController;
 use App\Http\Controllers\GroupNotificationController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LimitCallController;
 use App\Http\Controllers\LoadController;
 use App\Http\Controllers\LoginHistoryController;
 use App\Http\Controllers\ManualNotificationController;
@@ -293,6 +294,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::resource('bookmark', BookmarkController::class)->middleware("operator");
 
         Route::resource('trackableItems', TrackableItemController::class)->middleware("operator");
+
+        Route::resource('limitCall', LimitCallController::class)->middleware("operator");
 
 
         Route::get('ownerOperators', [OwnerController::class, 'ownerOperators'])

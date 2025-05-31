@@ -597,6 +597,11 @@
                         <div data-i18n="Without menu"> کمپین اعلان</div>
                     </a>
                 </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="{{ route('limitCall.index') }}">
+                        <div data-i18n="Without menu"> شماره های محدود شده</div>
+                    </a>
+                </li>
 
                 @if (in_array('searchLoads', auth()->user()->userAccess))
                     <li class="menu-item">
