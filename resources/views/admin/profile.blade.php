@@ -13,7 +13,7 @@
             </ul>
             <div class="card mb-4">
                 <div class="card-body">
-                    <form action="{{ url('admin/restPassword') }}/{{ auth()->id() }}" method="post">
+                    <form action="{{ url('admin/restPassword') }}" method="post">
                         @csrf
                         <div class="row">
                             <div class="mb-3 col-md-6">

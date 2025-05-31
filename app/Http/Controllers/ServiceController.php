@@ -161,7 +161,7 @@ class ServiceController extends Controller
     /**
      * Upload the service icon
      *
-     * @param string $icon
+
      * @return  string
      */
     private function storeIcon($icon)

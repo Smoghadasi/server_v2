@@ -677,7 +677,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
             ->middleware('operator')
             ->name('transactionManual.change.status');
 
-        Route::post('restPassword/{user}', [UserController::class, 'restPassword'])->middleware('operator')->name('user.resetPass');
+        Route::post('restPassword', [UserController::class, 'restPassword'])->middleware('operator')->name('user.resetPass');
 
         /**************************************************************************************************************/
         //  شماره تلفن های لیست ممنوعه

@@ -129,8 +129,9 @@ class UserController extends Controller
     }
 
     //
-    public function restPassword(Request $request, User $user)
+    public function restPassword(Request $request)
     {
+        $user = User::find(Auth::id());
         $user->password = Hash::make($request->password);
         $user->save();
         return back()->with('success', 'رمز جدید ثبت شد');
