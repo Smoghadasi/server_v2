@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use SoapClient;
 
@@ -278,6 +279,11 @@ class Driver extends Authenticatable
         } else {
             return round($score, 1);
         }
+    }
+
+    public function driverVisitLoad(): HasOne
+    {
+        return $this->hasOne(DriverVisitLoad::class);
     }
     //
     public function subscriptionLoadSmsIr($mobile, $driver, $from, $to)

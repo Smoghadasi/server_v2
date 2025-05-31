@@ -331,6 +331,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // رانندگان نزدیک بار
         Route::get('nearLoadDrivers/{load_id}', [LoadController::class, 'nearLoadDrivers'])->middleware('operator')->name('admin.nearLoadDrivers');
 
+        Route::get('driverVisitLoads/{load_id}', [LoadController::class, 'driverVisitLoads'])->middleware('operator')->name('admin.driverVisitLoads');
+
         Route::get('sendNearLoadDrivers/{load_id}/{type}', [LoadController::class, 'sendMessageNearLoadDrivers'])
             ->middleware('operator')
             ->name('admin.sendNearLoadDrivers');

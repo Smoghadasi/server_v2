@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class DriverCallCount extends Model
 {
     use HasFactory;
+    protected $guarded = [];
     public function driver (): BelongsTo
     {
         return $this->belongsTo(Driver::class);

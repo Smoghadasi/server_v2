@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DriverCall extends Model
 {
+    protected $guarded = [];
     protected $appends = [
         'isAccepted',
         'isAnyOneSelectedDriver',

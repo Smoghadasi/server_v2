@@ -1905,7 +1905,6 @@ class LoadController extends Controller
                     'count' => DB::raw('COALESCE(count, 0) + 1'),
                 ]
             );
-
         } catch (Exception $exception) {
             Log::emergency("******************************** DriverVisitLoad loads ******************************");
             Log::emergency($exception->getMessage());
@@ -2465,6 +2464,33 @@ class LoadController extends Controller
             ->count();
 
         return view('admin.driver.driverNearOwner', compact('drivers', 'load', 'sendSmsDriverCount'));
+    }
+
+
+    public function driverVisitLoads($load_id)
+    {
+        // دریافت رانندگان نزدیک
+        $drivers = Driver::with('driverVisitLoad')->whereHas('driverVisitLoad', function ($q) use ($load_id) {
+            $q->where('load_id', $load_id);
+        })
+            ->select([
+                'id',
+                'name',
+                'lastName',
+                'mobileNumber',
+                'fleet_id',
+                'location_at',
+                'latitude',
+                'longitude',
+                'created_at',
+                'city_id',
+                'updated_at',
+
+            ])
+            ->orderByDesc('created_at')
+            ->paginate(20);
+
+        return view('admin.driver.driverVisitLoad', compact('drivers'));
     }
 
 

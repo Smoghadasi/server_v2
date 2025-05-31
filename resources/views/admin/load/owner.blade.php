@@ -108,7 +108,10 @@
                                 <td>{{ $load->fromCity }}</td>
                                 <td>{{ $load->toCity }}</td>
                                 <td>
-                                    <span class="badge bg-primary">بازدید : {{ $load->driverVisitLoadCount }}</span>
+                                    <a href="{{ route('admin.driverVisitLoads', $load) }}">
+                                        <span class="badge bg-primary">بازدید : {{ $load->driverVisitLoadCount }}</span>
+                                    </a>
+
                                     <span>
                                         <a class="badge bg-danger" href="{{ route('load.searchLoadInquiry', $load->id) }}">
                                             درخواست: {{ $load->numOfInquiryDrivers }}
