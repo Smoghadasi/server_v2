@@ -5,7 +5,7 @@
         <h5 class="card-header">
             <div class="row justify-content-between">
                 <div class="col-6">
-                    رانندگان ({{ $drivers->total() }})
+                    رانندگان ({{ $drivers->total() }}) - {{ $loadVisit }}
                 </div>
 
             </div>
