@@ -2466,10 +2466,15 @@ class LoadController extends Controller
         return view('admin.driver.driverNearOwner', compact('drivers', 'load', 'sendSmsDriverCount'));
     }
 
+    public static function driverCallLoadExists($driverId, $loadId)
+    {
+        DriverCall::where('load_id', $loadId)->where('driver_id', $driverId)->exists();
+    }
+
 
     public function driverVisitLoads($load_id)
     {
-        $loadVisit = Load::findOrFail($load_id)->driverVisitCount;
+        $load = Load::findOrFail($load_id);
         // دریافت رانندگان نزدیک
         $drivers = Driver::with('driverVisitLoad')->whereHas('driverVisitLoad', function ($q) use ($load_id) {
             $q->where('load_id', $load_id);
@@ -2493,7 +2498,7 @@ class LoadController extends Controller
             ->orderByDesc('created_at')
             ->paginate(20);
 
-        return view('admin.driver.driverVisitLoad', compact('drivers', 'loadVisit'));
+        return view('admin.driver.driverVisitLoad', compact('drivers', 'load'));
     }
 
 
