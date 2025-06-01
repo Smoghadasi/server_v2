@@ -238,9 +238,9 @@ class DataConvertPlusController extends Controller
                         $originName = ProvinceCity::where('name', $origin)
                             ->where('parent_id', '!=', 0)
                             ->get(['id', 'name', 'parent_id']);
-                        $destinationName = ProvinceCity::where('name', 'like', "%{$dest}%")
-                            ->where('parent_id', '!=', 0)
+                        $destinationName = ProvinceCity::where('name', $dest)
                             ->get(['id', 'name', 'parent_id']);
+                        // return $destinationName;
                         $results[] = [
                             'fleet' => $fleet,
                             'fleet_id' => $fleetMap[$fleet] ?? null,
