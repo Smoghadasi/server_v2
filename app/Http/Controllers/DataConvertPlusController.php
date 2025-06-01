@@ -172,10 +172,10 @@ class DataConvertPlusController extends Controller
             if (preg_match_all("/\b($cityPattern)\b\s+به\s+\b($cityPattern)\b/u", $line, $routeMatches, PREG_SET_ORDER)) {
                 foreach ($routeMatches as $match) {
                     foreach ($fleets ?: [null] as $fleet) {
-                        $originName = ProvinceCity::where('name', 'like', "%{$match[1]}%")
+                        $originName = ProvinceCity::where('name', $match[1])
                             ->where('parent_id', '!=', 0)
                             ->get(['id', 'name', 'parent_id']);
-                        $destinationName = ProvinceCity::where('name', 'like', "%{$match[2]}%")
+                        $destinationName = ProvinceCity::where('name', $match[2])
                             ->where('parent_id', '!=', 0)
                             ->get(['id', 'name', 'parent_id']);
                         $results[] = [
@@ -203,10 +203,10 @@ class DataConvertPlusController extends Controller
                 foreach ($citiesInLine[0] ?? [] as $dest) {
                     if ($dest !== $lastOrigin) { // جلوگیری از ثبت مجدد مبدا به عنوان مقصد
                         foreach ($fleets as $fleet) {
-                            $originName = ProvinceCity::where('name', 'like', "%{$lastOrigin}%")
+                            $originName = ProvinceCity::where('name', $lastOrigin)
                                 ->where('parent_id', '!=', 0)
                                 ->get(['id', 'name', 'parent_id']);
-                            $destinationName = ProvinceCity::where('name', 'like', "%{$dest}%")
+                            $destinationName = ProvinceCity::where('name', $dest)
                                 ->where('parent_id', '!=', 0)
                                 ->get(['id', 'name', 'parent_id']);
                             $results[] = [
