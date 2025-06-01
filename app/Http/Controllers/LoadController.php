@@ -1896,15 +1896,15 @@ class LoadController extends Controller
         try {
             $loadInfo = Load::findOrFail($load_id);
 
-            DriverVisitLoad::updateOrCreate(
-                [
-                    'load_id' => $loadInfo->id,
-                    'driver_id' => Auth::id(),
-                ],
-                [
-                    'count' => DB::raw('COALESCE(count, 0) + 1'),
-                ]
-            );
+            // DriverVisitLoad::updateOrCreate(
+            //     [
+            //         'load_id' => $loadInfo->id,
+            //         'driver_id' => Auth::id(),
+            //     ],
+            //     [
+            //         'count' => DB::raw('COALESCE(count, 0) + 1'),
+            //     ]
+            // );
         } catch (Exception $exception) {
             Log::emergency("******************************** DriverVisitLoad loads ******************************");
             Log::emergency($exception->getMessage());
