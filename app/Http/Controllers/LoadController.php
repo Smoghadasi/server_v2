@@ -3002,7 +3002,7 @@ class LoadController extends Controller
 
         try {
 
-            $page = 15;
+            $page = 25;
             $toDate = \date('Y-m-d h:i:s', strtotime('-1 day', time()));
             $conditions = [];
             if ($lastLoadId > 0) {
