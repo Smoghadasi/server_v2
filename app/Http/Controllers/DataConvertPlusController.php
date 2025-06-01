@@ -172,16 +172,24 @@ class DataConvertPlusController extends Controller
             if (preg_match_all("/\b($cityPattern)\b\s+به\s+\b($cityPattern)\b/u", $line, $routeMatches, PREG_SET_ORDER)) {
                 foreach ($routeMatches as $match) {
                     foreach ($fleets ?: [null] as $fleet) {
+                        $originName = ProvinceCity::where('name', 'like', "%{$match[1]}%")
+                            ->where('parent_id', '!=', 0)
+                            ->get(['id', 'name', 'parent_id']);
+                        $destinationName = ProvinceCity::where('name', 'like', "%{$match[2]}%")
+                            ->where('parent_id', '!=', 0)
+                            ->get(['id', 'name', 'parent_id']);
                         $results[] = [
                             'fleet' => $fleet,
                             'fleet_id' => $fleetMap[$fleet] ?? null,
                             'origin' => $match[1], // مبدا
-                            'origin_id' => $cityMap[$match[1]] ?? null,
-                            'origin_state_id' => $parentCityMap[$match[1]] ?? null,
+                            'originProvince' => $originName, // مبدا
+
                             'destination' => $match[2], // مقصد
-                            'destination_id' => $cityMap[$match[2]] ?? null,
-                            'destination_state_id' => $parentCityMap[$match[2]] ?? null,
+                            'destinationProvince' => $destinationName, // مقصد
                             'phone' => $phone,
+                            'freight' => 0,
+                            'priceType' => 'توافقی'
+
                         ];
                     }
                     $lastOrigin = $match[1];
@@ -195,16 +203,24 @@ class DataConvertPlusController extends Controller
                 foreach ($citiesInLine[0] ?? [] as $dest) {
                     if ($dest !== $lastOrigin) { // جلوگیری از ثبت مجدد مبدا به عنوان مقصد
                         foreach ($fleets as $fleet) {
+                            $originName = ProvinceCity::where('name', 'like', "%{$lastOrigin}%")
+                                ->where('parent_id', '!=', 0)
+                                ->get(['id', 'name', 'parent_id']);
+                            $destinationName = ProvinceCity::where('name', 'like', "%{$dest}%")
+                                ->where('parent_id', '!=', 0)
+                                ->get(['id', 'name', 'parent_id']);
                             $results[] = [
                                 'fleet' => $fleet,
                                 'fleet_id' => $fleetMap[$fleet] ?? null,
-                                'origin' => $lastOrigin,
-                                'origin_id' => $cityMap[$lastOrigin] ?? null,
-                                'origin_state_id' => $parentCityMap[$lastOrigin] ?? null,
-                                'destination' => $dest,
-                                'destination_id' => $cityMap[$dest] ?? null,
-                                'destination_state_id' => $parentCityMap[$dest] ?? null,
+                                'origin' => $lastOrigin, // مبدا
+                                'originProvince' => $originName, // مبدا
+
+                                'destination' => $dest, // مقصد
+                                'destinationProvince' => $destinationName, // مقصد
                                 'phone' => $phone,
+                                'freight' => 0,
+                                'priceType' => 'توافقی'
+
                             ];
                         }
                     }
@@ -219,16 +235,24 @@ class DataConvertPlusController extends Controller
                 if (Str::contains($flatText, $f)) {
                     $fleet = $equivalentWordsMap[$f] ?? $f;
                     foreach ($destinations as $dest) {
+                        $originName = ProvinceCity::where('name', $origin)
+                            ->where('parent_id', '!=', 0)
+                            ->get(['id', 'name', 'parent_id']);
+                        $destinationName = ProvinceCity::where('name', 'like', "%{$dest}%")
+                            ->where('parent_id', '!=', 0)
+                            ->get(['id', 'name', 'parent_id']);
                         $results[] = [
                             'fleet' => $fleet,
                             'fleet_id' => $fleetMap[$fleet] ?? null,
-                            'origin' => $origin,
-                            'origin_id' => $cityMap[$origin] ?? null,
-                            'origin_state_id' => $parentCityMap[$origin] ?? null,
+                            'origin' => $origin, // مبدا
+                            'originProvince' => $originName, // مبدا
+
                             'destination' => $dest,
-                            'destination_id' => $cityMap[$dest] ?? null,
-                            'destination_state_id' => $parentCityMap[$dest] ?? null,
+                            'destinationProvince' => $destinationName ?? null,
                             'phone' => $phone,
+                            'freight' => 0,
+                            'priceType' => 'توافقی'
+
                         ];
                     }
                 }
@@ -237,7 +261,7 @@ class DataConvertPlusController extends Controller
 
         // حذف تکراری‌ها
         $uniqueResults = collect($results)->unique(fn($item) => ($item['fleet'] ?? '') . '-' . $item['origin'] . '-' . $item['destination'] . '-' . ($item['phone'] ?? ''))->values()->all();
-
+        // return $uniqueResults;
         // اطلاعات تکمیلی برای نمایش
         $countOfCargos = CargoConvertList::where('operator_id', 0)->count();
         $users = UserController::getOnlineAndOfflineUsers();
@@ -248,6 +272,7 @@ class DataConvertPlusController extends Controller
     // ذخیره دسته ای بارها
     public function storeMultiCargoSmart(Request $request, CargoConvertList $cargo)
     {
+        // return $request;
         try {
             $expiresAt = now()->addMinutes(3);
             $userId = Auth::id();
@@ -290,13 +315,15 @@ class DataConvertPlusController extends Controller
         $counter = 0;
         foreach ($request->key as $key) {
             $origin = "origin_" . $key;
-            $originState = "origin_state_id_" . $key;
+            $originState = "originState_" . $key;
             $destination = "destination_" . $key;
-            $destinationState = "destination_state_id_" . $key;
+            $destinationState = "destinationState_" . $key;
             $mobileNumber = "mobileNumber_" . $key;
             $description = "description_" . $key;
             $fleet = "fleets_" . $key;
             $title = "title_" . $key;
+            // $freight = "freight_" . $key;
+            // $priceType = "priceType_" . $key;
             // $pattern = "pattern_" . $key;
             try {
                 $this->storeCargoSmart(
@@ -308,6 +335,9 @@ class DataConvertPlusController extends Controller
                     $request->$description,
                     $request->$fleet,
                     $request->$title,
+                    // $request->$freight,
+                    // $request->$priceType,
+
                     // $request->$pattern,
                     $counter,
                     $cargo->id

@@ -98,35 +98,91 @@
             </form>
 
             <div class="col-lg-6" style="height: 100vh; overflow-y: auto;">
-                <form method="POST" action="{{ url('admin/storeMultiCargoSmart') }}/{{ $cargo->id }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ url('admin/storeMultiCargoSmart') }}/{{ $cargo->id }}"
+                    enctype="multipart/form-data">
                     @csrf
                     @foreach ($uniqueResults as $key => $item)
                         <div class="form-group row text-right alert alert-light border border-dark" style="color: #000000">
                             <input type="hidden" name="key[]" value="{{ $key }}">
 
                             <label class="col-lg-12 mb-2">عنوان :
-                                <input type="text" class="form-control" name="title_{{ $key }}" placeholder="بدون عنوان">
+                                <input type="text" class="form-control" name="title_{{ $key }}"
+                                    placeholder="بدون عنوان">
                             </label>
 
-                            <input type="hidden" class="form-control" name="originId_{{ $key }}" value="{{ $item['origin_id'] }}">
-                            <label class="col-lg-6 mb-2">مبدا :
-                                <input type="text" class="form-control" name="origin_{{ $key }}" value="{{ $item['origin'] }}">
-                                <input type="hidden" class="form-control" name="origin_state_id_{{ $key }}" value="{{ $item['origin_state_id'] }}">
-                            </label>
+                            @if (isset($item['originProvince']))
+                                <input type="hidden" class="form-control" name="origin_{{ $key }}"
+                                    value="{{ $item['origin'] }}">
 
-                            <input type="hidden" class="form-control" name="destinationId_{{ $key }}" value="{{ $item['destination_id'] }}">
+                                <label class="col-lg-6 mb-2">مبدا :
+                                    <select class="form-select" name="originState_{{ $key }}" id="">
+                                        @foreach ($item['originProvince'] as $province)
+                                            <option value="{{ $province->parent_id }}">
+                                                {{ $item['origin'] }} - {{ $province->state }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </label>
+                            @else
+                                <label class="col-lg-6 mb-2">مبدا :
+                                    <input type="text" class="form-control" name="origin_{{ $key }}"
+                                        value="{{ $item['origin'] }}">
+                                </label>
+                            @endif
+
+                            <input type="hidden" class="form-control" name="destination_{{ $key }}"
+                                value="{{ $item['destination'] }}">
+
                             <label class="col-lg-6 mb-2">مقصد :
-                                <input type="text" class="form-control" name="destination_{{ $key }}" value="{{ $item['destination'] }}">
-                                <input type="hidden" class="form-control" name="destination_state_id_{{ $key }}" value="{{ $item['destination_state_id'] }}">
+                                <select class="form-select" name="destinationState_{{ $key }}" id="">
+                                    @foreach ($item['destinationProvince'] as $province)
+                                        <option value="{{ $province->parent_id }}">
+                                            {{ $item['destination'] }} - {{ $province->state }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </label>
 
                             <label class="col-lg-12 mb-2">شماره تلفن :
-                                <input type="text" class="form-control" name="mobileNumber_{{ $key }}" value="{{ $item['phone'] }}">
+                                <input type="text" class="form-control" name="mobileNumber_{{ $key }}"
+                                    value="{{ $item['phone'] }}">
                             </label>
 
-                            <input type="hidden" class="form-control" name="fleetId_{{ $key }}" value="{{ $item['fleet_id'] }}">
+                            <div class="col-lg-12 row mb-2">
+                                <label class="col-lg-6">قیمت :
+                                    <input type="text" class="form-control"
+                                        onkeyup="separate('freight_{{ $key }}'); priceType('priceType_{{ $key }}',this.value)"
+                                        id="freight_{{ $key }}" name="freight_{{ $key }}"
+                                        value="{{ $item['freight'] }}">
+                                </label>
+                                <label class="col-lg-6">نوع قیمت :
+                                    <div class="col-lg-12">
+                                        <label class="ml-3">
+                                            <input checked type="radio" value="توافقی"
+                                                name="priceType_{{ $key }}" />توافقی
+                                        </label>
+
+                                        <label class="ml-3">
+                                            <input type="radio" value="به ازای هر تن"
+                                                name="priceType_{{ $key }}" />به ازای
+                                            هر تن
+                                        </label>
+                                        <label class="ml-3">
+                                            <input type="radio" value="به صورت صافی"
+                                                name="priceType_{{ $key }}" />به صورت
+                                            صافی
+                                        </label>
+                                    </div>
+
+                                </label>
+                            </div>
+
+
+                            <input type="hidden" class="form-control" name="fleetId_{{ $key }}"
+                                value="{{ $item['fleet_id'] }}">
                             <label class="col-lg-12 mb-2">ناوگان :
-                                <input type="text" class="form-control" name="fleets_{{ $key }}" value="{{ $item['fleet'] }}">
+                                <input type="text" class="form-control" name="fleets_{{ $key }}"
+                                    value="{{ $item['fleet'] }}">
                             </label>
 
                             <label class="col-lg-12 row">توضیحات :
@@ -148,4 +204,32 @@
         </div>
     </div>
 
+@endsection
+@section('script')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mobile-detect/1.4.5/mobile-detect.min.js"></script>
+
+    <script>
+        function separate(freight) {
+            document.getElementById(freight).value = document.getElementById(freight).value.replace(/\D/g, "")
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        function priceType(pt, value) {
+            value = value.replace(",", "");
+            if (value !== "0" && value.length > 0)
+                document.getElementById(pt).value = "به صورت صافی";
+            else
+                document.getElementById(pt).value = "توافقی";
+        }
+        document.addEventListener("DOMContentLoaded", function() {
+            let md = new MobileDetect(window.navigator.userAgent);
+            console.log(window.navigator.userAgent);
+            let deviceType = md.mobile() ? "موبایل" : md.tablet() ? "تبلت" : "دسکتاپ";
+
+            document.querySelectorAll(".device-info").forEach(function(element) {
+                console.log(element);
+                element.innerText = deviceType;
+            });
+        });
+    </script>
 @endsection
