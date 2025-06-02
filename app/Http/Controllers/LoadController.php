@@ -1899,7 +1899,7 @@ class LoadController extends Controller
             DriverVisitLoad::updateOrCreate(
                 [
                     'load_id' => $loadInfo->id,
-                    'driver_id' => Auth::id(),
+                    'driver_id' => $driver_id,
                 ],
                 [
                     'count' => DB::raw('COALESCE(count, 0) + 1'),
