@@ -43,11 +43,11 @@
                                 <td>{{ $driverVisitLoad->driver->mobileNumber }}</td>
 
                                 @php
-                                    $time = explode(' ', $driverVisitLoad->->created_at);
+                                    $time = explode(' ', $driverVisitLoad->created_at);
                                 @endphp
 
                                 <td>{{ $driverVisitLoad->driver->city_id ? \App\Http\Controllers\AddressController::geCityName($driverVisitLoad->driver->city_id) : '-'  }}</td>
-                                <td>{{ $driverVisitLoad->->count }}</td>
+                                <td>{{ $driverVisitLoad->count }}</td>
                                 <td>{{ gregorianDateToPersian($driverVisitLoad->created_at, '-', true) }} {{ $time[1] }}</td>
                                 <td>{{ $driver->activeDate ? gregorianDateToPersian($driverVisitLoad->driver->activeDate, '-', true) : 'ندارد' }}</td>
                                 <td>{{ $driverVisitLoad->driver->freeCalls }}</td>
