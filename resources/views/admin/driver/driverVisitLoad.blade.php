@@ -29,32 +29,32 @@
                         </tr>
                     </thead>
                     <tbody class="small">
-                        @forelse ($drivers as $driver)
+                        @forelse ($driverVisitLoads as $driverVisitLoad)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>
-                                    {{ $driver->name }} {{ $driver->lastName }}
-                                    @if (\App\Http\Controllers\LoadController::driverCallLoadExists($driver->id, $load->id) == 1)
+                                    {{ $driverVisitLoad->driver->name }} {{ $driverVisitLoad->driver->lastName }}
+                                    @if (\App\Http\Controllers\LoadController::driverCallLoadExists($driverVisitLoad->driver->id, $load->id) == 1)
                                         <i class="menu-icon tf-icons bx bx-support"></i>
                                     @endif
 
                                 </td>
-                                <td>{{ $driver->fleetTitle }}</td>
-                                <td>{{ $driver->mobileNumber }}</td>
+                                <td>{{ $driverVisitLoad->driver->fleetTitle }}</td>
+                                <td>{{ $driverVisitLoad->driver->mobileNumber }}</td>
 
                                 @php
-                                    $time = explode(' ', $driver->driverVisitLoad->created_at);
+                                    $time = explode(' ', $driverVisitLoad->->created_at);
                                 @endphp
 
-                                <td>{{ $driver->city_id ? \App\Http\Controllers\AddressController::geCityName($driver->city_id) : '-'  }}</td>
-                                <td>{{ $driver->driverVisitLoad->count }}</td>
-                                <td>{{ gregorianDateToPersian($driver->driverVisitLoad->created_at, '-', true) }} {{ $time[1] }}</td>
-                                <td>{{ $driver->activeDate ? gregorianDateToPersian($driver->activeDate, '-', true) : 'ندارد' }}</td>
-                                <td>{{ $driver->freeCalls }}</td>
+                                <td>{{ $driverVisitLoad->driver->city_id ? \App\Http\Controllers\AddressController::geCityName($driverVisitLoad->driver->city_id) : '-'  }}</td>
+                                <td>{{ $driverVisitLoad->->count }}</td>
+                                <td>{{ gregorianDateToPersian($driverVisitLoad->->created_at, '-', true) }} {{ $time[1] }}</td>
+                                <td>{{ $driver->activeDate ? gregorianDateToPersian($driverVisitLoad->driver->activeDate, '-', true) : 'ندارد' }}</td>
+                                <td>{{ $driverVisitLoad->driver->freeCalls }}</td>
 
                                 <td>
                                     <a class="btn btn-primary"
-                                        href="{{ url('admin/driverInfo') }}/{{ $driver->id }}">جزئیات</a>
+                                        href="{{ url('admin/driverInfo') }}/{{ $driverVisitLoad->driver->id }}">جزئیات</a>
                                 </td>
                             </tr>
                         @empty
@@ -66,6 +66,7 @@
                         @endforelse
                     </tbody>
                 </table>
+                {{ $driverVisitLoads }}
             </div>
         </div>
     </div>

@@ -2476,28 +2476,7 @@ class LoadController extends Controller
     public function driverVisitLoads($load_id)
     {
         $load = Load::findOrFail($load_id);
-        // دریافت رانندگان نزدیک
-        $drivers = Driver::with('driverVisitLoad')->whereHas('driverVisitLoad', function ($q) use ($load_id) {
-            $q->where('load_id', $load_id);
-        })
-            ->select([
-                'id',
-                'name',
-                'lastName',
-                'mobileNumber',
-                'fleet_id',
-                'location_at',
-                'latitude',
-                'longitude',
-                'created_at',
-                'city_id',
-                'updated_at',
-                'activeDate',
-                'freeCalls',
-
-            ])
-            ->orderByDesc('created_at')
-            ->paginate(20);
+        $driverVisitLoads = DriverVisitLoad::with('driver')->where('load_id', $load_id)->paginate(20);
 
         return view('admin.driver.driverVisitLoad', compact('drivers', 'load'));
     }
