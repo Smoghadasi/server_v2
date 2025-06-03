@@ -2478,7 +2478,7 @@ class LoadController extends Controller
         $load = Load::findOrFail($load_id);
         $driverVisitLoads = DriverVisitLoad::with('driver')->where('load_id', $load_id)->paginate(20);
 
-        return view('admin.driver.driverVisitLoad', compact('drivers', 'load'));
+        return view('admin.driver.driverVisitLoad', compact('driverVisitLoads', 'load'));
     }
 
 
