@@ -747,61 +747,46 @@ class PayController extends Controller
     public function payDriverSina($packageName, Driver $driver)
     {
         $driverPackagesInfo = getDriverPackagesInfo();
-        if (!isset($driverPackagesInfo['data'][$packageName]['price']))
+        if (!isset($driverPackagesInfo['data'][$packageName]['price'])) {
             return abort(404);
-
-        $monthsOfThePackage = 0;
-        switch ($packageName) {
-            case 'monthly':
-                $monthsOfThePackage = 1;
-                break;
-            case 'trimester':
-                $monthsOfThePackage = 3;
-                break;
-            case 'sixMonths':
-                $monthsOfThePackage = 6;
-                break;
         }
 
-        switch ($driverPackagesInfo['data'][$packageName]['price']) {
-            case MONTHLY:
-                $amount = '1350000';
-                break;
-            case TRIMESTER:
-                $amount = '3500000';
-                break;
-            case SIXMONTHS:
-                $amount = '7000000';
-                break;
-        }
-        $amountOrginal = $driverPackagesInfo['data'][$packageName]['price'];
+        $monthsOfThePackage = match ($packageName) {
+            'monthly' => 1,
+            'trimester' => 3,
+            'sixMonths' => 6,
+            default => 0
+        };
 
-        // آدرس درگاه پرداخت
+        $price = $driverPackagesInfo['data'][$packageName]['price'];
+
+        $amount = match ($price) {
+            MONTHLY => '1350000',
+            TRIMESTER => '3500000',
+            SIXMONTHS => '7000000',
+            default => '0'
+        };
+
+        $amountOrginal = $price;
+
         $url = "https://pec.shaparak.ir/NewIPGServices/Sale/SaleService.asmx?WSDL";
-
-        // شماره سفارش تولید شده توسط سیستم پذیرنده که باید الزاما یکتا باشد
-
-        // آدرسی که بعد از پایان هر عملیات درسمت بانک نتیجه تراکنش باید به آن برگشت داده شود
         $callbackUrl = 'https://dashboard.iran-tarabar.ir/verifyDriverPaySina';
 
-        $params = array(
+        $orderId = $driver->id . date('mHis') . substr(Carbon::now()->micro, 0, 2) . rand(100, 999);
+
+        $params = [
             "LoginAccount" => PIN_SINA,
             "Amount" => $amount,
-            "OrderId" => $driver->id . date('mHis') . substr(Carbon::now()->micro, 0, 2) . rand(100, 999),
+            "OrderId" => $orderId,
             "CallBackUrl" => $callbackUrl,
             "AdditionalData" => '',
             "Originator" => ''
-        );
-
-        // در این مرحله میتوانید اطلاعات قبل از ارسال را ذخیره سازی کنید.
-
-
-        $client = new SoapClient($url);
+        ];
 
         try {
-            $result = $client->SalePaymentRequest(array(
-                "requestData" => $params
-            ));
+            $client = new SoapClient($url);
+            $result = $client->SalePaymentRequest(['requestData' => $params]);
+
             if ($result->SalePaymentRequestResult->Token && $result->SalePaymentRequestResult->Status === 0) {
                 $token = $result->SalePaymentRequestResult->Token;
 
@@ -810,116 +795,110 @@ class PayController extends Controller
                 $transaction->userType = ROLE_DRIVER;
                 $transaction->authority = $token;
                 $transaction->status = 2;
-                // $transaction->ResCode = $this->generateOrderId();
                 $transaction->bank_name = SINA;
                 $transaction->amount = $amountOrginal;
                 $transaction->monthsOfThePackage = $monthsOfThePackage;
                 $transaction->save();
 
+                // بررسی دفعات پرداخت در روز
                 try {
-                    $driver = Driver::find($transaction->user_id);
-
                     if (
                         Transaction::where('user_id', $driver->id)
                         ->where('userType', 'driver')
-                        ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
-                        ->count() == 5
+                        ->where('created_at', '>', now()->startOfDay())
+                        ->count() >= 5
                     ) {
-                        $sms = new Driver();
-                        $sms->unSuccessPayment($driver->mobileNumber);
+                        $driver->unSuccessPayment($driver->mobileNumber);
                     }
-                } catch (Exception $exception) {
-                    Log::emergency("-------------------------------- unSuccessPayment -----------------------------");
-                    Log::emergency($exception->getMessage());
-                    Log::emergency("------------------------------------------------------------------------------");
+                } catch (Exception $e) {
+                    Log::emergency("unSuccessPayment failed: " . $e->getMessage());
                 }
 
-                $startGateWayUrl = "https://pec.shaparak.ir/NewIPG/?Token=" . $result->SalePaymentRequestResult->Token;
-                return redirect($startGateWayUrl);
-            } elseif ($result->SalePaymentRequestResult->Status  != '0') {
-                $err_msg = "(<strong> کد خطا : " . $result->SalePaymentRequestResult->Status . "</strong>) " .
+                return redirect("https://pec.shaparak.ir/NewIPG/?Token=$token");
+            } else {
+                $err_msg = "(<strong>کد خطا: " . $result->SalePaymentRequestResult->Status . "</strong>) " .
                     $result->SalePaymentRequestResult->Message;
                 return $err_msg;
             }
         } catch (Exception $ex) {
-            $err_msg =  $ex->getMessage();
+            Log::error("Soap Error in payDriverSina: " . $ex->getMessage());
+            return "خطا در ارتباط با درگاه بانک. لطفا دوباره تلاش کنید.";
         }
     }
+
 
     public function verifyDriverPaySina(Request $request)
     {
         $confirmUrl = 'https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL';
-        $params = array(
+
+        $params = [
             "LoginAccount" => PIN_SINA,
             "Token" => $request->Token
-        );
+        ];
 
-        $client = new SoapClient($confirmUrl);
+        $transaction = Transaction::where('authority', $request->Token)->first();
+
+        if (!$transaction) {
+            return view('users.driverPayStatus', [
+                'message' => 'تراکنش یافت نشد',
+                'status' => 0
+            ]);
+        }
+
         try {
+            $client = new SoapClient($confirmUrl);
+            $result = $client->ConfirmPayment(['requestData' => $params]);
 
-            // DB::beginTransaction();
-            try {
-                $result = $client->ConfirmPayment(array(
-                    "requestData" => $params
-                ));
-                $transaction = Transaction::where('authority', $request->Token)->first();
-
-                if ($result->ConfirmPaymentResult->Status != '0') {
-                    // نمایش نتیجه ی پرداخت
-                    $err_msg = "(<strong> کد خطا : " . $result->ConfirmPaymentResult->Status . "</strong>) ";
-                    $status = 0;
-                    $message = $this->getStatusMessage($status);
-                    $authority = $transaction->authority;
-                    $transaction->status = 0;
-                    $transaction->save();
-                    return view('users.driverPayStatus', compact('message', 'status'));
-                }
-
-                // پرداخت با موفقییت انجام شده است
-                $transaction = Transaction::where('authority', $request->Token)->first();
-                $transaction->status = 100;
-                $transaction->RefId = $result->ConfirmPaymentResult->RRN;
+            if ($result->ConfirmPaymentResult->Status != '0') {
+                $transaction->status = 0;
                 $transaction->save();
-                $numOfDays = 30;
 
-                try {
-                    $numOfDays = getNumOfCurrentMonthDays();
-                } catch (\Exception $exception) {
-                }
-
-                $activeDate = date("Y-m-d H:i:s", time() + $numOfDays * 24 * 60 * 60 * $transaction->monthsOfThePackage);
-                $driver = Driver::find($transaction->user_id);
-
-                try {
-                    $date = new \DateTime($driver->activeDate);
-                    $time = $date->getTimestamp();
-                    if ($time < time())
-                        $activeDate = date('Y-m-d', time() + $transaction->monthsOfThePackage * $numOfDays * 24 * 60 * 60);
-                    else
-                        $activeDate = date('Y-m-d', $time + $transaction->monthsOfThePackage * $numOfDays * 24 * 60 * 60);
-                } catch (\Exception $e) {
-                }
-                $driver->activeDate = $activeDate;
-                // خاور و نیسان
-                $driver->freeCalls = 3;
-
-                // $driver->freeAcceptLoads = ($driver->freeAcceptLoads > 0 ? $driver->freeAcceptLoads : 0);
-                $driver->save();
-
-                $status = 100;
-                $message = $this->getStatusMessage($status);
-                $authority = $transaction->authority;
-
-                return view('users.driverPayStatus', compact('message', 'status', 'authority'));
-            } catch (Exception $ex) {
-                $err_msg =  $ex->getMessage();
+                return view('users.driverPayStatus', [
+                    'message' => $this->getStatusMessage(0),
+                    'status' => 0
+                ]);
             }
-        } catch (\Exception $exception) {
-            $err_msg =  $exception->getMessage();
-            Log::warning($err_msg);
-            // DB::rollBack();
+
+            // تایید موفق
+            DB::beginTransaction();
+
+            $transaction->status = 100;
+            $transaction->RefId = $result->ConfirmPaymentResult->RRN;
+            $transaction->save();
+
+            $driver = Driver::find($transaction->user_id);
+
+            $numOfDays = 30;
+            try {
+                $numOfDays = getNumOfCurrentMonthDays();
+            } catch (Exception $e) {
+                Log::warning("getNumOfCurrentMonthDays failed: " . $e->getMessage());
+            }
+
+            $activeTimestamp = max(strtotime($driver->activeDate ?? 'now'), time());
+            $extraDays = $transaction->monthsOfThePackage * $numOfDays;
+            $driver->activeDate = date('Y-m-d', $activeTimestamp + $extraDays * 86400);
+            $driver->freeCalls = 3;
+            $driver->save();
+
+            DB::commit();
+
+            return view('users.driverPayStatus', [
+                'message' => $this->getStatusMessage(100),
+                'status' => 100,
+                'authority' => $transaction->authority
+            ]);
+        } catch (Exception $ex) {
+            DB::rollBack();
+            Log::error("verifyDriverPaySina error: " . $ex->getMessage());
+
+            return view('users.driverPayStatus', [
+                'message' => 'خطا در تایید پرداخت. لطفا با پشتیبانی تماس بگیرید.',
+                'status' => 0
+            ]);
         }
     }
+
 
     public function verifyDriverPayZibal(Request $request)
     {
