@@ -191,6 +191,7 @@ class OwnerController extends Controller
         $fleets = Fleet::all();
         $fleetId = $request->fleet_id;
         $ownerBookmarkCount = Bookmark::where('type', 'owner')->count();
+        $ownerLimitLoadCount = Owner::where('isLimitLoad', 1)->count();
 
         if ($request->has('fleet_id') || $request->has('isAccepted')) {
             if (auth()->user()->role == 'admin' || Auth::id() == 29) {
@@ -237,7 +238,8 @@ class OwnerController extends Controller
             'loadsTodayOwner',
             'fleets',
             'fleetId',
-            'ownerBookmarkCount'
+            'ownerBookmarkCount',
+            'ownerLimitLoadCount'
         ));
     }
 
