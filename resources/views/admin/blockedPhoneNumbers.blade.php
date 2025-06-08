@@ -115,7 +115,7 @@
                         <?php $i = 1; ?>
                         @foreach ($blockedPhoneNumbers as $blockedPhoneNumber)
                             <tr>
-                                <td>{{ $i++ }}</td>
+                                <td>{{ ($blockedPhoneNumbers->currentPage() - 1) * $blockedPhoneNumbers->perPage() + ++$i }}</td>
                                 <td>
                                     {{ $blockedPhoneNumber->phoneNumber ?? '-' }}
                                 </td>

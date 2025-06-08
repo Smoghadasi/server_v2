@@ -71,9 +71,11 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <?php $i = 1; ?>
+
                         @foreach ($loads as $load)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ ($loads->currentPage() - 1) * $loads->perPage() + ++$i }}</td>
                                 <td>
                                     @php
                                         $pieces = explode(' ', $load->deleted_at);
