@@ -15,10 +15,21 @@ class BlockPhoneNumberController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($blockedPhoneNumbers = [], $showSearchResult = false)
+    public function index(Request $request)
     {
-        if (!$showSearchResult)
-            $blockedPhoneNumbers = BlockPhoneNumber::with('operator')->orderByDesc('created_at')->paginate(20);
+        $blockedPhoneNumbers = BlockPhoneNumber::with('operator')
+            ->when($request->mobileNumber !== null, function ($query) use ($request) {
+                $query->where('phoneNumber', 'like', '%' . $request->mobileNumber . '%');
+            })
+            ->when($request->nationalCode !== null, function ($query) use ($request) {
+                $query->where('nationalCode', 'like', '%' . $request->nationalCode . '%');
+            })
+            ->when($request->name !== null, function ($query) use ($request) {
+                $query->where('name', 'like', '%' . $request->name . '%');
+            })
+            ->orderByDesc('created_at')
+            ->paginate(20);
+
         return view('admin.blockedPhoneNumbers', compact('blockedPhoneNumbers'));
     }
 
@@ -105,25 +116,25 @@ class BlockPhoneNumberController extends Controller
         return back()->with('success', 'شماره تلفن ' . $phoneNumber . ' از لیست ممنوعه حذف شد.');
     }
 
-    public function searchBlockedPhoneNumber(Request $request)
-    {
-        $condition = [];
-        if (isset($request->mobileNumber) && strlen($request->mobileNumber))
-            $condition[] = ['phoneNumber', 'like', '%' . $request->mobileNumber . '%'];
+    // public function searchBlockedPhoneNumber(Request $request)
+    // {
+    //     $condition = [];
+    //     if (isset($request->mobileNumber) && strlen($request->mobileNumber))
+    //         $condition[] = ['phoneNumber', 'like', '%' . $request->mobileNumber . '%'];
 
-        if (isset($request->nationalCode) && strlen($request->nationalCode))
-            $condition[] = ['nationalCode', 'like', '%' . $request->nationalCode . '%'];
+    //     if (isset($request->nationalCode) && strlen($request->nationalCode))
+    //         $condition[] = ['nationalCode', 'like', '%' . $request->nationalCode . '%'];
 
-        if (isset($request->name) && strlen($request->name))
-            $condition[] = ['name', 'like', '%' . $request->name . '%'];
+    //     if (isset($request->name) && strlen($request->name))
+    //         $condition[] = ['name', 'like', '%' . $request->name . '%'];
 
-        $blockedPhoneNumbers = BlockPhoneNumber::orderByDesc('created_at')
-            ->where($condition)
-            ->paginate(20);
+    //     $blockedPhoneNumbers = BlockPhoneNumber::orderByDesc('created_at')
+    //         ->where($condition)
+    //         ->paginate(20);
 
-        if (count($blockedPhoneNumbers))
-            return $this->index($blockedPhoneNumbers, true);
+    //     if (count($blockedPhoneNumbers))
+    //         return $this->index($blockedPhoneNumbers, true);
 
-        return back()->with('danger', 'آیتم پیدا نشد!');
-    }
+    //     return back()->with('danger', 'آیتم پیدا نشد!');
+    // }
 }

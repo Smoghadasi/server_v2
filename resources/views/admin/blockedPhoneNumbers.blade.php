@@ -66,8 +66,7 @@
                     </form>
                 </div>
             </div>
-            <form action="{{ route('search.blockNumber') }}" method="post">
-                @csrf
+            <form action="{{ route('blockedPhoneNumber.index') }}" method="get">
                 <div class="col-lg-12 border rounded mt-2 mb-2 p-2">
                     {{-- <h6>جستجو : </h6> --}}
                     <div class="container">
@@ -158,7 +157,7 @@
 
 
             <div class="mt-3">
-                {{ $blockedPhoneNumbers }}
+                {{ $blockedPhoneNumbers->appends(request()->input())->links(); }}
             </div>
 
         </div>

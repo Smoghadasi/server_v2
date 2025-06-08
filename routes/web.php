@@ -695,15 +695,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::resource('slider', SliderController::class);
 
 
-        // جستجوی لیست ممنوعه شماره موبایل
-        Route::post('searchBlockedPhoneNumber', [BlockPhoneNumberController::class, 'searchBlockedPhoneNumber'])
-            ->middleware('operator')
-            ->name('search.blockNumber');
-
-        Route::get('searchBlockedPhoneNumber', function () {
-            return redirect()->route('blockedPhoneNumber.index');
-        });
-
         /**************************************************************************************************************/
         // آی پی های مسدود
         Route::get('blockedIps', [UserController::class, 'blockedIps'])->middleware('operator');
