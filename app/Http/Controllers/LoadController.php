@@ -2735,7 +2735,8 @@ class LoadController extends Controller
     {
         $drivers = Driver::whereHas('inquiries', function ($q) use ($load_id) {
             $q->where('load_id', $load_id);
-        })->paginate(100);
+        })->paginate(20);
+        return $drivers;
 
         if (count($drivers))
             return view('admin.load.searchLoadInquiry', compact('drivers'));
