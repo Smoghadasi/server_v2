@@ -56,7 +56,7 @@
                             <th>تاریخ ثبت نام</th>
                             <th>کد نسخه</th>
                             <th>شماره تلفن همراه</th>
-                            <th>تاریخ و ساعت تماس</th>
+                            {{-- <th>تاریخ و ساعت تماس</th> --}}
                             <th class="text-center">عملیات</th>
                         </tr>
                     </thead>
@@ -101,9 +101,9 @@
                                 <td>{{ $driver->version ?? '-' }}</td>
                                 <td>{{ $driver->mobileNumber }}</td>
                                 @php
-                                    $pieces = explode(' ', $created_at);
+                                    $pieces = explode(' ', $driver->created_at);
                                 @endphp
-                                <td>{{ gregorianDateToPersian($created_at, '-', true) . ' ( ' . $pieces[1] . ' ) ' }} </td>
+                                {{-- <td>{{ gregorianDateToPersian($driver->created_at, '-', true) . ' ( ' . $pieces[1] . ' ) ' }} </td> --}}
 
 
                                 <td>
