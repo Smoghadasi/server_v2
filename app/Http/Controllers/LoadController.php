@@ -2739,7 +2739,7 @@ class LoadController extends Controller
         $driverCalls = DriverCall::with('driver')->where('load_id', $load_id)->paginate(100);
 
         if (count($drivers))
-            return view('admin.driver.searchDriver', compact('drivers'));
+            return view('admin.driver.searchDriver', compact('drivers', 'driverCalls'));
 
         return back()->with('danger', 'راننده ای پیدا نشد!');
     }
