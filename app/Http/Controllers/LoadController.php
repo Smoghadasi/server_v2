@@ -2533,9 +2533,23 @@ class LoadController extends Controller
 
     private function getDrivers($cityFrom, $fleets, $haversine, $radius, $count, $sendMessageStatus = 0)
     {
+        $locationTimeLimit = Carbon::now()->subMinutes(360);
+        $initialDriverCount = Driver::whereNotNull('location_at')
+            ->where('location_at', '>=', $locationTimeLimit)
+            ->whereIn('fleet_id', $fleets)
+            ->where('sendMessage', $sendMessageStatus)
+            ->where('province_id', $cityFrom->parent_id)
+            ->selectRaw("{$haversine} AS distance")
+            ->whereRaw("{$haversine} < ?", [$radius])
+            ->take($count)
+            ->count();
+        if ($initialDriverCount < 30) {
+            $locationTimeLimit = Carbon::now()->subMinutes(720);
+        }
+
         return Driver::select('drivers.*')
             ->where('location_at', '!=', null)
-            ->where('location_at', '>=', Carbon::now()->subMinutes(360))
+            ->where('location_at', '>=', $locationTimeLimit)
             ->whereIn('fleet_id', $fleets)
             ->where('sendMessage', $sendMessageStatus)
             ->where('province_id', $cityFrom->parent_id)
@@ -2586,9 +2600,23 @@ class LoadController extends Controller
             * sin(radians(latitude))))";
 
         try {
+            $locationTimeLimit = Carbon::now()->subMinutes(360);
+
+            $initialDriverCount = Driver::whereNotNull('location_at')
+                ->where('location_at', '>=', $locationTimeLimit)
+                ->whereIn('fleet_id', $fleets)
+                ->where('version', '>', 58)
+                ->where('province_id', $cityFrom->parent_id)
+                ->selectRaw("{$haversine} AS distance")
+                ->whereRaw("{$haversine} < ?", [$radius])
+                ->count();
+            if ($initialDriverCount < 30) {
+                $locationTimeLimit = Carbon::now()->subMinutes(720);
+            }
+
             $driverFCM_tokens = Driver::select('drivers.FCM_token')
                 ->where('location_at', '!=', null)
-                ->where('location_at', '>=', Carbon::now()->subMinutes(120))
+                ->where('location_at', '>=', $locationTimeLimit)
                 ->whereIn('fleet_id', $fleets)
                 ->where('version', '>', 58)
                 ->where('province_id', $cityFrom->parent_id)
