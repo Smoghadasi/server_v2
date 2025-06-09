@@ -67,6 +67,9 @@ class OwnerController extends Controller
         $ownerAcceptCounts = Owner::where('isAuth', 1)->count();
         $ownerRejectedCounts = Owner::where('isRejected', 1)->count();
         $fleets = Fleet::where('parent_id', '!=', 0)->get();
+        $ownerBookmarkCount = Bookmark::where('type', 'owner')->count();
+        $ownerLimitLoadCount = Owner::where('isLimitLoad', 1)->count();
+
         return view('admin.owner.operators', compact([
             'ownerPenddingCounts',
             'ownerRejectCounts',
@@ -74,7 +77,9 @@ class OwnerController extends Controller
             'ownerRejectedCounts',
             'loadsToday',
             'loadsTodayOwner',
-            'fleets'
+            'fleets',
+            'ownerBookmarkCount',
+            'ownerLimitLoadCount'
         ]));
     }
 

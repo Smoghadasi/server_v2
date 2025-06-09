@@ -872,6 +872,7 @@ class PayController extends Controller
             try {
                 $numOfDays = getNumOfCurrentMonthDays();
             } catch (Exception $e) {
+
                 Log::warning("getNumOfCurrentMonthDays failed: " . $e->getMessage());
             }
 

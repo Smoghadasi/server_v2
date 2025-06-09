@@ -8,15 +8,19 @@
             <div class="my-3">
                 <div class="row justify-content-between">
                     <div class="col">
-                        <a href="{{ route('ownerAuth.index') }}" class="alert p-1 alert-secondary">در حال بررسی :
-                            {{ $ownerPenddingCounts }}</a>
-                        <a href="{{ route('owner.reject') }}" class="alert p-1 alert-danger">تایید نشده :
-                            {{ $ownerRejectCounts }}</a>
-                        <a href="{{ route('owner.accept') }}" class="alert p-1 alert-success">تایید شده :
-                            {{ $ownerAcceptCounts }}</a>
-                        <a href="{{ route('owner.ownerRejected') }}" class="alert p-1 alert-dark">رد شده :
-                            {{ $ownerRejectedCounts }}</a>
-
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                وضعیت صاحبان بار
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ route('ownerAuth.index') }}">در حال بررسی: {{ $ownerPenddingCounts }}</a></li>
+                                <li><a class="dropdown-item text-danger" href="{{ route('owner.reject') }}">تایید نشده: {{ $ownerRejectCounts }}</a></li>
+                                <li><a class="dropdown-item text-success" href="{{ route('owner.accept') }}">تایید شده: {{ $ownerAcceptCounts }}</a></li>
+                                <li><a class="dropdown-item text-dark" href="{{ route('owner.ownerRejected') }}">رد شده: {{ $ownerRejectedCounts }}</a></li>
+                                <li><a class="dropdown-item text-primary" href="{{ route('bookmark.index', ['type' => 'owner']) }}">علامت گذاری شده ها: {{ $ownerBookmarkCount }}</a></li>
+                                <li><a class="dropdown-item text-primary" href="{{ route('owner.index', ['isLimitLoad' => 1]) }}">صاحبان بار محدود شده برای بار: {{ $ownerLimitLoadCount }}</a></li>
+                            </ul>
+                        </div>
                     </div>
                     <div class="col" style="text-align: left;">
                         <a href="{{ route('loadToday.owner') }}" class="alert p-1 alert-primary">تعداد بار های ثبت شده

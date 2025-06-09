@@ -22,7 +22,6 @@
                                 <li><a class="dropdown-item text-primary" href="{{ route('owner.index', ['isLimitLoad' => 1]) }}">صاحبان بار محدود شده برای بار: {{ $ownerLimitLoadCount }}</a></li>
                             </ul>
                         </div>
-
                     </div>
                     <div class="col" style="text-align: left;">
                         <a href="{{ route('loadToday.owner') }}" class="alert p-1 alert-primary">تعداد بار های ثبت شده
