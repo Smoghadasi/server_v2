@@ -151,7 +151,7 @@ const LEGAL_PERSONALITY = "legalPersonality";
 const SMS_PANEL = 'SMSIR';
 
 
-const ACCEPT_LOAD = false;
+const ACCEPT_LOAD = true;
 
 
 const TRANSPORTATION_COMPANY_MONTHLY_SERVICE_AMOUNT = 60000;
