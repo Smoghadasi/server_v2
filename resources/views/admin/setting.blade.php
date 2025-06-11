@@ -13,7 +13,7 @@
                         @csrf
                         @method('put')
                         <div class="row">
-                            @if (Auth::id() == 40)
+                            {{-- @if (Auth::id() == 40) --}}
                                 <div class="mb-3 col-md-6">
                                     <label for="tel" class="form-label">تلفن</label>
                                     <select id="tel" name="tel" class="select2 form-select">
@@ -23,7 +23,7 @@
                                         <option value="08338390328" @if($setting->tel == '08338390328') selected @endif>08338390328</option>
                                     </select>
                                 </div>
-                            @endif
+                            {{-- @endif --}}
                             <div class="mb-3 col-md-6">
                                 <label for="sms_panel" class="form-label">پنل اس ام اس</label>
                                 <select id="sms_panel" name="sms_panel" class="select2 form-select">
