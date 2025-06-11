@@ -24,6 +24,7 @@ use App\Models\OperatorCargoListAccess;
 use App\Models\Owner;
 use App\Models\ProvinceCity;
 use App\Models\RejectCargoOperator;
+use App\Models\Setting;
 use App\Models\Tender;
 use App\Models\Transaction;
 use App\Models\User;
@@ -780,11 +781,13 @@ class DataConvertController extends Controller
             ];
             $loadDuplicate = Load::where($conditions)
                 ->where('userType', 'operator')
+                // ->withTrashed()
                 ->first();
 
             $loadDuplicateOwner = Load::where($conditions)
                 ->where('userType', 'owner')
                 ->where('isBot', 0)
+                // ->withTrashed()
                 ->first();
 
             if (is_null($loadDuplicate) && is_null($loadDuplicateOwner)) {
@@ -868,7 +871,7 @@ class DataConvertController extends Controller
                 } catch (\Exception $th) {
                     //throw $th;
                 }
-                if ($load->isBot == 0 && ACCEPT_LOAD == true) {
+                if ($load->isBot == 0 && Setting::first()->accept_load == 1) {
 
                     $firstLoad = FirstLoad::where('mobileNumberForCoordination', $load->mobileNumberForCoordination)->first();
 

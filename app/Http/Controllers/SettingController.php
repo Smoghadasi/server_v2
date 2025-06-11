@@ -72,6 +72,7 @@ class SettingController extends Controller
     {
         $setting->tel = $request->tel;
         $setting->sms_panel = $request->sms_panel;
+        $setting->accept_load = $request->accept_load;
         $setting->save();
         return back()->with('success', 'تنظیمات جدید ثبت شد');
     }

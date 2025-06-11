@@ -31,6 +31,13 @@
                                     <option value="Faraz" @if($setting->sms_panel == 'Faraz') selected @endif>Faraz SMS</option>
                                 </select>
                             </div>
+                            <div class="mb-3 col-md-6">
+                                <label for="sms_panel" class="form-label">تایید بار</label>
+                                <select id="sms_panel" name="sms_panel" class="select2 form-select">
+                                    <option value="1" @if($setting->accept_load == 1) selected @endif>فعال</option>
+                                    <option value="0" @if($setting->accept_load == 0) selected @endif>غیر فعال</option>
+                                </select>
+                            </div>
                         </div>
                         <div class="mt-2">
                             <button type="submit" class="btn btn-primary me-2">ذخیره</button>
