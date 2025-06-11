@@ -107,6 +107,7 @@
                                     <th>تعداد</th>
                                     <th>اپراتور</th>
                                     <th>تاریخ</th>
+                                    <th>وضعیت</th>
                                     <th>نمایش</th>
                                 </tr>
                             </thead>
@@ -177,6 +178,18 @@
                                             $pieces = explode(' ', $load->created_at);
                                         @endphp
                                         <td>{{ $load->loadingDate . ' ' . $pieces[1] }}</td>
+                                        <td>
+                                            @switch($load->status)
+                                                @case(4)
+                                                    ارسال راننده
+                                                @break
+
+                                                @case(-1)
+                                                    در حال بررسی
+                                                @break
+
+                                            @endswitch
+                                        </td>
                                         <td>
                                             <div class="dropdown">
                                                 <div class="btn-group dropstart">

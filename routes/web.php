@@ -20,6 +20,7 @@ use App\Http\Controllers\DataConvertController;
 use App\Http\Controllers\DataConvertPlusController;
 use App\Http\Controllers\DiscrepancyController;
 use App\Http\Controllers\DriverController;
+use App\Http\Controllers\FirstLoadController;
 use App\Http\Controllers\FleetController as AdminFleetController;
 use App\Http\Controllers\GroupNotificationController;
 use App\Http\Controllers\HomeController;
@@ -785,8 +786,13 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('combinedReports', [ReportingController::class, 'combinedReports'])->middleware('operator');
 
         // تایید بار بصورت هر شخص صاحب بار
-        Route::get('acceptCustomer/{user}', [CustomerController::class, 'acceptCustomer'])->middleware('operator')->name('acceptCustomer');
-        Route::get('rejectCustomer/{user}', [CustomerController::class, 'rejectCustomer'])->middleware('operator')->name('rejectCustomer');
+        Route::get('acceptCustomer/{mobileNumber}', [CustomerController::class, 'acceptCustomer'])->middleware('operator')->name('acceptCustomer');
+        Route::get('rejectCustomer/{mobileNumber}', [CustomerController::class, 'rejectCustomer'])->middleware('operator')->name('rejectCustomer');
+
+
+        Route::get('firstLoad', [FirstLoadController::class, 'index'])->middleware('operator')->name('firstLoad.index');
+
+        Route::put('firstLoad/{firstLoad}', [FirstLoadController::class, 'update'])->middleware('operator')->name('firstLoad.update');
 
 
         // لیست صاحب بارها به ترتیب بیشترین بار

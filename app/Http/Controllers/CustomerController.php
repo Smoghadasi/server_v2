@@ -6,6 +6,7 @@ use App\Models\ActivationCode;
 use App\Models\BlockPhoneNumber;
 use App\Models\City;
 use App\Models\Customer;
+use App\Models\FirstLoad;
 use App\Models\Fleet;
 use App\Models\Load;
 use App\Models\LoadType;
@@ -136,33 +137,22 @@ class CustomerController extends Controller
         return back()->with("success", "مشتری مورد نظر حذف شد");
     }
 
-    public function acceptCustomer(string $id)
+    public function acceptCustomer($mobileNumber)
     {
-        $loads = Load::whereIn('userType', ['owner', 'operator'])
-            ->where('user_id', $id)
-            ->get();
-
-        foreach ($loads as $load) {
-            if ($load->status = -1) {
-                $load->status = 4;
-                $load->save();
-            }
-        }
+        Load::where('mobileNumberForCoordination', $mobileNumber)->update(['status' => 4]);
+        FirstLoad::where('mobileNumberForCoordination', $mobileNumber)->update(['status' => 1]);
         return back()->with("success", "صاحب بار تایید شد");
     }
 
-    public function rejectCustomer(string $id)
+    public function rejectCustomer(string $mobileNumber)
     {
-        $owner = Owner::findOrFail($id);
-        $blockNumber = new BlockPhoneNumber();
-        $blockNumber->phoneNumber = $owner->mobileNumber;
-        $blockNumber->name = $owner->name . " " . $owner->lastName;
-        $blockNumber->description = "کلاهبرداری";
-        $blockNumber->save();
-        Load::where('user_id', $id)
-            ->whereIn('userType', ['owner', 'customer'])
-            ->where('isBot', 1)
-            ->delete();
+        // $blockNumber = new BlockPhoneNumber();
+        // $blockNumber->phoneNumber = $owner->mobileNumber;
+        // $blockNumber->name = $owner->name . " " . $owner->lastName;
+        // $blockNumber->description = "کلاهبرداری";
+        // $blockNumber->save();
+        Load::where('mobileNumberForCoordination', $mobileNumber)->where('status', -1)->delete();
+        FirstLoad::where('mobileNumberForCoordination', $mobileNumber)->update(['status' => 0]);
         return back()->with("success", "بار رد شد");
     }
 

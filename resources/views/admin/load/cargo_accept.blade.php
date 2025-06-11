@@ -7,7 +7,7 @@
         </h5>
         {{-- @if (auth()->user()->role == 'admin')
             <div class="alert alert-info text-right">
-                @if(isNewLoadAutoAccept())
+                @if (isNewLoadAutoAccept())
                 تایید بار ها بصورت خودکار
                 <a class="btn btn-danger" href="{{ url('admin/changeSiteOption/newLoadAutoAccept') }}">
                     تغییر به غیر خودکار
@@ -42,7 +42,8 @@
                     <tbody>
                         @foreach ($cargoAccepts as $cargoAccept)
                             <tr>
-                                <td>{{ ($cargoAccepts ->currentpage()-1) * $cargoAccepts ->perpage() + $loop->index + 1 }}</td>
+                                <td>{{ ($cargoAccepts->currentpage() - 1) * $cargoAccepts->perpage() + $loop->index + 1 }}
+                                </td>
                                 <td>{{ $cargoAccept->title ?? '-' }}</td>
                                 <td>{{ $cargoAccept->userType == ROLE_OWNER ? 'صاحب بار' : 'اپراتور' }}</td>
                                 <td>{{ $cargoAccept->fromCity }}</td>
@@ -52,19 +53,22 @@
                                         $fleets = json_decode($cargoAccept->fleets, true);
                                     @endphp
                                     @foreach ($fleets as $fleet)
-                                        <span class="alert alert-primary p-1 m-1 small" style="line-height: 2rem">{{ $fleet['title'] }}</span>
+                                        <span class="alert alert-primary p-1 m-1 small"
+                                            style="line-height: 2rem">{{ $fleet['title'] }}</span>
                                     @endforeach
                                 </td>
                                 <td>{{ $cargoAccept->mobileNumberForCoordination }}</td>
                                 @php
-                                    $pieces = explode(" ", $cargoAccept->created_at);
+                                    $pieces = explode(' ', $cargoAccept->created_at);
                                 @endphp
-                                <td>{{ gregorianDateToPersian($cargoAccept->created_at, '-', true) . ' ' . $pieces[1] }}</td>
+                                <td>{{ gregorianDateToPersian($cargoAccept->created_at, '-', true) . ' ' . $pieces[1] }}
+                                </td>
                                 <td style="display: flex;">
-                                        <a class="btn btn-sm btn-success"
-                                           href="{{ route('acceptCustomer', $cargoAccept->user_id) }}">تایید</a>
-                                           <br>
-                                           <a class="btn btn-sm btn-danger" href="{{ route('rejectCustomer', $cargoAccept->user_id) }}">عدم تایید</a>
+                                    <a class="btn btn-sm btn-success"
+                                        href="{{ route('acceptCustomer', $cargoAccept->mobileNumberForCoordination) }}">تایید</a>
+                                    <br>
+                                    <a class="btn btn-sm btn-danger"
+                                        href="{{ route('rejectCustomer', $cargoAccept->mobileNumberForCoordination) }}">عدم تایید</a>
                                     {{-- <a class="btn btn-danger btn-sm"
                                         href="{{ route('accept.cargo.store', $cargoAccept) }}">رد</a> --}}
                                 </td>

@@ -227,6 +227,11 @@
                             <div data-i18n="Without menu">تایید بار ها</div>
                         </a>
                     </li>
+                    <li class="menu-item">
+                        <a class="menu-link" href="{{ route('firstLoad.index') }}">
+                            <div data-i18n="Without menu">بار اولیه</div>
+                        </a>
+                    </li>
                 @endif
 
                 @if (in_array('EquivalentWordsInCargoRegistration', auth()->user()->userAccess))
