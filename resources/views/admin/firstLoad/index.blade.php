@@ -6,8 +6,20 @@
             بار اولیه ها
         </h5>
 
-        <div class="card-body">
+        <div class="container">
+            <form method="get" action="{{ route('firstLoad.index') }}" class="mt-3 mb-3 ">
+                <div class="form-group">
+                    <div class="col-md-12 row">
+                        <div class="col-md-3">
+                            <input type="text" placeholder="شماره تلفن" class="form-control col-md-4"
+                                name="mobileNumber" id="mobileNumber" />
+                        </div>
 
+                    </div>
+                    <button type="submit" class="btn btn-primary m-2">جستجو</button>
+                </div>
+
+            </form>
             <div class="mt-2">
                 <table class="table table-bordered">
                     <thead>

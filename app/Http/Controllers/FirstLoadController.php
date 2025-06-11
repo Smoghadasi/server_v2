@@ -8,10 +8,14 @@ use Illuminate\Http\Request;
 
 class FirstLoadController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $firstLoads = FirstLoad::orderBy('status', 'asc')
             ->where('status', 0)
+            ->when($request->mobileNumber !== null, function ($query) use ($request) {
+                return $query->where('mobileNumberForCoordination', $request->mobileNumber);
+                return $query->whereIn('status', [0, 1]);
+            })
             ->paginate(20);
         return view('admin.firstLoad.index', compact('firstLoads'));
     }
@@ -32,6 +36,5 @@ class FirstLoadController extends Controller
         }
         $firstLoad->save();
         return back()->with("success", "وضعیت با موفقیت تغییر کرد");
-
     }
 }
