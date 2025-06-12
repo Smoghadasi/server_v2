@@ -2586,7 +2586,7 @@ class LoadController extends Controller
 
     public function sendNotificationForNearDriver($load, $radius)
     {
-        Log::warning($load);
+        // Log::warning($load);
         $latitude = $load->latitude;
         $longitude = $load->longitude;
         $fleets = FleetLoad::where('load_id', $load->id)->pluck('fleet_id');
@@ -2627,7 +2627,7 @@ class LoadController extends Controller
             $title = 'ایران ترابر رانندگان';
             $body = ' بار ' . ' از ' . $cityFrom->name . ' به ' . $cityTo->name;
             foreach ($driverFCM_tokens as $driverFCM_token) {
-                $this->sendNotificationWeb($driverFCM_token, $title, $body, API_ACCESS_KEY_OWNER);
+                $this->sendNotificationWeb($driverFCM_token, $title, $body, $load->id);
             }
         } catch (\Exception $exception) {
             Log::emergency("----------------------send notification load by driver-----------------------");
@@ -3595,7 +3595,7 @@ class LoadController extends Controller
         return $data;
     }
 
-    private function sendNotificationWeb($FCM_token, $title, $body)
+    private function sendNotificationWeb($FCM_token, $title, $body, $loadId = '/')
     {
         $serviceAccountPath = base_path('public/assets/zarin-tarabar-firebase-adminsdk-9x6c3-7dbc939cac.json');
         $serviceAccountJson = file_get_contents($serviceAccountPath);
@@ -3645,12 +3645,10 @@ class LoadController extends Controller
                 "notification" => [
                     "title" => $title,
                     "body" => $body
+                ],
+                "data" => [
+                    "route" => $loadId ? '/' . $loadId : '',
                 ]
-                // "webpush" => [
-                //     "fcm_options" => [
-                //         "link" => "https://cargo.iran-tarabar.com/780849"
-                //     ]
-                // ]
             ],
         ];
 
