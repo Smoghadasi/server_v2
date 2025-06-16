@@ -112,6 +112,6 @@ class VacationController extends Controller
             ->where('type', VACATION_DAY)
             ->where('user_id', $user_id)
             ->paginate('10');
-        return view('admin.vacation.vacationDay', compact('vacations'));
+        return view('admin.vacation.index', compact('vacations'));
     }
 }

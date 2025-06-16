@@ -75,9 +75,9 @@
                             <th>تا تاریخ</th>
                             {{-- <th>تعداد روز</th> --}}
                             <th>علت</th>
-                            @if (auth()->user()->role == ROLE_ADMIN)
+                            {{-- @if (auth()->user()->role == ROLE_ADMIN) --}}
                                 <th>عملیات</th>
-                            @endif
+                            {{-- @endif --}}
                         </tr>
                     </thead>
                     <tbody class="small">
@@ -94,7 +94,7 @@
                                 </td>
 
                                 <td>
-                                    @if (auth()->user()->role == ROLE_ADMIN)
+                                    {{-- @if (auth()->user()->role == ROLE_ADMIN) --}}
 
                                         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
                                             data-bs-target="#editVacation_{{ $vacation->id }}">ویرایش
@@ -102,7 +102,7 @@
                                         <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
                                             data-bs-target="#removeVacation_{{ $vacation->id }}">حذف
                                         </button>
-                                    @endif
+                                    {{-- @endif --}}
                                     <div id="editVacation_{{ $vacation->id }}" class="modal fade" role="dialog">
                                         <div class="modal-dialog">
 
