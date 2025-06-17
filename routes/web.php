@@ -338,6 +338,11 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
             ->middleware('operator')
             ->name('admin.sendNearLoadDrivers');
 
+
+        Route::get('sendNotifLoadVisit/{load_id}/{type}', [LoadController::class, 'sendNotifLoadVisit'])
+            ->middleware('operator')
+            ->name('admin.sendNotifLoadVisit');
+
         // بار های ثبت شده صاحبان بار (تلگرام)
         Route::get('loadOperators', [LoadController::class, 'loadOperators'])->middleware('operator')->name('admin.load.operator');
 

@@ -285,6 +285,11 @@ class Driver extends Authenticatable
     {
         return $this->hasOne(DriverVisitLoad::class);
     }
+
+    public function driverVisitLoads(): HasMany
+    {
+        return $this->hasMany(DriverVisitLoad::class);
+    }
     //
     public function subscriptionLoadSmsIr($mobile, $driver, $from, $to)
     {

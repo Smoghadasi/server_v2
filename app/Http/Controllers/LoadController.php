@@ -2477,6 +2477,7 @@ class LoadController extends Controller
     {
         $load = Load::withTrashed()->findOrFail($load_id);
         $driverVisitLoads = DriverVisitLoad::with('driver')->where('load_id', $load_id)->paginate(20);
+        // return $driverVisitLoads;
 
         return view('admin.driver.driverVisitLoad', compact('driverVisitLoads', 'load'));
     }
@@ -2499,6 +2500,52 @@ class LoadController extends Controller
         }
         $load->save();
         return back()->with('success', 'ارسال انجام شد!');
+    }
+
+
+    public function sendNotifLoadVisit(Request $request, $load_id, $type = null)
+    {
+        $load = Load::findOrFail($load_id);
+        $radius = 120;
+
+        if ($type == 'notification') {
+            $this->sendNotificationLoadVisit($load, $radius);
+        }
+        // else {
+        //     $load->numOfSms += 1;
+        //     $this->sendSmsForNearDriver($load, $radius, $request->count);
+        // }
+        $load->save();
+        return back()->with('success', 'ارسال انجام شد!');
+    }
+
+    public function sendNotificationLoadVisit($load)
+    {
+        $cityFrom = ProvinceCity::where('id', $load->origin_city_id)->first();
+        $cityTo = ProvinceCity::where('id', $load->destination_city_id)->first();
+
+        try {
+            $driverFCM_tokens = Driver::select([
+                'drivers.FCM_token',
+                'drivers.activeDate'
+            ])
+                ->where('version', '>', 58)
+                ->whereHas('driverVisitLoads', function ($q) use ($load) {
+                    $q->where('load_id', $load->id);
+                })
+                ->where('activeDate', '>', date('Y-m-d', time()) . ' 00:00:00')
+                ->pluck('FCM_token');
+
+            $title = 'ایران ترابر رانندگان';
+            $body = ' تماس رایگان با بار از  ' . $cityFrom->name . ' به ' . $cityTo->name;
+            foreach ($driverFCM_tokens as $driverFCM_token) {
+                $this->sendNotificationWeb($driverFCM_token, $title, $body, $load->id);
+            }
+        } catch (\Exception $exception) {
+            Log::emergency("----------------------send notification LoadVisit-----------------------");
+            Log::emergency($exception);
+            Log::emergency("---------------------------------------------------------");
+        }
     }
 
     public function sendSmsForNearDriver($load, $radius, $count)
