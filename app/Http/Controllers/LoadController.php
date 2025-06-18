@@ -2503,18 +2503,29 @@ class LoadController extends Controller
     }
 
 
-    public function sendNotifLoadVisit(Request $request, $load_id, $type = null)
+    public function sendNotifLoadVisit($load_id, $type = null)
     {
         $load = Load::findOrFail($load_id);
         $radius = 120;
 
         if ($type == 'notification') {
             $this->sendNotificationLoadVisit($load, $radius);
+        } else {
+            $driverVisitLoads = DriverVisitLoad::with('driver')->where('load_id', $load_id)->get();
+            $cityFrom = ProvinceCity::where('id', $load->origin_city_id)->first();
+            $cityTo = ProvinceCity::where('id', $load->destination_city_id)->first();
+
+            foreach ($driverVisitLoads as $driverVisitLoad) {
+                if ($this->driverCallLoadExists($driverVisitLoad->driver_id, $driverVisitLoad->load_id) == 0) {
+                    $driverFCM_token = Driver::whereId($driverVisitLoad->driver_id)->whereNotNull('FCM_token')->first()->FCM_token;
+                    $title = 'ایران ترابر رانندگان';
+                    $body = ' تماس رایگان با بار از  ' . $cityFrom->name . ' به ' . $cityTo->name;
+                    $this->sendNotificationWeb($driverFCM_token, $title, $body, $load->id);
+                }
+            }
+            // $load->numOfSms += 1;
+            // $this->sendSmsForNearDriver($load, $radius, $request->count);
         }
-        // else {
-        //     $load->numOfSms += 1;
-        //     $this->sendSmsForNearDriver($load, $radius, $request->count);
-        // }
         $load->save();
         return back()->with('success', 'ارسال انجام شد!');
     }

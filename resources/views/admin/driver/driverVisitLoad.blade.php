@@ -12,6 +12,10 @@
                         class="btn btn-primary btn-sm">
                         ارسال نوتیفیکشن
                     </a>
+                    <a href="{{ route('admin.sendNotifLoadVisit', ['load_id' => $load->id, 'type' => 'sms']) }}"
+                        class="btn btn-primary btn-sm">
+                        ارسال پیامک
+                    </a>
                     {{-- <button data-bs-toggle="modal" data-bs-target="#driverNearOwnerCount" class="btn btn-primary btn-sm">
                         ارسال پیامک ({{ $load->numOfSms }})
                     </button>

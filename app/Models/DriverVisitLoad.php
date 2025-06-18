@@ -17,4 +17,5 @@ class DriverVisitLoad extends Model
     {
         return $this->belongsTo(Load::class, 'load_id');
     }
+
 }
