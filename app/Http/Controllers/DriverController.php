@@ -27,6 +27,7 @@ use App\Models\Setting;
 use App\Models\State;
 use App\Models\Support;
 use App\Models\Transaction;
+use Carbon\Carbon;
 use Exception;
 use http\Env\Response;
 use Illuminate\Http\Request;
@@ -731,6 +732,22 @@ class DriverController extends Controller
         return back()->with('success', $message);
     }
 
+    public function driverTokens()
+    {
+        $title = 'قهرمانان جاده سلام';
+        $body = `برایتان آرزوی سلامتی داریم ،امروز هم با اعلام بار از سراسر ایران درخدمت شما هستیم.
+        ایران ترابر همراه همیشگی شما 👋`;
+
+        $driverFCM_tokens = Driver::select('FCM_token')
+            ->where('FCM_token', '!=', null)
+            ->where('version', '>', 58)
+            ->take(100)
+            ->pluck('FCM_token');
+        foreach ($driverFCM_tokens as $ownerFCM_token) {
+            $this->sendNotification($ownerFCM_token, $title, $body);
+        }
+    }
+
     // ارسال نوتیفیکیشن
     private function sendNotification($FCM_token, $title, $body)
     {
@@ -839,11 +856,31 @@ class DriverController extends Controller
         if (count($condition)) {
             $driverCalls = Driver::where($condition)->orderBy('id', 'desc')->paginate(500);
             if (count($driverCalls))
-            // return $driverCalls;
+                // return $driverCalls;
                 return view('admin.driver.searchDriver', compact('driverCalls'));
         }
 
         return back()->with('danger', 'راننده ای پیدا نشد!');
+    }
+
+    // رانندگانی که 3 روز از برنامه استفاده نکرده اند
+    public function driverNotActivity()
+    {
+        // زمان 3 روز قبل تا الان
+        $threeDaysAgo = Carbon::now()->subDays(3);
+        $now = Carbon::now();
+
+        $driver = Driver::where('activeDate', '>', $now)
+            ->whereDoesntHave('activities', function ($query) use ($threeDaysAgo) {
+                // یعنی اگر فعالیتی داشته، بعد از ۳ روز گذشته نبوده
+                $query->where('created_at', '>=', $threeDaysAgo);
+            })
+            ->inRandomOrder()
+            ->first();
+        // return $driver;
+        return view('admin.driverNotActivity', compact('driver'));
+
+        // $driver = Driver::where('activeDate', '>', date('Y-m-d', time()) . ' 00:00:00')->inRandomOrder()->first();
     }
 
     // تماس بار رانندگان

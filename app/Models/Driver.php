@@ -286,6 +286,11 @@ class Driver extends Authenticatable
         return $this->hasOne(DriverVisitLoad::class);
     }
 
+    public function activities()
+    {
+        return $this->hasMany(DriverActivity::class, 'driver_id');
+    }
+
     public function driverVisitLoads(): HasMany
     {
         return $this->hasMany(DriverVisitLoad::class);

@@ -491,7 +491,13 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // نمایش لیست راننده ها
         Route::get('drivers', [DriverController::class, 'drivers'])->middleware('operator')->name('drivers');
 
+        Route::get('driverNotActivity', [DriverController::class, 'driverNotActivity'])->middleware('operator')->name('driverNotActivity');
 
+        Route::get('driverTokens', [DriverController::class, 'driverTokens'])->middleware('operator')->name('driverTokens');
+
+        // Route::get('ownerTokens', function () {
+
+        // });
 
         // Route::get('threeDaysDrivers', function () {
 
