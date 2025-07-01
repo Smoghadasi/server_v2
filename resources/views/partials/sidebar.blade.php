@@ -103,7 +103,7 @@
                     <ul class="menu-sub">
                         @if (in_array('incomingCallDriver', auth()->user()->userAccess))
                             <li class="menu-item">
-                                <a class="menu-link" href="{{ route('admin.indexDriver') }}">
+                                <a class="menu-link" href="{{ route('admin.support', ['type' => 'driver']) }}">
                                     <span>راننده</span>
                                 </a>
                             </li>

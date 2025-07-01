@@ -741,7 +741,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // خلاصه گزارش روز
         Route::get('summaryOfDaysReport', [ReportingController::class, 'summaryOfDaysReport'])->middleware('operator');
 
-        Route::get('supportDriver', [SupportController::class, 'indexDriver'])->name('admin.indexDriver')->middleware('operator');
+
+        // تماس های پستیبانی
+        Route::get('support', [SupportController::class, 'index'])->name('admin.support')->middleware('operator');
 
         Route::get('supportDriver/{driver}', [SupportController::class, 'show'])
             ->name('admin.supportDriver.show')
