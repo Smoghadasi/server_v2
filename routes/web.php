@@ -491,13 +491,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // نمایش لیست راننده ها
         Route::get('drivers', [DriverController::class, 'drivers'])->middleware('operator')->name('drivers');
 
-        Route::get('driverNotActivity', [DriverController::class, 'driverNotActivity'])->middleware('operator')->name('driverNotActivity');
 
-        Route::get('driverTokens', [DriverController::class, 'driverTokens'])->middleware('operator')->name('driverTokens');
-
-        // Route::get('ownerTokens', function () {
-
-        // });
 
         // Route::get('threeDaysDrivers', function () {
 
@@ -741,8 +735,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // خلاصه گزارش روز
         Route::get('summaryOfDaysReport', [ReportingController::class, 'summaryOfDaysReport'])->middleware('operator');
 
-
-        // تماس های پستیبانی
         Route::get('support', [SupportController::class, 'index'])->name('admin.support')->middleware('operator');
 
         Route::get('supportDriver/{driver}', [SupportController::class, 'show'])

@@ -64,11 +64,6 @@
                         </a>
                     </li>
                 @endif
-                <li class="menu-item">
-                    <a href="{{ route('driverNotActivity') }}" class="menu-link">
-                        <div data-i18n="Analytics">رانندگان بر اساس فعالیت </div>
-                    </a>
-                </li>
                     <li class="menu-item">
                         <a href="{{ route('trackableItems.index') }}" class="menu-link">
                             <div data-i18n="Analytics">موارد قابل پیگیری</div>

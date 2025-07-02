@@ -258,7 +258,7 @@
                                     </div>
                                 </div>
                             </div>
-                            {{-- @if (Auth::user()->role == 'admin') --}}
+                            {{-- <!--@if (Auth::user()->role == 'admin')--> --}}
                                 <div class="mb-3 col">
                                     <div class="row">
                                         <div class="col">
@@ -277,7 +277,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            {{-- @endif --}}
+                            {{-- <!--@endif--> --}}
                         </div>
 
                         <button type="submit" class="btn btn-primary">بروز رسانی اطلاعات</button>

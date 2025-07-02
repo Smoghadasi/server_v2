@@ -33,6 +33,9 @@
                     @forelse($loads as $key => $load)
                         <tr>
                             <td>{{ $key + 1 }}</td>
+                            @php
+                                $pieces = explode(' ', $load->deleted_at);
+                            @endphp
                             <td>
                                 @if ($load->deleted_at != null)
                                     <i class="menu-icon tf-icons bx bx-trash text-danger" data-bs-toggle="tooltip"
