@@ -31,6 +31,28 @@
                 <a href="{{ route('loadToday.owner') }}" class="alert p-1 alert-success">تعداد بار های ثبت شده امروز:
                     {{ $loadsToday }}</a>
             </div>
+            <form method="get" action="{{ route('admin.load.operator') }}">
+                <div class="form-group row">
+                    <div class="col-md-2 mt-3">
+                        <select class="form-select" name="loadBy">
+                            <option value="0">همه</option>
+                            <option value="1">فعال</option>
+                            <option value="2">بایگانی</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mt-3">
+                        <select class="form-select" name="fleet_id">
+                            <option disabled selected>انتخاب ناوگان</option>
+                            @foreach ($fleets as $fleet)
+                                <option value="{{ $fleet->id }}">{{ $fleet->title }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-4 mt-3">
+                        <button type="submit" class="btn btn-primary mr-2">جستجو</button>
+                    </div>
+                </div>
+            </form>
             <table class="table">
                 <thead>
                     <tr>
@@ -120,7 +142,7 @@
             </table>
         </div>
         <div class="mt-2 mb-2">
-            {{ $loads }}
+            {{ $loads->withQueryString()->links() }}
         </div>
     </div>
 

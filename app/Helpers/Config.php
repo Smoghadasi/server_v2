@@ -20,6 +20,7 @@ const END_TENDER = 2;
 
 const TEN_AUTH_CALLS = 10;
 const AUTH_CALLS = 'AuthCalls'; // تماس رایگان
+const AUTH_CALLS_OWNER = 'AuthCallsOwner'; // تماس رایگان بار صاحب بار
 const AUTH_VALIDITY = 'AuthValidity'; // اعتبار رایگان
 const AUTH_VALIDITY_DELETED = 'AuthValidityDeleted'; // اعتبار رایگان
 const AUTH_CARGO = 'AuthCargo'; // بار رایگان

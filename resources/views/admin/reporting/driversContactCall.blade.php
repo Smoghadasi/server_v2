@@ -1,5 +1,9 @@
 @extends('layouts.dashboard')
 
+@section('css')
+    <script type="text/javascript" src="{{ asset('js/canvasjs.min.js') }}"></script>
+@endsection
+
 @section('content')
     <div class="card">
         <h5 class="card-header">

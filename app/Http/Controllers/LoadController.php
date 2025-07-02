@@ -2766,14 +2766,52 @@ class LoadController extends Controller
     }
 
 
-    public function loadOperators()
+    public function loadOperators(Request $request)
     {
-        $loads = Load::orderByDesc('created_at')
-            ->with('owner')
-            ->withTrashed()
+        $loads = Load::query()
+            ->with(['owner:id,isAccepted,name,lastName']) // فیلدهای مورد نیاز
+            ->when($request->fleet_id !== null, function ($query) use ($request) {
+                return $query->where('fleets', 'LIKE', '%fleet_id":' . $request->fleet_id . ',%');
+            })
+            ->when($request->loadBy !== null, function ($query) use ($request) {
+                if ($request->loadBy == 0) {
+                    return $query->withTrashed();
+                } elseif ($request->loadBy == 1) {
+                    return $query->withoutTrashed();
+                } elseif ($request->loadBy == 2) {
+                    return $query->onlyTrashed();
+                }
+            }, function ($query) {
+                return $query->withTrashed(); // پیش‌فرض
+            })
             ->where('userType', ROLE_OWNER)
             ->where('isBot', 1)
-            ->paginate(20);
+            ->orderByDesc('created_at')
+            ->select([
+                'id',
+                'title',
+                'isBot',
+                'user_id',
+                'userType',
+                'senderMobileNumber',
+                'fleets',
+                'fromCity',
+                'toCity',
+                'driverVisitCount',
+                'date',
+                'dateTime',
+                'latitude',
+                'longitude',
+                'deleted_at'
+            ])
+            ->paginate(10);
+        $fleets = Cache::remember('filtered_fleets', 86400, function () {
+            return Fleet::select('id', 'title', 'parent_id')
+                ->where('parent_id', '!=', 0)
+                ->orderBy('title', 'asc')
+                ->get()
+                ->makeHidden(['numOfDrivers']);
+        });
         $loadsCount = Load::orderByDesc('created_at')
             ->where('userType', ROLE_OWNER)
             ->where('isBot', 1)
@@ -2785,7 +2823,7 @@ class LoadController extends Controller
             ->withTrashed()
             ->where('isBot', 1)
             ->count();
-        return view('admin.load.operators', compact('loads', 'loadsCount', 'loadsToday'));
+        return view('admin.load.operators', compact('loads', 'loadsCount', 'loadsToday', 'fleets'));
     }
 
 
