@@ -13,11 +13,20 @@
             </div>
         </h5>
         <div class="card-body">
-            <form method="post" action="{{ route('search.free.subscription') }}">
-                @csrf
+            <form method="get" action="{{ route('freeSubscription.index') }}">
                 <div class="form-group row">
-                    <div class="col-md-4 my-3">
+                    <div class="col-md-3 my-3">
                         <input class="form-control" name="mobileNumber" id="mobileNumber" placeholder="شماره موبایل">
+                    </div>
+                    <div class="col-md-3 my-3">
+                        <select class="form-control form-select" name="type" id="">
+                            <option value="">همه</option>
+                            <option value="AuthCalls">تماس رایگان</option>
+                            <option value="AuthCallsOwner">تماس رایگان (بار صاحب بار)</option>
+                            <option value="AuthValidity">اعتبار رایگان</option>
+                            <option value="AuthValidityDeleted">حذف اعتبار</option>
+                            <option value="AuthCargo">بار رایگان</option>
+                        </select>
                     </div>
                     <div class="col-md-4 mt-3">
                         <button type="submit" class="btn btn-primary mr-2">جستجو</button>
@@ -84,7 +93,7 @@
             </div>
 
             <div class="mt-2 mb-2">
-                {{ $freeSubscriptions }}
+                {{ $freeSubscriptions->withQueryString()->links() }}
             </div>
         </div>
     </div>

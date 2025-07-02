@@ -35,7 +35,9 @@
                             <td>{{ $key + 1 }}</td>
                             <td>
                                 @if ($load->deleted_at != null)
-                                    <i class="menu-icon tf-icons bx bx-trash text-danger"></i>
+                                    <i class="menu-icon tf-icons bx bx-trash text-danger" data-bs-toggle="tooltip"
+                                        data-bs-placement="bottom"
+                                        title="{{ $load->deleted_at ? gregorianDateToPersian($load->deleted_at, '-', true) . ' ' . $pieces[1] : '-' }}"></i>
                                 @endif
                                 {{ $load->title }}
                             </td>

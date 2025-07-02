@@ -13,10 +13,15 @@ class FreeSubscriptionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $freeSubscriptions = FreeSubscription::with('driver', 'operator')
-            ->orderByDesc('created_at')
+        $freeSubscriptions = FreeSubscription::orderByDesc('created_at')
+            ->when($request->type !== null, function ($query) use ($request) {
+                return $query->where('type', $request->type);
+            })
+            ->when($request->mobileNumber !== null, function ($query) use ($request) {
+                return $query->where('mobileNumber', $request->mobileNumber);
+            })
             ->where('value', '!=', 0)
             ->whereIn('type', ['AuthCalls', 'AuthValidity'])
             ->paginate(20);
