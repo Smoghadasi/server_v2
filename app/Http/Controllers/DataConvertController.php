@@ -97,8 +97,9 @@ class DataConvertController extends Controller
     {
         $cargo = CargoConvertList::where([
             ['operator_id', auth()->id()],
-            // ['isBlocked', 0],
-            // ['isDuplicate', 0]
+            ['status', 0],
+            ['isBlocked', 0],
+            ['isDuplicate', 0]
         ])
             ->orderby('id', 'desc')
             ->first();
