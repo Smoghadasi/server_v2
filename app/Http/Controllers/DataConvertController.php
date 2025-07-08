@@ -144,11 +144,6 @@ class DataConvertController extends Controller
         }
 
         if (isset($cargo->id)) {
-            $replaceEnter = str_replace("\n", ' ', $cargo->cargo);
-            $words = explode(' ', $replaceEnter);
-
-            $fleets = Fleet::whereIn('title', $words)->pluck('title')->toArray();
-            return $fleets;
 
             $dictionary = Equivalent::where('type', 'fleet')
                 ->whereIn('original_word_id', $operatorCargoListAccess)
