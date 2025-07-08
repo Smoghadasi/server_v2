@@ -97,10 +97,12 @@ class DataConvertController extends Controller
     {
         $cargo = CargoConvertList::where([
             ['operator_id', auth()->id()],
-            ['status', 0]
+            ['isBlocked', 0],
+            ['isDuplicate', 0]
         ])
             ->orderby('id', 'desc')
             ->first();
+
         $operatorCargoListAccess = OperatorCargoListAccess::where('user_id', auth()->id())
             ->select('fleet_id')
             ->pluck('fleet_id')
@@ -122,6 +124,8 @@ class DataConvertController extends Controller
                         return $q->orWhere($conditions);
                     })
                         ->where('operator_id', 0)
+                        ->where('isBlocked', 0)
+                        ->where('isDuplicate', 0)
                         ->orderby('id', 'asc')
                         ->first();
 
@@ -132,10 +136,19 @@ class DataConvertController extends Controller
             }
 
             if (!isset($cargo->id))
-                $cargo = CargoConvertList::where('operator_id', 0)->orderby('id', 'asc')->first();
+                $cargo = CargoConvertList::where('operator_id', 0)
+                    ->orderby('id', 'asc')
+                    ->where('isBlocked', 0)
+                    ->where('isDuplicate', 0)
+                    ->first();
         }
 
         if (isset($cargo->id)) {
+            $replaceEnter = str_replace("\n", ' ', $cargo->cargo);
+            $words = explode(' ', $replaceEnter);
+
+            $fleets = Fleet::whereIn('title', $words)->pluck('title')->toArray();
+            return $fleets;
 
             $dictionary = Equivalent::where('type', 'fleet')
                 ->whereIn('original_word_id', $operatorCargoListAccess)
@@ -781,13 +794,13 @@ class DataConvertController extends Controller
             ];
             $loadDuplicate = Load::where($conditions)
                 ->where('userType', 'operator')
-                // ->withTrashed()
+                ->withTrashed()
                 ->first();
 
             $loadDuplicateOwner = Load::where($conditions)
                 ->where('userType', 'owner')
                 ->where('isBot', 0)
-                // ->withTrashed()
+                ->withTrashed()
                 ->first();
 
             if (is_null($loadDuplicate) && is_null($loadDuplicateOwner)) {
@@ -879,7 +892,6 @@ class DataConvertController extends Controller
                         $load->delete();
                     } elseif ($firstLoad && $firstLoad->status == -1) {
                         $load->update(['status' => BEFORE_APPROVAL]);
-
                     } elseif ($firstLoad === null) {
                         try {
                             $first = new FirstLoad();
@@ -2012,6 +2024,16 @@ class DataConvertController extends Controller
     {
         $cargoList = CargoConvertList::where('rejected', 1)->orderBy('id', 'desc')->paginate(20);
         return view('admin.rejectCargo.index', compact('cargoList'));
+    }
+
+    // لیست بارهای تکراری شده
+    public function duplicateCargoFromCargoList()
+    {
+        $cargoList = CargoConvertList::where('isBlocked', 1)
+            ->orWhere('isDuplicate', 1)
+            ->orderBy('id', 'desc')
+            ->paginate(20);
+        return view('admin.duplicateCargo.index', compact('cargoList'));
     }
 
     // لیست بارهای رد شده
