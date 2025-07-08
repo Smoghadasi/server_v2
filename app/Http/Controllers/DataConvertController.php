@@ -98,8 +98,8 @@ class DataConvertController extends Controller
         $cargo = CargoConvertList::where([
             ['operator_id', auth()->id()],
             ['status', 0],
-            // ['isBlocked', 0],
-            // ['isDuplicate', 0]
+            ['isBlocked', 0],
+            ['isDuplicate', 0]
         ])
             ->orderby('id', 'desc')
             ->first();
@@ -126,8 +126,8 @@ class DataConvertController extends Controller
                     })
                         ->where('operator_id', 0)
                         ->where('status', 0)
-                        // ->where('isBlocked', 0)
-                        // ->where('isDuplicate', 0)
+                        ->where('isBlocked', 0)
+                        ->where('isDuplicate', 0)
                         ->orderby('id', 'asc')
                         ->first();
 
@@ -141,8 +141,8 @@ class DataConvertController extends Controller
                 $cargo = CargoConvertList::where('operator_id', 0)
                     ->where('status', 0)
                     ->orderby('id', 'asc')
-                    // ->where('isBlocked', 0)
-                    // ->where('isDuplicate', 0)
+                    ->where('isBlocked', 0)
+                    ->where('isDuplicate', 0)
                     ->first();
         }
 
