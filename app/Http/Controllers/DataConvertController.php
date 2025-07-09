@@ -163,12 +163,13 @@ class DataConvertController extends Controller
                     ->first();
 
                 if (isset($oldCargo->id)) {
-                    $replaceEnter = str_replace("\n", ' ', $oldCargo->cargo);
-                    $words = explode(' ', $replaceEnter);
-                    $fleets = Fleet::whereIn('title', $words)->pluck('title')->toArray();
-                    if ($fleets == null) {
-                        $oldCargo->cargo = 'نیسان پلاس\n' . $oldCargo->cargo;
-                    }
+                    // $words = explode(' ', $cargo->cargo);
+
+                    // $fleets = Fleet::whereIn('title', $words)->pluck('title')->toArray();
+                    // // return $fleets;
+                    // if ($fleets == null) {
+                    //     $oldCargo->cargo = "نیسان پلاس\n" . $oldCargo->cargo;
+                    // }
                     $oldCargo->operator_id = auth()->id();
                     $oldCargo->save();
                     return $this->dataConvert($oldCargo);
@@ -184,24 +185,25 @@ class DataConvertController extends Controller
                     ->first();
 
                 if (isset($newCargo->id)) {
-                    $replaceEnter = str_replace("\n", ' ', $newCargo->cargo);
-                    $words = explode(' ', $replaceEnter);
-                    $fleets = Fleet::whereIn('title', $words)->pluck('title')->toArray();
-                    if ($fleets == null) {
-                        $newCargo->cargo = 'نیسان پلاس\n' . $newCargo->cargo;
-                    }
+                    // $words = explode(' ', $cargo->cargo);
+                    // $fleets = Fleet::whereIn('title', $words)->pluck('title')->toArray();
+                    // return $fleets;
+
+                    // if ($fleets == null) {
+                    //     $newCargo->cargo = "نیسان پلاس\n" . $newCargo->cargo;
+                    // }
 
                     $newCargo->operator_id = auth()->id();
                     $newCargo->save();
                     return $this->dataConvert($newCargo);
                 }
             }
-            $replaceEnter = str_replace("\n", ' ', $cargo->cargo);
-            $words = explode(' ', $replaceEnter);
-            $fleets = Fleet::whereIn('title', $words)->pluck('title')->toArray();
-            if ($fleets == null) {
-                $cargo->cargo = 'نیسان پلاس\n' . $cargo->cargo;
-            }
+            // $words = explode(' ', $cargo->cargo);
+            // $fleets = Fleet::whereIn('title', $words)->pluck('title')->toArray();
+            // return $fleets;
+            // if ($fleets == null) {
+            //     $cargo->cargo = "نیسان پلاس\n" . $cargo->cargo;
+            // }
 
             $cargo->operator_id = auth()->id();
             $cargo->save();
