@@ -201,8 +201,8 @@
                                         <tr>
                                             <th>#</th>
                                             {{-- <th>اپراتور</th> --}}
-                                            {{-- <th>موضوع</th>
-                                            <th>نتیجه</th> --}}
+                                            <th>موضوع</th>
+                                            {{-- <th>نتیجه</th> --}}
                                             <th>تاریخ ثبت</th>
                                             <th>عملیات</th>
                                         </tr>
@@ -211,12 +211,11 @@
                                         <?php $i = 1; ?>
                                         @forelse ($supports as $key => $support)
                                             <tr class="text-center">
-                                                <td>{{ ($supports->currentPage() - 1) * $supports->perPage() + ($key + 1) }}
-                                                </td>
-                                                {{-- <td>
+                                                <td>{{ ($supports->currentPage() - 1) * $supports->perPage() + ($key + 1) }}</td>
+                                                <td>
                                                     {{ $support->subject ?? '-' }}
                                                 </td>
-                                                <td>
+                                                {{-- <td>
                                                     {{ $support->result ?? '-' }}
                                                 </td> --}}
                                                 @php
