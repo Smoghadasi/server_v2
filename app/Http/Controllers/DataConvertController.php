@@ -801,6 +801,9 @@ class DataConvertController extends Controller
                 ->where('userType', 'operator')
                 // ->withTrashed()
                 ->first();
+            if ($loadDuplicate) {
+                $loadDuplicate->delete();
+            }
 
             $loadDuplicateOwner = Load::where($conditions)
                 ->where('userType', 'owner')
