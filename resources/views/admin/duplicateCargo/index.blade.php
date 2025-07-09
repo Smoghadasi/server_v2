@@ -7,6 +7,17 @@
             <h5 class="mb-0">بار های تکراری</h5>
         </div>
         <div class="card-body">
+            <form method="get" action="{{ route('duplicateCargoFromCargoList') }}">
+                <div class="form-group">
+                    <div class="col-md-12 row">
+                        <div class="col-md-3">
+                            <input type="text" placeholder="بار مورد نظر..." class="form-control col-md-4"
+                                name="cargo" id="cargo" />
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary m-2">جستجو</button>
+                </div>
+            </form>
             <div class="table-responsive">
             <table class="table">
                 <tr>
@@ -39,7 +50,7 @@
                 @endforeach
             </table>
             <div class="mt-2">
-                {{ $cargoList }}
+                {{ $cargoList->appends($_GET)->links() }}
             </div>
         </div>
         </div>

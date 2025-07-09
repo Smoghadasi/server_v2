@@ -799,10 +799,10 @@ class DataConvertController extends Controller
             ];
             $loadDuplicate = Load::where($conditions)
                 ->where('userType', 'operator')
-                // ->withTrashed()
                 ->first();
             if ($loadDuplicate) {
                 $loadDuplicate->delete();
+                $load->save();
             }
 
             $loadDuplicateOwner = Load::where($conditions)
@@ -2035,11 +2035,16 @@ class DataConvertController extends Controller
     }
 
     // لیست بارهای تکراری شده
-    public function duplicateCargoFromCargoList()
+    public function duplicateCargoFromCargoList(Request $request)
     {
+        // return $request;
         $cargoList = CargoConvertList::where('isBlocked', 1)
             ->orWhere('isDuplicate', 1)
-            ->orderBy('id', 'desc')
+            ->where('cargo', 'LIKE', '%' . $request->cargo . '%')
+            ->when($request->cargo !== null, function ($query) use ($request) {
+                return $query->where('cargo', 'LIKE', '%' . $request->cargo . '%');
+            })
+            ->orderByDesc('created_at')
             ->paginate(20);
         return view('admin.duplicateCargo.index', compact('cargoList'));
     }
