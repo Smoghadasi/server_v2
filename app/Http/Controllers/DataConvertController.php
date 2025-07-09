@@ -167,7 +167,7 @@ class DataConvertController extends Controller
                     $words = explode(' ', $replaceEnter);
                     $fleets = Fleet::whereIn('title', $words)->pluck('title')->toArray();
                     if ($fleets == null) {
-                        $oldCargo->cargo = 'نیسان پلاس ' . $oldCargo->cargo;
+                        $oldCargo->cargo = 'نیسان پلاس\n' . $oldCargo->cargo;
                     }
                     $oldCargo->operator_id = auth()->id();
                     $oldCargo->save();
@@ -188,7 +188,7 @@ class DataConvertController extends Controller
                     $words = explode(' ', $replaceEnter);
                     $fleets = Fleet::whereIn('title', $words)->pluck('title')->toArray();
                     if ($fleets == null) {
-                        $newCargo->cargo = 'نیسان پلاس ' . $newCargo->cargo;
+                        $newCargo->cargo = 'نیسان پلاس\n' . $newCargo->cargo;
                     }
 
                     $newCargo->operator_id = auth()->id();
@@ -200,7 +200,7 @@ class DataConvertController extends Controller
             $words = explode(' ', $replaceEnter);
             $fleets = Fleet::whereIn('title', $words)->pluck('title')->toArray();
             if ($fleets == null) {
-                $cargo->cargo = 'نیسان پلاس ' . $cargo->cargo;
+                $cargo->cargo = 'نیسان پلاس\n' . $cargo->cargo;
             }
 
             $cargo->operator_id = auth()->id();
