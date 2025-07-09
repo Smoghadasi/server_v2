@@ -196,12 +196,13 @@
                             <p>تماس ورودی</p>
 
                             <div class="table-responsive" style="display: block; max-height: 300px; overflow-y: auto;">
-                                <table class="table table-striped">
+                                <table class="table table-bordered">
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>اپراتور</th>
-                                            <th>نتیجه</th>
+                                            {{-- <th>اپراتور</th> --}}
+                                            {{-- <th>موضوع</th>
+                                            <th>نتیجه</th> --}}
                                             <th>تاریخ ثبت</th>
                                             <th>عملیات</th>
                                         </tr>
@@ -212,14 +213,12 @@
                                             <tr class="text-center">
                                                 <td>{{ ($supports->currentPage() - 1) * $supports->perPage() + ($key + 1) }}
                                                 </td>
-
-                                                <td>
-                                                    {{ $support->user ? $support->user->name . ' ' . $support->user->lastName : '-' }}
+                                                {{-- <td>
+                                                    {{ $support->subject ?? '-' }}
                                                 </td>
-
                                                 <td>
                                                     {{ $support->result ?? '-' }}
-                                                </td>
+                                                </td> --}}
                                                 @php
                                                     $pieces = explode(' ', $support->created_at);
                                                 @endphp
@@ -230,7 +229,7 @@
                                                     <button type="button" class="btn btn-primary mb-3 btn-sm text-nowrap"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#adminMessageForm_{{ $support->id }}">
-                                                        ثبت نتیحه
+                                                        {{ $support->result != null || $support->subject != null ? 'مشاهده نتیجه' : 'ثبت نتیجه' }}
                                                     </button>
                                                     <div id="adminMessageForm_{{ $support->id }}" class="modal fade"
                                                         role="dialog">
@@ -243,18 +242,44 @@
                                                                 @csrf
                                                                 @method('put')
                                                                 <div class="modal-header">
-                                                                    <h4 class="modal-title">نتیجه</h4>
-                                                                </div>
-                                                                <div class="modal-body text-right">
-
-                                                                    <div>
-                                                                        راننده :
+                                                                    <h4 class="modal-title">
                                                                         {{ $support->driver->name . ' ' . $support->driver->lastName }}
+                                                                    </h4>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <div class="form-group mb-2">
+                                                                        <select class="form-control form-select"
+                                                                            name="subject" id="">
+                                                                            <option
+                                                                                @if ($support->subject == 'خرید اشتراک') selected @endif
+                                                                                value="خرید اشتراک">خرید اشتراک</option>
+                                                                            <option
+                                                                                @if ($support->subject == 'تماس رایگان') selected @endif
+                                                                                value="تماس رایگان">تماس رایگان</option>
+                                                                            <option
+                                                                                @if ($support->subject == 'احراز هویت') selected @endif
+                                                                                value="احراز هویت">احراز هویت</option>
+                                                                            <option
+                                                                                @if ($support->subject == 'استعلام') selected @endif
+                                                                                value="استعلام">استعلام</option>
+                                                                            <option
+                                                                                @if ($support->subject == 'شکایت') selected @endif
+                                                                                value="شکایت">شکایت</option>
+                                                                            <option
+                                                                                @if ($support->subject == 'راهنمایی استفاده') selected @endif
+                                                                                value="راهنمایی استفاده">راهنمایی استفاده
+                                                                            </option>
+                                                                            <option
+                                                                                @if ($support->subject == 'ویرایش اطلاعات') selected @endif
+                                                                                value="ویرایش اطلاعات">ویرایش اطلاعات
+                                                                            </option>
+                                                                            <option
+                                                                                @if ($support->subject == 'سایر موارد') selected @endif
+                                                                                value="سایر موارد">سایر موارد</option>
+                                                                        </select>
                                                                     </div>
-
                                                                     <div class="form-group">
-                                                                        <label>نتیجه :</label>
-                                                                        <textarea class="form-control" name="result" id="result" placeholder="پاسخ"></textarea>
+                                                                        <textarea class="form-control" name="result" id="result" rows="5" placeholder="پاسخ">{{ $support->result }}</textarea>
                                                                     </div>
                                                                 </div>
                                                                 <div class="modal-footer text-left">
