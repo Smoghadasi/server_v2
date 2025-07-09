@@ -23,12 +23,16 @@ use App\Http\Controllers\SOSController;
 use App\Http\Controllers\TenderController;
 use App\Models\AppVersion;
 use App\Models\Bearing;
+use App\Models\BlockPhoneNumber;
 // use App\Models\ClearText;
 use App\Models\Customer;
 use App\Models\Dictionary;
 use App\Models\Driver;
+use App\Models\Fleet;
 use App\Models\Load;
+use App\Models\ProvinceCity;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -424,7 +428,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         // درخواست اطلاعات مشتری
         Route::get('requestCustomerInfo/{customer}', [CustomerController::class, 'requestCustomerInfo']);
-
     });
 
     Route::group(['prefix' => 'transportationCompany'], function () {
@@ -539,7 +542,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         // ذخیره توکن رانندگان
         Route::patch('saveMyFireBaseToken/{driver}', [DriverController::class, 'saveMyFireBaseToken']);
-
     });
 
     // وب سرویس های عمومی
@@ -643,19 +645,16 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         // درخواست نوتیفیکیشن صاحبان بار
         Route::post('sendCustomNotificationOwner', [NotificationController::class, 'sendCustomNotificationOwner']);
-
     });
 
     Route::prefix('test')->group(function () {
         Route::get('sendNotifLoad/{load}', [LoadController::class, 'sendNotifLoadTest']);
-
     });
 });
 
 
 // کال بک بیمه
-Route::post('InsuranceCallBack', function (Request $request) {
-});
+Route::post('InsuranceCallBack', function (Request $request) {});
 
 // کال بک احراز هویت کدملی
 Route::get('DidarCallBack', function () {
@@ -667,6 +666,89 @@ Route::get('DidarCallBack', function () {
 Route::post('extractData', [DataConvertController::class, 'extractData']);
 
 Route::post('botData', function (Request $request) {
+
+    try {
+        $newText = convertFaNumberToEn($request->data);
+
+        $regex = "@(https?://([-\w\.]+[-\w])+(:\d+)?(/([\w/_\.#-]*(\?\S+)?[^\.\s])?).*$)@";
+
+        $removeSpace = preg_replace('/\s+/', '', $newText);
+        $removeLink = preg_replace($regex, ' ', $newText);
+        $replaceEnter = str_replace("\n", ' ', $removeLink);
+        $words = explode(' ', $replaceEnter);
+        // $removeEmoji = remove_emoji($replaceEnter);
+        preg_match('/0\d{2}/', $newText, $matches);
+        $cities = ProvinceCity::whereIn('name', $words)->where('parent_id', '!=', 0)->pluck('name')->toArray();
+        $equivalentWords = Dictionary::whereIn('equivalentWord', $words)->pluck('equivalentWord')->toArray();
+        $blockNumbers = BlockPhoneNumber::whereIn('phoneNumber', $words)->pluck('phoneNumber')->toArray();
+        // $fleets = Fleet::whereIn('title', $words)->pluck('title')->toArray();
+        if ($blockNumbers) {
+            DB::table('cargo_convert_lists')->insert([
+                'cargo' => $newText,
+                'isBlocked' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            return response()->json(['message' => 'شماره مسدود است و ذخیره نشد.'], 409);
+        }
+
+        if (isset($matches[0]) && ($cities || $equivalentWords)) {
+
+            $existingMessages = DB::table('cargo_convert_lists')
+                ->where('created_at', '>', date('Y-m-d h:i:s', strtotime('-180 minute', time())))
+                ->where('isBlocked', 0)
+                ->where('isDuplicate', 0)
+                ->pluck('cargo')
+                ->map(function ($cargo) {
+                    return preg_replace('/\s+/', '', $cargo);
+                });
+
+            $isDuplicate = false;
+            foreach ($existingMessages as $oldText) {
+                $distance = levenshtein(
+                    substr($removeSpace, 0, 255),
+                    substr($oldText, 0, 255)
+                );
+                // جلوگیری از تقسیم بر صفر در صورتی که یکی از رشته‌ها خالی باشه
+                $maxLength = max(strlen($removeSpace), strlen($oldText), 1);
+
+                $similarity = 100 - ($distance / $maxLength) * 100;
+
+                if ($similarity >= 99) {
+                    $isDuplicate = true;
+                    break;
+                }
+            }
+            if ($isDuplicate) {
+                // ذخیره پیام جدید
+                DB::table('cargo_convert_lists')->insert([
+                    'cargo' => $newText,
+                    'isDuplicate' => 1,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+                return response()->json(['message' => 'پیام بسیار مشابه است و ذخیره نشد.'], 409);
+            }
+            // if ($fleets == null) {
+            //     $newText = 'نیسان ' .  $newText;
+            // }
+            // ذخیره پیام جدید
+            DB::table('cargo_convert_lists')->insert([
+                'cargo' => $newText,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            return response()->json(['message' => 'پیام ذخیره شد.'], 201);
+        }
+        return response()->json(['message' => 'Error.'], 404);
+    } catch (Exception $exception) {
+        \Illuminate\Support\Facades\Log::emergency("------------------- botData ERROR ---------------------");
+        \Illuminate\Support\Facades\Log::emergency($exception->getMessage());
+        \Illuminate\Support\Facades\Log::emergency("------------------- End botData ERROR ---------------------");
+    }
+
+
 
     // try {
     //     $data = convertFaNumberToEn($request->data);
@@ -690,6 +772,7 @@ Route::post('botData', function (Request $request) {
 
     // return 'ERROR';
 });
+
 
 
 Route::post('botData1', function (Request $request) {
