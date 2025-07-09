@@ -391,7 +391,10 @@ class DataConvertController extends Controller
             }
         }
 
-        $countOfCargos = CargoConvertList::where('operator_id', 0)->count();
+        $countOfCargos = CargoConvertList::where('operator_id', 0)
+            ->where('isBlocked', 0)
+            ->where('isDuplicate', 0)
+            ->count();
 
         $users = UserController::getOnlineAndOfflineUsers();
 
@@ -502,7 +505,10 @@ class DataConvertController extends Controller
     // فرم ثبت بار (بررسی و ثبت)
     public function storeCargoConvertForm()
     {
-        $countOfCargos = CargoConvertList::where('operator_id', 0)->count();
+        $countOfCargos = CargoConvertList::where('operator_id', 0)
+            ->where('isBlocked', 0)
+            ->where('isDuplicate', 0)
+            ->count();
 
         return view('admin.storeCargoConvertForm', compact('countOfCargos'));
     }
