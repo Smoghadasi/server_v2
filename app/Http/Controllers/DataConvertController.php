@@ -629,10 +629,7 @@ class DataConvertController extends Controller
             $cargoPattern = $origin . $destination . $mobileNumber . $fleet;
 
             if (
-                BlockPhoneNumber::where('phoneNumber', $mobileNumber)->exists() ||
-                Load::where('cargoPattern', $cargoPattern)
-                ->where('created_at', '>', now()->subMinutes(180))
-                ->exists()
+                BlockPhoneNumber::where('phoneNumber', $mobileNumber)->exists() || Load::where('cargoPattern', $cargoPattern)->where('created_at', '>', now()->subMinutes(180))->exists()
             ) {
                 return;
             }
@@ -802,13 +799,13 @@ class DataConvertController extends Controller
             ];
             $loadDuplicate = Load::where($conditions)
                 ->where('userType', 'operator')
-                ->withTrashed()
+                // ->withTrashed()
                 ->first();
 
             $loadDuplicateOwner = Load::where($conditions)
                 ->where('userType', 'owner')
                 ->where('isBot', 0)
-                ->withTrashed()
+                // ->withTrashed()
                 ->first();
 
             if (is_null($loadDuplicate) && is_null($loadDuplicateOwner)) {
