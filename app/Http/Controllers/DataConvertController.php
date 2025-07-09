@@ -158,6 +158,8 @@ class DataConvertController extends Controller
                 $oldCargo = CargoConvertList::where('cargo', 'LIKE', '%' . $item . '%')
                     ->where('id', $cargo->id)
                     ->where('status', 0)
+                    ->where('isBlocked', 0)
+                    ->where('isDuplicate', 0)
                     ->first();
 
                 if (isset($oldCargo->id)) {
@@ -170,6 +172,8 @@ class DataConvertController extends Controller
             foreach ($dictionary as $item) {
                 $newCargo = CargoConvertList::where('cargo', 'LIKE', '%' . $item . '%')
                     ->where('operator_id', 0)
+                    ->where('isBlocked', 0)
+                    ->where('isDuplicate', 0)
                     ->orderby('id', 'asc')
                     ->first();
 
