@@ -833,10 +833,10 @@ class DataConvertController extends Controller
             $loadDuplicate = Load::where($conditions)
                 ->where('userType', 'operator')
                 ->first();
-            if ($loadDuplicate) {
-                $loadDuplicate->delete();
-                $load->save();
-            }
+            // if ($loadDuplicate) {
+            //     $loadDuplicate->delete();
+            //     $load->save();
+            // }
 
             $loadDuplicateOwner = Load::where($conditions)
                 ->where('userType', 'owner')
