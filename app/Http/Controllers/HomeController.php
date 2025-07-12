@@ -169,7 +169,7 @@ class HomeController extends Controller
             ->get();
 
         // شکایات راننده
-        $drivers = Driver::with('provinceOwner')
+        $drivers = Driver::with('provinceOwner', 'cityOwner')
             ->where('mobileNumber', 'like', '%' . $request->title . '%')
             ->orWhere('nationalCode', $request->title)
             ->orWhere('name', 'like', '%' . $request->title . '%')

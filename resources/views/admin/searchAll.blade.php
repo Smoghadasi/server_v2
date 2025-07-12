@@ -22,7 +22,7 @@
                             <th>تاریخ ثبت نام</th>
                             <th>کد نسخه</th>
                             <th>شماره تلفن همراه</th>
-                            <th>استان</th>
+                            <th>استان - شهر</th>
                             <th class="text-center">عملیات</th>
                         </tr>
                     </thead>
@@ -86,7 +86,7 @@
                                 </td>
                                 <td>{{ $driver->version ?? '-' }}</td>
                                 <td>{{ $driver->mobileNumber }}</td>
-                                <td>{{ $driver->provinceOwner?->name ?? '-' }}</td>
+                                <td>{{ $driver->provinceOwner?->name ?? '-' }} {{ $driver->cityOwner?->name ?? '-' }}</td>
                                 <td>
                                     <a class="btn btn-primary btn-sm"
                                         href="{{ url('admin/driverInfo') }}/{{ $driver->id }}">جزئیات</a>
