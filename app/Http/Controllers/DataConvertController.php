@@ -147,6 +147,31 @@ class DataConvertController extends Controller
         }
 
         if (isset($cargo->id)) {
+            // $replaceEnter = str_replace("\n", ' ', $cargo->cargo);
+            // $removeR = str_replace("\r", ' ', $replaceEnter);
+            // $removeParentheses = preg_replace('/\(|\)/', '', $removeR);
+            // $result = preg_replace('/^:\s*/', '', $removeParentheses);
+
+
+            // $words = explode(' ', $result);
+            // $cleanedArray = array_map(function($item) {
+            //     $item = preg_replace('/:/u', '', $item); // حذف دو نقطه
+            //     $item = preg_replace('/\s+/u', ' ', $item); // جایگزینی چند فاصله با یک فاصله
+            //     return trim($item); // حذف فاصله از ابتدا و انتها
+            // }, $words);
+
+            // // حذف عناصر خالی از آرایه (اختیاری)
+            // $cleanedArray = array_filter($cleanedArray, function($item) {
+            //     return $item !== '';
+            // });
+
+            // $fleets = Fleet::whereIn('title', $words)->pluck('title')->toArray();
+            // $equivalents = Equivalent::whereIn('equivalentWord', $cleanedArray)->where('type', 'fleet')->pluck('equivalentWord')->toArray();
+            // return $equivalents;
+            // if (count($equivalents) == 0) {
+            //     $cargo->cargo = "نیسان پلاس\n" . $cargo->cargo;
+            //     $cargo->save();
+            // }
 
             $dictionary = Equivalent::where('type', 'fleet')
                 ->whereIn('original_word_id', $operatorCargoListAccess)
@@ -163,13 +188,6 @@ class DataConvertController extends Controller
                     ->first();
 
                 if (isset($oldCargo->id)) {
-                    // $words = explode(' ', $cargo->cargo);
-
-                    // $fleets = Fleet::whereIn('title', $words)->pluck('title')->toArray();
-                    // // return $fleets;
-                    // if ($fleets == null) {
-                    //     $oldCargo->cargo = "نیسان پلاس\n" . $oldCargo->cargo;
-                    // }
                     $oldCargo->operator_id = auth()->id();
                     $oldCargo->save();
                     return $this->dataConvert($oldCargo);
@@ -185,13 +203,7 @@ class DataConvertController extends Controller
                     ->first();
 
                 if (isset($newCargo->id)) {
-                    // $words = explode(' ', $cargo->cargo);
-                    // $fleets = Fleet::whereIn('title', $words)->pluck('title')->toArray();
-                    // return $fleets;
 
-                    // if ($fleets == null) {
-                    //     $newCargo->cargo = "نیسان پلاس\n" . $newCargo->cargo;
-                    // }
 
                     $newCargo->operator_id = auth()->id();
                     $newCargo->save();
@@ -913,27 +925,27 @@ class DataConvertController extends Controller
                 } catch (\Exception $th) {
                     //throw $th;
                 }
-                if ($load->isBot == 0 && Setting::first()->accept_load == 1) {
+                // if ($load->isBot == 0 && Setting::first()->accept_load == 1) {
 
-                    $firstLoad = FirstLoad::where('mobileNumberForCoordination', $load->mobileNumberForCoordination)->first();
+                //     $firstLoad = FirstLoad::where('mobileNumberForCoordination', $load->mobileNumberForCoordination)->first();
 
-                    if ($firstLoad && $firstLoad->status == 0) {
-                        $load->delete();
-                    } elseif ($firstLoad && $firstLoad->status == -1) {
-                        $load->update(['status' => BEFORE_APPROVAL]);
-                    } elseif ($firstLoad === null) {
-                        try {
-                            $first = new FirstLoad();
-                            $first->mobileNumberForCoordination = $load->mobileNumberForCoordination;
-                            $first->save();
-                            $load->update(['status' => BEFORE_APPROVAL]);
-                        } catch (\Exception $e) {
-                            Log::emergency("========================= first load ==================================");
-                            Log::emergency($e->getMessage());
-                            Log::emergency("==============================================================");
-                        }
-                    }
-                }
+                //     if ($firstLoad && $firstLoad->status == 0) {
+                //         $load->delete();
+                //     } elseif ($firstLoad && $firstLoad->status == -1) {
+                //         $load->update(['status' => BEFORE_APPROVAL]);
+                //     } elseif ($firstLoad === null) {
+                //         try {
+                //             $first = new FirstLoad();
+                //             $first->mobileNumberForCoordination = $load->mobileNumberForCoordination;
+                //             $first->save();
+                //             $load->update(['status' => BEFORE_APPROVAL]);
+                //         } catch (\Exception $e) {
+                //             Log::emergency("========================= first load ==================================");
+                //             Log::emergency($e->getMessage());
+                //             Log::emergency("==============================================================");
+                //         }
+                //     }
+                // }
             }
 
 
