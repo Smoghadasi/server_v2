@@ -133,9 +133,74 @@
                 {{-- <div class="card-header">اشتراک یا تماس رایگان</div> --}}
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-6">
-                            <p>اشتراک یا تماس رایگان</p>
+                        <div class="col-md-6 col-sm-12">
+                            <div class="card-title d-flex align-items-start justify-content-between">
+                                <div class="">
+                                    اشتراک یا تماس رایگان ({{ $freeCallTotal }})
+                                </div>
+                                <div class="dropdown">
+                                    <button class="btn p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown"
+                                        aria-haspopup="true" aria-expanded="false">
+                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
+                                        <button type="button" class="dropdown-item" data-bs-toggle="modal"
+                                            data-bs-target="#searchFreeSubs">
+                                            جستجو
+                                        </button>
+                                    </div>
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="searchFreeSubs" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <form action="{{ route('driver.detail', ['driver' => $driver]) }}" method="get">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="searchFreeSubsTitle">جستجو اشتراک
+                                                            رایگان
+                                                        </h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <div class="col mb-3">
+                                                                <label for="type" class="form-label">نوع</label>
+                                                                <select class="form-control form-select" name="type"
+                                                                    id="type">
+                                                                    <option value="AuthCalls">تماس رایگان</option>
+                                                                    <option value="AUTH_VALIDITY">اعتبار رایگان</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row g-2">
+                                                            <div class="col mb-0">
+                                                                <label for="fromDate" class="form-label">از تاریخ</label>
+                                                                <input class="form-control" type="text" id="fromDate"
+                                                                    name="fromDate" placeholder="از تاریخ"
+                                                                    autocomplete="off" />
+                                                            </div>
+                                                            <div class="col mb-0">
+                                                                <label for="toDate" class="form-label">تا تاریخ</label>
+                                                                <input class="form-control" type="text" name="toDate"
+                                                                    id="fromDate" placeholder="تا تاریخ"
+                                                                    autocomplete="off" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-outline-secondary"
+                                                            data-bs-dismiss="modal">
+                                                            منصرف
+                                                        </button>
+                                                        <button type="submit" class="btn btn-primary">جستجو</button>
+                                                    </div>
+                                                </form>
 
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="table-responsive" style="display: block; max-height: 300px; overflow-y: auto;">
                                 <table class="table table-striped">
                                     <thead>
@@ -192,7 +257,7 @@
                                 </table>
                             </div>
                         </div>
-                        <div class="col-6">
+                        <div class="col-md-6 col-sm-12">
                             <p>تماس ورودی</p>
 
                             <div class="table-responsive" style="display: block; max-height: 300px; overflow-y: auto;">
@@ -211,7 +276,8 @@
                                         <?php $i = 1; ?>
                                         @forelse ($supports as $key => $support)
                                             <tr class="text-center">
-                                                <td>{{ ($supports->currentPage() - 1) * $supports->perPage() + ($key + 1) }}</td>
+                                                <td>{{ ($supports->currentPage() - 1) * $supports->perPage() + ($key + 1) }}
+                                                </td>
                                                 <td>
                                                     {{ $support->subject ?? '-' }}
                                                 </td>
@@ -555,4 +621,18 @@
         </div>
     </div>
 
+@endsection
+@section('script')
+    <script src="{{ asset('js/persianDatepicker.min.js') }}"></script>
+
+    <script type="text/javascript">
+        $("#fromDate, #toDate").persianDatepicker({
+            formatDate: "YYYY/MM/DD",
+            selectedBefore: !0
+        });
+        // $("#toDate, #span2").persianDatepicker({
+        //     formatDate: "YYYY/MM/DD",
+        //     selectedBefore: !0
+        // });
+    </script>
 @endsection

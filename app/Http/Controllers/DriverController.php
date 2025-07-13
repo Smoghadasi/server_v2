@@ -629,14 +629,40 @@ class DriverController extends Controller
     }
 
     // نمایش اطلاعات راننده
-    public function driverInfo(Driver $driver)
+    public function driverInfo(Request $request, Driver $driver)
     {
+        // if ($request->has('type')) {
+        //     $freeSubscriptions = FreeSubscription::with('operator')
+        //         ->orderByDesc('created_at')
+        //         ->where('value', '!=', 0)
+        //         ->where('driver_id', $driver->id)
+        //         ->whereIn('type', $request->)
+        //         ->get();
+        //     return $freeSubscriptions;
+        // }
+        // if ($request->has('type')) {
+        //     $fromDate = persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00';
+        //     $toDate = persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:59';
+        // }
+
         $freeSubscriptions = FreeSubscription::with('operator')
             ->orderByDesc('created_at')
             ->where('value', '!=', 0)
             ->where('driver_id', $driver->id)
             ->whereIn('type', ['AuthCalls', 'AuthValidity', 'AuthValidityDeleted'])
+            ->when($request->toDate !== null, function ($query) use ($request) {
+                return $query->whereBetween('created_at', [persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00', persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:59']);
+            })
+            ->when($request->type !== null, function ($query) use ($request) {
+                return $query->where('type', $request->type);
+            })
             ->get();
+
+        $freeCallTotal = FreeSubscription::where('type', 'AuthCalls')
+            ->when($request->toDate !== null, function ($query) use ($request) {
+                return $query->whereBetween('created_at', [persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00', persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:59']);
+            })
+            ->where('driver_id', $driver->id)->sum('value');
 
         $supports = Support::with('driver', 'owner', 'user')
             ->where('type', 'Driver')
@@ -644,7 +670,7 @@ class DriverController extends Controller
             ->orderByDesc('created_at')
             ->paginate(15);
         // return $freeSubscriptions;
-        return view('admin/driverInfo', compact('driver', 'freeSubscriptions', 'supports'));
+        return view('admin/driverInfo', compact('driver', 'freeSubscriptions', 'supports', 'freeCallTotal'));
     }
 
     // ریپورت کردن راننده توسط باربری
