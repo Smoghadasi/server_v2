@@ -681,24 +681,24 @@ class DataConvertController extends Controller
             $load = new Load();
             $load->title = strlen($title) == 0 ? 'بدون عنوان' : $title;
             $load->pattern = $pattern;
+            $load->cargo_convert_list_id = $cargoId;
+            $load->senderMobileNumber = $mobileNumber;
+            $load->emergencyPhone = $mobileNumber;
+            $load->load_type_id = 0;
+            $load->tenderTimeDuration = 0;
+            $load->packing_type_id = 0;
             // $load->weight = 0;
             // $load->width = 0;
             // $load->length = 0;
             // $load->height = 0;
-            $load->cargo_convert_list_id = $cargoId;
             // $load->loadingAddress = '';
             // $load->dischargeAddress = '';
-            $load->senderMobileNumber = $mobileNumber;
             // $load->receiverMobileNumber = '';
             // $load->insuranceAmount = 0;
             // $load->suggestedPrice = 0;
             // $load->marketing_price = 0;
-            $load->emergencyPhone = $mobileNumber;
             // $load->dischargeTime = '';
             // $load->fleet_id = 0;
-            $load->load_type_id = 0;
-            $load->tenderTimeDuration = 0;
-            $load->packing_type_id = 0;
             // $load->loadPic = "noImage";
             $owner = Owner::where('mobileNumber', $mobileNumber)->first();
             if (isSendBotLoadOwner() == true) {
@@ -833,10 +833,12 @@ class DataConvertController extends Controller
             $loadDuplicate = Load::where($conditions)
                 ->where('userType', 'operator')
                 ->first();
-            // if ($loadDuplicate) {
-            //     $loadDuplicate->delete();
-            //     $load->save();
-            // }
+            // return dd($loadDuplicate);
+
+            if ($loadDuplicate) {
+                $loadDuplicate->delete();
+                $load->save();
+            }
 
             $loadDuplicateOwner = Load::where($conditions)
                 ->where('userType', 'owner')
