@@ -147,31 +147,30 @@ class DataConvertController extends Controller
         }
 
         if (isset($cargo->id)) {
-            // $replaceEnter = str_replace("\n", ' ', $cargo->cargo);
-            // $removeR = str_replace("\r", ' ', $replaceEnter);
-            // $removeParentheses = preg_replace('/\(|\)/', '', $removeR);
-            // $result = preg_replace('/^:\s*/', '', $removeParentheses);
+            $replaceEnter = str_replace("\n", ' ', $cargo->cargo);
+            $removeR = str_replace("\r", ' ', $replaceEnter);
+            $removeParentheses = preg_replace('/\(|\)/', '', $removeR);
+            $result = preg_replace('/^:\s*/', '', $removeParentheses);
 
 
-            // $words = explode(' ', $result);
-            // $cleanedArray = array_map(function($item) {
-            //     $item = preg_replace('/:/u', '', $item); // حذف دو نقطه
-            //     $item = preg_replace('/\s+/u', ' ', $item); // جایگزینی چند فاصله با یک فاصله
-            //     return trim($item); // حذف فاصله از ابتدا و انتها
-            // }, $words);
+            $words = explode(' ', $result);
+            $cleanedArray = array_map(function($item) {
+                $item = preg_replace('/:/u', '', $item); // حذف دو نقطه
+                $item = preg_replace('/\s+/u', ' ', $item); // جایگزینی چند فاصله با یک فاصله
+                return trim($item); // حذف فاصله از ابتدا و انتها
+            }, $words);
 
-            // // حذف عناصر خالی از آرایه (اختیاری)
-            // $cleanedArray = array_filter($cleanedArray, function($item) {
-            //     return $item !== '';
-            // });
+            // حذف عناصر خالی از آرایه (اختیاری)
+            $cleanedArray = array_filter($cleanedArray, function($item) {
+                return $item !== '';
+            });
 
             // $fleets = Fleet::whereIn('title', $words)->pluck('title')->toArray();
-            // $equivalents = Equivalent::whereIn('equivalentWord', $cleanedArray)->where('type', 'fleet')->pluck('equivalentWord')->toArray();
-            // return $equivalents;
-            // if (count($equivalents) == 0) {
-            //     $cargo->cargo = "نیسان پلاس\n" . $cargo->cargo;
-            //     $cargo->save();
-            // }
+            $equivalents = Equivalent::whereIn('equivalentWord', $cleanedArray)->where('type', 'fleet')->pluck('equivalentWord')->toArray();
+            if (count($equivalents) == 0) {
+                $cargo->cargo = "نیسان پلاس\n" . $cargo->cargo;
+                $cargo->save();
+            }
 
             $dictionary = Equivalent::where('type', 'fleet')
                 ->whereIn('original_word_id', $operatorCargoListAccess)
@@ -840,14 +839,13 @@ class DataConvertController extends Controller
             // return dd($loadDuplicate);
 
             if ($loadDuplicate || $loadDuplicateOwnerBot) {
-                if ($loadDuplicate) {
-                    $loadDuplicate->delete();
-                }
-                if ($loadDuplicateOwnerBot) {
-                    $loadDuplicateOwnerBot->delete();
-                }
+                collect([$loadDuplicate, $loadDuplicateOwnerBot])
+                    ->filter()
+                    ->each(fn($duplicate) => $duplicate->delete());
+
                 $load->save();
             }
+
 
             $loadDuplicateOwner = Load::where($conditions)
                 ->where('userType', 'owner')

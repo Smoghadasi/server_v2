@@ -649,7 +649,7 @@ class DriverController extends Controller
             ->orderByDesc('created_at')
             ->where('value', '!=', 0)
             ->where('driver_id', $driver->id)
-            ->whereIn('type', ['AuthCalls', 'AuthValidity', 'AuthValidityDeleted'])
+            ->whereIn('type', ['AuthCalls', 'AuthValidity', 'AuthValidityDeleted', 'AuthCallsOwner'])
             ->when($request->toDate !== null, function ($query) use ($request) {
                 return $query->whereBetween('created_at', [persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00', persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:59']);
             })
