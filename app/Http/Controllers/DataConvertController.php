@@ -148,7 +148,8 @@ class DataConvertController extends Controller
 
         if (isset($cargo->id)) {
             // Normalize and clean the cargo string
-            $cleaned = $this->replaceToPersianAlphabet($cargo->cargo);
+            $removeEmojis = $this->removeEmojis($cargo->cargo);
+            $cleaned = $this->replaceToPersianAlphabet($removeEmojis);
             $normalized = str_replace(["\n", "\r"], ' ', $cleaned);
             $normalized = preg_replace(['/[\(\)]/', '/^:\s*/'], ['', ''], $normalized);
 
@@ -226,6 +227,21 @@ class DataConvertController extends Controller
 
 
         return redirect(url('dashboard'))->with('danger', 'هیچ باری وجود ندارد');
+    }
+
+    private function removeEmojis($text)
+    {
+        // حذف بیشتر ایموجی‌های متداول (unicode ranges)
+        return preg_replace('/[\x{1F600}-\x{1F64F}' . // شکلک‌های چهره
+            '\x{1F300}-\x{1F5FF}' . // نمادها و اشیاء
+            '\x{1F680}-\x{1F6FF}' . // وسایل نقلیه و نمادهای نقشه
+            '\x{2600}-\x{26FF}' .   // نمادهای متفرقه
+            '\x{2700}-\x{27BF}' .   // نمادهای دکمه‌ای
+            '\x{1F1E6}-\x{1F1FF}' . // پرچم‌ها
+            '\x{1F900}-\x{1F9FF}' . // ایموجی‌های جدیدتر
+            '\x{1FA70}-\x{1FAFF}' . // ایموجی‌های نسخه‌های اخیر
+            '\x{200D}' .            // Zero-width joiner (ZWJ)
+            '\x{FE0F}]/u', ' ', $text);
     }
 
     // دریافت لیست ناوگان
