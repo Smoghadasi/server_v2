@@ -171,7 +171,7 @@ class DataConvertController extends Controller
                 ->toArray();
             // Prepend default if no fleet equivalents found
             if (empty($equivalents) && empty($fleets)) {
-                $cargo->cargo = "نیسان پلاس\n" . $cargo->cargo;
+                $cargo->cargo = "( نیسان پلاس ) \n" . $cargo->cargo;
                 $cargo->save();
             }
 
