@@ -148,7 +148,8 @@ class DataConvertController extends Controller
 
         if (isset($cargo->id)) {
             // Normalize and clean the cargo string
-            $normalized = str_replace(["\n", "\r"], ' ', $cargo->cargo);
+            $cleaned = $this->replaceToPersianAlphabet($cargo->cargo);
+            $normalized = str_replace(["\n", "\r"], ' ', $cleaned);
             $normalized = preg_replace(['/[\(\)]/', '/^:\s*/'], ['', ''], $normalized);
 
             // Split and clean words
@@ -164,7 +165,7 @@ class DataConvertController extends Controller
                 ->toArray();
 
             $fleets = Fleet::whereIn('title', $words)
-                ->where('parent_id', '!=' , '0')
+                ->where('parent_id', '!=', '0')
                 ->pluck('title')
                 ->toArray();
             // Prepend default if no fleet equivalents found
