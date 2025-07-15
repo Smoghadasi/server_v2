@@ -49,6 +49,7 @@
 
                             <div class="col-md-3">
                                 <select class="form-control col-md-4" name="operator_id" id="operator_id">
+                                    <option value="0">اپراتور</option>
                                      @foreach ($operators as $operator)
                                         <option value="{{ $operator->id }}">
                                             {{ $operator->name }} {{ $operator->lastName }}
