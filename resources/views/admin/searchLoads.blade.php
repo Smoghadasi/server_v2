@@ -14,7 +14,7 @@
                     <div class="form-group">
                         <div class="col-md-12 row">
                             <div class="col-md-3">
-                                <select class="form-control" name="origin_city_id" id="origin_city_id">
+                                <select class="form-control form-select" name="origin_city_id" id="origin_city_id">
                                     <option value="0">شهر مبدا</option>
                                     @foreach ($cities as $city)
                                         <option value="{{ $city->id }}">
@@ -24,7 +24,7 @@
                                 </select>
                             </div>
                             <div class="col-md-3">
-                                <select class="form-control col-md-3" name="destination_city_id" id="destination_city_id">
+                                <select class="form-control form-select col-md-3" name="destination_city_id" id="destination_city_id">
                                     <option value="0">شهر مقصد</option>
                                     @foreach ($cities as $city)
                                         <option value="{{ $city->id }}">
@@ -35,7 +35,7 @@
                             </div>
 
                             <div class="col-md-3">
-                                <select class="form-control col-md-4" name="fleet_id" id="fleet_id">
+                                <select class="form-control form-select col-md-4" name="fleet_id" id="fleet_id">
                                     <option value="0">نوع ناوگان</option>
                                     @foreach ($fleets as $fleet)
                                         <option value="{{ $fleet->id }}">
@@ -48,7 +48,7 @@
                             </div>
 
                             <div class="col-md-3">
-                                <select class="form-control col-md-4" name="operator_id" id="operator_id">
+                                <select class="form-control form-select col-md-4" name="operator_id" id="operator_id">
                                     <option value="0">اپراتور</option>
                                      @foreach ($operators as $operator)
                                         <option value="{{ $operator->id }}">
@@ -57,8 +57,13 @@
                                     @endforeach
                                 </select>
                             </div>
+
                             <div class="col-md-3">
-                                <select class="form-control" name= "origin_state_id" id="origin_state_id">
+                                <input type="text" placeholder="شماره تلفن صاحب بار" class="form-control col-md-4"
+                                    name="mobileNumber" id="mobileNumber" />
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-control form-select" name= "origin_state_id" id="origin_state_id">
                                     <option value="0">استان مبدا</option>
                                     @foreach ($provinces as $province)
                                         <option value="{{ $province->id }}">
@@ -66,11 +71,6 @@
                                         </option>
                                     @endforeach
                                 </select>
-                            </div>
-
-                            <div class="col-md-3">
-                                <input type="text" placeholder="شماره تلفن صاحب بار" class="form-control col-md-4"
-                                    name="mobileNumber" id="mobileNumber" />
                             </div>
 
                         </div>
