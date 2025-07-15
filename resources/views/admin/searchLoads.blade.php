@@ -56,7 +56,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            {{-- <div class="col-md-3">
+                            <div class="col-md-3">
                                 <select class="form-control" name= "origin_state_id" id="origin_state_id">
                                     <option value="0">استان مبدا</option>
                                     @foreach ($provinces as $province)
@@ -65,7 +65,7 @@
                                         </option>
                                     @endforeach
                                 </select>
-                            </div> --}}
+                            </div>
 
                             <div class="col-md-3">
                                 <input type="text" placeholder="شماره تلفن صاحب بار" class="form-control col-md-4"

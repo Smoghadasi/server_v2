@@ -5617,11 +5617,12 @@ class LoadController extends Controller
     public function searchLoadsForm()
     {
         $cities = ProvinceCity::where('parent_id', '!=', 0)->get();
+        $provinces = ProvinceCity::where('parent_id', '=', 0)->get();
         $fleets = Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
         $operators = User::where([['role', 'operator'], ['status', 1]])->get();
         $loads = [];
         $countLoads = 0;
-        return view('admin.searchLoads', compact('loads', 'cities', 'fleets', 'operators', 'countLoads'));
+        return view('admin.searchLoads', compact('loads', 'cities', 'fleets', 'operators', 'countLoads', 'provinces'));
     }
 
     public function searchLoads(Request $request)
