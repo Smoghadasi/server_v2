@@ -5631,6 +5631,8 @@ class LoadController extends Controller
 
         if ($request->origin_city_id != "0")
             $condition[] = ['origin_city_id', $request->origin_city_id];
+        if ($request->origin_state_id != "0")
+            $condition[] = ['origin_state_id', $request->origin_state_id];
         if ($request->destination_city_id != "0")
             $condition[] = ['destination_city_id', $request->destination_city_id];
         if ($request->fleet_id != "0")
@@ -5646,6 +5648,7 @@ class LoadController extends Controller
             ->paginate(20);
         $firstDateLoad = LoadBackup::where('mobileNumberForCoordination', $request->mobileNumber)
             ->orderBy('created_at', 'ASC')->first();
+        $provinces = ProvinceCity::where('parent_id', '=', 0)->get();
         $cities = ProvinceCity::where('parent_id', '!=', 0)->get();
         $fleets = Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
         $operators = User::where('status', 1)
@@ -5660,7 +5663,8 @@ class LoadController extends Controller
                 'fleets',
                 'operators',
                 'countLoads',
-                'firstDateLoad'
+                'firstDateLoad',
+                'provinces'
             )
         );
     }

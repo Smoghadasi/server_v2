@@ -49,10 +49,19 @@
 
                             <div class="col-md-3">
                                 <select class="form-control col-md-4" name="operator_id" id="operator_id">
-                                    <option value="0">اپراتور</option>
-                                    @foreach ($operators as $operator)
+                                     @foreach ($operators as $operator)
                                         <option value="{{ $operator->id }}">
                                             {{ $operator->name }} {{ $operator->lastName }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-control" name= "origin_state_id" id="origin_state_id">
+                                    <option value="0">استان مبدا</option>
+                                    @foreach ($provinces as $province)
+                                        <option value="{{ $province->id }}">
+                                            <?php echo str_replace('ك', 'ک', str_replace('ي', 'ی', $province->name)); ?>
                                         </option>
                                     @endforeach
                                 </select>
