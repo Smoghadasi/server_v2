@@ -14,6 +14,16 @@
                     <div class="form-group">
                         <div class="col-md-12 row">
                             <div class="col-md-3">
+                                <select class="form-control form-select" name= "origin_state_id" id="origin_state_id">
+                                    <option value="0">استان مبدا</option>
+                                    @foreach ($provinces as $province)
+                                        <option value="{{ $province->id }}">
+                                            <?php echo str_replace('ك', 'ک', str_replace('ي', 'ی', $province->name)); ?>
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-3">
                                 <select class="form-control form-select" name="origin_city_id" id="origin_city_id">
                                     <option value="0">شهر مبدا</option>
                                     @foreach ($cities as $city)
@@ -61,16 +71,6 @@
                             <div class="col-md-3">
                                 <input type="text" placeholder="شماره تلفن صاحب بار" class="form-control col-md-4"
                                     name="mobileNumber" id="mobileNumber" />
-                            </div>
-                            <div class="col-md-3">
-                                <select class="form-control form-select" name= "origin_state_id" id="origin_state_id">
-                                    <option value="0">استان مبدا</option>
-                                    @foreach ($provinces as $province)
-                                        <option value="{{ $province->id }}">
-                                            <?php echo str_replace('ك', 'ک', str_replace('ي', 'ی', $province->name)); ?>
-                                        </option>
-                                    @endforeach
-                                </select>
                             </div>
 
                         </div>
