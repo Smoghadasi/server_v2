@@ -265,7 +265,7 @@
     });
 
 </script>
-<script src="{{ asset('/assets/js/actions.js') }}"></script>
+{{-- <script src="{{ asset('/assets/js/actions.js') }}"></script> --}}
 <script>
     function toggleMenu(menu) {
         if (menu === "complaint")
