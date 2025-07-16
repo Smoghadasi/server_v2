@@ -43,6 +43,7 @@ class PersonalizedNotificationController extends Controller
         $personalizedNotification->title = $request->title;
         $personalizedNotification->body = $request->body;
         $personalizedNotification->user_id = Auth::id();
+        $personalizedNotification->status = 2;
         $personalizedNotification->save();
         return back()->with('success', 'آیتم مورد نظر ثبت شد.');
     }
@@ -84,7 +85,6 @@ class PersonalizedNotificationController extends Controller
         $personalizedNotification->body = $request->body;
         $personalizedNotification->save();
         return back()->with('success', 'آیتم مورد نظر ویرایش شد.');
-
     }
 
     /**
@@ -97,6 +97,5 @@ class PersonalizedNotificationController extends Controller
     {
         $personalizedNotification->delete();
         return back()->with('danger', 'آیتم مورد نظر حذف شد.');
-
     }
 }

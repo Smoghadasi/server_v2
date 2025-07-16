@@ -111,13 +111,33 @@
                                     {{ $personalizedNotification->user?->name }}
                                     {{ $personalizedNotification->user?->lastName }}
                                 </td>
-                                <td>{{ $personalizedNotification->status ? 'فعال' : 'غیر فعال' }}</td>
+                                <td>
+                                    @switch($personalizedNotification->status)
+                                        @case(1)
+                                            ارسال شد
+                                        @break
+
+                                        @case(2)
+                                            @if (Auth::user()->role == 'admin')
+                                                <a class="btn btn-outline-success" href="#">تایید</a>
+                                            @else
+                                                در حال بررسی
+                                            @endif
+                                        @break
+
+                                        @default
+                                            غیر فعال
+                                    @endswitch
                                 <td>
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                         data-bs-target="#modalCenter_{{ $personalizedNotification->id }}">
                                         ویرایش
                                     </button>
-                                    <form class="d-inline" action="{{ route('personalizedNotification.destroy', $personalizedNotification) }}" method="post">
+                                    @if ($personalizedNotification->status == 2)
+                                    @endif
+                                    <form class="d-inline"
+                                        action="{{ route('personalizedNotification.destroy', $personalizedNotification) }}"
+                                        method="post">
                                         @method('delete')
                                         @csrf
                                         <button class="btn btn-danger">حذف</button>
@@ -185,49 +205,49 @@
                                     </div>
                                 </td>
                             </tr>
-                        @empty
-                            <tr class="text-center">
-                                <td colspan="10">
-                                    دیتا مورد نظر یافت نشد
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                            @empty
+                                <tr class="text-center">
+                                    <td colspan="10">
+                                        دیتا مورد نظر یافت نشد
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-3">
+                    {{ $personalizedNotifications->appends($_GET)->links() }}
+
+                </div>
+
             </div>
-
-            <div class="mt-3">
-                {{ $personalizedNotifications->appends($_GET)->links() }}
-
-            </div>
-
         </div>
-    </div>
-@endsection
-@section('script')
-    <script>
-        const emojiBtn = document.getElementById("emoji-btn");
-        const emojiContainer = document.getElementById("emoji-picker-container");
-        const textarea = document.getElementById("desc-textarea");
+    @endsection
+    @section('script')
+        <script>
+            const emojiBtn = document.getElementById("emoji-btn");
+            const emojiContainer = document.getElementById("emoji-picker-container");
+            const textarea = document.getElementById("desc-textarea");
 
-        // ایجاد picker فقط یک بار
-        const picker = document.createElement("emoji-picker");
-        picker.style.width = "300px"; // یا هر اندازه‌ای که خواستی
-        picker.addEventListener("emoji-click", (event) => {
-            textarea.value += event.detail.unicode;
-            emojiContainer.style.display = "none";
-        });
-
-        emojiContainer.appendChild(picker);
-
-        emojiBtn.addEventListener("click", () => {
-            emojiContainer.style.display = emojiContainer.style.display === "none" ? "block" : "none";
-        });
-
-        document.addEventListener("click", (e) => {
-            if (!emojiContainer.contains(e.target) && e.target !== emojiBtn) {
+            // ایجاد picker فقط یک بار
+            const picker = document.createElement("emoji-picker");
+            picker.style.width = "300px"; // یا هر اندازه‌ای که خواستی
+            picker.addEventListener("emoji-click", (event) => {
+                textarea.value += event.detail.unicode;
                 emojiContainer.style.display = "none";
-            }
-        });
-    </script>
-@endsection
+            });
+
+            emojiContainer.appendChild(picker);
+
+            emojiBtn.addEventListener("click", () => {
+                emojiContainer.style.display = emojiContainer.style.display === "none" ? "block" : "none";
+            });
+
+            document.addEventListener("click", (e) => {
+                if (!emojiContainer.contains(e.target) && e.target !== emojiBtn) {
+                    emojiContainer.style.display = "none";
+                }
+            });
+        </script>
+    @endsection
