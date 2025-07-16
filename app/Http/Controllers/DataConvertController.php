@@ -2100,14 +2100,16 @@ class DataConvertController extends Controller
     public function duplicateCargoFromCargoList(Request $request)
     {
         // return $request;
-        $cargoList = CargoConvertList::where('isBlocked', 1)
-            ->orWhere('isDuplicate', 1)
-            ->where('cargo', 'LIKE', '%' . $request->cargo . '%')
+        $cargoList = CargoConvertList::where(function ($query) {
+            $query->where('isBlocked', 1)
+                ->orWhere('isDuplicate', 1);
+        })
             ->when($request->cargo !== null, function ($query) use ($request) {
-                return $query->where('cargo', 'LIKE', '%' . $request->cargo . '%');
+                $query->where('cargo', 'LIKE', '%' . $request->cargo . '%');
             })
             ->orderByDesc('created_at')
             ->paginate(20);
+
         return view('admin.duplicateCargo.index', compact('cargoList'));
     }
 
