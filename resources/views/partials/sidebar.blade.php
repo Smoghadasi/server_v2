@@ -64,11 +64,11 @@
                         </a>
                     </li>
                 @endif
-                    <li class="menu-item">
-                        <a href="{{ route('trackableItems.index') }}" class="menu-link">
-                            <div data-i18n="Analytics">موارد قابل پیگیری</div>
-                        </a>
-                    </li>
+                <li class="menu-item">
+                    <a href="{{ route('trackableItems.index') }}" class="menu-link">
+                        <div data-i18n="Analytics">موارد قابل پیگیری</div>
+                    </a>
+                </li>
                 @if (in_array('drivers', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('drivers') }}">
@@ -90,6 +90,11 @@
                         </a>
                     </li>
                 @endif
+                <li class="menu-item">
+                    <a class="menu-link" href="{{ route('personalizedNotification.index') }}">
+                        <span>اعلان شخصی سازی شده</span>
+                    </a>
+                </li>
                 <li
                     class="menu-item {{ request()->is('admin/support*') ? 'active open' : '' }} {{ request()->is('admin/supportDriver*') ? 'active open' : '' }}">
                     <a href="javascript:void(0);" class="menu-link menu-toggle">

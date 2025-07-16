@@ -28,7 +28,8 @@ use App\Models\BlockPhoneNumber;
 use App\Models\Customer;
 use App\Models\Dictionary;
 use App\Models\Driver;
-use App\Models\Fleet;
+use App\Models\Equivalent;
+// use App\Models\Fleet;
 use App\Models\Load;
 use App\Models\ProvinceCity;
 use Illuminate\Http\Request;
@@ -670,21 +671,26 @@ Route::post('botData', function (Request $request) {
     try {
         $newText = convertFaNumberToEn($request->data);
 
-        $regex = "@(https?://([-\w\.]+[-\w])+(:\d+)?(/([\w/_\.#-]*(\?\S+)?[^\.\s])?).*$)@";
+        // Remove links and normalize spacing and special characters
+        $linkRegex = "@(https?://([-\w\.]+[-\w])+(:\d+)?(/([\w/_\.#-]*(\?\S+)?[^\.\s])?).*$)@";
+        $cleanText = preg_replace('/\s+/', '', $newText); // For duplicate check
+        $textWithoutLinks = preg_replace($linkRegex, ' ', $newText);
+        $normalizedText = str_replace(["\n", "\r", ":"], ' ', $textWithoutLinks);
+        $words = explode(' ', $normalizedText);
 
-        $removeSpace = preg_replace('/\s+/', '', $newText);
-        $removeLink = preg_replace($regex, ' ', $newText);
-        $replaceEnter = str_replace("\n", ' ', $removeLink);
-        $words = explode(' ', $replaceEnter);
-        // $removeEmoji = remove_emoji($replaceEnter);
+        // Optional: Extract area code for mobile number pattern like 0912, 0935, etc.
         preg_match('/0\d{2}/', $newText, $matches);
+
+        // Lookups
         $cities = ProvinceCity::whereIn('name', $words)->where('parent_id', '!=', 0)->pluck('name')->toArray();
-        $equivalentWords = Dictionary::whereIn('equivalentWord', $words)->pluck('equivalentWord')->toArray();
+        $equivalentWords = Equivalent::whereIn('equivalentWord', $words)->pluck('equivalentWord')->toArray();
         $blockNumbers = BlockPhoneNumber::whereIn('phoneNumber', $words)->pluck('phoneNumber')->toArray();
-        // $fleets = Fleet::whereIn('title', $words)->pluck('title')->toArray();
-        if ($blockNumbers) {
+
+        // Check if blocked number
+        if (!empty($blockNumbers)) {
             DB::table('cargo_convert_lists')->insert([
                 'cargo' => $newText,
+                'cargo_orginal' => $newText,
                 'isBlocked' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -692,56 +698,41 @@ Route::post('botData', function (Request $request) {
             return response()->json(['message' => 'شماره مسدود است و ذخیره نشد.'], 409);
         }
 
-        if (isset($matches[0]) && ($cities || $equivalentWords)) {
+        // Proceed if mobile code exists and either city or equivalent word is found
+        if (!empty($matches[0]) && (!empty($cities) || !empty($equivalentWords))) {
 
-            $existingMessages = DB::table('cargo_convert_lists')
-                ->where('created_at', '>', date('Y-m-d h:i:s', strtotime('-180 minute', time())))
+            // Get previous non-blocked, non-duplicate messages within 3 hours
+            $recentMessages = DB::table('cargo_convert_lists')
+                ->where('created_at', '>', now()->subMinutes(180))
                 ->where('isBlocked', 0)
                 ->where('isDuplicate', 0)
-                ->pluck('cargo')
-                ->map(function ($cargo) {
-                    return preg_replace('/\s+/', '', $cargo);
-                });
+                ->pluck('cargo_orginal')
+                ->map(fn($item) => preg_replace('/\s+/', '', $item));
 
-            $isDuplicate = false;
-            foreach ($existingMessages as $oldText) {
-                $distance = levenshtein(
-                    substr($removeSpace, 0, 255),
-                    substr($oldText, 0, 255)
-                );
-                // جلوگیری از تقسیم بر صفر در صورتی که یکی از رشته‌ها خالی باشه
-                $maxLength = max(strlen($removeSpace), strlen($oldText), 1);
+            // Check for similarity
+            $isDuplicate = $recentMessages->contains(function ($oldText) use ($cleanText) {
+                $distance = levenshtein(substr($cleanText, 0, 255), substr($oldText, 0, 255));
+                $maxLen = max(strlen($cleanText), strlen($oldText), 1); // avoid division by zero
+                $similarity = 100 - ($distance / $maxLen) * 100;
+                return $similarity >= 99;
+            });
 
-                $similarity = 100 - ($distance / $maxLength) * 100;
-
-                if ($similarity >= 99) {
-                    $isDuplicate = true;
-                    break;
-                }
-            }
-            if ($isDuplicate) {
-                // ذخیره پیام جدید
-                DB::table('cargo_convert_lists')->insert([
-                    'cargo' => $newText,
-                    'isDuplicate' => 1,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-                return response()->json(['message' => 'پیام بسیار مشابه است و ذخیره نشد.'], 409);
-            }
-            // if ($fleets == null) {
-            //     $newText = 'نیسان ' .  $newText;
-            // }
-            // ذخیره پیام جدید
             DB::table('cargo_convert_lists')->insert([
                 'cargo' => $newText,
+                'cargo_orginal' => $newText,
+                'isDuplicate' => $isDuplicate ? 1 : 0,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
 
+            if ($isDuplicate) {
+                return response()->json(['message' => 'پیام بسیار مشابه است و ذخیره نشد.'], 409);
+            }
+
             return response()->json(['message' => 'پیام ذخیره شد.'], 201);
         }
-        return response()->json(['message' => 'Error.'], 404);
+
+        return response()->json(['message' => 'شرایط لازم برای ذخیره‌سازی وجود ندارد.'], 400);
     } catch (Exception $exception) {
         \Illuminate\Support\Facades\Log::emergency("------------------- botData ERROR ---------------------");
         \Illuminate\Support\Facades\Log::emergency($exception->getMessage());

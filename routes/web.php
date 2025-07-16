@@ -36,6 +36,7 @@ use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\PackingTypeController;
 use App\Http\Controllers\ParameterController;
 use App\Http\Controllers\PayController;
+use App\Http\Controllers\PersonalizedNotificationController;
 use App\Http\Controllers\ProvinceCityController;
 use App\Http\Controllers\RadioController;
 // use App\Http\Controllers\RegisterController;
@@ -896,6 +897,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('contactingWithDrivers', [OperatorContactingController::class, 'contactingWithDrivers'])->middleware('operator');
 
         Route::resource('freeSubscription', FreeSubscriptionController::class)->middleware('operator');
+
+        // ارسال نوتیفیکیشن شخصی سازی شده
+        Route::resource('personalizedNotification', PersonalizedNotificationController::class)->middleware('operator');
 
         // اعلان ها
         Route::resource('web-notification', WebNotificationController::class)->middleware('operator');
