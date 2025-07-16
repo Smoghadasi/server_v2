@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 @section('css')
-    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+    <script type="module" src="{{ asset('js/index.js') }}"></script>
 
     <style>
         #emoji-picker-container {
