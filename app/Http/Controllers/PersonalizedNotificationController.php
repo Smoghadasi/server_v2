@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\SendPushNotificationPersonalizeJob;
 use App\Models\Driver;
+use App\Models\Owner;
 use App\Models\PersonalizedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -110,6 +111,21 @@ class PersonalizedNotificationController extends Controller
             $tokens = Driver::whereNotNull('FCM_token')
                 ->where('version', $personalizedNotification->version)
                 ->whereIn('id', ['45172'])
+                ->pluck('FCM_token')
+                ->toArray();
+
+            $chunks = array_chunk($tokens, 250); // چون FCM حداکثر 250 تا پشتیبانی می‌کنه
+            foreach ($chunks as $chunk) {
+                dispatch(new SendPushNotificationPersonalizeJob($chunk, $title, $body));
+            }
+            $personalizedNotification->status = 1;
+            $personalizedNotification->save();
+            return back()->with('success', 'اعلان مورد نظر ارسال شد.');
+        }
+        if ($personalizedNotification->type == 'owner') {
+            $tokens = Owner::whereNotNull('FCM_token')
+                ->where('version', $personalizedNotification->version)
+                ->whereIn('id', ['81'])
                 ->pluck('FCM_token')
                 ->toArray();
 

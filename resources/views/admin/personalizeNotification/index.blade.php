@@ -139,9 +139,9 @@
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-outline-secondary"
                                                                     data-bs-dismiss="modal">
-                                                                    Close
+                                                                    بستن
                                                                 </button>
-                                                                <a class="btn btn-outline-success"
+                                                                <a class="btn btn-primary"
                                                                     href="{{ route('admin.requestForApproval', $personalizedNotification) }}">تایید
                                                                 </a>
                                                             </div>
