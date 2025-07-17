@@ -160,10 +160,10 @@
                                             غیر فعال
                                     @endswitch
                                 <td>
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    {{-- <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                         data-bs-target="#modalCenter_{{ $personalizedNotification->id }}">
                                         ویرایش
-                                    </button>
+                                    </button> --}}
                                     @if ($personalizedNotification->status == 2)
                                     @endif
                                     <form class="d-inline"
