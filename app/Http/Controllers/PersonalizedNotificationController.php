@@ -118,8 +118,9 @@ class PersonalizedNotificationController extends Controller
             foreach ($chunks as $chunk) {
                 dispatch(new SendPushNotificationPersonalizeJob($chunk, $title, $body));
             }
-
-            return response()->json(['message' => 'در صف ارسال قرار گرفت']);
+            $personalizedNotification->status = 1;
+            $personalizedNotification->save();
+            return back()->with('success', 'اعلان مورد نظر ارسال شد.');
         }
     }
 }
