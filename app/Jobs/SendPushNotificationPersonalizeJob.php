@@ -34,8 +34,9 @@ class SendPushNotificationPersonalizeJob implements ShouldQueue
 
     private function getAccessToken()
     {
-        $path = public_path('assets/zarin-tarabar-firebase-adminsdk-9x6c3-7dbc939cac.json');
-        $serviceAccount = json_decode(file_get_contents($path), true);
+        $serviceAccountPath = base_path('public/assets/zarin-tarabar-firebase-adminsdk-9x6c3-7dbc939cac.json');
+        $serviceAccountJson = file_get_contents($serviceAccountPath);
+        $serviceAccount = json_decode($serviceAccountJson, true);
 
         $clientEmail = $serviceAccount['client_email'];
         $privateKey = $serviceAccount['private_key'];
