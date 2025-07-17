@@ -109,7 +109,7 @@ class PersonalizedNotificationController extends Controller
         if ($personalizedNotification->type == 'driver') {
             $tokens = Driver::whereNotNull('FCM_token')
                 ->where('version', $personalizedNotification->version)
-                ->whereIn('id', ['45172'])
+                ->whereIn('id', ['45172', '24721'])
                 ->pluck('FCM_token')
                 ->toArray();
 
