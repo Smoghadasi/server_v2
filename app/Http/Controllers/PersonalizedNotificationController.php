@@ -109,12 +109,10 @@ class PersonalizedNotificationController extends Controller
         if ($personalizedNotification->type == 'driver') {
             $tokens = Driver::whereNotNull('FCM_token')
                 ->where('version', $personalizedNotification->version)
-                ->whereIn('id', ['45172', '24721'])
                 ->pluck('FCM_token')
                 ->toArray();
 
-            $chunks = array_chunk($tokens, 250); // چون FCM حداکثر 500 تا پشتیبانی می‌کنه
-            // return $chunks;
+            $chunks = array_chunk($tokens, 250); // چون FCM حداکثر 250 تا پشتیبانی می‌کنه
             foreach ($chunks as $chunk) {
                 dispatch(new SendPushNotificationPersonalizeJob($chunk, $title, $body));
             }

@@ -733,6 +733,16 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
+                                                                        <input type="checkbox"
+                                                                            name="personalizedNotification"
+                                                                            @if (in_array('personalizedNotification', $user->userAccess)) checked @endif>
+                                                                        اعلان شخصی سازی شده
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
                                                                         <input type="checkbox" name="operators"
                                                                             @if (in_array('operators', $user->userAccess)) checked @endif>
                                                                         اپراتورها
@@ -866,16 +876,7 @@
                                                                     </label>
                                                                 </div>
                                                             </li>
-                                                            <li>
-                                                                <div class="form-group">
-                                                                    <label>
-                                                                        <input type="checkbox"
-                                                                            name="personalizedNotification"
-                                                                            @if (in_array('personalizedNotification', $user->userAccess)) checked @endif>
-                                                                        اعلان شخصی سازی شده
-                                                                    </label>
-                                                                </div>
-                                                            </li>
+
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>

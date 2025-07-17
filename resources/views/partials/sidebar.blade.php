@@ -90,13 +90,7 @@
                         </a>
                     </li>
                 @endif
-                @if (in_array('personalizedNotification', auth()->user()->userAccess))
-                    <li class="menu-item">
-                        <a class="menu-link" href="{{ route('personalizedNotification.index') }}">
-                            <span>اعلان شخصی سازی شده</span>
-                        </a>
-                    </li>
-                @endif
+
 
                 <li
                     class="menu-item {{ request()->is('admin/support*') ? 'active open' : '' }} {{ request()->is('admin/supportDriver*') ? 'active open' : '' }}">
@@ -615,6 +609,13 @@
                         <div data-i18n="Without menu"> کمپین اعلان</div>
                     </a>
                 </li>
+                @if (in_array('personalizedNotification', auth()->user()->userAccess))
+                    <li class="menu-item">
+                        <a class="menu-link" href="{{ route('personalizedNotification.index') }}">
+                            <span>اعلان شخصی سازی شده</span>
+                        </a>
+                    </li>
+                @endif
                 <li class="menu-item">
                     <a class="menu-link" href="{{ route('limitCall.index') }}">
                         <div data-i18n="Without menu"> شماره های محدود شده</div>
