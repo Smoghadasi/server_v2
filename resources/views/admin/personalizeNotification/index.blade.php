@@ -119,8 +119,38 @@
 
                                         @case(2)
                                             @if (Auth::user()->role == 'admin')
-                                                <a class="btn btn-outline-success"
-                                                    href="{{ route('admin.requestForApproval', $personalizedNotification) }}">تایید</a>
+                                                <button type="button" class="btn btn-outline-success" data-bs-toggle="modal"
+                                                    data-bs-target="#requestForApproval_{{ $personalizedNotification->id }}">
+                                                    تایید
+                                                </button>
+                                                <!-- Small Modal -->
+                                                <div class="modal fade" id="requestForApproval_{{ $personalizedNotification->id }}"
+                                                    tabindex="-1" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="exampleModalLabel2">ارسال اعلان</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                    aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                آیا از ارسال اعلان مطمئن هستید؟
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-outline-secondary"
+                                                                    data-bs-dismiss="modal">
+                                                                    Close
+                                                                </button>
+                                                                <a class="btn btn-outline-success"
+                                                                    href="{{ route('admin.requestForApproval', $personalizedNotification) }}">تایید
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {{-- <a class="btn btn-outline-success"
+                                                    href="{{ route('admin.requestForApproval', $personalizedNotification) }}">تایید
+                                                </a> --}}
                                             @else
                                                 در حال بررسی
                                             @endif
