@@ -44,7 +44,7 @@
                                             </div>
                                             <div class="col-6 mb-3">
                                                 <input type="number" id="version" name="version" class="form-control"
-                                                    placeholder="ورژن..." />
+                                                    required placeholder="ورژن..." />
                                             </div>
                                             <div class="col-12 mb-3">
                                                 <input type="text" id="title" name="title" class="form-control"
@@ -119,7 +119,8 @@
 
                                         @case(2)
                                             @if (Auth::user()->role == 'admin')
-                                                <a class="btn btn-outline-success" href="#">تایید</a>
+                                                <a class="btn btn-outline-success"
+                                                    href="{{ route('admin.requestForApproval', $personalizedNotification) }}">تایید</a>
                                             @else
                                                 در حال بررسی
                                             @endif
@@ -172,7 +173,7 @@
                                                             </div>
                                                             <div class="col-6 mb-3">
                                                                 <input type="number" id="version" name="version"
-                                                                    class="form-control"
+                                                                    required class="form-control"
                                                                     value="{{ $personalizedNotification->version }}"
                                                                     placeholder="ورژن..." />
                                                             </div>

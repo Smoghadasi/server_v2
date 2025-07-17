@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendPushNotificationPersonalizeJob;
+use App\Models\Driver;
 use App\Models\PersonalizedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -97,5 +99,27 @@ class PersonalizedNotificationController extends Controller
     {
         $personalizedNotification->delete();
         return back()->with('danger', 'آیتم مورد نظر حذف شد.');
+    }
+
+    public function requestForApproval(PersonalizedNotification $personalizedNotification)
+    {
+        $title = $personalizedNotification->title;
+        $body  = $personalizedNotification->body;
+
+        if ($personalizedNotification->type == 'driver') {
+            $tokens = Driver::whereNotNull('FCM_token')
+                ->where('version', $personalizedNotification->version)
+                ->whereIn('id', ['45172'])
+                ->pluck('FCM_token')
+                ->toArray();
+
+            $chunks = array_chunk($tokens, 250); // چون FCM حداکثر 500 تا پشتیبانی می‌کنه
+            return $chunks;
+            foreach ($chunks as $chunk) {
+                dispatch(new SendPushNotificationPersonalizeJob($chunk, $title, $body));
+            }
+
+            return response()->json(['message' => 'در صف ارسال قرار گرفت']);
+        }
     }
 }

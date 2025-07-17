@@ -900,6 +900,10 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         // ارسال نوتیفیکیشن شخصی سازی شده
         Route::resource('personalizedNotification', PersonalizedNotificationController::class)->middleware('operator');
+        Route::get('requestForApprovalNotification/{personalizedNotification}', [PersonalizedNotificationController::class, 'requestForApproval'])
+            ->middleware('operator')
+            ->name('admin.requestForApproval');
+
 
         // اعلان ها
         Route::resource('web-notification', WebNotificationController::class)->middleware('operator');

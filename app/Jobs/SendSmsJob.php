@@ -12,7 +12,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class SendSmsJob implements ShouldQueue
+class SendSmsJob
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     public $load;

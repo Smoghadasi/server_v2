@@ -14,7 +14,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class SendNotificationForNearDriver implements ShouldQueue
+class SendNotificationForNearDriver
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 

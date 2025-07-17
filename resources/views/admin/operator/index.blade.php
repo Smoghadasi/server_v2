@@ -184,8 +184,7 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="dashboardAllCustomers"
+                                                                        <input type="checkbox" name="dashboardAllCustomers"
                                                                             @if (in_array('dashboardAllCustomers', $user->userAccess)) checked @endif>
                                                                         کل صاحب بارها
                                                                     </label>
@@ -218,8 +217,7 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="driversAuthentication"
+                                                                        <input type="checkbox" name="driversAuthentication"
                                                                             @if (in_array('driversAuthentication', $user->userAccess)) checked @endif>
                                                                         رانندگان
                                                                     </label>
@@ -301,7 +299,7 @@
                                                                     <label>
                                                                         <input type="checkbox" name="driversPaymentReport"
                                                                             @if (in_array('driversPaymentReport', $user->userAccess)) checked @endif>
-                                                                            لیست پرداختی و تمدید اعتبار
+                                                                        لیست پرداختی و تمدید اعتبار
                                                                     </label>
                                                                 </div>
                                                             </li>
@@ -310,7 +308,7 @@
                                                                     <label>
                                                                         <input type="checkbox" name="detailDriver"
                                                                             @if (in_array('detailDriver', $user->userAccess)) checked @endif>
-                                                                            جزئیات و ویرایش
+                                                                        جزئیات و ویرایش
                                                                     </label>
                                                                 </div>
                                                             </li>
@@ -335,7 +333,8 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox" name="EquivalentWordsInCargoRegistration"
+                                                                        <input type="checkbox"
+                                                                            name="EquivalentWordsInCargoRegistration"
                                                                             @if (in_array('EquivalentWordsInCargoRegistration', $user->userAccess)) checked @endif>
                                                                         کلمات معادل در ثبت بار
                                                                     </label>
@@ -344,7 +343,8 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox" name="listOfLoadsByOperator"
+                                                                        <input type="checkbox"
+                                                                            name="listOfLoadsByOperator"
                                                                             @if (in_array('listOfLoadsByOperator', $user->userAccess)) checked @endif>
                                                                         بار ها به تفکیک اپراتور
                                                                     </label>
@@ -361,8 +361,7 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="reportcargofleets"
+                                                                        <input type="checkbox" name="reportcargofleets"
                                                                             @if (in_array('reportcargofleets', $user->userAccess)) checked @endif>
                                                                         بار ها به تفکیک ناوگان
                                                                     </label>
@@ -406,18 +405,16 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="driversInMonth"
+                                                                        <input type="checkbox" name="driversInMonth"
                                                                             @if (in_array('driversInMonth', $user->userAccess)) checked @endif>
-                                                                            فعالیت رانندگان غیر تکراری
+                                                                        فعالیت رانندگان غیر تکراری
                                                                     </label>
                                                                 </div>
                                                             </li>
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="driverActivityReport"
+                                                                        <input type="checkbox" name="driverActivityReport"
                                                                             @if (in_array('driverActivityReport', $user->userAccess)) checked @endif>
                                                                         فعالیت رانندگان
                                                                     </label>
@@ -444,7 +441,8 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox" name="driversBasedOnTheMostCalls"
+                                                                        <input type="checkbox"
+                                                                            name="driversBasedOnTheMostCalls"
                                                                             @if (in_array('driversBasedOnTheMostCalls', $user->userAccess)) checked @endif>
                                                                         رانندگان بر اساس بیشترین تماس
                                                                     </label>
@@ -462,7 +460,8 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox" name="summaryOfTheDayReport"
+                                                                        <input type="checkbox"
+                                                                            name="summaryOfTheDayReport"
                                                                             @if (in_array('summaryOfTheDayReport', $user->userAccess)) checked @endif>
                                                                         خلاصه گزارش روز
                                                                     </label>
@@ -473,16 +472,17 @@
                                                                     <label>
                                                                         <input type="checkbox" name="bearingActivities"
                                                                             @if (in_array('bearingActivities', $user->userAccess)) checked @endif>
-                                                                            فعالیت باربری ها
+                                                                        فعالیت باربری ها
                                                                     </label>
                                                                 </div>
                                                             </li>
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox" name="cargoOwnersActivityReport"
+                                                                        <input type="checkbox"
+                                                                            name="cargoOwnersActivityReport"
                                                                             @if (in_array('cargoOwnersActivityReport', $user->userAccess)) checked @endif>
-                                                                            فعالیت صاحب بارها
+                                                                        فعالیت صاحب بارها
                                                                     </label>
                                                                 </div>
                                                             </li>
@@ -507,18 +507,20 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox" name="driverInstallationInLast30Days"
+                                                                        <input type="checkbox"
+                                                                            name="driverInstallationInLast30Days"
                                                                             @if (in_array('driverInstallationInLast30Days', $user->userAccess)) checked @endif>
-                                                                            نصب رانندگان در 30 روز
+                                                                        نصب رانندگان در 30 روز
                                                                     </label>
                                                                 </div>
                                                             </li>
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox" name="fleetRatioToDriverActivityReport"
+                                                                        <input type="checkbox"
+                                                                            name="fleetRatioToDriverActivityReport"
                                                                             @if (in_array('fleetRatioToDriverActivityReport', $user->userAccess)) checked @endif>
-                                                                            نسبت راننده به بار
+                                                                        نسبت راننده به بار
                                                                     </label>
                                                                 </div>
                                                             </li>
@@ -533,8 +535,7 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="driverPayment"
+                                                                        <input type="checkbox" name="driverPayment"
                                                                             @if (in_array('driverPayment', $user->userAccess)) checked @endif>
                                                                         راننده ها
                                                                     </label>
@@ -553,8 +554,7 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="paymentBasedOnFleet"
+                                                                        <input type="checkbox" name="paymentBasedOnFleet"
                                                                             @if (in_array('paymentBasedOnFleet', $user->userAccess)) checked @endif>
                                                                         پرداخت بر اساس ناوگان
                                                                     </label>
@@ -595,8 +595,7 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="complaintsOfDrivers"
+                                                                        <input type="checkbox" name="complaintsOfDrivers"
                                                                             @if (in_array('complaintsOfDrivers', $user->userAccess)) checked @endif>
                                                                         رانندگان
                                                                     </label>
@@ -605,8 +604,7 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="complaintsOfOwners"
+                                                                        <input type="checkbox" name="complaintsOfOwners"
                                                                             @if (in_array('complaintsOfOwners', $user->userAccess)) checked @endif>
                                                                         صاحبان بار
                                                                     </label>
@@ -615,8 +613,7 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="blockages"
+                                                                        <input type="checkbox" name="blockages"
                                                                             @if (in_array('blockages', $user->userAccess)) checked @endif>
                                                                         مسدودی ها
                                                                     </label>
@@ -625,8 +622,7 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="IPBlocked"
+                                                                        <input type="checkbox" name="IPBlocked"
                                                                             @if (in_array('IPBlocked', $user->userAccess)) checked @endif>
                                                                         IP های مسدود
                                                                     </label>
@@ -635,8 +631,7 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="messages"
+                                                                        <input type="checkbox" name="messages"
                                                                             @if (in_array('messages', $user->userAccess)) checked @endif>
                                                                         پیام ها
                                                                     </label>
@@ -686,8 +681,7 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="fleet"
+                                                                        <input type="checkbox" name="fleet"
                                                                             @if (in_array('fleets', $user->userAccess)) checked @endif>
                                                                         ناوگان ها
                                                                     </label>
@@ -696,8 +690,7 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="myFleets"
+                                                                        <input type="checkbox" name="myFleets"
                                                                             @if (in_array('myFleets', $user->userAccess)) checked @endif>
                                                                         ناوگان من
                                                                     </label>
@@ -722,8 +715,7 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="searchLoads"
+                                                                        <input type="checkbox" name="searchLoads"
                                                                             @if (in_array('searchLoads', $user->userAccess)) checked @endif>
                                                                         جستجو بارها
                                                                     </label>
@@ -732,18 +724,16 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="bookmark"
+                                                                        <input type="checkbox" name="bookmark"
                                                                             @if (in_array('bookmark', $user->userAccess)) checked @endif>
-                                                                            علامت گذاری شده ها
+                                                                        علامت گذاری شده ها
                                                                     </label>
                                                                 </div>
                                                             </li>
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="operators"
+                                                                        <input type="checkbox" name="operators"
                                                                             @if (in_array('operators', $user->userAccess)) checked @endif>
                                                                         اپراتورها
                                                                     </label>
@@ -753,8 +743,7 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="callWithOwner"
+                                                                        <input type="checkbox" name="callWithOwner"
                                                                             @if (in_array('callWithOwner', $user->userAccess)) checked @endif>
                                                                         تماس با صاحب بار و باربری
                                                                     </label>
@@ -763,8 +752,7 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="contactTheDrivers"
+                                                                        <input type="checkbox" name="contactTheDrivers"
                                                                             @if (in_array('contactTheDrivers', $user->userAccess)) checked @endif>
                                                                         تماس با رانندگان
                                                                     </label>
@@ -773,8 +761,7 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="appVersions"
+                                                                        <input type="checkbox" name="appVersions"
                                                                             @if (in_array('appVersions', $user->userAccess)) checked @endif>
                                                                         ورژن اپلیکیشن ها
                                                                     </label>
@@ -783,8 +770,7 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="provincesAndCities"
+                                                                        <input type="checkbox" name="provincesAndCities"
                                                                             @if (in_array('provincesAndCities', $user->userAccess)) checked @endif>
                                                                         استان ها و شهر ها
                                                                     </label>
@@ -793,10 +779,9 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="services"
+                                                                        <input type="checkbox" name="services"
                                                                             @if (in_array('services', $user->userAccess)) checked @endif>
-                                                                         خدمات ها
+                                                                        خدمات ها
                                                                     </label>
                                                                 </div>
                                                             </li>
@@ -809,8 +794,7 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="sliders"
+                                                                        <input type="checkbox" name="sliders"
                                                                             @if (in_array('sliders', $user->userAccess)) checked @endif>
                                                                         اسلایدر
                                                                     </label>
@@ -819,8 +803,7 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="radios"
+                                                                        <input type="checkbox" name="radios"
                                                                             @if (in_array('radios', $user->userAccess)) checked @endif>
                                                                         رادیو
                                                                     </label>
@@ -835,8 +818,7 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="discrepancies"
+                                                                        <input type="checkbox" name="discrepancies"
                                                                             @if (in_array('discrepancies', $user->userAccess)) checked @endif>
                                                                         صورت مغایرت بانکی
                                                                     </label>
@@ -860,8 +842,7 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="drivers"
+                                                                        <input type="checkbox" name="drivers"
                                                                             @if (in_array('drivers', $user->userAccess)) checked @endif>
                                                                         رانندگان
                                                                     </label>
@@ -870,8 +851,7 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="listOfOwners"
+                                                                        <input type="checkbox" name="listOfOwners"
                                                                             @if (in_array('listOfOwners', $user->userAccess)) checked @endif>
                                                                         صاحبان بار
                                                                     </label>
@@ -880,8 +860,7 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        <input type="checkbox"
-                                                                            name="transactionManual"
+                                                                        <input type="checkbox" name="transactionManual"
                                                                             @if (in_array('transactionManual', $user->userAccess)) checked @endif>
                                                                         تراکنش های دستی
                                                                     </label>
@@ -891,7 +870,16 @@
                                                                 <div class="form-group">
                                                                     <label>
                                                                         <input type="checkbox"
-                                                                            name="incomingCallDriver"
+                                                                            name="personalizedNotification"
+                                                                            @if (in_array('personalizedNotification', $user->userAccess)) checked @endif>
+                                                                        اعلان شخصی سازی شده
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="incomingCallDriver"
                                                                             @if (in_array('incomingCallDriver', $user->userAccess)) checked @endif>
                                                                         تماس ورودی رانندگان
                                                                     </label>
@@ -933,13 +921,11 @@
                                                     </label>
                                                 </div>
 
-
-
                                                 <div class="form-group">
                                                     <label>
                                                         <input type="checkbox" name="driversContactCall"
                                                             @if (in_array('driversContactCall', $user->userAccess)) checked @endif>
-                                                            لیست تماس ها
+                                                        لیست تماس ها
                                                     </label>
                                                 </div>
                                                 <div class="form-group">
