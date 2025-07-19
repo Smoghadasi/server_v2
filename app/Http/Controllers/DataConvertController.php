@@ -851,9 +851,11 @@ class DataConvertController extends Controller
             ];
             $loadDuplicate = Load::where($conditions)
                 ->where('userType', 'operator')
+                ->where('created_at', '<', now()->subMinutes(180))
                 ->first();
             $loadDuplicateOwnerBot = Load::where($conditions)
                 ->where('userType', 'owner')
+                ->where('created_at', '<', now()->subMinutes(180))
                 ->where('isBot', 1)
                 ->first();
             // return dd($loadDuplicate);
