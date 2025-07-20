@@ -64,9 +64,13 @@
                         <tr>
                             <td>{{ $key + 1 }}</td>
                             <td>
-                                {{ $city->name }}
                                 @if ($city->centerOfProvince == 1)
+                                    <a  href="{{ route('provinceCity.show', $city->id) }}">
+                                        {{ $city->name }}
+                                    </a>
                                     <span class="alert alert-primary small d-inline-block p-1">مرکز استان</span>
+                                @else
+                                    {{ $city->name }}
                                 @endif
                             </td>
                             <td>{{ $city->latitude }} , {{ $city->longitude }}</td>
@@ -123,7 +127,8 @@
                                                     </p>
                                                 </div>
                                                 <div class="modal-footer text-left">
-                                                    <form action="{{ route('provinceCity.destroy', $city->id) }}" method="post">
+                                                    <form action="{{ route('provinceCity.destroy', $city->id) }}"
+                                                        method="post">
                                                         @method('DELETE')
                                                         @csrf
                                                         <button class="btn btn-primary" type="submit">حذف</button>
