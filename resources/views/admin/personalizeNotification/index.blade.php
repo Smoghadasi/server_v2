@@ -118,7 +118,7 @@
                                         @break
 
                                         @case(2)
-                                            @if (Auth::user()->role == 'admin')
+                                            @if (Auth::user()->role == 'admin' || Auth::user()->id == 29)
                                                 <button type="button" class="btn btn-outline-success" data-bs-toggle="modal"
                                                     data-bs-target="#requestForApproval_{{ $personalizedNotification->id }}">
                                                     تایید
