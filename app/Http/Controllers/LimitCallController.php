@@ -15,7 +15,7 @@ class LimitCallController extends Controller
      */
     public function index()
     {
-        $limitCalls = LimitCall::with('operator')->paginate(20);
+        $limitCalls = LimitCall::with('operator')->orderByDesc('created_at')->paginate(20);
         return view('admin.limitCalls.index', compact('limitCalls'));
     }
 
