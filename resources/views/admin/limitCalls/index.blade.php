@@ -29,6 +29,16 @@
                                                 <input type="text" id="mobileNumber" name="mobileNumber"
                                                     class="form-control" placeholder="شماره موبایل..." />
                                             </div>
+                                            <div class="col-6 mb-3">
+                                                <select class="form-control form-select" name="type" id="type">
+                                                    <option value="limitCall">محدودیت با 2 تماس </option>
+                                                    <option value="time">زمان</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-6 mb-3" id="toggleTime" style="display: none;">
+                                                <input class="form-control" type="number"
+                                                    placeholder="تایم به دقیقه را وارد کنید" name="value">
+                                            </div>
                                         </div>
 
 
@@ -54,6 +64,7 @@
                             <th scope="col">#</th>
                             <th scope="col">شماره موبایل</th>
                             <th scope="col">اپراتور</th>
+                            <th scope="col">نوع</th>
                             <th scope="col">عملیات</th>
                         </tr>
                     </thead>
@@ -67,6 +78,13 @@
                                 </th>
                                 <td>{{ $limitCall->mobileNumber }}</td>
                                 <td>{{ $limitCall->operator?->name }} {{ $limitCall->operator?->lastName }}</td>
+                                <td>
+                                    @if ($limitCall->type == 'limitCall')
+                                        محدودیت تماس
+                                    @else
+                                        محدود به زمان ({{ $limitCall->value }} دقیقه)
+                                    @endif
+                                </td>
                                 <td>
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                         data-bs-target="#modal_{{ $limitCall->id }}">
@@ -102,6 +120,25 @@
                                                                     name="mobileNumber" class="form-control"
                                                                     placeholder="شماره موبایل..." />
                                                             </div>
+                                                            <div class="col-6 mb-3">
+                                                                <select class="form-control form-select type-select"
+                                                                    data-index="{{ $key }}" name="type">
+                                                                    <option value="limitCall"
+                                                                        @if ($limitCall->type == 'limitCall') selected @endif>
+                                                                        محدودیت با 2 تماس</option>
+                                                                    <option value="time"
+                                                                        @if ($limitCall->type == 'time') selected @endif>
+                                                                        زمان</option>
+                                                                </select>
+                                                            </div>
+
+                                                            <div class="col-6 mb-3 toggle-time"
+                                                                data-index="{{ $key }}" style="display: none;">
+                                                                <input value="{{ $limitCall->value }}"
+                                                                    class="form-control" type="number"
+                                                                    placeholder="تایم به دقیقه را وارد کنید"
+                                                                    name="value">
+                                                            </div>
                                                         </div>
 
 
@@ -132,4 +169,58 @@
 
         </div>
     </div>
+@endsection
+
+
+@section('script')
+    <script>
+        $(document).ready(function() {
+            function toggleTimeInput() {
+                if ($('#type').val() === 'time') {
+                    $('#toggleTime').show();
+                } else {
+                    $('#toggleTime').hide();
+                }
+            }
+
+            // Run once on page load
+            toggleTimeInput();
+
+            // Run when the select changes
+            $('#type').on('change', toggleTimeInput);
+
+
+
+
+            function updateToggleTime() {
+                $('.type-select').each(function() {
+                    let index = $(this).data('index');
+                    let value = $(this).val();
+                    let toggleDiv = $('.toggle-time[data-index="' + index + '"]');
+
+                    if (value === 'time') {
+                        toggleDiv.show();
+                    } else {
+                        toggleDiv.hide();
+                    }
+                });
+            }
+
+            // در شروع صفحه بررسی شود
+            updateToggleTime();
+
+            // هنگام تغییر select
+            $('.type-select').on('change', function() {
+                let index = $(this).data('index');
+                let value = $(this).val();
+                let toggleDiv = $('.toggle-time[data-index="' + index + '"]');
+
+                if (value === 'time') {
+                    toggleDiv.show();
+                } else {
+                    toggleDiv.hide();
+                }
+            });
+        });
+    </script>
 @endsection

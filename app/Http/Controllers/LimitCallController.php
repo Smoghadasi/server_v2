@@ -38,12 +38,15 @@ class LimitCallController extends Controller
     public function store(Request $request)
     {
         $mobileNumber = ParameterController::convertNumbers($request->mobileNumber);
+        // return $request;
 
         if (LimitCall::where('mobileNumber', $mobileNumber)->count() > 0) {
             return back()->with('danger', 'این شماره موبایل قبلا ثبت شده است.');
         }
         LimitCall::create([
             'mobileNumber' => $request->mobileNumber,
+            'type' => $request->type,
+            'value' => $request->value,
             'operator_id' => Auth::id(),
         ]);
         return back()->with('success', 'با موفقیت ثبت شد.');
@@ -81,14 +84,14 @@ class LimitCallController extends Controller
     public function update(Request $request, LimitCall $limitCall)
     {
         $mobileNumber = ParameterController::convertNumbers($request->mobileNumber);
-
-        if (LimitCall::where('mobileNumber', $mobileNumber)->count() > 0) {
+        if (LimitCall::where('mobileNumber', $mobileNumber)->where('id', '!=' , $limitCall->id)->count() > 0) {
             return back()->with('danger', 'این شماره موبایل قبلا ثبت شده است.');
         }
 
         $limitCall->update([
             'mobileNumber' => $request->mobileNumber,
-            'operator_id' => Auth::id(),
+            'type' => $request->type,
+            'value' => $request->value,
         ]);
         return back()->with('success', 'با موفقیت ثبت شد.');
 
