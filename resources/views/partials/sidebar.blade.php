@@ -274,17 +274,16 @@
                         </a>
                     </li>
                 @endif
-                {{-- @if (in_array('storeCargoOperator', auth()->user()->userAccess)) --}}
+                @if (in_array('storeCargoOperator', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('storeCargoOperator.index') }}">
                             <span>ثبت بار دستی</span>
                         </a>
                     </li>
-                {{-- @endif --}}
+                @endif
                 <li
                     class="menu-item {{ request()->is('admin/usersByCity*') ? 'active open' : '' }} {{ request()->is('admin/usersByProvince*') ? 'active open' : '' }}">
                     <a href="javascript:void(0);" class="menu-link menu-toggle">
-                        {{-- <i class="menu-icon tf-icons bx bx-bar-chart"></i> --}}
                         <div data-i18n="Layouts">استفاده کنندگان</div>
                     </a>
                     <ul class="menu-sub">

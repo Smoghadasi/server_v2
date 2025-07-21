@@ -367,6 +367,15 @@
                                                                     </label>
                                                                 </div>
                                                             </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="storeCargoOperator"
+                                                                            @if (in_array('storeCargoOperator', $user->userAccess)) checked @endif>
+                                                                        ثبت بار دستی
+                                                                    </label>
+                                                                </div>
+                                                            </li>
                                                             <ul id="myUL">
                                                                 <li><span class="caret">استفاده کنندگان</span>
                                                                     <ul class="nested">
