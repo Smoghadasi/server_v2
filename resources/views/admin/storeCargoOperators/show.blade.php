@@ -21,10 +21,10 @@
                             <td>{{ $cargo->cargo }}</td>
                             <td>
                                 @if ($cargo->operator_id > 0)
-                                    @if ($cargo->status == 1)
+                                    @if ($cargo->status == 1 && $cargo->rejected == 0)
                                         <span class="text-success">ثبت شد</span>
                                     @endif
-                                    @if ($cargo->rejected == 1)
+                                    @if ($cargo->rejected == 1 && $cargo->status == 1)
                                         <span class="text-danger">رد شد</span>
                                     @endif
                                     @if ($cargo->status == 0 && $cargo->rejected == 0)
