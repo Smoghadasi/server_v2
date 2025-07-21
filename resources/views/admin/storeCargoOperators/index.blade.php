@@ -42,15 +42,6 @@
                             <td>
                                 <a href="{{ route('storeCargoOperator.show', ['storeCargoOperator' => $user->id]) }}" class="btn btn-primary">جزئیات ثبت بار های اخیر</a>
                             </td>
-                            {{-- <td>{{ $user->mobileNumber }}</td>
-                            <td>{{ $user->email }}</td> --}}
-                            {{-- <td>
-                            @if ($user->sex == 0)
-                                خانم
-                            @else
-                                آقا
-                            @endif
-                        </td> --}}
                         </tr>
                     @endforeach
                 </tbody>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CargoConvertList;
 use App\Models\StoreCargoOperator;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -30,7 +31,7 @@ class StoreCargoOperatorController extends Controller
             $user->total_count = $all->sum('count');
             $user->today_count = $all->where('persian_date', $today)->sum('count');
         }
-        return view('admin.load.storeCargoOperators', compact('users'));
+        return view('admin.storeCargoOperators.index', compact('users'));
     }
 
     /**
@@ -60,9 +61,23 @@ class StoreCargoOperatorController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($userId)
     {
-        //
+        $user = User::findOrFail($userId);
+
+        $cargoList = CargoConvertList::where('cargo_user_id', $userId)
+            ->orderByDesc('id', 'desc')
+            ->paginate(20);
+        return view('admin.storeCargoOperators.show', compact('cargoList', 'user'));
+
+        // return $cargoList;
+
+        // $storeCargoOperatorsIds = StoreCargoOperator::select('user_id')->pluck('user_id')->toArray();
+
+        // $users = User::whereIn('id', $storeCargoOperatorsIds)
+        //     ->with('storeCargoOperators')
+        //     ->get();
+        // return $users;
     }
 
     /**
