@@ -22,10 +22,10 @@
                             <td>
                                 @if ($cargo->operator_id > 0)
                                     @if ($cargo->status == 1 && $cargo->rejected == 0)
-                                        <span class="text-success">ثبت شد</span>
+                                        <span class="text-success">ثبت توسط: {{ $cargo->operator->name }} {{ $cargo->operator->lastName }}</span>
                                     @endif
                                     @if ($cargo->rejected == 1 && $cargo->status == 1)
-                                        <span class="text-danger">رد شد</span>
+                                        <span class="text-danger">رد توسط : {{ $cargo->operator->name }} {{ $cargo->operator->lastName }} </span>
                                     @endif
                                     @if ($cargo->status == 0 && $cargo->rejected == 0)
                                         <span class="text-primary">در حال بررسی</span>
