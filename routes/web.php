@@ -47,6 +47,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SliderController;
 // use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SOSController;
+use App\Http\Controllers\StoreCargoOperatorController;
 use App\Http\Controllers\SupportController;
 use App\Http\Controllers\TenderController;
 use App\Http\Controllers\TrackableItemController;
@@ -897,6 +898,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('contactingWithDrivers', [OperatorContactingController::class, 'contactingWithDrivers'])->middleware('operator');
 
         Route::resource('freeSubscription', FreeSubscriptionController::class)->middleware('operator');
+
+        // گزارش بر اساس ثبت بار دستی اپراتور
+        Route::resource('storeCargoOperator', StoreCargoOperatorController::class)->middleware('operator');
 
         // ارسال نوتیفیکیشن شخصی سازی شده
         Route::resource('personalizedNotification', PersonalizedNotificationController::class)->middleware('operator');

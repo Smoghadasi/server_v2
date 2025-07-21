@@ -5,28 +5,31 @@ namespace App\Http\Controllers;
 use App\Models\Bearing;
 use App\Models\BlockPhoneNumber;
 use App\Models\BotTest;
-use App\Models\CargoCanvertList;
+// use App\Models\CargoCanvertList;
 use App\Models\CargoConvertList;
 use App\Models\City;
-use App\Models\Customer;
-use App\Models\DateOfCargoDeclaration;
+// use App\Models\Customer;
+// use App\Models\DateOfCargoDeclaration;
 use App\Models\Dictionary;
-use App\Models\DriverCallCount;
-use App\Models\DriverCallReport;
+// use App\Models\DriverCallCount;
+// use App\Models\DriverCallReport;
 use App\Models\Fleet;
 use App\Models\FleetLoad;
 use App\Models\Load;
 use App\Models\LoadBackup;
 use App\Models\CargoReportByFleet;
+use App\Models\DriverCall;
 use App\Models\Equivalent;
-use App\Models\FirstLoad;
+// use App\Models\FirstLoad;
+// use App\Models\LimitCall;
 use App\Models\OperatorCargoListAccess;
 use App\Models\Owner;
 use App\Models\ProvinceCity;
 use App\Models\RejectCargoOperator;
-use App\Models\Setting;
-use App\Models\Tender;
-use App\Models\Transaction;
+// use App\Models\Setting;
+use App\Models\StoreCargoOperator;
+// use App\Models\Tender;
+// use App\Models\Transaction;
 use App\Models\User;
 use App\Models\UserActivityReport;
 use Carbon\Carbon;
@@ -55,7 +58,19 @@ class DataConvertController extends Controller
             if (CargoConvertList::where('cargo', $request->cargo)->count() == 0) {
                 $cargoConvertList = new CargoConvertList();
                 $cargoConvertList->cargo = $request->cargo;
+                $cargoConvertList->cargo_user_id = Auth::id();
                 $cargoConvertList->save();
+
+                // گزارش بار ها بر اساس اپراتور
+                $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+                $storeCargoOperator = StoreCargoOperator::firstOrNew([
+                    'user_id' => Auth::id(),
+                    'persian_date' => $persian_date,
+                ]);
+
+                $storeCargoOperator->count = ($storeCargoOperator->count ?? 0) + 1;
+                $storeCargoOperator->save();
+
                 return back()->with('success', 'ذخیره شد');
             }
             return back()->with('success', 'اطلاعات ارسال شده تکراری بود!');
@@ -95,6 +110,32 @@ class DataConvertController extends Controller
 
     public function finalApprovalAndStoreCargo()
     {
+        // $arrayFleets = ['82', '86', '45', '47', '87'];
+        // $repeatedCargoIds = Load::select('cargo_convert_list_id')
+        //     ->groupBy('cargo_convert_list_id')
+        //     ->havingRaw('COUNT(*) > 3')
+        //     ->pluck('cargo_convert_list_id');
+        // foreach ($repeatedCargoIds as $repeatedCargoId) {
+        //     // Step 1: Get load IDs matching cargo ID and fleet IDs
+        //     $loadIds = DB::table('loads as l')
+        //         ->join('fleet_loads as fl', 'fl.load_id', '=', 'l.id')
+        //         ->where('l.cargo_convert_list_id', $repeatedCargoId)
+        //         ->whereIn('fl.fleet_id', $arrayFleets)
+        //         ->pluck('l.id')
+        //         ->unique()
+        //         ->toArray();
+        //     // Step 2: Check if there are enough driver calls
+        //     if (!empty($loadIds) && DriverCall::whereIn('load_id', $loadIds)->count() >= 5) {
+        //         // Step 3: Delete matching loads
+        //         DB::table('loads')->whereIn('id', $loadIds)->delete();
+        //     }
+        // }
+
+        // foreach ($loads as $key => $load) {
+        // }
+        // return $loads;
+
+
         $cargo = CargoConvertList::where([
             ['operator_id', auth()->id()],
             ['status', 0],
@@ -568,6 +609,7 @@ class DataConvertController extends Controller
     // ذخیره دسته ای بارها
     public function storeMultiCargo(Request $request, CargoConvertList $cargo)
     {
+
         $agent = new Agent();
         $device = '';
         // بررسی نوع دستگاه
