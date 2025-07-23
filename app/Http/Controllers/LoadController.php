@@ -26,6 +26,7 @@ use App\Models\FleetOperator;
 use App\Models\Inquiry;
 use App\Models\Load;
 use App\Models\LoadBackup;
+use App\Models\LoadOwnerCount;
 use App\Models\LoadStatus;
 use App\Models\LoadType;
 use App\Models\Notification;
@@ -877,7 +878,24 @@ class LoadController extends Controller
                     }
                 }
 
+
+
                 if (isset($load->id) && isset($request->fleetList)) {
+
+                    $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+
+                    try {
+                        // گزارش بار ها بر اساس اپراتور
+                        $loadOwnerCount = LoadOwnerCount::firstOrNew([
+                            'mobileNumber' => $load->mobileNumberForCoordination,
+                            'persian_date' => $persian_date,
+                        ]);
+
+                        $loadOwnerCount->count = ($loadOwnerCount->count ?? 0) + 1;
+                        $loadOwnerCount->save();
+                    } catch (\Exception $e) {
+                        Log::emergency($exception->getMessage());
+                    }
 
                     foreach ($request->fleetList as $item) {
 

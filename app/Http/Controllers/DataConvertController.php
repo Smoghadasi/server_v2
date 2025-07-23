@@ -20,6 +20,7 @@ use App\Models\LoadBackup;
 use App\Models\CargoReportByFleet;
 use App\Models\DriverCall;
 use App\Models\Equivalent;
+use App\Models\LoadOwnerCount;
 // use App\Models\FirstLoad;
 // use App\Models\LimitCall;
 use App\Models\OperatorCargoListAccess;
@@ -926,6 +927,7 @@ class DataConvertController extends Controller
 
                 $counter++;
 
+
                 if (isset($fleet_id->id)) {
                     // if ($fleet_id->id == 86) {
                     //     $fleet_ids = [86, 87];
@@ -952,8 +954,8 @@ class DataConvertController extends Controller
                     $fleetLoad->userType = $load->userType;
                     $fleetLoad->save();
 
+                    $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
                     try {
-                        $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
                         // Log::emergency("Error cargo report by 1371: ");
 
                         $cargoReport = CargoReportByFleet::where('fleet_id', $fleetLoad->fleet_id)
@@ -971,10 +973,22 @@ class DataConvertController extends Controller
                             $cargoReportNew->date = $persian_date;
                             $cargoReportNew->save();
                             // Log::emergency("Error cargo report by 1387: " . $cargoReportNew);
-
                         }
                     } catch (Exception $e) {
                         Log::emergency("Error cargo report by fleets: " . $e->getMessage());
+                    }
+
+                    try {
+                        // گزارش بار ها بر اساس اپراتور
+                        $loadOwnerCount = LoadOwnerCount::firstOrNew([
+                            'mobileNumber' => $mobileNumber,
+                            'persian_date' => $persian_date,
+                        ]);
+
+                        $loadOwnerCount->count = ($loadOwnerCount->count ?? 0) + 1;
+                        $loadOwnerCount->save();
+                    } catch (\Exception $e) {
+                        Log::emergency($exception->getMessage());
                     }
                 }
 

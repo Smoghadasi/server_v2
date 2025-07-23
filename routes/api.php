@@ -679,7 +679,8 @@ Route::post('botData', function (Request $request) {
         $words = explode(' ', $normalizedText);
 
         // Optional: Extract area code for mobile number pattern like 0912, 0935, etc.
-        preg_match('/0\d{2}/', $newText, $matches);
+        // preg_match('/0\d{2}/', $newText, $matches);
+        preg_match('/(?:\+98|0)\d{2}/', $newText, $matches);
 
         // Lookups
         $cities = ProvinceCity::whereIn('name', $words)->where('parent_id', '!=', 0)->pluck('name')->toArray();
