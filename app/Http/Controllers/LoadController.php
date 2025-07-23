@@ -5665,15 +5665,15 @@ class LoadController extends Controller
             ->withTrashed()
             ->orderByDesc('created_at')
             ->paginate(20);
-        $firstDateLoad = LoadBackup::where('mobileNumberForCoordination', $request->mobileNumber)
-            ->orderBy('created_at', 'ASC')->first();
+        $firstDateLoad = LoadOwnerCount::where('mobileNumber', $request->mobileNumber)->first()->created_at;
+
         $provinces = ProvinceCity::where('parent_id', '=', 0)->get();
         $cities = ProvinceCity::where('parent_id', '!=', 0)->get();
         $fleets = Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
         $operators = User::where('status', 1)
             ->whereIn('role', ['admin', 'operator'])
             ->get();
-        $countLoads = LoadBackup::where('mobileNumberForCoordination', $request->mobileNumber)->count();
+        $countLoads = LoadOwnerCount::where('mobileNumber', $request->mobileNumber)->sum('count');
         return view(
             'admin.searchLoads',
             compact(

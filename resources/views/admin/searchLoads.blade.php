@@ -81,18 +81,24 @@
                     @endif
                     @if (isset($firstDateLoad))
                         <div class="row alert alert-info text-right">
-                            <div class="col-2">
+                            <div class="col-md-2 col-sm-12">
                                 تاریخ اولین بار
                             </div>
-                            <div class="col-2" style="text-align: right">
-                                {{ $firstDateLoad->loadingDate }}
+                            <div class="col-md-2 col-sm-12" style="text-align: right">
+
+                            <td>
+                                {{ $firstDateLoad ? gregorianDateToPersian($firstDateLoad, '-', true) : '-' }}
                             </div>
-                            <div class="col " style="text-align: right">
+                            <div class="col-md-2 col-sm-12" style="text-align: right">
 
                                 @if ($loads[0]?->ownerAuthenticated == true)
                                     صاحب بار تایید شده
                                     <i class="menu-icon tf-icons bx bx-check-shield text-success"></i>
                                 @endif
+                            </div>
+                            <div class="col-md-2 col-sm-12" style="text-align: right">
+
+                                    مجموع بار های ثبت شده : {{ $countLoads }}
                             </div>
 
                         </div>
