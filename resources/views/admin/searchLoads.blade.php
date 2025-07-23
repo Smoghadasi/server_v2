@@ -87,7 +87,7 @@
                             <div class="col-md-2 col-sm-12" style="text-align: right">
 
                             <td>
-                                {{ $firstDateLoad ? gregorianDateToPersian($firstDateLoad, '-', true) : '-' }}
+                                {{ $firstDateLoad ? gregorianDateToPersian($firstDateLoad->created_at, '-', true) : '-' }}
                             </div>
                             <div class="col-md-2 col-sm-12" style="text-align: right">
 

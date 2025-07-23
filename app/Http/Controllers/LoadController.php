@@ -5665,7 +5665,7 @@ class LoadController extends Controller
             ->withTrashed()
             ->orderByDesc('created_at')
             ->paginate(20);
-        $firstDateLoad = LoadOwnerCount::where('mobileNumber', $request->mobileNumber)->first()->created_at;
+        $firstDateLoad = LoadOwnerCount::where('mobileNumber', $request->mobileNumber)->first();
 
         $provinces = ProvinceCity::where('parent_id', '=', 0)->get();
         $cities = ProvinceCity::where('parent_id', '!=', 0)->get();
