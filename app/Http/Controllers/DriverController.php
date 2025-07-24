@@ -347,12 +347,14 @@ class DriverController extends Controller
     // درخواست تغییر ناوگان
     public function requestChangeFleet(Request $request)
     {
-        Driver::where('id', $request->driver_id)
-            ->update(['fleet_id' => $request->fleet_id]);
+        // Driver::where('id', $request->driver_id)
+        //     ->update(['fleet_id' => $request->fleet_id]);
 
-        $driver = Driver::where('id', $request->driver_id)
-            ->select('id', 'fleet_id')
-            ->first();
+        // $driver = Driver::where('id', $request->driver_id)
+        //     ->select('id', 'fleet_id')
+        //     ->first();
+
+        $driver = Driver::findOrFail($request->driver_id);
 
         return [
             'data' => [
