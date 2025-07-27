@@ -1,4 +1,7 @@
 @extends('layouts.dashboard')
+@section('css')
+    <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+@endsection
 
 @section('content')
     <div class="card">

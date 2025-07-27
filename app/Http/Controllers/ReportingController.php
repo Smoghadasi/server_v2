@@ -52,6 +52,136 @@ class ReportingController extends Controller
         ]);
     }
 
+    public function fleetReportSummary()
+    {
+        $date = now()->subDays(30)->startOfDay();
+        $now = now();
+        $today = now()->toDateString(); // امروز
+        $yesterday = now()->subDay()->toDateString(); // روز گذشته
+
+
+        $activityStats = DB::table('fleets')
+            ->join('drivers', 'drivers.fleet_id', '=', 'fleets.id')
+            ->join('driver_activities', 'driver_activities.driver_id', '=', 'drivers.id')
+            ->where('driver_activities.created_at', '>', $date)
+            ->groupBy('fleets.id', 'fleets.title')
+            ->select(
+                'fleets.id as fleet_id',
+                DB::raw('COUNT(*) as total'),
+                DB::raw("SUM(CASE WHEN drivers.activeDate IS NULL OR drivers.activeDate < '{$now}' THEN 1 ELSE 0 END) as notActive"),
+                DB::raw("SUM(CASE WHEN drivers.activeDate >= '{$now}' THEN 1 ELSE 0 END) as active"),
+                DB::raw("COUNT(DISTINCT CASE WHEN DATE(driver_activities.created_at) = '{$yesterday}' THEN driver_activities.driver_id END) as yesterday_active")
+            )
+            ->get()
+            ->keyBy('fleet_id');
+
+        // -----------------------------
+        // 2. آمار تماس‌های روز گذشته
+        // -----------------------------
+        $callStats = DB::table('fleets')
+            ->join('drivers', 'drivers.fleet_id', '=', 'fleets.id')
+            ->join('driver_calls', 'driver_calls.driver_id', '=', 'drivers.id')
+            ->whereDate('driver_calls.callingDate', '=', $yesterday)
+            ->groupBy('fleets.id', 'fleets.title')
+            ->select(
+                'fleets.id as fleet_id',
+                DB::raw('COUNT(*) as total_calls'),
+                DB::raw("SUM(CASE WHEN drivers.activeDate IS NULL OR drivers.activeDate < '{$now}' THEN 1 ELSE 0 END) as notActive_calls"),
+                DB::raw("SUM(CASE WHEN drivers.activeDate >= '{$now}' THEN 1 ELSE 0 END) as active_calls")
+            )
+            ->get()
+            ->keyBy('fleet_id');
+
+        // -----------------------------
+        // 3. تعداد راننده‌های منحصربه‌فرد که دیروز فعالیت داشته‌اند
+        // -----------------------------
+        $yesterdayNewDrivers  = DB::table('fleets')
+            ->join('drivers', 'drivers.fleet_id', '=', 'fleets.id')
+            ->whereDate('drivers.created_at', '=', $yesterday)
+            ->groupBy('fleets.id', 'fleets.title')
+            ->select(
+                'fleets.id as fleet_id',
+                DB::raw('COUNT(*) as new_drivers_yesterday')
+            )
+            ->get()
+            ->keyBy('fleet_id');
+
+
+        // -----------------------------
+        // 4. نسبت رشد فعالیت رانندگان دیروز با امروز بر اساس ناوگان
+        // -----------------------------
+
+        $growthStats = DB::table('fleets')
+            ->join('drivers', 'drivers.fleet_id', '=', 'fleets.id')
+            ->join('driver_activities', 'driver_activities.driver_id', '=', 'drivers.id')
+            ->whereIn(DB::raw('DATE(driver_activities.created_at)'), [$yesterday, $today])
+            ->groupBy('fleets.id', 'fleets.title')
+            ->select(
+                'fleets.id as fleet_id',
+                DB::raw("SUM(CASE WHEN DATE(driver_activities.created_at) = '{$yesterday}' THEN 1 ELSE 0 END) as count_yesterday"),
+                DB::raw("SUM(CASE WHEN DATE(driver_activities.created_at) = '{$today}' THEN 1 ELSE 0 END) as count_today")
+            )
+            ->get()
+            ->keyBy('fleet_id');
+        // return $growthStats;
+
+
+
+
+        // -----------------------------
+        // 3. ترکیب و چسباندن آمار به هر ناوگان
+        // -----------------------------
+        $fleets = Fleet::where('parent_id', '>', 0)
+            ->withCount('drivers')
+            ->get()
+            ->makeHidden(['numOfDrivers'])
+            ->map(function ($fleet) use (
+                $activityStats,
+                $callStats,
+                $yesterdayNewDrivers,
+                $growthStats
+            ) {
+                $activity = $activityStats[$fleet->id] ?? null;
+                $calls = $callStats[$fleet->id] ?? null;
+                $newDrivers = $yesterdayNewDrivers[$fleet->id] ?? null;
+                $growth = $growthStats[$fleet->id] ?? null;
+
+                // رشد فعالیت امروز نسبت به دیروز
+                $count_today = $growth->count_today ?? 0;
+                $count_yesterday = $growth->count_yesterday ?? 0;
+
+                // $fleet->activity_today = $count_today;
+                // $fleet->activity_yesterday_growth = $count_yesterday;
+                $fleet->activity_growth_percent = $count_yesterday > 0
+                    ? round((($count_today - $count_yesterday) / $count_yesterday) * 100, 1)
+                    : ($count_today > 0 ? 100 : 0); // 100% اگر دیروز صفر بوده
+
+
+                // فعالیت‌ها
+                $fleet->activity_total = $activity->total ?? 0;
+                $fleet->activity_active = $activity->active ?? 0;
+                $fleet->activity_notActive = $activity->notActive ?? 0;
+                $fleet->activity_yesterday = $activity->yesterday_active ?? 0;
+
+                // تماس‌ها
+                $fleet->call_total = $calls->total_calls ?? 0;
+                $fleet->call_active = $calls->active_calls ?? 0;
+                $fleet->call_notActive = $calls->notActive_calls ?? 0;
+
+
+                // رانندگان جدید دیروز (بر اساس created_at در جدول drivers)
+                $fleet->new_drivers_yesterday = $newDrivers->new_drivers_yesterday ?? 0;
+
+                return $fleet;
+            });
+        // return $fleets;
+
+
+
+        return view('admin.reporting.fleetReportSummary', compact('fleets'));
+    }
+
+
     public function driverActivityReportNonRepeat()
     {
         return view('admin.reporting.nonRepeate');
