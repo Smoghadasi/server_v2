@@ -193,6 +193,10 @@ class ReportingController extends Controller
                 ->where('status', '>', 2)
                 ->where('payment_type', 'cardToCard')
                 ->count(),
+            'todayGift' => Transaction::where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
+                ->where('status', '>', 2)
+                ->where('payment_type', 'gift')
+                ->count(),
             'todayOnline' => Transaction::where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
                 ->where('status', '>', 2)
                 ->where('payment_type', 'online')

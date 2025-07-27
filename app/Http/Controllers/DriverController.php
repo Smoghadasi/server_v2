@@ -80,6 +80,17 @@ class DriverController extends Controller
                 $q->where('payment_type', 'cardToCard');
             })->paginate(50);
         }
+        if ($type == 'todayGift') {
+            $drivers = Driver::with(['transactions' => function ($query) {
+                $query->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00');
+                $query->where('status', '>', 2);
+                $query->where('payment_type', 'gift');
+            }])->whereHas('transactions', function ($q) {
+                $q->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00');
+                $q->where('status', '>', 2);
+                $q->where('payment_type', 'gift');
+            })->paginate(200);
+        }
         return view('admin.driver.summery', compact('drivers'));
     }
 

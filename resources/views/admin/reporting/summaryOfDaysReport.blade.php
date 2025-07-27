@@ -52,6 +52,9 @@
                             <a href="{{ route('driverSummery', ['type' => 'todayCartToCart']) }}">
                                 کارت به کارت : {{ number_format($drivers['todayCartToCart']) }}
                             </a>
+                            <a href="{{ route('driverSummery', ['type' => 'todayGift']) }}">
+                                هدیه : {{ number_format($drivers['todayGift']) }}
+                            </a>
                         </td>
                     </tr>
                     <tr>
