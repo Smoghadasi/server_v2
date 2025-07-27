@@ -178,7 +178,11 @@ class TransactionManualController extends Controller
                         $sms = new Driver();
 
                         if ($setting->sms_panel == 'SMSIR') {
-                            $sms->freeSubscriptionSmsIr($driver->mobileNumber, $persian_date, $months[$month]);
+                            if ($gift) {
+                                $sms->freeSubscriptionGiftSmsIr($driver->mobileNumber, $persian_date, $months[$month]);
+                            } else {
+                                $sms->freeSubscriptionSmsIr($driver->mobileNumber, $persian_date, $months[$month]);
+                            }
                         } else {
                             $sms->freeSubscription($driver->mobileNumber, $persian_date, $months[$month]);
                         }
