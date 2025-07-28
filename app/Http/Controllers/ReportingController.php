@@ -71,7 +71,7 @@ class ReportingController extends Controller
                 ->groupBy('fleets.id', 'fleets.title')
                 ->select(
                     'fleets.id as fleet_id',
-                    DB::raw('COUNT(*) as total'),
+                    DB::raw('COUNT(DISTINCT driver_activities.driver_id) as total'), // ← اصلاح این خط
                     DB::raw("SUM(CASE WHEN drivers.activeDate IS NULL OR drivers.activeDate < '{$now}' THEN 1 ELSE 0 END) as notActive"),
                     DB::raw("SUM(CASE WHEN drivers.activeDate >= '{$now}' THEN 1 ELSE 0 END) as active"),
                     DB::raw("COUNT(DISTINCT CASE WHEN DATE(driver_activities.created_at) = '{$yesterday}' THEN driver_activities.driver_id END) as yesterday_active")
