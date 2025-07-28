@@ -125,12 +125,6 @@
                                     </div>
                                 </div>
 
-
-
-
-
-
-
                                 <div id="operatorAccess_{{ $user->id }}" class="modal fade" role="dialog">
                                     <div class="modal-dialog">
 
@@ -358,6 +352,15 @@
                                                 <ul id="myUL">
                                                     <li><span class="caret">گزارش ها</span>
                                                         <ul class="nested">
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="fleetReportSummary"
+                                                                            @if (in_array('fleetReportSummary', $user->userAccess)) checked @endif>
+                                                                            خلاصه رانندگان بر اساس ناوگان
+                                                                    </label>
+                                                                </div>
+                                                            </li>
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>

@@ -267,6 +267,13 @@
             </a>
 
             <ul class="menu-sub">
+                @if (in_array('fleetReportSummary', auth()->user()->userAccess))
+                    <li class="menu-item">
+                        <a class="menu-link" href="{{ route('admin.report.fleetReportSummary') }}">
+                            <span>خلاصه گزارش رانندگان بر اساس ناوگان</span>
+                        </a>
+                    </li>
+                @endif
                 @if (in_array('reportcargofleets', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('report.cargo.fleets') }}">
