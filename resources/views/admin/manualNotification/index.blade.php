@@ -78,19 +78,20 @@
                                         </div>
                                         @if ($groupNotification->groupType == 'driver')
                                             <div class="row g-2" id="multi">
-                                                <div class="col-6">
-                                                    <select class="form-control form-select" name="city_id">
-                                                        <option value="">شهر مبدا</option>
-                                                        @foreach ($cities as $city)
-                                                            <option value="{{ $city->id }}">
-                                                                <?php echo str_replace('ك', 'ک', str_replace('ي', 'ی', $city->name)); ?>
+                                                <div class="col-12">
+                                                    <select class="form-control form-select" name="province_id">
+                                                        <option value="">استان مبدا</option>
+                                                        @foreach ($provinces as $province)
+                                                            <option value="{{ $province->id }}">
+                                                                <?php echo str_replace('ك', 'ک', str_replace('ي', 'ی', $province->name)); ?>
                                                             </option>
                                                         @endforeach
                                                     </select>
                                                 </div>
-                                                <div class="col-6">
-                                                    <select class="form-control col-md-4" name="fleet_id">
-                                                        <option value="">نوع ناوگان</option>
+                                                <div class="col-12">
+                                                    <select class="form-control col-md-4" name="fleets[]" id="fleets"
+                                                        multiple>
+                                                        <option value="" disabled>نوع ناوگان</option>
                                                         @foreach ($fleets as $fleet)
                                                             <option value="{{ $fleet->id }}">
                                                                 {{ \App\Http\Controllers\FleetController::getFleetName($fleet->parent_id) }}
@@ -99,10 +100,11 @@
                                                             </option>
                                                         @endforeach
                                                     </select>
+
                                                 </div>
                                                 <div class="col-12">
-                                                    <input name="count" type="number" value="10" class="form-control"
-                                                        placeholder="تعداد">
+                                                    <input name="count" type="number" value="10"
+                                                        class="form-control" placeholder="تعداد">
                                                 </div>
                                             </div>
                                         @endif
@@ -141,6 +143,7 @@
                             <td>
                                 {{ $manualNotification->userable->name }}
                                 {{ $manualNotification->userable->lastName }}
+                                ({{ $groupNotification->groupType === 'driver' ? $manualNotification->userable->fleetTitle : 'vvv' }})
                             </td>
                             <td>{{ $manualNotification->userable->mobileNumber }}</td>
                             <td>
@@ -168,6 +171,7 @@
 
     @section('script')
         <script>
+
             $(document).ready(function() {
                 $('#multi').hide();
                 $('#changeType').change(function() {

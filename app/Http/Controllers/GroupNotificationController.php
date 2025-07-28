@@ -45,6 +45,7 @@ class GroupNotificationController extends Controller
         $group->groupType = $request->groupType;
         $group->description = $request->description;
         $group->save();
+
         return back()->with('success', 'گروه مورد نظر ثبت شد');
     }
 
@@ -57,18 +58,18 @@ class GroupNotificationController extends Controller
     public function show(GroupNotification $groupNotification)
     {
         $manualNotifications = ManualNotificationRecipient::with(['userable' => function ($query) {
-            $query->select(['id', 'name', 'lastName', 'mobileNumber']);
+            $query->select(['id', 'name', 'lastName', 'mobileNumber', 'fleet_id']);
         }])
             ->where('group_id', $groupNotification->id)
             ->paginate(20);
-        $cities = Cache::remember('cities', now()->addMinutes(60), function () {
-            return ProvinceCity::where('parent_id', '!=', 0)->get();
+        $provinces = Cache::remember('province', now()->addMinutes(60), function () {
+            return ProvinceCity::where('parent_id', 0)->get();
         });
 
         $fleets = Cache::remember('fleets', now()->addMinutes(60), function () {
             return Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get();
         });
-        return view('admin.manualNotification.index', compact('manualNotifications', 'groupNotification', 'cities', 'fleets'));
+        return view('admin.manualNotification.index', compact('manualNotifications', 'groupNotification', 'provinces', 'fleets'));
     }
 
     /**

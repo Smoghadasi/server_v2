@@ -54,23 +54,26 @@ class ManualNotificationController extends Controller
 
             $IdsDriver = Driver::query()
                 ->where(function ($query) use ($request) {
-                    if ($request->fleet_id !== null) {
-                        $query->where('fleet_id', $request->fleet_id);
+                    if ($request->fleets !== null) {
+                        $query->whereIn('fleet_id', $request->fleets);
                     }
-                    if ($request->city_id !== null) {
-                        $query->where('city_id', $request->city_id);
+                    if ($request->province_id !== null) {
+                        $query->where('province_id', $request->province_id);
                     }
                 })
                 ->take($request->count)
                 ->pluck('id');
+                // return $IdsDriver;
 
             foreach ($IdsDriver as $IdDriver) {
-                if (ManualNotificationRecipient::where('userable_id', $IdDriver)->count() > 0) {
+                // return $IdDriver;
+                if (ManualNotificationRecipient::where('userable_id', $IdDriver)->count() === 0) {
                     ManualNotificationRecipient::create([
                         'userable_id' => $IdDriver,
                         'userable_type' => $model,
                         'group_id' => $request->group_id,
                     ]);
+                    // return $manual;
                 }
             }
             return back()->with('success', 'کاربران مورد نظر ثبت شد');
