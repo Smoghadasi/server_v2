@@ -57,8 +57,8 @@ class ManualNotificationController extends Controller
                     if ($request->fleets !== null) {
                         $query->whereIn('fleet_id', $request->fleets);
                     }
-                    if ($request->province_id !== null) {
-                        $query->where('province_id', $request->province_id);
+                    if ($request->provinces !== null) {
+                        $query->whereIn('province_id', $request->provinces);
                     }
                 })
                 ->take($request->count)

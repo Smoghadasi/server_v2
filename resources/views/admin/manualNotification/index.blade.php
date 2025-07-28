@@ -79,7 +79,7 @@
                                         @if ($groupNotification->groupType == 'driver')
                                             <div class="row g-2" id="multi">
                                                 <div class="col-12">
-                                                    <select class="form-control form-select" name="province_id">
+                                                    <select class="form-control form-select" name="provinces[]" multiple>
                                                         <option value="">استان مبدا</option>
                                                         @foreach ($provinces as $province)
                                                             <option value="{{ $province->id }}">
