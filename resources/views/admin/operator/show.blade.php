@@ -78,7 +78,7 @@
                  <div id="changePassOperator_{{ $user->id }}" class="modal fade" role="dialog">
                     <div class="modal-dialog">
                         <div class="modal-content">
-                            <form method="POST" action="{{ route('user.resetPass', $user->id) }}">
+                            <form method="POST" action="{{ route('user.resetPassByAdmin', $user->id) }}">
                                 @csrf
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="modalTopTitle">تغییر رمز عبور :

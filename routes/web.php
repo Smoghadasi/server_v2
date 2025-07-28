@@ -692,6 +692,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         Route::post('restPassword', [UserController::class, 'restPassword'])->middleware('operator')->name('user.resetPass');
 
+        Route::post('resetPassByAdmin/{user}', [UserController::class, 'resetPassByAdmin'])->middleware('operator')->name('user.resetPassByAdmin');
+
         /**************************************************************************************************************/
         //  شماره تلفن های لیست ممنوعه
         Route::resource('blockedPhoneNumber', BlockPhoneNumberController::class);

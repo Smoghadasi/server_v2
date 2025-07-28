@@ -137,6 +137,13 @@ class UserController extends Controller
         return back()->with('success', 'رمز جدید ثبت شد');
     }
 
+    public function resetPasswordByAdmin(Request $request, User $user)
+    {
+        $user->password = Hash::make($request->password);
+        $user->save();
+        return back()->with('success', 'رمز جدید ثبت شد');
+    }
+
     public function operatorAccess(Request $request, User $user)
     {
         try {
