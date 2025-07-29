@@ -14,6 +14,7 @@
                     <tr>
                         <th>ردیف</th>
                         <th>نام پرداخت کننده</th>
+                        <th>ناوگان</th>
                         <th>تعداد پرداخت موفق</th>
                         <th>تعداد کل تلاش ها</th>
                         <th>تعداد امروز</th>
@@ -40,6 +41,7 @@
                         <tr>
                             <td>{{ $key + 1 }}</td>
                             <td>{{ $transaction->payerName }}</td>
+                            <td>{{ $transaction->driverFleetName }}</td>
                             <td>{{ $transaction->countOfSuccess }}</td>
                             <td>{{ $transaction->countOfAllTries }}</td>
                             <td>{{ $transaction->total }}</td>
