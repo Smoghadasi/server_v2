@@ -671,10 +671,17 @@ class ReportingController extends Controller
         return view('admin.reporting.usersByProvince', compact('users', 'provinceCities'));
     }
 
-    public function usersByCustomProvinces(ProvinceCity $provinceCity, $drivers = [], $showSearchResult = false)
+    public function usersByCustomProvinces(Request $request, ProvinceCity $provinceCity, $drivers = [], $showSearchResult = false)
     {
         if (!$showSearchResult)
-            $drivers = Driver::where('province_id', $provinceCity->id)->paginate(10);
+            $drivers = Driver::where('province_id', $provinceCity->id)
+                ->when($request->fleet_id !== null, function ($query) use ($request) {
+                    $query->where('fleet_id', $request->fleet_id);
+                })
+                ->when($request->mobileNumber !== null, function ($query) use ($request) {
+                    $query->where('mobileNumber', $request->mobileNumber);
+                })
+                ->paginate(10);
 
         $fleets = Fleet::all();
 

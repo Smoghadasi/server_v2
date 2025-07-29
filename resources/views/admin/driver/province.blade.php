@@ -8,8 +8,7 @@
             {{ $provinceCity->name }}
         </h5>
         <div class="card-body">
-            <form action="{{ url('admin/searchDrivers') }}" method="post">
-                @csrf
+            <form action="{{ route('reporting.usersByCustomProvinces', $provinceCity) }}" method="get">
                 <div class="col-lg-12 border rounded mt-2 mb-2 p-2">
                     <h6>جستجوی رانندگان : </h6>
                     <div class="container">
@@ -17,7 +16,7 @@
                             <div class="col">
                                 <div class="form-group">
                                     <label>نوع ناوگان :</label>
-                                    <input type="hidden" value="{{ $provinceCity->id }}" name="province_id">
+                                    {{-- <input type="hidden" value="{{ $provinceCity->id }}" name="province_id"> --}}
                                     <select class="form-select" name="fleet_id">
                                         <option disabled selected>انتخاب ناوگان</option>
                                         @foreach ($fleets as $fleet)
@@ -32,7 +31,7 @@
                                     <input type="text" name="mobileNumber" class="form-control">
                                 </div>
                             </div>
-                            <input type="hidden" name="province_id" value="{{ $provinceCity->id }}">
+                            {{-- <input type="hidden" name="province_id" value="{{ $provinceCity->id }}"> --}}
                         </div>
                         <div class="form-group my-4">
                             <button class="btn btn-info" type="submit">جستجو</button>
@@ -106,7 +105,7 @@
                     </tbody>
                 </table>
                 <div class="mt-2">
-                    {{ $drivers }}
+                    {{ $drivers->appends($_GET)->links() }}
                 </div>
             </div>
 

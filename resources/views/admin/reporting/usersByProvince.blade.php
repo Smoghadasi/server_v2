@@ -15,7 +15,7 @@
                         <div class="row row-cols-4">
                             <div class="col">
                                 <div class="form-group">
-                                    <label>نوع شهر :</label>
+                                    <label>نوع استان :</label>
                                     <select class="form-select" name="province_id">
                                         <option value="0">همه</option>
                                         @foreach ($provinceCities as $provinceCity)
