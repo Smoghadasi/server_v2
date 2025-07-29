@@ -100,7 +100,8 @@ class LoadController extends Controller
             return collect();
         }
 
-        $loads = Load::withCount('driverCalls')
+        $loads = Load::select('loads.*')
+            ->join('driver_calls', 'driver_calls.load_id', '=', 'loads.id')
             ->where(function ($query) {
                 $query->where('userType', 'operator')
                     ->orWhere(function ($q) {
@@ -109,13 +110,11 @@ class LoadController extends Controller
                     });
             })
             ->whereIn('mobileNumberForCoordination', $mobileNumbers)
+            ->groupBy('loads.id')
+            ->havingRaw('COUNT(driver_calls.id) > 2')
+            ->orderByDesc('loads.created_at')
             ->withTrashed()
-            ->orderByDesc('created_at')
-            ->get()
-            ->filter(function ($load) {
-                return $load->driver_calls_count > 2;
-            })
-            ->unique('id'); // یا use ->unique() اگر تضمین می‌کنی که id یکتا هست
+            ->get();
 
         // return $loads;
 
