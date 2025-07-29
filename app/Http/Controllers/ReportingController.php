@@ -673,10 +673,17 @@ class ReportingController extends Controller
 
     public function usersByCustomProvinces(Request $request, ProvinceCity $provinceCity, $drivers = [], $showSearchResult = false)
     {
+        $fromDate = persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00';
+        $toDate = persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:00';
         if (!$showSearchResult)
             $drivers = Driver::where('province_id', $provinceCity->id)
                 ->when($request->fleet_id !== null, function ($query) use ($request) {
                     $query->where('fleet_id', $request->fleet_id);
+                })
+                ->when($request->toDate !== null, function ($query) use ($fromDate, $toDate) {
+                    $query->whereHas('driverActivities', function ($q) use ($fromDate, $toDate) {
+                        $q->whereBetween('created_at', [$fromDate, $toDate]);
+                    });
                 })
                 ->when($request->mobileNumber !== null, function ($query) use ($request) {
                     $query->where('mobileNumber', $request->mobileNumber);

@@ -5,7 +5,7 @@
 
     <div class="card">
         <h5 class="card-header">
-            {{ $provinceCity->name }}
+            {{ $provinceCity->name }} : {{ $drivers->total() }}
         </h5>
         <div class="card-body">
             <form action="{{ route('reporting.usersByCustomProvinces', $provinceCity) }}" method="get">
@@ -26,10 +26,16 @@
                                 </div>
                             </div>
                             <div class="col">
-                                <div class="form-group">
-                                    <label>شماره تلفن :</label>
-                                    <input type="text" name="mobileNumber" class="form-control">
-                                </div>
+                                <label>از تاریخ :</label>
+                                <input class="form-control" type="text" id="fromDate" name="fromDate"
+                                    placeholder="از تاریخ" autocomplete="off" />
+                                <span id="span1"></span>
+                            </div>
+                            <div class="col">
+                                <label>تا تاریخ :</label>
+                                <input class="form-control" type="text" name="toDate" id="fromDate"
+                                    placeholder="تا تاریخ"  autocomplete="off"/>
+                                <span id="span2"></span>
                             </div>
                             {{-- <input type="hidden" name="province_id" value="{{ $provinceCity->id }}"> --}}
                         </div>
@@ -113,4 +119,15 @@
     </div>
 
 
+@endsection
+@section('script')
+    <script src="{{ asset('js/persianDatepicker.min.js') }}"></script>
+
+    <script type="text/javascript">
+        $("#fromDate, #toDate").persianDatepicker(({
+            formatDate: "YYYY/MM/DD",
+            selectedBefore: !0
+        }));
+        // $("#toDate, #span2").persianDatepicker();
+    </script>
 @endsection
