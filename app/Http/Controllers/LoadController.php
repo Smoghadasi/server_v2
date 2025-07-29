@@ -81,6 +81,35 @@ class LoadController extends Controller
         return view('admin.load.searchByFleetCity', compact('loads'));
     }
 
+    public function scamAlert()
+    {
+        $toDay = gregorianDateToPersian(date('Y/m/d'), '/');
+
+        $mobileNumbers = DB::table('load_owner_counts as loc1')
+            ->select('loc1.mobileNumber')
+            ->where('loc1.persian_date', $toDay)
+            ->whereNotExists(function ($query) use ($toDay) {
+                $query->select(DB::raw(1))
+                    ->from('load_owner_counts as loc2')
+                    ->whereColumn('loc2.mobileNumber', 'loc1.mobileNumber')
+                    ->where('loc2.persian_date', '<', $toDay);
+            })
+            ->pluck('loc1.mobileNumber');
+
+        if ($mobileNumbers->isEmpty()) {
+            return collect();
+        }
+
+        $loads = Load::withCount('driverCalls')
+            ->where('userType', 'operator')
+            ->whereIn('mobileNumberForCoordination', $mobileNumbers)
+            ->having('driver_calls_count', '>', 4)
+            ->paginate(30);
+
+        return view('admin.load.scamAlert', compact('loads'));
+    }
+
+
     // افزودن بار جدید
     public function addNewLoadType(Request $request)
     {

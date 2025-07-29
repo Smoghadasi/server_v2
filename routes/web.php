@@ -600,6 +600,10 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // تایید یا عدم تایید بار توسط ناظر
         Route::post('approveOrRejectLoad', [LoadController::class, 'approveOrRejectLoad'])->middleware('operator');
 
+        // هشدار کلاه برداری! صاحب بار
+        Route::get('scamAlert', [LoadController::class, 'scamAlert'])->name('admin.scamAlert')->middleware('operator');
+
+
 
         /**********************************************************************************************/
         // حسابداری
@@ -754,8 +758,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // گزارش فعالیت رانندگان
         Route::get('driverActivityReport', [ReportingController::class, 'driverActivityReport'])->middleware('operator');
 
+
         // خلاصه گزارش ناوگان ها
-        Route::get('fleetReportSummary', [ReportingController::class, 'fleetReportSummary'])->name('admin.report.fleetReportSummary')->middleware('operator');
+        Route::get('fleetReportSummary', [ReportingController::class, 'fleetRephvortSummary'])->name('admin.report.fleetReportSummary')->middleware('operator');
 
         Route::get('getDriverActivityData', [ReportingController::class, 'getDriverActivityData'])
             ->name('admin.reporting.nonRepeate.data')
