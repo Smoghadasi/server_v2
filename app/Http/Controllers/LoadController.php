@@ -111,6 +111,7 @@ class LoadController extends Controller
             ->whereIn('mobileNumberForCoordination', $mobileNumbers)
             ->having('driver_calls_count', '>', 2)
             ->orderByDesc('created_at')
+            ->withTrashed()
             ->paginate(20);
 
         return view('admin.load.scamAlert', compact('loads'));
