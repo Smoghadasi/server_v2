@@ -91,7 +91,7 @@
                                 <td>{{ gregorianDateToPersian($driverVisitLoad->created_at, '-', true) }}
                                     {{ $time[1] }}</td>
                                 <td @class([
-                                    'text-danger' => $driverVisitLoad->driver->activeDate > now() || $driverVisitLoad->driver->activeDate == null,
+                                    'text-danger' => $driverVisitLoad->driver->activeDate < now() || $driverVisitLoad->driver->activeDate == null,
                                 ])>{{ $driverVisitLoad->driver->activeDate  ? gregorianDateToPersian($driverVisitLoad->driver->activeDate, '-', true) : 'ندارد' }}
                                 </td>
                                 <td>{{ $driverVisitLoad->driver->freeCalls }}</td>
