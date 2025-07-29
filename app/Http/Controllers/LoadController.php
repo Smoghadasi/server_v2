@@ -2795,7 +2795,7 @@ class LoadController extends Controller
                 'longitude',
                 'deleted_at'
             ])
-            ->paginate(10);
+            ->paginate(20);
 
         $fleets = Cache::remember('filtered_fleets', 86400, function () {
             return Fleet::select('id', 'title', 'parent_id')
