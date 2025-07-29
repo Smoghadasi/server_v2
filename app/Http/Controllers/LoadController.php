@@ -101,10 +101,17 @@ class LoadController extends Controller
         }
 
         $loads = Load::withCount('driverCalls')
-            // ->where('userType', 'operator')
+            ->where(function ($query) {
+                $query->where('userType', 'operator')
+                    ->orWhere(function ($q) {
+                        $q->where('userType', 'owner')
+                            ->where('isBot', 1);
+                    });
+            })
             ->whereIn('mobileNumberForCoordination', $mobileNumbers)
             ->having('driver_calls_count', '>', 2)
-            ->paginate(30);
+            ->orderByDesc('created_at')
+            ->paginate(20);
 
         return view('admin.load.scamAlert', compact('loads'));
     }

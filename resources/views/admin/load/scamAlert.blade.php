@@ -26,7 +26,7 @@
                             <th>ناوگان</th>
                             <th>مبدا</th>
                             <th>مقصد</th>
-                            {{-- <th>تعداد</th> --}}
+                            <th>تعداد تماس</th>
                             <th>تاریخ ثبت</th>
                             {{-- <th>تاریخ حذف</th> --}}
                             <th>عملیات</th>
@@ -63,6 +63,7 @@
                                 </td>
                                 <td>{{ $load->fromCity }}</td>
                                 <td>{{ $load->toCity }}</td>
+                                <td>{{ $load->driver_calls_count }}</td>
 
                                 <td>{{ $load->date }} {{ $load->dateTime }}</td>
 
