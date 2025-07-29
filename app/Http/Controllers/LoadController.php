@@ -109,10 +109,15 @@ class LoadController extends Controller
                     });
             })
             ->whereIn('mobileNumberForCoordination', $mobileNumbers)
-            ->having('driver_calls_count', '>', 2)
-            ->orderByDesc('created_at')
             ->withTrashed()
-            ->paginate(20);
+            ->orderByDesc('created_at')
+            ->get()
+            ->filter(function ($load) {
+                return $load->driver_calls_count > 2;
+            })
+            ->unique('id'); // یا use ->unique() اگر تضمین می‌کنی که id یکتا هست
+
+        // return $loads;
 
         return view('admin.load.scamAlert', compact('loads'));
     }

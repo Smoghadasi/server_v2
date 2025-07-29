@@ -37,7 +37,7 @@
 
                         @foreach ($loads as $load)
                             <tr>
-                                <td>{{ ($loads->currentPage() - 1) * $loads->perPage() + ++$i }}</td>
+                                <td></td>
                                 <td>
                                     @php
                                         $pieces = explode(' ', $load->deleted_at);
@@ -63,13 +63,11 @@
                                 </td>
                                 <td>{{ $load->fromCity }}</td>
                                 <td>{{ $load->toCity }}</td>
-                                <td>{{ $load->driver_calls_count }}</td>
-
-                                <td>{{ $load->date }} {{ $load->dateTime }}</td>
-
                                 <td>
-                                    <a class="btn btn-info btn-sm" href="{{ route('loadInfo', $load->id) }}">جزئیات</a>
+                                    <a href="{{ route('load.searchLoadDriverCall', $load) }}">{{ $load->driver_calls_count }}</a>
                                 </td>
+                                <td>{{ $load->date }} {{ $load->dateTime }}</td>
+                                <td><a class="btn btn-info btn-sm" href="{{ route('loadInfo', $load->id) }}">جزئیات</a></td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -77,7 +75,7 @@
             </div>
         </div>
         <div class="mt-2 mb-2">
-            {{ $loads }}
+            {{-- {{ $loads }} --}}
 
         </div>
     </div>
