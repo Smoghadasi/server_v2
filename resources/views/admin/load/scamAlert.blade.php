@@ -26,7 +26,7 @@
                             <th>ناوگان</th>
                             <th>مبدا</th>
                             <th>مقصد</th>
-                            <th>تعداد تماس</th>
+                            <th>تماس</th>
                             <th>تاریخ ثبت</th>
                             {{-- <th>تاریخ حذف</th> --}}
                             <th>عملیات</th>
@@ -37,7 +37,7 @@
 
                         @foreach ($loads as $load)
                             <tr>
-                                <td></td>
+                                <td>{{ ($loads->currentPage() - 1) * $loads->perPage() + ++$i }}</td>
                                 <td>
                                     @php
                                         $pieces = explode(' ', $load->deleted_at);
@@ -75,7 +75,7 @@
             </div>
         </div>
         <div class="mt-2 mb-2">
-            {{-- {{ $loads }} --}}
+            {{ $loads }}
 
         </div>
     </div>

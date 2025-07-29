@@ -100,8 +100,15 @@ class LoadController extends Controller
             return collect();
         }
 
-        $loads = Load::select('loads.*')
-            ->join('driver_calls', 'driver_calls.load_id', '=', 'loads.id')
+        // $loads = Load::withCount('driverCalls')
+        //     ->whereIn('mobileNumberForCoordination', $mobileNumbers)
+        //     // ->groupBy('mobileNumberForCoordination')
+        //     ->having('driver_calls_count', '>', 2)
+        //     ->withTrashed()
+        //     ->paginate(20);
+        // return $driverCalls;
+
+        $loads = Load::withCount('driverCalls')
             ->where(function ($query) {
                 $query->where('userType', 'operator')
                     ->orWhere(function ($q) {
@@ -110,13 +117,10 @@ class LoadController extends Controller
                     });
             })
             ->whereIn('mobileNumberForCoordination', $mobileNumbers)
-            ->groupBy('loads.id')
-            ->havingRaw('COUNT(driver_calls.id) > 2')
-            ->orderByDesc('loads.created_at')
+            ->having('driver_calls_count', '>', 2)
+            ->orderByDesc('created_at')
             ->withTrashed()
-            ->get();
-
-        // return $loads;
+            ->paginate(20);
 
         return view('admin.load.scamAlert', compact('loads'));
     }
