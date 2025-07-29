@@ -86,12 +86,13 @@
                                     $time = explode(' ', $driverVisitLoad->created_at);
                                 @endphp
 
-                                <td>{{ $driverVisitLoad->driver->city_id ? \App\Http\Controllers\AddressController::geCityName($driverVisitLoad->driver->city_id) : '-' }}
-                                </td>
+                                <td>{{ $driverVisitLoad->driver->city_id ? \App\Http\Controllers\AddressController::geCityName($driverVisitLoad->driver->city_id) : '-' }}</td>
                                 <td>{{ $driverVisitLoad->count }}</td>
                                 <td>{{ gregorianDateToPersian($driverVisitLoad->created_at, '-', true) }}
                                     {{ $time[1] }}</td>
-                                <td>{{ $driverVisitLoad->driver->activeDate ? gregorianDateToPersian($driverVisitLoad->driver->activeDate, '-', true) : 'ندارد' }}
+                                <td @class([
+                                    'text-danger' => $driverVisitLoad->driver->activeDate > now() || $driverVisitLoad->driver->activeDate == null,
+                                ])>{{ $driverVisitLoad->driver->  ? gregorianDateToPersian($driverVisitLoad->driver->activeDate, '-', true) : 'ندارد' }}
                                 </td>
                                 <td>{{ $driverVisitLoad->driver->freeCalls }}</td>
 
