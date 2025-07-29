@@ -103,7 +103,7 @@ class LoadController extends Controller
         $loads = Load::withCount('driverCalls')
             ->where('userType', 'operator')
             ->whereIn('mobileNumberForCoordination', $mobileNumbers)
-            ->having('driver_calls_count', '>', 4)
+            ->having('driver_calls_count', '>', 2)
             ->paginate(30);
 
         return view('admin.load.scamAlert', compact('loads'));
