@@ -42,6 +42,7 @@ use App\Http\Controllers\RadioController;
 // use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReportingController;
+use App\Http\Controllers\RuleRegulationController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SliderController;
@@ -760,7 +761,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
 
         // خلاصه گزارش ناوگان ها
-        Route::get('fleetReportSummary', [ReportingController::class, 'fleetRephvortSummary'])->name('admin.report.fleetReportSummary')->middleware('operator');
+        Route::get('fleetReportSummary', [ReportingController::class, 'fleetReportSummary'])->name('admin.report.fleetReportSummary')->middleware('operator');
 
         Route::get('getDriverActivityData', [ReportingController::class, 'getDriverActivityData'])
             ->name('admin.reporting.nonRepeate.data')
@@ -1000,6 +1001,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         /*************************************************************************************************** */
         // خدمات
         Route::resource('services', ServiceController::class)->middleware('operator');
+
+        // قوانین و مقررات
+        Route::resource('ruleRegulation', RuleRegulationController::class)->middleware('operator');
 
 
         // درگاه پرداخت

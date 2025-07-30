@@ -3,14 +3,8 @@
 @section('content')
     <div class="row">
         <div class="col-md-12">
-            <ul class="nav nav-pills flex-column flex-md-row mb-3">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('services.index') }}">خدمات</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="{{ route('bank.index') }}">درگاه پرداخت</a>
-                </li>
-            </ul>
+            @include('admin.service.header_partial')
+
             <div class="card">
                 <div class="card-header d-flex align-items-center justify-content-between">
                     <h5 class="mb-0">درگاه پرداخت</h5>
