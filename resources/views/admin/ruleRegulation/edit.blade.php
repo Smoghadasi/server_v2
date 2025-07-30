@@ -6,28 +6,32 @@
 @endsection
 
 @section('content')
-    <div class="card">
-        <h5 class="card-header">قوانین و مقررات</h5>
-        <div class="card-body">
-            <form id="myForm" onsubmit="return false;">
-                <div class="form-group text-right small">
+    <div class="col-md-12">
+        @include('admin.service.header_partial')
 
-                    <div dir="ltr" id="editor" style="height: 200px;">
-                        {!! $ruleRegulation->description !!}
+        <div class="card">
+            <h5 class="card-header">قوانین و مقررات</h5>
+            <div class="card-body">
+                <form id="myForm" onsubmit="return false;">
+                    <div class="form-group text-right small">
+
+                        <div dir="ltr" id="editor" style="height: 200px;">
+                            {!! $ruleRegulation->description !!}
+                        </div>
+
+                        <!-- Hidden input to store editor content (optional) -->
+                        <input type="hidden" name="description" id="description">
                     </div>
 
-                    <!-- Hidden input to store editor content (optional) -->
-                    <input type="hidden" name="description" id="description">
-                </div>
-
-                <div class="row form-group row mb-0">
-                    <div class="col-md-6 offset-md-4">
-                        <button type="submit" class="btn btn-primary" id="submitBtn">
-                            ذخیره
-                        </button>
+                    <div class="row form-group row mb-0">
+                        <div class="col-md-6 offset-md-4">
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                ذخیره
+                            </button>
+                        </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 @endsection
