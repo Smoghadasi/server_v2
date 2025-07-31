@@ -70,6 +70,11 @@ class Driver extends Authenticatable
         return '';
     }
 
+    public function freeCallDrivers()
+    {
+        return $this->hasMany(Driver::class);
+    }
+
     public function resultOfContacting()
     {
         return $this->hasMany(ResultOfContactingWithDriver::class)->orderBy('id', 'desc');

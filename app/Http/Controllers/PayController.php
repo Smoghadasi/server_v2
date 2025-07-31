@@ -1020,8 +1020,29 @@ class PayController extends Controller
                         } catch (\Exception $e) {
                         }
                         $driver->activeDate = $activeDate;
-                        // خاور و نیسان
-                        $driver->freeCalls = 3;
+
+                        if ($driver->freeCalls > 3) {
+                            $driver->freeCalls = 3;
+                        }
+                        // try {
+                        //     $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+                        //     $oneMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+30 day', time())), '/');
+                        //     $threeMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+90 day', time())), '/');
+                        //     $sixMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+180 day', time())), '/');
+
+                        //     $sms = new Driver();
+                        //     if ($transaction->monthsOfThePackage == 1) {
+                        //         $sms->freeSubscriptionSmsIr($driver->mobileNumber, $persian_date, $oneMonth);
+                        //     }
+                        //     if ($transaction->monthsOfThePackage == 3) {
+                        //         $sms->freeSubscriptionSmsIr($driver->mobileNumber, $persian_date, $threeMonth);
+                        //     }
+                        //     if ($transaction->monthsOfThePackage == 6) {
+                        //         $sms->freeSubscriptionSmsIr($driver->mobileNumber, $persian_date, $sixMonth);
+                        //     }
+                        // } catch (\Exception $e) {
+                        //     Log::warning($e->getMessage());
+                        // }
 
                         // $driver->freeAcceptLoads = ($driver->freeAcceptLoads > 0 ? $driver->freeAcceptLoads : 0) + DRIVER_FREE_ACCEPT_LOAD;
                         $driver->save();
