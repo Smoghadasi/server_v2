@@ -5,7 +5,7 @@
         <h5 class="card-header">
             <div class="row justify-content-between">
                 <div class="col">
-                    تماس رایگان رانندگان (امروز)
+                    تماس رایگان رانندگان
                 </div>
             </div>
         </h5>
