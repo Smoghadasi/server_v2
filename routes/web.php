@@ -22,6 +22,7 @@ use App\Http\Controllers\DiscrepancyController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\FirstLoadController;
 use App\Http\Controllers\FleetController as AdminFleetController;
+use App\Http\Controllers\FreeCallDriverController;
 use App\Http\Controllers\GroupNotificationController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LimitCallController;
@@ -907,6 +908,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         // تماس با رانندگان
         Route::get('contactingWithDrivers', [OperatorContactingController::class, 'contactingWithDrivers'])->middleware('operator');
+
+        // تماس با رانندگان
+        Route::get('freeCallDriver', [FreeCallDriverController::class, 'index'])->name('admin.freeCallDriver.index')->middleware('operator');
 
         Route::resource('freeSubscription', FreeSubscriptionController::class)->middleware('operator');
 

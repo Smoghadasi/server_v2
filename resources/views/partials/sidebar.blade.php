@@ -286,6 +286,11 @@
                         </a>
                     </li>
                 @endif
+                <li class="menu-item">
+                    <a class="menu-link" href="{{ route('admin.freeCallDriver.index') }}">
+                        <span>تماس رایگان رانندگان</span>
+                    </a>
+                </li>
                 @if (in_array('storeCargoOperator', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('storeCargoOperator.index') }}">
