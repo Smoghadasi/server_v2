@@ -24,6 +24,7 @@
                     <th>#</th>
                     <th>بار</th>
                     <th>دلیل</th>
+                    <th>تعداد</th>
                     <th>تاریخ</th>
                 </tr>
                 <?php $i = 0; ?>
@@ -40,6 +41,9 @@
                             @if ($cargo->isDuplicate == 1)
                                 تکراری
                             @endif
+                        </td>
+                        <td>
+                            {{ $cargo->count }}
                         </td>
 
                         @php

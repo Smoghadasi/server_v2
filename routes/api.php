@@ -667,73 +667,109 @@ Route::get('DidarCallBack', function () {
 Route::post('extractData', [DataConvertController::class, 'extractData']);
 
 Route::post('botData', function (Request $request) {
+    // \Illuminate\Support\Facades\Log::emergency($request);
 
     try {
         $newText = convertFaNumberToEn($request->data);
 
-        // Remove links and normalize spacing and special characters
-        $linkRegex = "@(https?://([-\w\.]+[-\w])+(:\d+)?(/([\w/_\.#-]*(\?\S+)?[^\.\s])?).*$)@";
-        $cleanText = preg_replace('/\s+/', '', $newText); // For duplicate check
-        $textWithoutLinks = preg_replace($linkRegex, ' ', $newText);
-        $normalizedText = str_replace(["\n", "\r", ":"], ' ', $textWithoutLinks);
-        $words = explode(' ', $normalizedText);
+        $regex = "@(https?://([-\w\.]+[-\w])+(:\d+)?(/([\w/_\.#-]*(\?\S+)?[^\.\s])?).*$)@";
 
-        // Optional: Extract area code for mobile number pattern like 0912, 0935, etc.
+        $removeSpace = preg_replace('/\s+/', '', $newText);
+
+        $removeLink = preg_replace($regex, ' ', $newText);
+        $replaceEnter = str_replace("\n", ' ', $removeLink);
+        $replaceR = str_replace("\r", ' ', $replaceEnter);
+        $replaceDouble = str_replace(":", ' ', $replaceR);
+        $words = explode(' ', $replaceDouble);
+        // $removeEmoji = remove_emoji($replaceEnter);
         // preg_match('/0\d{2}/', $newText, $matches);
         preg_match('/(?:\+98|0)\d{2}/', $newText, $matches);
 
-        // Lookups
+
         $cities = ProvinceCity::whereIn('name', $words)->where('parent_id', '!=', 0)->pluck('name')->toArray();
         $equivalentWords = Equivalent::whereIn('equivalentWord', $words)->pluck('equivalentWord')->toArray();
         $blockNumbers = BlockPhoneNumber::whereIn('phoneNumber', $words)->pluck('phoneNumber')->toArray();
-
-        // Check if blocked number
-        if (!empty($blockNumbers)) {
-            DB::table('cargo_convert_lists')->insert([
-                'cargo' => $newText,
-                'cargo_orginal' => $newText,
-                'isBlocked' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+        // $fleets = Fleet::whereIn('title', $words)->pluck('title')->toArray();
+        if ($blockNumbers) {
+            DB::table('cargo_convert_lists')->updateOrInsert(
+                [
+                    'cargo' => $newText,
+                    'isBlocked' => 1
+                ],
+                [
+                    'cargo' => $newText,
+                    'isBlocked' => 1,
+                    'count' => DB::raw('COALESCE(count, 1) + 1'),
+                    'updated_at' => now(),
+                    'created_at' => now(),
+                ]
+            );
             return response()->json(['message' => 'شماره مسدود است و ذخیره نشد.'], 409);
         }
 
-        // Proceed if mobile code exists and either city or equivalent word is found
-        if (!empty($matches[0]) && (!empty($cities) || !empty($equivalentWords))) {
+        if (isset($matches[0]) && ($cities || $equivalentWords)) {
 
-            // Get previous non-blocked, non-duplicate messages within 3 hours
-            $recentMessages = DB::table('cargo_convert_lists')
-                ->where('created_at', '>', now()->subMinutes(180))
+            $existingMessages = DB::table('cargo_convert_lists')
+                ->where('created_at', '>', date('Y-m-d h:i:s', strtotime('-180 minute', time())))
                 ->where('isBlocked', 0)
                 ->where('isDuplicate', 0)
                 ->pluck('cargo_orginal')
-                ->map(fn($item) => preg_replace('/\s+/', '', $item));
+                ->map(function ($cargo_orginal) {
+                    return preg_replace('/\s+/', '', $cargo_orginal);
+                });
 
-            // Check for similarity
-            $isDuplicate = $recentMessages->contains(function ($oldText) use ($cleanText) {
-                $distance = levenshtein(substr($cleanText, 0, 255), substr($oldText, 0, 255));
-                $maxLen = max(strlen($cleanText), strlen($oldText), 1); // avoid division by zero
-                $similarity = 100 - ($distance / $maxLen) * 100;
-                return $similarity >= 99;
-            });
+            $isDuplicate = false;
+            foreach ($existingMessages as $oldText) {
+                $distance = levenshtein(
+                    substr($removeSpace, 0, 255),
+                    substr($oldText, 0, 255)
+                );
+                // جلوگیری از تقسیم بر صفر در صورتی که یکی از رشته‌ها خالی باشه
+                $maxLength = max(strlen($removeSpace), strlen($oldText), 1);
 
-            DB::table('cargo_convert_lists')->insert([
-                'cargo' => $newText,
+                $similarity = 100 - ($distance / $maxLength) * 100;
+
+                if ($similarity >= 99) {
+                    $isDuplicate = true;
+                    break;
+                }
+            }
+            $data = [
+                'cargo'        => $newText,
                 'cargo_orginal' => $newText,
-                'isDuplicate' => $isDuplicate ? 1 : 0,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+                'isDuplicate'  => $isDuplicate ? 1 : 0,
+                'updated_at'   => now(),
+            ];
 
+            // اگر پیام تکراری بود، count افزایش می‌یابد یا در صورت نبود، رکورد ساخته می‌شود
             if ($isDuplicate) {
+                DB::table('cargo_convert_lists')->updateOrInsert(
+                    [
+                        'cargo_orginal' => $newText,
+                        'isDuplicate' => 1
+                    ],
+                    array_merge($data, [
+                        'count' => DB::raw('COALESCE(count, 1) + 1'),
+                        'created_at' => now(),
+                    ])
+                );
+
                 return response()->json(['message' => 'پیام بسیار مشابه است و ذخیره نشد.'], 409);
             }
 
+            // اگر پیام تکراری نبود، رکورد جدید با count = 1 ساخته می‌شود
+            DB::table('cargo_convert_lists')->insert(array_merge($data, [
+                'count'      => 1,
+                'created_at' => now(),
+            ]));
+
             return response()->json(['message' => 'پیام ذخیره شد.'], 201);
         }
+        // \Illuminate\Support\Facades\Log::emergency("------------------- nayamad ---------------------");
 
-        return response()->json(['message' => 'شرایط لازم برای ذخیره‌سازی وجود ندارد.'], 400);
+        // \Illuminate\Support\Facades\Log::emergency($newText);
+
+        return response()->json(['message' => 'Error.'], 404);
     } catch (Exception $exception) {
         \Illuminate\Support\Facades\Log::emergency("------------------- botData ERROR ---------------------");
         \Illuminate\Support\Facades\Log::emergency($exception->getMessage());
@@ -741,10 +777,10 @@ Route::post('botData', function (Request $request) {
     }
 
 
-
     // try {
+    //     \Illuminate\Support\Facades\Log::emergency($request);
     //     $data = convertFaNumberToEn($request->data);
-    //     preg_match('/09\d{2}/', $data, $matches);
+    //     preg_match('/0\d{2}/', $data, $matches);
 
     //     $cargoConvertListCount = CargoConvertList::where([
     //         ['cargo', $data],
@@ -753,9 +789,13 @@ Route::post('botData', function (Request $request) {
     //     if ($cargoConvertListCount == 0 && isset($matches[0])) {
     //         $cargoConvertList = new CargoConvertList();
     //         $cargoConvertList->cargo = $data;
+    //         $cargoConvertList->message_id = $request->message_id;
     //         $cargoConvertList->save();
+    //         // \Illuminate\Support\Facades\Log::emergency($cargoConvertList);
+    //         return 'OK';
+    //     }else{
+    //         return 'duplicate';
     //     }
-    //     return 'OK';
     // } catch (Exception $exception) {
     //     \Illuminate\Support\Facades\Log::emergency("------------------- botData ERROR ---------------------");
     //     \Illuminate\Support\Facades\Log::emergency($exception->getMessage());
