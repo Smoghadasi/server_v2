@@ -268,8 +268,8 @@
                                                                     <label>
                                                                         <label>
                                                                             <input type="checkbox"
-                                                                                name="rejectedCargoFromCargoList"
-                                                                                @if (in_array('rejectedCargoFromCargoList', $user->userAccess)) checked @endif>
+                                                                                name="fleetlessNumber"
+                                                                                @if (in_array('fleetlessNumber', $user->userAccess)) checked @endif>
                                                                              شماره های بدون ناوگان
                                                                         </label>
                                                                 </div>
