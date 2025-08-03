@@ -22,6 +22,7 @@ use App\Http\Controllers\DiscrepancyController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\FirstLoadController;
 use App\Http\Controllers\FleetController as AdminFleetController;
+use App\Http\Controllers\FleetlessNumberController;
 use App\Http\Controllers\FreeCallDriverController;
 use App\Http\Controllers\GroupNotificationController;
 use App\Http\Controllers\HomeController;
@@ -876,9 +877,13 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // لیست بارهای رد شده
         Route::get('rejectedCargoFromCargoList', [DataConvertController::class, 'rejectedCargoFromCargoList']);
 
-        //
+        // بار های تکراری
         Route::get('duplicateCargoFromCargoList', [DataConvertController::class, 'duplicateCargoFromCargoList'])->name('duplicateCargoFromCargoList');
 
+        // بار های تکراری
+        Route::resource('fleetlessNumber', FleetlessNumberController::class)->middleware('operator');
+
+        // جستجو بار های رد شده
         Route::get('searchRejectCargo', [DataConvertController::class, 'searchRejectCargo'])->name('searchRejectCargo');
 
         Route::get('allRejectedCargoCount', [DataConvertController::class, 'allRejectedCargoCount'])->name('allRejectedCargoCount');

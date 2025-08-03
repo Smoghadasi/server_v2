@@ -183,11 +183,21 @@
                         </a>
                     </li>
                 @endif
-                <li class="menu-item">
-                    <a class="menu-link" href="{{ url('admin/duplicateCargoFromCargoList') }}">
-                        <div data-i18n="Without menu">بار تکراری</div>
-                    </a>
-                </li>
+                @if (in_array('duplicateCargoFromCargoList', auth()->user()->userAccess))
+                    <li class="menu-item">
+                        <a class="menu-link" href="{{ route('duplicateCargoFromCargoList') }}">
+                            <div data-i18n="Without menu">بار تکراری</div>
+                        </a>
+                    </li>
+                @endif
+                @if (in_array('fleetlessNumber', auth()->user()->userAccess))
+                    <li class="menu-item">
+                        <a class="menu-link" href="{{ route('fleetlessNumber.index') }}">
+                            <div data-i18n="Without menu">شماره های بدون ناوگان</div>
+                        </a>
+                    </li>
+                @endif
+
                 @if (in_array('ownersNissan', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('ownersNissan') }}">

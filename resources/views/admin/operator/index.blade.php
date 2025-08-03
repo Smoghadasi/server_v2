@@ -255,6 +255,28 @@
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
+                                                                        <label>
+                                                                            <input type="checkbox"
+                                                                                name="duplicateCargoFromCargoList"
+                                                                                @if (in_array('duplicateCargoFromCargoList', $user->userAccess)) checked @endif>
+                                                                             بار تکراری
+                                                                        </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <label>
+                                                                            <input type="checkbox"
+                                                                                name="rejectedCargoFromCargoList"
+                                                                                @if (in_array('rejectedCargoFromCargoList', $user->userAccess)) checked @endif>
+                                                                             شماره های بدون ناوگان
+                                                                        </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
                                                                         <input type="checkbox" name="ownersNissan"
                                                                             @if (in_array('ownersNissan', $user->userAccess)) checked @endif>
                                                                         صاحبان بار نیسان
