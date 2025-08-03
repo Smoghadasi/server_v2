@@ -43,7 +43,7 @@
                             @endif
                         </td>
                         <td>
-                            {{ $cargo->count }}
+                            {{ $cargo->total }}
                         </td>
 
                         @php

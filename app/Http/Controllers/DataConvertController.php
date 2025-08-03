@@ -2163,14 +2163,16 @@ class DataConvertController extends Controller
     // لیست بارهای تکراری شده
     public function duplicateCargoFromCargoList(Request $request)
     {
-        // return $request;
-        $cargoList = CargoConvertList::where(function ($query) {
-            $query->where('isBlocked', 1)
-                ->orWhere('isDuplicate', 1);
-        })
+        $cargoList = CargoConvertList::select('cargo', 'created_at', 'isBlocked', 'isDuplicate', DB::raw('COUNT(*) as total'))
+            ->where(function ($query) {
+                $query->where('isBlocked', 1)
+                    ->orWhere('isDuplicate', 1);
+            })
             ->when($request->cargo !== null, function ($query) use ($request) {
                 $query->where('cargo', 'LIKE', '%' . $request->cargo . '%');
             })
+            ->groupBy('cargo')
+            ->having('total', '>', 1) // فقط تکراری‌ها
             ->orderByDesc('created_at')
             ->paginate(20);
 
