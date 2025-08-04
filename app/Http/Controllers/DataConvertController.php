@@ -409,7 +409,7 @@ class DataConvertController extends Controller
                 $originPrefixWord = true;
                 $originPostfixWord = false;
                 $isOrigin = true;
-            } else if (in_array($item, ['[به]', '[ب]']) == true && strlen($cityName)) {
+            } else if (in_array($item, ['[به]', 'ب']) == true && strlen($cityName)) {
                 $originPostfixWord = true;
                 $originPrefixWord = false;
                 $isOrigin = true;
