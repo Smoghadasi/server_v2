@@ -1105,7 +1105,12 @@ class DataConvertController extends Controller
     // دیکشنری کلمات معادل در ثبت بار
     public function equivalents()
     {
-        $cities = ProvinceCity::all();
+        $cities = ProvinceCity::where('parent_id', '!=', 0)
+            ->orderBy('name', 'asc')
+            ->select(['id', 'name'])
+            ->get();
+        // return $cities;
+
         $fleets = Fleet::where('parent_id', '>', 0)->get();
 
         $dictionary = Equivalent::paginate(500);

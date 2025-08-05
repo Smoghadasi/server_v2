@@ -1,7 +1,10 @@
 @extends('layouts.dashboard')
 
+@section('css')
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+@endsection
 @section('content')
-
     <div class="card">
         <h5 class="card-header">
             کلمات معادل در ثبت بار
@@ -36,20 +39,26 @@
 
                             <div class="form-group" id="cityList" style="display: none">
                                 <label>شهر : </label>
-                                <select style="width: 100%" class="form-control" name="city_id">
+                                <select id="city-select" name="city_id" dir="rtl">
                                     <option value="0">شهر</option>
                                     @foreach ($cities as $city)
-                                        <option value="{{ $city->id }}"><?php echo str_replace('ك', 'ک', str_replace('ي', 'ی', $city->name)); ?></option>
+                                        <option value="{{ $city->id }}">
+                                            <?php echo str_replace('ك', 'ک', str_replace('ي', 'ی', $city->name)); ?>
+                                        </option>
                                     @endforeach
                                 </select>
+
                             </div>
 
                             <div class="form-group" id="fleetList">
                                 <label>ناوگان : </label>
-                                <select style="width: 100%" class="form-control" name="fleet_id">
+                                <select id="fleet-select" name="fleet_id" class="form-control" style="width: 100%"
+                                    dir="rtl">
                                     <option value="0">ناوگان</option>
                                     @foreach ($fleets as $fleet)
-                                        <option value="{{ $fleet->id }}"><?php echo str_replace('ك', 'ک', str_replace('ي', 'ی', $fleet->title)); ?></option>
+                                        <option value="{{ $fleet->id }}">
+                                            <?php echo str_replace('ك', 'ک', str_replace('ي', 'ی', $fleet->title)); ?>
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
@@ -112,7 +121,8 @@
                                                     </p>
                                                 </div>
                                                 <div class="modal-footer text-left">
-                                                    <form action="{{ route('removeDictionaryWord', $item) }}" method="POST">
+                                                    <form action="{{ route('removeDictionaryWord', $item) }}"
+                                                        method="POST">
                                                         @csrf
                                                         @method('delete')
                                                         <button type="submit" class="btn btn-primary">حذف</button>
@@ -137,6 +147,30 @@
             </div>
         </div>
     </div>
+@endsection
+@section('script')
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const element = document.getElementById('city-select');
+            const choices = new Choices(element, {
+                searchEnabled: true,
+                itemSelectText: '',
+                shouldSort: false,
+                placeholderValue: 'انتخاب شهر',
+            });
+
+            const fleetSelect = document.getElementById('fleet-select');
+            new Choices(fleetSelect, {
+                searchEnabled: true,
+                itemSelectText: '',
+                shouldSort: false,
+                placeholderValue: 'انتخاب ناوگان',
+            });
+        });
+    </script>
+
 
     <script>
         function hideItem(item) {
@@ -156,4 +190,4 @@
             }
         }
     </script>
-@stop
+@endsection
