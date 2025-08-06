@@ -5,10 +5,10 @@
         <h5 class="card-header">
             <div class="row justify-content-between">
                 <div class="col">
-                    فعالیت رانندگان بر اساس زمان (امروز)
+                    فعالیت رانندگان بر اساس زمان (کل)
                 </div>
                 <div class="col" style="text-align: left;">
-                    <a href="#" class="alert p-1 alert-primary">مجموع تعداد تماس امروز: {{ $driversActivitiesCallDatesCount }}</a>
+                    <a href="#" class="alert p-1 alert-primary">مجموع تعداد تماس: {{ $driversActivitiesCallDatesCount }}</a>
                 </div>
                 {{-- <div class="col" style="text-align: left;">
                     <a href="#" class="alert p-1 alert-success">مجموع کل تعداد تماس: {{ $driverCallDatesAllCount }}</a>
