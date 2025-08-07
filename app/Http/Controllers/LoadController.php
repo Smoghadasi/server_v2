@@ -141,6 +141,23 @@ class LoadController extends Controller
         $query = Load::whereHas('fleetLoads', function ($query) use ($fleets) {
             $query->whereIn('fleet_id', $fleets);
         })
+        ->select([
+            'id',
+            'title',
+            'isBot',
+            'user_id',
+            'userType',
+            'senderMobileNumber',
+            'fleets',
+            'fromCity',
+            'toCity',
+            'driverVisitCount',
+            'date',
+            'dateTime',
+            'latitude',
+            'longitude',
+            'deleted_at'
+        ])
             ->where('userType', 'owner')
             ->where('isCopy', 0)
             ->where('isBot', 0);
