@@ -160,6 +160,7 @@ class LoadController extends Controller
         ])
             ->where('userType', 'owner')
             ->where('isCopy', 0)
+            ->orderByDesc('created_at')
             ->where('isBot', 0);
 
         if ($type !== 'khavar') {
