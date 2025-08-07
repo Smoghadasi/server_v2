@@ -166,7 +166,7 @@ class LoadController extends Controller
             $query->where('created_at', '<', Carbon::now()->subMinutes(20));
         }
 
-        $loads = $query->paginate(20);
+        $loads = $query->paginate(10);
         // return $loads;
         return view('admin.load.copyLoad', compact('loads'));
     }
