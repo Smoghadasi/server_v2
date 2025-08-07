@@ -137,6 +137,7 @@
                     </tbody>
                 </table>
             </div>
+            {{ $loads->withQueryString()->links() }}
         </div>
     </div>
 @endsection
