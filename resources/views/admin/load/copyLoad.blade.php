@@ -124,7 +124,7 @@
                                                 @csrf
                                                 @method('put')
                                                 <button type="submit" class="btn btn-danger btn-sm">
-                                                    حذف از لیست
+                                                    حذف
                                                 </button>
                                             </form>
                                         </div>
@@ -174,12 +174,12 @@
                         .text('کپی شد!');
 
                     // برگشت به حالت اولیه بعد از چند ثانیه (اختیاری)
-                    // setTimeout(() => {
-                    //     $btn
-                    //         .removeClass('btn-success')
-                    //         .addClass('btn-primary')
-                    //         .text('کپی');
-                    // }, 3000);
+                    setTimeout(() => {
+                        $btn
+                            .removeClass('btn-success')
+                            .addClass('btn-primary')
+                            .text('کپی');
+                    }, 3000);
                 })
                 .catch((res) => {
                     console.log(res);
