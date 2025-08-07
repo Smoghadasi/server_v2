@@ -156,6 +156,7 @@ class LoadController extends Controller
             'dateTime',
             'latitude',
             'longitude',
+            'description',
             'deleted_at'
         ])
             ->where('userType', 'owner')

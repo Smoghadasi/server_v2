@@ -102,6 +102,8 @@
 
                                     🏘 مقصد :  {{ $load->toCity }}
 
+                                    📝 توضیحا‌ت : {{ $load->description }}
+
                                     ✳ عنوان بار : {{ $load->title }}
 
                                     ⏱تاریخ :  {{ $load->date }}
@@ -116,8 +118,7 @@
                                 <td>
                                     <div class="row">
                                         <div class="col-6">
-                                            <button class="btn btn-primary btn-sm copyBtn" type="button">کپی متن</button>
-
+                                            <button class="btn btn-primary btn-sm copyBtn" type="button">کپی</button>
                                         </div>
                                         <div class="col-6">
                                             <form action="{{ route('copyLoad.update', $load) }}" method="POST">
