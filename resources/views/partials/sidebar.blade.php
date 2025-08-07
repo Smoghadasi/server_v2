@@ -183,6 +183,25 @@
                         </a>
                     </li>
                 @endif
+                <li
+                    class="menu-item {{ request()->is('admin/copyLoad*') ? 'active open' : '' }} {{ request()->is('admin/copyLoad*') ? 'active open' : '' }}">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <div data-i18n="Layouts">کپی بار</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item">
+                            <a class="menu-link" href="{{ route('copyLoad', ['type' => 'nissan']) }}">
+                                <span>نیسان</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a class="menu-link" href="{{ route('copyLoad', ['type' => 'khavar']) }}">
+                                <span>خاور</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
                 @if (in_array('duplicateCargoFromCargoList', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('duplicateCargoFromCargoList') }}">

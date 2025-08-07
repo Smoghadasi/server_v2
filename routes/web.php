@@ -443,6 +443,10 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('searchLoadsForm', [LoadController::class, 'searchLoadsForm'])->middleware('operator')->name('search.load.form');
         Route::get('searchLoads', [LoadController::class, 'searchLoads'])->middleware('operator');
 
+        Route::get('copyLoad/{type}', [LoadController::class, 'copyLoad'])->name('copyLoad')->middleware('operator');
+
+        Route::put('copyLoad/{load}', [LoadController::class, 'updateCopyLoad'])->name('copyLoad.update')->middleware('operator');
+
         // نمایش اطلاعات بار
         Route::get('loadInfo/{load_id}', [LoadController::class, 'loadInfo'])->middleware('operator')->name('loadInfo');
 

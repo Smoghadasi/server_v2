@@ -125,6 +125,45 @@ class LoadController extends Controller
         return view('admin.load.scamAlert', compact('loads'));
     }
 
+    public function copyLoad($type = null)
+    {
+        $fleetMap = [
+            'nissan' => ['82', '83', '84', '85', '86', '87'],
+            'khavar' => ['45', '46', '47', '48', '63'],
+        ];
+
+        if (!isset($fleetMap[$type])) {
+            return false;
+        }
+
+        $fleets = $fleetMap[$type];
+
+        $query = Load::whereHas('fleetLoads', function ($query) use ($fleets) {
+            $query->whereIn('fleet_id', $fleets);
+        })
+            ->where('userType', 'owner')
+            ->where('isCopy', 0)
+            ->where('isBot', 0);
+
+        if ($type !== 'khavar') {
+            $query->where('created_at', '<', Carbon::now()->subMinutes(20));
+        }
+
+        $loads = $query->paginate(20);
+        // return $loads;
+        return view('admin.load.copyLoad', compact('loads'));
+    }
+
+    public function updateCopyLoad($loadId)
+    {
+        $load = Load::findOrFail($loadId);
+        $load->isCopy = 1;
+        $load->save();
+        return back()->with('danger', "بار مورد نظر حذف شد");
+
+    }
+
+
 
     // افزودن بار جدید
     public function addNewLoadType(Request $request)
