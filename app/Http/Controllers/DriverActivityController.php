@@ -18,6 +18,12 @@ class DriverActivityController extends Controller
             })
             ->groupBy('drivers.id')
             ->paginate(10);
+
+        // حالا روی collection داخل paginator، makeHidden بزن
+        $drivers->getCollection()->transform(function ($driver) {
+            return $driver->makeHidden(['countOfPais', 'countOfCalls', 'operatorMessage', 'blockedIp', 'transactionCount', 'ratingDriver', 'fleetTitle']);
+        });
+
         // return $drivers;
 
         return view('admin.driverActivity.version', compact('drivers', 'version'));
