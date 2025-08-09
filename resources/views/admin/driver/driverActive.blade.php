@@ -9,9 +9,9 @@
                 <div class="col-6">
                     رانندگان ورژن: {{ $version }}
                 </div>
-                <div class="col-6 text-end">
-                    تعداد کل: {{ $drivers->total() }}
-                </div>
+                {{-- <div class="col-6 text-end">
+                    تعداد کل: {{ $drivers }}
+                </div> --}}
             </div>
         </h5>
         <div class="card-body">
@@ -102,8 +102,6 @@
                     </tbody>
                 </table>
             </div>
-            {{ $drivers }}
-
         </div>
     </div>
 
