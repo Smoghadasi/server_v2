@@ -107,6 +107,16 @@ class DriverController extends Controller
         }
     }
 
+    // رانندگان فعال بر اساس ورژن
+    public function driverActive($version)
+    {
+        // return $version;
+        $drivers = Driver::where('version', $version)
+            ->where('activeDate',  '>',  now())
+            ->paginate(20);
+        return view('admin.driver.driverActive', compact('version', 'drivers'));
+    }
+
 
     // فرم افزودن راننده جدید
     public function addNewDriverForm($message = '', $alert = '')

@@ -158,7 +158,12 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('appVersions', [HomeController::class, 'appVersions']);
         Route::post('storeAppVersions', [HomeController::class, 'storeAppVersions']);
         // Route::get('driverActivityVersion/{version}', [HomeController::class, 'driverActivityVersion'])->name('driver.activity.version');
+
+        // لیست رانندگان بر اساس فعالیت یک ماهه اخیر
         Route::get('driverActivityVersion/{version}', [DriverActivityController::class, 'index'])->name('driver.activity.version');
+
+
+        Route::get('driverActive/{version}', [DriverController::class, 'driverActive'])->name('admin.driverActive.version');
 
         // equivalents
         Route::get('equivalents', [DataConvertController::class, 'equivalents'])

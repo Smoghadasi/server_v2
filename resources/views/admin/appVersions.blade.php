@@ -41,7 +41,11 @@
                     <tr>
                         <td>{{ $key + 1 }}</td>
                         <td>{{ $driverVersion->version ?? 0 }}</td>
-                        <td>{{ $driverVersion->activeDate_count ?? 0 }}</td>
+                        <td>
+                            <a href="{{ route('admin.driverActive.version', ['version' => $driverVersion->version ?? 68]) }}">
+                                {{ $driverVersion->activeDate_count ?? 0 }}
+                            </a>
+                        </td>
                         <td>{{ $driverVersion->total }}</td>
                         <td>
                             <a class="btn btn-outline-primary btn-sm"
