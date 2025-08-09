@@ -113,6 +113,7 @@ class DriverController extends Controller
         // return $version;
         $drivers = Driver::where('version', $version)
             ->where('activeDate',  '>',  now())
+            ->orderByDesc('freeCalls')
             ->paginate(20);
         return view('admin.driver.driverActive', compact('version', 'drivers'));
     }
