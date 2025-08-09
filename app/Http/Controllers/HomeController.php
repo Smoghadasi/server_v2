@@ -18,6 +18,7 @@ use App\Models\Report;
 use App\Models\SiteOption;
 use App\Models\TrackableItems;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
@@ -112,15 +113,15 @@ class HomeController extends Controller
             $appVersion->save();
         }
 
-        $driverVersions = Driver::select('version',
-         DB::raw('count(*) as total'),
-         DB::raw("SUM(activeDate > NOW()) as activeDate_count"),
-         )
+        $driverVersions = Driver::select(
+            'version',
+            DB::raw('count(*) as total'),
+            DB::raw("SUM(activeDate > NOW()) as activeDate_count"),
+        )
             ->groupBy('version')
             ->orderBy('version', 'desc')
             ->get()
-            ->makeHidden(['countOfPais', 'countOfCalls', 'operatorMessage', 'blockedIp', 'transactionCount', 'ratingDriver', 'fleetTitle']);;
-
+            ->makeHidden(['countOfPais', 'countOfCalls', 'operatorMessage', 'blockedIp', 'transactionCount', 'ratingDriver', 'fleetTitle']);
 
         return view('admin.appVersions', compact('appVersion', 'driverVersions'));
     }

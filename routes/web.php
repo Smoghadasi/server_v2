@@ -19,6 +19,7 @@ use App\Http\Controllers\ContractController;
 use App\Http\Controllers\DataConvertController;
 use App\Http\Controllers\DataConvertPlusController;
 use App\Http\Controllers\DiscrepancyController;
+use App\Http\Controllers\DriverActivityController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\FirstLoadController;
 use App\Http\Controllers\FleetController as AdminFleetController;
@@ -156,7 +157,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         Route::get('appVersions', [HomeController::class, 'appVersions']);
         Route::post('storeAppVersions', [HomeController::class, 'storeAppVersions']);
-        Route::get('driverActivityVersion/{version}', [HomeController::class, 'driverActivityVersion'])->name('driver.activity.version');
+        // Route::get('driverActivityVersion/{version}', [HomeController::class, 'driverActivityVersion'])->name('driver.activity.version');
+        Route::get('driverActivityVersion/{version}', [DriverActivityController::class, 'index'])->name('driver.activity.version');
 
         // equivalents
         Route::get('equivalents', [DataConvertController::class, 'equivalents'])

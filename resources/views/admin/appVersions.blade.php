@@ -40,13 +40,13 @@
                 @foreach ($driverVersions as $key => $driverVersion)
                     <tr>
                         <td>{{ $key + 1 }}</td>
-                        <td>{{ $driverVersion->version }}</td>
-                        <td>{{ $driverVersion->activeDate_count }}</td>
+                        <td>{{ $driverVersion->version ?? 0 }}</td>
+                        <td>{{ $driverVersion->activeDate_count ?? 0 }}</td>
                         <td>{{ $driverVersion->total }}</td>
                         <td>
-                            <a class="btn btn-primary btn-sm"
-                                href="{{ route('driver.activity.version', $driverVersion->version ?? '1') }}">گزارش فعالیت
-                                رانندگان</a>
+                            <a class="btn btn-outline-primary btn-sm"
+                                href="{{ route('driver.activity.version', $driverVersion->version ?? '1') }}">فعالیت یک ماه گذشته
+                            </a>
                         </td>
                     </tr>
                 @endforeach
