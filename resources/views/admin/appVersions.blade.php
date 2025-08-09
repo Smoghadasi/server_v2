@@ -33,6 +33,7 @@
                 <tr>
                     <th>#</th>
                     <th>نسخه رانندگان</th>
+                    <th>اشتراک فعال</th>
                     <th>تعداد نصب فعال</th>
                     <th>عملیات</th>
                 </tr>
@@ -40,6 +41,7 @@
                     <tr>
                         <td>{{ $key + 1 }}</td>
                         <td>{{ $driverVersion->version }}</td>
+                        <td>{{ $driverVersion->activeDate_count }}</td>
                         <td>{{ $driverVersion->total }}</td>
                         <td>
                             <a class="btn btn-primary btn-sm"
