@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Driver;
+use App\Models\DriverActivity;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -10,23 +11,22 @@ class DriverActivityController extends Controller
 {
     public function index($version = null)
     {
+
         $oneMonthAgo = Carbon::now()->subMonth();
 
-        $drivers = Driver::where('version', $version)
-            ->whereHas('driverActivities', function ($q) use ($oneMonthAgo) {
-                $q->where('created_at', '>=', $oneMonthAgo);
+        $driverActivities = DriverActivity::where('created_at', '>=', $oneMonthAgo)
+            ->whereHas('driver', function ($q) use ($version) {
+                $q->where('version', $version);
             })
-            ->withCount(['driverActivities as recent_activities_count' => function ($q) use ($oneMonthAgo) {
-                $q->where('created_at', '>=', $oneMonthAgo);
+            ->select('driver_id')  // فقط driver_id برای distinct
+            ->distinct()
+            ->with(['driver' => function ($q) {
+                $q->select(['id', 'name', 'lastName', 'authLevel', 'fleet_id', 'nationalCode', 'created_at', 'version', 'mobileNumber', 'status']);
             }])
-            ->groupBy('drivers.id')
-            ->select(['id', 'name', 'lastName', 'authLevel', 'fleet_id', 'nationalCode', 'created_at', 'version', 'mobileNumber', 'status'])
             ->paginate(10);
+        // return $driverActivities;
 
-        $drivers->getCollection()->transform(function ($driver) {
-            return $driver->makeHidden(['countOfPais', 'countOfCalls', 'operatorMessage', 'blockedIp', 'transactionCount', 'ratingDriver', 'fleetTitle']);
-        });
 
-        return view('admin.driverActivity.version', compact('drivers', 'version'));
+        return view('admin.driverActivity.version', compact('driverActivities', 'version'));
     }
 }
