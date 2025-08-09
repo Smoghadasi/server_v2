@@ -5,7 +5,14 @@
 
     <div class="card">
         <h5 class="card-header">
-            رانندگان
+            <div class="row">
+                <div class="col-6">
+                    رانندگان ورژن: {{ $version }}
+                </div>
+                <div class="col-6 text-end">
+                    تعداد کل: {{ $drivers->total() }}
+                </div>
+            </div>
         </h5>
         <div class="card-body">
 

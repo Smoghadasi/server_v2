@@ -5,14 +5,14 @@
 
     <div class="card">
         <h5 class="card-header">
-           <div class="row">
-            <div class="col-6">
-                رانندگان ورژن: {{ $version }}
+            <div class="row">
+                <div class="col-6">
+                    رانندگان ورژن: {{ $version }}
+                </div>
+                <div class="col-6 text-end">
+                    تعداد کل: {{ $driverActivities->total() }}
+                </div>
             </div>
-            <div class="col-6 text-end">
-                تعداد کل: {{ $driverActivities->total() }}
-            </div>
-           </div>
         </h5>
         <div class="card-body">
 
@@ -83,7 +83,8 @@
                                     @endif
                                 </td>
                                 <td>{{ $driverActivity->driver->nationalCode }}</td>
-                                <td>{{ \App\Http\Controllers\FleetController::getFleetName($driverActivity->driver->fleet_id) }}</td>
+                                <td>{{ \App\Http\Controllers\FleetController::getFleetName($driverActivity->driver->fleet_id) }}
+                                </td>
                                 <td>
                                     {{ gregorianDateToPersian($driverActivity->driver->created_at, '-', true) }}
                                     @if (isset(explode(' ', $driverActivity->driver->created_at)[1]))
@@ -102,7 +103,7 @@
                 </table>
             </div>
             {{-- @if (!isset($showSearchResult) || !$showSearchResult) --}}
-                {{ $driverActivities }}
+            {{ $driverActivities }}
             {{-- @endif --}}
 
         </div>
