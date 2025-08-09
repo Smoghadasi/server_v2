@@ -10,6 +10,7 @@ use SoapClient;
 
 class Driver extends Authenticatable
 {
+    protected $guarded = [];
 
     protected $appends = [
         'fleetTitle',
