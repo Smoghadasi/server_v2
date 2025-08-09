@@ -112,10 +112,14 @@ class HomeController extends Controller
             $appVersion->save();
         }
 
-        $driverVersions = Driver::select('version', DB::raw('count(*) as total'))
+        $driverVersions = Driver::select('version',
+         DB::raw('count(*) as total'),
+         DB::raw("SUM(activeDate > NOW()) as activeDate_count"),
+         )
             ->groupBy('version')
             ->orderBy('version', 'desc')
-            ->get();
+            ->get()
+            ->makeHidden(['countOfPais', 'countOfCalls', 'operatorMessage', 'blockedIp', 'transactionCount', 'ratingDriver', 'fleetTitle']);;
 
 
         return view('admin.appVersions', compact('appVersion', 'driverVersions'));
