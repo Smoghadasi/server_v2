@@ -33,11 +33,10 @@
                         </tr>
                     </thead>
                     <tbody class="small">
-                        <?php $i = 0; ?>
 
                         @foreach ($drivers as $driver)
                             <tr>
-                                <td>{{ ($drivers->currentPage() - 1) * $drivers->perPage() + ++$i }}</td>
+                                <td>{{ $loop->iteration }}</td>
                                 <td>
                                     @if ($driver->bookmark)
                                         <form style="display: contents" action="{{ route('bookmark.store') }}" method="post">
