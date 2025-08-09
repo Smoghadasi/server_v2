@@ -33,18 +33,14 @@
                 <tr>
                     <th>#</th>
                     <th>نسخه رانندگان</th>
-                    <th>اشتراک فعال</th>
                     <th>تعداد نصب فعال</th>
-                    <th>رانندگان فعال یک ماه گذشته</th>
                     <th>عملیات</th>
                 </tr>
                 @foreach ($driverVersions as $key => $driverVersion)
                     <tr>
                         <td>{{ $key + 1 }}</td>
                         <td>{{ $driverVersion->version }}</td>
-                        <td>{{ $driverVersion->activeDate_count }}</td>
                         <td>{{ $driverVersion->total }}</td>
-                        <td>{{ $driverVersion->active_drivers_count }}</td>
                         <td>
                             <a class="btn btn-primary btn-sm"
                                 href="{{ route('driver.activity.version', $driverVersion->version ?? '1') }}">گزارش فعالیت
