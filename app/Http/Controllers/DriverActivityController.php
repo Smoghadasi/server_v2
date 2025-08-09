@@ -17,6 +17,7 @@ class DriverActivityController extends Controller
                 $q->where('created_at', '>=', $oneMonthAgo);
             })
             ->groupBy('drivers.id')
+            ->select(['id', 'name', 'lastName', 'authLevel', 'fleet_id', 'nationalCode', 'created_at', 'version', 'mobileNumber', 'status'])
             ->paginate(10);
 
         // حالا روی collection داخل paginator، makeHidden بزن
