@@ -256,10 +256,9 @@
                                                                 <div class="form-group">
                                                                     <label>
                                                                         <label>
-                                                                            <input type="checkbox"
-                                                                                name="duplicateCargoFromCargoList"
-                                                                                @if (in_array('duplicateCargoFromCargoList', $user->userAccess)) checked @endif>
-                                                                             بار تکراری
+                                                                            <input type="checkbox" name="copyLoad"
+                                                                                @if (in_array('copyLoad', $user->userAccess)) checked @endif>
+                                                                            کپی بار
                                                                         </label>
                                                                 </div>
                                                             </li>
@@ -268,9 +267,19 @@
                                                                     <label>
                                                                         <label>
                                                                             <input type="checkbox"
-                                                                                name="fleetlessNumber"
+                                                                                name="duplicateCargoFromCargoList"
+                                                                                @if (in_array('duplicateCargoFromCargoList', $user->userAccess)) checked @endif>
+                                                                            بار تکراری
+                                                                        </label>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <label>
+                                                                            <input type="checkbox" name="fleetlessNumber"
                                                                                 @if (in_array('fleetlessNumber', $user->userAccess)) checked @endif>
-                                                                             شماره های بدون ناوگان
+                                                                            شماره های بدون ناوگان
                                                                         </label>
                                                                 </div>
                                                             </li>
@@ -379,7 +388,7 @@
                                                                     <label>
                                                                         <input type="checkbox" name="fleetReportSummary"
                                                                             @if (in_array('fleetReportSummary', $user->userAccess)) checked @endif>
-                                                                            خلاصه رانندگان بر اساس ناوگان
+                                                                        خلاصه رانندگان بر اساس ناوگان
                                                                     </label>
                                                                 </div>
                                                             </li>
