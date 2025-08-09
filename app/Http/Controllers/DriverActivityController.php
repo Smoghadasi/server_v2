@@ -17,8 +17,8 @@ class DriverActivityController extends Controller
                 $q->where('created_at', '>=', $oneMonthAgo);
             })
             ->groupBy('drivers.id')
-            ->paginate(20);
-        return $drivers;
+            ->paginate(10);
+        // return $drivers;
 
         return view('admin.driverActivity.version', compact('drivers', 'version'));
     }
