@@ -18,7 +18,7 @@ class DriverActivityController extends Controller
             })
             ->groupBy('drivers.id')
             ->paginate(20);
-        // return $drivers;
+        return $drivers;
 
         return view('admin.driverActivity.version', compact('drivers', 'version'));
     }
