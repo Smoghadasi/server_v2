@@ -26,6 +26,7 @@
                             <th>کد ملی</th>
                             <th>نوع ناوگان</th>
                             <th>تاریخ اعتبار اشتراک</th>
+                            <th>تماس رایگان</th>
                             <th>کد نسخه</th>
                             <th>شماره تلفن همراه</th>
                             <th class="text-center">عملیات</th>
@@ -85,6 +86,9 @@
                                 <td>{{ $driver->fleetTitle }}</td>
                                 <td>
                                     {{ gregorianDateToPersian($driver->activeDate, '-', true) }}
+                                </td>
+                                <td>
+                                    {{ $driver->freeCalls }}
                                 </td>
 
                                 <td>{{ $driver->version ?? '-' }}</td>
