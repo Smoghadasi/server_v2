@@ -16,16 +16,16 @@ class DriverActivityController extends Controller
             ->whereHas('driverActivities', function ($q) use ($oneMonthAgo) {
                 $q->where('created_at', '>=', $oneMonthAgo);
             })
+            ->withCount(['driverActivities as recent_activities_count' => function ($q) use ($oneMonthAgo) {
+                $q->where('created_at', '>=', $oneMonthAgo);
+            }])
             ->groupBy('drivers.id')
             ->select(['id', 'name', 'lastName', 'authLevel', 'fleet_id', 'nationalCode', 'created_at', 'version', 'mobileNumber', 'status'])
             ->paginate(10);
 
-        // حالا روی collection داخل paginator، makeHidden بزن
         $drivers->getCollection()->transform(function ($driver) {
             return $driver->makeHidden(['countOfPais', 'countOfCalls', 'operatorMessage', 'blockedIp', 'transactionCount', 'ratingDriver', 'fleetTitle']);
         });
-
-        // return $drivers;
 
         return view('admin.driverActivity.version', compact('drivers', 'version'));
     }
