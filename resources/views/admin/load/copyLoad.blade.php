@@ -92,28 +92,30 @@
                                 </td>
 
                                 <td>{{ $load->date }} {{ $load->dateTime }}</td>
-                                <textarea class="form-control message-box d-none">
-                                    🚛 ناوگان:
-                                    @foreach ($fleets as $fleet)
-                                    {{ $fleet['title'] }}
-                                    @endforeach
+                                <td class="d-none">
+                                    <textarea class="form-control message-box">
+                                        🚛 ناوگان:
+                                        @foreach ($fleets as $fleet)
+                                            {{ $fleet['title'] }}
+                                        @endforeach
 
-                                    🏠 مبدا :   {{ $load->fromCity }}
+                                        🏠 مبدا :   {{ $load->fromCity }}
 
-                                    🏘 مقصد :  {{ $load->toCity }}
+                                        🏘 مقصد :  {{ $load->toCity }}
 
-                                    📝 توضیحا‌ت : {{ $load->description }}
+                                        📝 توضیحا‌ت : {{ $load->description }}
 
-                                    ✳ عنوان بار : {{ $load->title }}
+                                        ✳ عنوان بار : {{ $load->title }}
 
-                                    ⏱تاریخ :  {{ $load->date }}
+                                        ⏱تاریخ :  {{ $load->date }}
 
-                                    وضعیت  :  موجود
+                                        وضعیت  :  موجود
 
-                                    📞 ‌  :   {{ $load->senderMobileNumber }}
-                                    لینک پیوستن به گروه:
-                                    @elambarkhavari
-                                </textarea>
+                                        📞 ‌  :   {{ $load->senderMobileNumber }}
+                                        لینک پیوستن به گروه:
+                                        @elambarkhavari
+                                    </textarea>
+                                </td>
 
                                 <td>
                                     <div class="row">
@@ -144,37 +146,27 @@
 @endsection
 @section('script')
     <script>
-        $('.copyBtn').on('click', function() {
-            const textarea = $('.message-box');
-            const $btn = $(this); // دکمه‌ای که کلیک شده
+        $(document).on('click', '.copyBtn', function() {
+            const $btn = $(this);
+            const target = $btn.closest('tr').find('.message-box'); // جستجو در همان ردیف
 
-            if (textarea.length === 0) {
+            if (target.length === 0) {
                 alert('عنصر پیدا نشد');
                 return;
             }
 
-            const text = textarea.val();
-            var cleanedText = text
-                .split('\n') // تبدیل متن به آرایه‌ای از خطوط
-                .map(line => line.trim()) // trim هر خط
-                .join('\n'); // دوباره ترکیب به یک رشته
+            const text = target.val();
+            const cleanedText = text
+                .split('\n')
+                .map(line => line.trim())
+                .join('\n');
 
-
-            // if (!cleanedText) {
-            //     alert('متن خالی است!');
-            //     return;
-            // }
-
-            // کپی با Clipboard API
             navigator.clipboard.writeText(cleanedText)
                 .then(() => {
-                    // تغییر کلاس دکمه
                     $btn
                         .removeClass('btn-primary')
                         .addClass('btn-success')
                         .text('کپی شد!');
-
-                    // برگشت به حالت اولیه بعد از چند ثانیه (اختیاری)
                     setTimeout(() => {
                         $btn
                             .removeClass('btn-success')
@@ -182,11 +174,10 @@
                             .text('کپی');
                     }, 3000);
                 })
-                .catch((res) => {
-                    console.log(res);
+                .catch(err => {
+                    console.error(err);
                     alert('خطا در کپی کردن متن!');
                 });
-
         });
     </script>
 @endsection
