@@ -165,7 +165,7 @@ class LoadController extends Controller
             ->where('isBot', 0);
 
         if ($type !== 'khavar') {
-            $query->where('created_at', '<', Carbon::now()->subMinutes(20));
+            $query->where('created_at', '<', Carbon::now()->subMinutes(15));
         }
 
         $loads = $query->paginate(10);
