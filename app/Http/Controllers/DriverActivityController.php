@@ -18,12 +18,13 @@ class DriverActivityController extends Controller
             ->whereHas('driver', function ($q) use ($version) {
                 $q->where('version', $version);
             })
-            ->select('driver_id')  // فقط driver_id برای distinct
-            ->distinct()
+            ->selectRaw('driver_id, MAX(created_at) as last_activity_at')
+            ->groupBy('driver_id')
             ->with(['driver' => function ($q) {
                 $q->select(['id', 'name', 'lastName', 'authLevel', 'fleet_id', 'nationalCode', 'created_at', 'version', 'mobileNumber', 'status']);
             }])
             ->paginate(10);
+
         // return $driverActivities;
 
 
