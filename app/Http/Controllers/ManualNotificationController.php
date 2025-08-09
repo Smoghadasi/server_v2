@@ -85,12 +85,13 @@ class ManualNotificationController extends Controller
 
         if (ManualNotificationRecipient::where('userable_type', $model)
             ->where('userable_id', $user->id)
+            ->where('group_id', $request->group_id)
             ->exists()
         ) {
             return back()->with('danger', 'کاربر مورد نظر تکراری است');
         }
 
-        if (ManualNotificationRecipient::where('userable_id', $user->id)->where('userable_type', $model)->count() == 0) {
+        if (ManualNotificationRecipient::where('userable_id', $user->id)->where('userable_type', $model)->where('group_id', $request->group_id)->count() == 0) {
             ManualNotificationRecipient::create([
                 'userable_id' => $user->id,
                 'userable_type' => $model,
