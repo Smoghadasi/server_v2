@@ -58,7 +58,7 @@ class GroupNotificationController extends Controller
     public function show(GroupNotification $groupNotification)
     {
         $manualNotifications = ManualNotificationRecipient::with(['userable' => function ($query) {
-            $query->select(['id', 'name', 'lastName', 'mobileNumber', 'fleet_id']);
+            $query->select(['id', 'name', 'lastName', 'mobileNumber']);
         }])
             ->where('group_id', $groupNotification->id)
             ->paginate(20);
