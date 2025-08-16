@@ -47,51 +47,69 @@ class ManualNotificationController extends Controller
      */
     public function store(Request $request)
     {
+        // مقدار خام از فرم (string JSON)
+        $mobilesJson = $request->input('mobiles');
+
+        // تبدیل به آرایه
+        $mobilesArray = json_decode($mobilesJson, true);
+
+        // گرفتن فقط شماره‌ها
+        $numbers = array_column($mobilesArray ?? [], 'value');
+
+        // اضافه کردن صفر اول اگر نداشت
+        $numbers = array_map(function ($number) {
+            $number = trim($number);
+            if (!str_starts_with($number, '0')) {
+                return '0' . $number;
+            }
+            return $number;
+        }, $numbers);
+
+
         $group = GroupNotification::find($request->group_id);
         $model = $group->groupType === 'owner' ? Owner::class : Driver::class;
 
-        if ($group->groupType === 'driver' && $request->mobileNumber == null) {
+        // اگر گروه راننده باشه و هیچ شماره دستی نیاد
+        if ($group->groupType === 'driver' && empty($numbers)) {
 
             $IdsDriver = Driver::query()
-                ->where(function ($query) use ($request) {
-                    if ($request->fleets !== null) {
-                        $query->whereIn('fleet_id', $request->fleets);
-                    }
-                    if ($request->provinces !== null) {
-                        $query->whereIn('province_id', $request->provinces);
-                    }
-                })
+                ->when($request->fleets !== null, fn($query) => $query->whereIn('fleet_id', $request->fleets))
+                ->when($request->provinces !== null, fn($query) => $query->whereIn('province_id', $request->provinces))
                 ->take($request->count)
                 ->pluck('id');
-                // return $IdsDriver;
 
             foreach ($IdsDriver as $IdDriver) {
-                // return $IdDriver;
-                if (ManualNotificationRecipient::where('userable_id', $IdDriver)->count() === 0) {
+                if (ManualNotificationRecipient::where('userable_id', $IdDriver)->where('group_id', $request->group_id)->doesntExist()) {
                     ManualNotificationRecipient::create([
                         'userable_id' => $IdDriver,
                         'userable_type' => $model,
                         'group_id' => $request->group_id,
                     ]);
-                    // return $manual;
                 }
             }
-            return back()->with('success', 'کاربران مورد نظر ثبت شد');
-        }
-        $user = $model::where('mobileNumber', $request->mobileNumber)->first();
-        if (!$user) {
-            return back()->with('danger', 'کاربر مورد نظر یافت نشد');
+
+            return back()->with('success', 'کاربران مورد نظر ثبت شدند');
         }
 
-        if (ManualNotificationRecipient::where('userable_type', $model)
-            ->where('userable_id', $user->id)
-            ->where('group_id', $request->group_id)
-            ->exists()
-        ) {
-            return back()->with('danger', 'کاربر مورد نظر تکراری است');
-        }
+        // 📌 اینجا برای شماره‌های دستی (آرایه‌ای)
+        foreach ($numbers as $mobile) {
+            $user = $model::where('mobileNumber', $mobile)->first();
 
-        if (ManualNotificationRecipient::where('userable_id', $user->id)->where('userable_type', $model)->where('group_id', $request->group_id)->count() == 0) {
+            if (!$user) {
+                // یکی از شماره‌ها پیدا نشد → می‌تونی ادامه بدی یا break کنی
+                // اینجا تصمیم گرفتم ادامه بده ولی پیام danger هم بده
+                continue;
+            }
+
+            if (ManualNotificationRecipient::where('userable_type', $model)
+                ->where('userable_id', $user->id)
+                ->where('group_id', $request->group_id)
+                ->exists()
+            ) {
+                // کاربر تکراری → رد میشه
+                continue;
+            }
+
             ManualNotificationRecipient::create([
                 'userable_id' => $user->id,
                 'userable_type' => $model,
@@ -99,9 +117,9 @@ class ManualNotificationController extends Controller
             ]);
         }
 
-
-        return back()->with('success', 'کاربر مورد نظر ثبت شد');
+        return back()->with('success', 'شماره‌های مورد نظر ثبت شدند');
     }
+
 
 
     /**

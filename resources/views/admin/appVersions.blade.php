@@ -35,7 +35,7 @@
                     <th>نسخه رانندگان</th>
                     <th>اشتراک فعال</th>
                     <th>تعداد نصب فعال</th>
-                    {{-- <th>عملیات</th> --}}
+                    <th>عملیات</th>
                 </tr>
                 @foreach ($driverVersions as $key => $driverVersion)
                     <tr>

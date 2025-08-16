@@ -1,4 +1,7 @@
 @extends('layouts.dashboard')
+@section('css')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.17.9/tagify.css" />
+@endsection
 
 @section('content')
     <div class="card">
@@ -72,10 +75,11 @@
                                         @endif
                                         <div class="row g-2" id="single">
                                             <div class="col mb-0">
-                                                <input type="text" id="mobileNumberGroup" name="mobileNumber"
-                                                    class="form-control" placeholder="شماره موبایل..." />
+                                                <input id="mobileNumberGroup" name="mobiles" class="form-control"
+                                                    placeholder="شماره موبایل..." />
                                             </div>
                                         </div>
+
                                         @if ($groupNotification->groupType == 'driver')
                                             <div class="row g-2" id="multi">
                                                 <div class="col-12">
@@ -170,8 +174,22 @@
     @endsection
 
     @section('script')
-        <script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.17.9/tagify.min.js"></script>
 
+        <script>
+            const input = document.getElementById('mobileNumberGroup');
+
+            // فعال کردن Tagify
+            const tagify = new Tagify(input, {
+                delimiters: ",|\n|\r|\t| ", // با کاما، خط جدید یا فاصله جدا کن
+                // pattern: /^09\d{9}$/, // فقط شماره موبایل ایران
+                placeholder: "شماره موبایل وارد کنید یا چندتا کپی‌پیست کنید...",
+                trim: true
+            });
+        </script>
+
+
+        <script>
             $(document).ready(function() {
                 $('#multi').hide();
                 $('#changeType').change(function() {
