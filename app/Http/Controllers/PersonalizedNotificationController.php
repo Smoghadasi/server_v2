@@ -6,6 +6,7 @@ use App\Jobs\SendPushNotificationPersonalizeJob;
 use App\Models\Driver;
 use App\Models\Owner;
 use App\Models\PersonalizedNotification;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -108,13 +109,18 @@ class PersonalizedNotificationController extends Controller
         $body  = $personalizedNotification->body;
 
         if ($personalizedNotification->type == 'driver') {
+            $oneMonthAgo = Carbon::now()->subMonth();
+
             $tokens = Driver::whereNotNull('FCM_token')
+                ->whereHas('driverActivities', function ($q) use ($oneMonthAgo) {
+                    $q->where('created_at', '>=', $oneMonthAgo);
+                })
                 ->where('version', $personalizedNotification->version)
-                // ->whereIn('id', ['45172'])
                 ->pluck('FCM_token')
                 ->toArray();
 
-            $chunks = array_chunk($tokens, 250); // چون FCM حداکثر 250 تا پشتیبانی می‌کنه
+            $chunks = array_chunk($tokens, 100); // چون FCM حداکثر 250 تا پشتیبانی می‌کنه
+
             foreach ($chunks as $chunk) {
                 dispatch(new SendPushNotificationPersonalizeJob($chunk, $title, $body));
             }
