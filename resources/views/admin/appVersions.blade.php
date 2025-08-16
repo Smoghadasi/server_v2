@@ -47,17 +47,14 @@
                             </a>
                         </td>
                         <td>{{ $driverVersion->total }}</td>
-                        {{-- <td>
+                        <td>
                             <a class="btn btn-outline-primary btn-sm"
                                 href="{{ route('driver.activity.version', $driverVersion->version ?? '1') }}">فعالیت یک ماه گذشته
                             </a>
-                        </td> --}}
+                        </td>
                     </tr>
                 @endforeach
             </table>
         </div>
     </div>
-
-
-
-@stop
+@endsection

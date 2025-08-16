@@ -101,8 +101,9 @@
                     </tbody>
                 </table>
             </div>
+            <div class="mt-2">
+                {{ $drivers->links() }}
+            </div>
         </div>
     </div>
-
-
-@stop
+@endsection
