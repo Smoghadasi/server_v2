@@ -118,6 +118,27 @@
                             </li> --}}
                     </ul>
                 </li>
+                <li
+                    class="menu-item {{ request()->is('admin/support*') ? 'active open' : '' }} {{ request()->is('admin/supportDriver*') ? 'active open' : '' }}">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <div data-i18n="Layouts">اعلان</div>
+                    </a>
+                    <ul class="menu-sub">
+                        @if (in_array('incomingCallDriver', auth()->user()->userAccess))
+                            <li class="menu-item">
+                                <a class="menu-link" href="{{ route('groupNotification.index') }}">
+                                    <span>کمپین اعلان</span>
+                                </a>
+                            </li>
+                        @endif
+
+                        <li class="menu-item">
+                            <a class="menu-link" href="{{ route('personalizedNotification.index') }}">
+                                <span>اعلان شخصی سازی شده</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
 
             </ul>
         </li>
