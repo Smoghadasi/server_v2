@@ -50,11 +50,10 @@
                                 </td>
                                 <td>{{ $load->senderMobileNumber }}</td>
                                 <td>
-                                    -
-                                    {{-- <a class="{{ $load->owner->isAccepted == 1 ? 'text-success' : '' }}"
+                                    <a class="{{ $load->owner->isAccepted == 1 ? 'text-success' : '' }}"
                                         href="{{ route('owner.show', $load->owner->id) }}">
                                         {{ $load->owner->name }} {{ $load->owner->lastName }}
-                                    </a> --}}
+                                    </a>
                                 </td>
                                 <td>
                                     @php
@@ -119,6 +118,10 @@
 
                                 <td>
                                     <div class="row">
+                                        <div class="col-6">
+                                            <a class="btn btn-info btn-sm"
+                                                href="{{ route('loadInfo', $load->id) }}">جزئیات</a>
+                                        </div>
                                         <div class="col-6">
                                             <button class="btn btn-primary btn-sm copyBtn" type="button">کپی</button>
                                         </div>
