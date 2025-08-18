@@ -1423,7 +1423,7 @@ class DriverController extends Controller
                         $driver->save();
                         if (!empty($driver->FCM_token) && $driver->version > 68) {
                             $title = 'ایران ترابر رانندگان';
-                            $body  = "{$request->freeCalls} تماس رایگان برای شما فعال شد";
+                            $body  = "تماس رایگان برای شما فعال شد";
                             $this->sendNotificationWeb($driver->FCM_token, $title, $body);
                         }
                     }
