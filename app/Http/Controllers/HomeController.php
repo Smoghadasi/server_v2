@@ -171,6 +171,9 @@ class HomeController extends Controller
             ->orWhere('nationalCode', $request->title)
             ->orWhere('name', 'like', '%' . $request->title . '%')
             ->orWhere('lastName', 'like', '%' . $request->title . '%')
+            ->orWhereHas('ownerMobiles', function ($query) use ($request) {
+                $query->where('mobileNumber', 'like', '%' . $request->title . '%');
+            })
             ->get();
 
         // شکایات راننده
@@ -179,6 +182,9 @@ class HomeController extends Controller
             ->orWhere('nationalCode', $request->title)
             ->orWhere('name', 'like', '%' . $request->title . '%')
             ->orWhere('lastName', 'like', '%' . $request->title . '%')
+            ->orWhereHas('driverMobiles', function ($query) use ($request) {
+                $query->where('mobileNumber', 'like', '%' . $request->title . '%');
+            })
             ->get();
 
         // شکایات راننده

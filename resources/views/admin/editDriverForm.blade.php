@@ -1,7 +1,6 @@
 @extends('layouts.dashboard')
 
 @section('content')
-
     @php
         $persianAlphabet = ["الف", "ب", "پ", "ت", "ث", "ج", "چ", "‌ح", "خ", "د", "ذ", "ر", "ز", "ژ", "س", " ش", "ص", "ض", "ط", "ظ", "ع", "غ", "ف", "ق", "ک", "گ", "ل", "م", "ن", "و", "ه", "ی"];
     @endphp
@@ -89,12 +88,30 @@
                                     class="form-control{{ $errors->has('mobileNumber') ? ' is-invalid' : '' }}"
                                     name="mobileNumber" value="{{ $driver->mobileNumber }}" required autofocus>
 
+                                <div id="mobileNumbersWrapper">
+                                    @foreach ($driver->driverMobiles as $driverMobile)
+                                        <div class="input-group my-2">
+                                            <input class="form-control" name="mobileNumbers[]" type="text"
+                                                value="{{ $driverMobile->mobileNumber }}" placeholder="شماره موبایل">
+                                            <button type="button" class="btn btn-danger removeMobile">-</button>
+                                        </div>
+                                    @endforeach
+
+                                    {{-- یک input برای شماره جدید --}}
+                                    <div class="input-group my-2">
+                                        <input class="form-control" name="mobileNumbers[]" type="text"
+                                            placeholder="شماره موبایل">
+                                        <button type="button" class="btn btn-success" id="addMobile">+</button>
+                                    </div>
+                                </div>
+
                                 @if ($errors->has('mobileNumber'))
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $errors->first('mobileNumber') }}</strong>
                                     </span>
                                 @endif
                             </div>
+
 
                             <div class="mb-3 col">
                                 <label class="form-label" for="basic-default-fullname">
@@ -259,24 +276,28 @@
                                 </div>
                             </div>
                             {{-- <!--@if (Auth::user()->role == 'admin')--> --}}
-                                <div class="mb-3 col">
-                                    <div class="row">
-                                        <div class="col">
-                                            <label class="form-label" for="basic-default-company">نوتیفیکشن :</label>
-                                            <select class="form-control form-select" name="notification" id="">
-                                                <option @if($driver->notification == 'enable') selected @endif value="enable">فعال</option>
-                                                <option @if($driver->notification == 'disable') selected @endif value="disable">غیر فعال</option>
-                                            </select>
-                                        </div>
-                                        <div class="col">
-                                            <label class="form-label" for="basic-default-company">پیامک :</label>
-                                            <select class="form-control form-select" name="sms" id="">
-                                                <option @if($driver->sms == 'enable') selected @endif value="enable">فعال</option>
-                                                <option @if($driver->sms == 'disable') selected @endif value="disable">غیر فعال</option>
-                                            </select>
-                                        </div>
+                            <div class="mb-3 col">
+                                <div class="row">
+                                    <div class="col">
+                                        <label class="form-label" for="basic-default-company">نوتیفیکشن :</label>
+                                        <select class="form-control form-select" name="notification" id="">
+                                            <option @if ($driver->notification == 'enable') selected @endif value="enable">فعال
+                                            </option>
+                                            <option @if ($driver->notification == 'disable') selected @endif value="disable">غیر
+                                                فعال</option>
+                                        </select>
+                                    </div>
+                                    <div class="col">
+                                        <label class="form-label" for="basic-default-company">پیامک :</label>
+                                        <select class="form-control form-select" name="sms" id="">
+                                            <option @if ($driver->sms == 'enable') selected @endif value="enable">فعال
+                                            </option>
+                                            <option @if ($driver->sms == 'disable') selected @endif value="disable">غیر
+                                                فعال</option>
+                                        </select>
                                     </div>
                                 </div>
+                            </div>
                             {{-- <!--@endif--> --}}
                         </div>
 
@@ -383,6 +404,31 @@
             @endforeach
         </div>
     </div>
+@endsection
 
 
-@stop
+@section('script')
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const wrapper = document.getElementById("mobileNumbersWrapper");
+        const addBtn = document.getElementById("addMobile");
+
+        addBtn.addEventListener("click", function() {
+            const div = document.createElement("div");
+            div.classList.add("input-group", "mb-2");
+            div.innerHTML = `
+                <input class="form-control" name="mobileNumbers[]" type="text" placeholder="شماره موبایل">
+                <button type="button" class="btn btn-danger removeMobile">-</button>
+            `;
+            wrapper.appendChild(div);
+        });
+
+        wrapper.addEventListener("click", function(e) {
+            if (e.target.classList.contains("removeMobile")) {
+                e.target.parentElement.remove();
+            }
+        });
+    });
+</script>
+@endsection
+

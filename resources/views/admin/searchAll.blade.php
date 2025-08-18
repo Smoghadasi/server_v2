@@ -85,7 +85,12 @@
                                     @endif
                                 </td>
                                 <td>{{ $driver->version ?? '-' }}</td>
-                                <td>{{ $driver->mobileNumber }}</td>
+                                <td>
+                                    <span class="text-primary">{{ $driver->mobileNumber }}</span>
+                                    @foreach ($driver->driverMobiles as $driverMobile)
+                                        , {{ $driverMobile->mobileNumber }}
+                                    @endforeach
+                                </td>
                                 <td>{{ $driver->provinceOwner?->name ?? '-' }} {{ $driver->cityOwner?->name ?? '-' }}</td>
                                 <td>
                                     <a class="btn btn-primary btn-sm"
@@ -191,7 +196,11 @@
                                     @endswitch
                                 </td>
                                 <td>{{ $owner->nationalCode }}</td>
-                                <td>{{ $owner->mobileNumber }}</td>
+                                <td> <span class="text-primary">{{ $owner->mobileNumber }}</span>
+                                    @foreach ($owner->ownerMobiles as $ownerMobile)
+                                        , {{ $ownerMobile->mobileNumber }}
+                                    @endforeach
+                                </td>
                                 <td>
                                     <a href="{{ route('owner.loads', $owner->id) }}">{{ $owner->numOfLoads }}</a>
                                 </td>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Owner;
 use App\Http\Controllers\Controller;
 use App\Models\OperatorOwnerAuthMessage;
 use App\Models\Owner;
+use App\Models\OwnerMobile;
 use App\Models\ProvinceCity;
 use Exception;
 use Illuminate\Http\Request;
@@ -132,7 +133,8 @@ class AuthController extends Controller
      */
     public function edit(string $id)
     {
-        $ownerAuth = Owner::with('operatorMessages')->where('id', $id)->first();
+        $ownerAuth = Owner::with('operatorMessages', 'ownerMobiles')->whereId($id)->first();
+        // return $ownerAuth;
         $provinces = ProvinceCity::where('parent_id', '=', 0)->get();
 
         return view('admin.auth.owner.edit', compact('ownerAuth', 'provinces'));
@@ -166,8 +168,25 @@ class AuthController extends Controller
             $ownerAuth->save();
         }
 
-        $input = $request->all();
-        $ownerAuth->fill($input)->save();
+        // فیلدهای اصلی OwnerAuth
+        $ownerAuth->name         = $request->input('name');
+        $ownerAuth->lastName     = $request->input('lastName');
+        $ownerAuth->nationalCode = $request->input('nationalCode');
+        $ownerAuth->mobileNumber = $request->input('mobileNumber');
+        $ownerAuth->isOwner      = $request->input('isOwner');
+        $ownerAuth->isAccepted   = $request->input('isAccepted');
+        $ownerAuth->isLimitLoad  = $request->input('isLimitLoad');
+        $ownerAuth->address      = $request->input('address');
+        $ownerAuth->postalCode   = $request->input('postalCode');
+        $ownerAuth->province_id  = $request->input('province_id');
+        $ownerAuth->description  = $request->input('description');
+        $ownerAuth->companyName  = $request->input('companyName');
+        $ownerAuth->companyID    = $request->input('companyID');
+        $ownerAuth->notification = $request->input('notification');
+        $ownerAuth->sms          = $request->input('sms');
+
+        // ذخیره تغییرات
+        $ownerAuth->save();
 
         if ($request->file('sanaImage'))
             $ownerAuth->sanaImage = $this->storePicOfOwner($request->file('sanaImage'), "sanaImage", $ownerAuth);
@@ -179,6 +198,19 @@ class AuthController extends Controller
             $ownerAuth->nationalFaceImage = $this->storePicOfOwner($request->file('nationalFaceImage'), "nationalFaceImage", $ownerAuth);
 
         $ownerAuth->save();
+
+        // حذف شماره‌های قبلی
+        $ownerAuth->ownerMobiles()->delete();
+        // ثبت شماره‌های جدید
+        if ($request->mobileNumbers) {
+            foreach ($request->mobileNumbers as $number) {
+                if (!empty($number)) {
+                    $ownerAuth->ownerMobiles()->create([
+                        'mobileNumber' => $number,
+                    ]);
+                }
+            }
+        }
 
         return back()->with("success", "با موفقیت ویرایش شد");
     }

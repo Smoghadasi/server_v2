@@ -124,6 +124,11 @@ class Driver extends Authenticatable
         return $this->hasMany(DriverActivity::class);
     }
 
+    public function driverMobiles()
+    {
+        return $this->hasMany(DriverMobile::class);
+    }
+
 
     /**
      * @return bool

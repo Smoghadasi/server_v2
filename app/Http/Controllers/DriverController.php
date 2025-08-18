@@ -329,6 +329,19 @@ class DriverController extends Controller
             }
             $driver->save();
 
+            // حذف شماره‌های قبلی
+            $driver->driverMobiles()->delete();
+            // ثبت شماره‌های جدید
+            if ($request->mobileNumbers) {
+                foreach ($request->mobileNumbers as $number) {
+                    if (!empty($number)) {
+                        $driver->driverMobiles()->create([
+                            'mobileNumber' => $number,
+                        ]);
+                    }
+                }
+            }
+
             try {
 
                 OperatorDriverAuthMessage::where('driver_id', $driver->id)

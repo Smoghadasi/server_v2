@@ -39,6 +39,26 @@
                                     value="{{ $ownerAuth->mobileNumber }}" id="mobileNumber">
                             </div>
                         </div>
+                        <div class="mb-3 row">
+                            <label class="col-md-2 col-form-label">دیگر شماره موبایل</label>
+                            <div class="col-md-10">
+                                <div id="mobileNumbersWrapper">
+                                    {{-- شماره‌های قبلی --}}
+                                    @foreach ($ownerAuth->ownerMobiles as $mobile)
+                                        <div class="input-group mb-2">
+                                            <input class="form-control" name="mobileNumbers[]" type="text"
+                                                   value="{{ $mobile->mobileNumber }}" placeholder="شماره موبایل">
+                                            <button type="button" class="btn btn-danger removeMobile">-</button>
+                                        </div>
+                                    @endforeach
+                                </div>
+
+                                {{-- دکمه اضافه کردن --}}
+                                <button type="button" class="btn btn-success mt-2" id="addMobile">+</button>
+                            </div>
+                        </div>
+
+
                         @if (auth()->user()->role == 'admin' || auth()->user()->id == 29 || auth()->user()->id == 69)
                             <div class="mb-3 row">
                                 <label for="isOwner" class="col-md-2 col-form-label">نوع</label>
@@ -63,7 +83,8 @@
                                 </div>
                             </div>
                             <div class="mb-3 row">
-                                <label for="isLimitLoad" class="col-md-2 col-form-label">محدودیت بعد {{ LIMIT_OWNER_CALL }} از تماس</label>
+                                <label for="isLimitLoad" class="col-md-2 col-form-label">محدودیت بعد {{ LIMIT_OWNER_CALL }}
+                                    از تماس</label>
                                 <div class="col-md-10">
                                     <select class="form-select" name="isLimitLoad" id="isLimitLoad">
                                         <option @if ($ownerAuth->isLimitLoad == 0) selected @endif value="0">تایید نشده
@@ -248,4 +269,28 @@
             </div>
         </div>
     </div>
+@endsection
+@section('script')
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const wrapper = document.getElementById("mobileNumbersWrapper");
+            const addBtn = document.getElementById("addMobile");
+
+            addBtn.addEventListener("click", function() {
+                const div = document.createElement("div");
+                div.classList.add("input-group", "mb-2");
+                div.innerHTML = `
+                <input class="form-control" name="mobileNumbers[]" type="text" placeholder="شماره موبایل">
+                <button type="button" class="btn btn-danger removeMobile">-</button>
+            `;
+                wrapper.appendChild(div);
+            });
+
+            wrapper.addEventListener("click", function(e) {
+                if (e.target.classList.contains("removeMobile")) {
+                    e.target.parentElement.remove();
+                }
+            });
+        });
+    </script>
 @endsection

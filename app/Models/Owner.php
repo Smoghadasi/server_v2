@@ -49,6 +49,12 @@ class Owner extends Model
     {
         return $this->morphOne(Bookmark::class, 'userable');
     }
+
+    public function ownerMobiles()
+    {
+        return $this->hasMany(OwnerMobile::class);
+    }
+
     public function acceptCustomerSmsIr($mobile)
     {
         $curl = curl_init();
