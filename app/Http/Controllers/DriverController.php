@@ -1421,11 +1421,11 @@ class DriverController extends Controller
                         $free_subscription->save();
                         $driver->freeCallTotal += $request->freeCalls;
                         $driver->save();
-                        if (!empty($driver->FCM_token) && $driver->version > 68) {
-                            $title = 'ایران ترابر رانندگان';
-                            $body  = "تماس رایگان برای شما فعال شد";
-                            $this->sendNotificationWeb($driver->FCM_token, $title, $body);
-                        }
+                        // if (!empty($driver->FCM_token) && $driver->version > 68) {
+                        //     $title = 'ایران ترابر رانندگان';
+                        //     $body  = "تماس رایگان برای شما فعال شد";
+                        //     $this->sendNotificationWeb($driver->FCM_token, $title, $body);
+                        // }
                     }
                     if ($request->freeAcceptLoads > 0) {
                         $free_subscription = new FreeSubscription();
@@ -1483,11 +1483,11 @@ class DriverController extends Controller
                         $free_subscription->save();
                         $driver->freeCallTotal += $request->freeCalls;
                         $driver->save();
-                        if (!empty($driver->FCM_token) && $driver->version > 68) {
-                            $title = 'ایران ترابر رانندگان';
-                            $body  = "{$request->freeCalls} تماس رایگان برای شما فعال شد";
-                            $this->sendNotificationWeb($driver->FCM_token, $title, $body);
-                        }
+                        // if (!empty($driver->FCM_token) && $driver->version > 68) {
+                        //     $title = 'ایران ترابر رانندگان';
+                        //     $body  = "{$request->freeCalls} تماس رایگان برای شما فعال شد";
+                        //     $this->sendNotificationWeb($driver->FCM_token, $title, $body);
+                        // }
                     }
                     if ($request->freeAcceptLoads > 0) {
                         $free_subscription = new FreeSubscription();
@@ -1549,11 +1549,11 @@ class DriverController extends Controller
                     $free_subscription->save();
                     $driver->freeCallTotal += $request->freeCalls;
                     $driver->save();
-                    if (!empty($driver->FCM_token) && $driver->version > 68) {
-                        $title = 'ایران ترابر رانندگان';
-                        $body  = "{$request->freeCalls} تماس رایگان برای شما فعال شد";
-                        $this->sendNotificationWeb($driver->FCM_token, $title, $body);
-                    }
+                    // if (!empty($driver->FCM_token) && $driver->version > 68) {
+                    //     $title = 'ایران ترابر رانندگان';
+                    //     $body  = "{$request->freeCalls} تماس رایگان برای شما فعال شد";
+                    //     $this->sendNotificationWeb($driver->FCM_token, $title, $body);
+                    // }
                 }
                 if ($request->freeAcceptLoads > 0) {
                     $free_subscription = new FreeSubscription();
