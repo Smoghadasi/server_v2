@@ -1010,13 +1010,13 @@ class LoadController extends Controller
                         $fleetLoad->save();
 
 
-                        $fleet_khavar = ['45', '47', '46', '64'];
-                        if (in_array($fleetLoad->fleet_id, $fleet_khavar)) {
-                            $notification = new Notification();
-                            $notification->message = "یک بار جدید با ناوگان خاور ($load->fromCity) به ($load->toCity) ثبت شد";
-                            $notification->link = route('loadInfo', $fleetLoad->load_id);
-                            $notification->save();
-                        }
+                        // $fleet_khavar = ['45', '47', '46', '64'];
+                        // if (in_array($fleetLoad->fleet_id, $fleet_khavar)) {
+                        //     $notification = new Notification();
+                        //     $notification->message = "یک بار جدید با ناوگان خاور ($load->fromCity) به ($load->toCity) ثبت شد";
+                        //     $notification->link = route('loadInfo', $fleetLoad->load_id);
+                        //     $notification->save();
+                        // }
 
                         try {
                             $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');

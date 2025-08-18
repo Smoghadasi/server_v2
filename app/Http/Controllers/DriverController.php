@@ -114,9 +114,9 @@ class DriverController extends Controller
         $drivers = Driver::where('version', $version)
             ->where('activeDate', '>', now())
             ->paginate(5);
-            // ->inRandomOrder()
-            // ->take(5)
-            // ->get();
+        // ->inRandomOrder()
+        // ->take(5)
+        // ->get();
 
         return view('admin.driver.driverActive', compact('version', 'drivers'));
     }
@@ -694,7 +694,7 @@ class DriverController extends Controller
             ->orderByDesc('created_at')
             ->paginate(15);
         // return $freeSubscriptions;
-        return view('admin/driverInfo', compact('driver', 'freeSubscriptions', 'supports', 'freeCallTotal'));
+        return view('admin.driverInfo', compact('driver', 'freeSubscriptions', 'supports', 'freeCallTotal'));
     }
 
     // ریپورت کردن راننده توسط باربری
@@ -1478,6 +1478,11 @@ class DriverController extends Controller
                         $free_subscription->save();
                         $driver->freeCallTotal += $request->freeCalls;
                         $driver->save();
+                        if (!empty($driver->FCM_token) && $driver->version > 68) {
+                            $title = 'ایران ترابر رانندگان';
+                            $body  = "{$request->freeCalls} تماس رایگان برای شما فعال شد";
+                            $this->sendNotificationWeb($driver->FCM_token, $title, $body);
+                        }
                     }
                     if ($request->freeAcceptLoads > 0) {
                         $free_subscription = new FreeSubscription();
@@ -1552,6 +1557,76 @@ class DriverController extends Controller
             }
         }
         return redirect('admin/drivers')->with('danger', 'خطا در تمدید اعتبار راننده!');
+    }
+
+    private function sendNotificationWeb($FCM_token, $title, $body, $loadId = '/')
+    {
+        $serviceAccountPath = base_path('public/assets/zarin-tarabar-firebase-adminsdk-9x6c3-7dbc939cac.json');
+        $serviceAccountJson = file_get_contents($serviceAccountPath);
+        $serviceAccount = json_decode($serviceAccountJson, true);
+
+        $clientEmail = $serviceAccount['client_email'];
+        $privateKey = $serviceAccount['private_key'];
+        $header = json_encode(['alg' => 'RS256', 'typ' => 'JWT']);
+        $now = time();
+        $expiration = $now + 3600;
+        $payload = json_encode([
+            'iss' => $clientEmail,
+            'scope' => 'https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/firebase.messaging',
+            'aud' => 'https://oauth2.googleapis.com/token',
+            'exp' => $expiration,
+            'iat' => $now
+        ]);
+
+        // Encode to base64
+        $base64UrlHeader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
+        $base64UrlPayload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
+        // Create the signature
+        $signatureInput = $base64UrlHeader . "." . $base64UrlPayload;
+        openssl_sign($signatureInput, $signature, $privateKey, 'sha256');
+        $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
+        // Create the JWT
+        $jwt = $base64UrlHeader . "." . $base64UrlPayload . "." . $base64UrlSignature;
+        // Exchange JWT for an access token
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://oauth2.googleapis.com/token');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
+            'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+            'assertion' => $jwt
+        ]));
+        $response = curl_exec($ch);
+        curl_close($ch);
+        $responseData = json_decode($response, true);
+        $accessToken = $responseData['access_token'];
+
+        $url = 'https://fcm.googleapis.com/v1/projects/zarin-tarabar/messages:send';
+        $notification = [
+            "message" => [
+                "token" => $FCM_token,
+                "notification" => [
+                    "title" => $title,
+                    "body" => $body
+                ],
+                "data" => [
+                    "route" => $loadId ? '/' . $loadId : '',
+                ]
+            ],
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Authorization: Bearer ' . $accessToken,
+            'Content-Type: application/json'
+        ]);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($notification));
+        curl_exec($ch);
+        curl_close($ch);
     }
 
     /**
