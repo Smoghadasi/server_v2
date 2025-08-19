@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendPushNotificationPersonalizeJob;
 use App\Models\Bearing;
 use App\Models\BlockPhoneNumber;
 use App\Models\BotTest;
@@ -18,6 +19,7 @@ use App\Models\FleetLoad;
 use App\Models\Load;
 use App\Models\LoadBackup;
 use App\Models\CargoReportByFleet;
+use App\Models\Driver;
 use App\Models\DriverCall;
 use App\Models\Equivalent;
 use App\Models\FleetlessNumbers;
@@ -114,13 +116,28 @@ class DataConvertController extends Controller
     {
 
         $cargo = CargoConvertList::where([
-            ['operator_id', auth()->id()],
+            ['cargo', 'like', '%' . 'نیسان پلاس' . '%'],
+            // ['operator_id', auth()->id()],
             ['status', 0],
             ['isBlocked', 0],
-            ['isDuplicate', 0]
+            ['isDuplicate', 0],
         ])
+            // ->orwhere([
+            //     // ['operator_id', auth()->id()],
+            //     ['cargo', 'like', '%' . 'مسقف' . '%'],
+            //     ['status', 0],
+            //     ['isBlocked', 0],
+            //     ['isDuplicate', 0],
+            // ])
+            ->orWhere([
+                ['operator_id', auth()->id()],
+                ['status', 0],
+                ['isBlocked', 0],
+                ['isDuplicate', 0]
+            ])
             ->orderby('id', 'desc')
             ->first();
+        // return $cargo;
 
         $operatorCargoListAccess = OperatorCargoListAccess::where('user_id', auth()->id())
             ->select('fleet_id')
@@ -188,6 +205,7 @@ class DataConvertController extends Controller
                 ->where('parent_id', '!=', '0')
                 ->pluck('title')
                 ->toArray();
+            // return $matches;
             // Prepend default if no fleet equivalents found
             if (empty($equivalents) && empty($fleets) && FleetlessNumbers::where('mobileNumber', $matches)->count() > 0) {
                 $cargo->cargo = "( نیسان پلاس ) \n" . $cargo->cargo;
@@ -994,6 +1012,49 @@ class DataConvertController extends Controller
                 } catch (\Exception $th) {
                     //throw $th;
                 }
+
+                // ارسال نوتیفیکیشن برای باری های مبدا برای بار امروز
+                // try {
+                //     $fleets = FleetLoad::where('load_id', $load->id)->pluck('fleet_id');
+
+                //     $checkloads = Load::whereHas('fleetLoads', function ($query) use ($fleets) {
+                //         $query->whereIn('fleet_id', $fleets);
+                //     })
+                //         ->where('origin_state_id', $load->origin_state_id)
+                //         ->where('created_at', '>', now()->startOfDay())
+                //         ->withTrashed()
+                //         ->exists();
+
+                //     if (!$checkloads) {
+
+                //         if ($fleets->isNotEmpty()) {
+                //             $driverFCM_tokens = Driver::whereNotNull('FCM_token')
+                //                 ->where('province_id', $load->origin_state_id)
+                //                 ->whereIn('fleet_id', $fleets)
+                //                 ->where('version', '>', 65)
+                //                 ->where('notification', 'enable')
+                //                 ->pluck('FCM_token')
+                //                 ->toArray();
+
+                //             if ($driverFCM_tokens->isNotEmpty()) {
+                //                 $title = 'ایران ترابر رانندگان';
+                //                 $body = 'بار جدیدی در مبدا شما ثبت شد';
+
+                //                 $chunks = array_chunk($driverFCM_tokens, 100);
+
+                //                 foreach ($chunks as $chunk) {
+                //                     dispatch(new SendPushNotificationPersonalizeJob($chunk, $title, $body));
+                //                 }
+                //                 // foreach ($driverFCM_tokens as $driverFCM_token) {
+                //                 //     $this->sendNotificationWeb($driverFCM_token, $title, $body, $load->id);
+                //                 // }
+                //             }
+                //         }
+                //     }
+                // } catch (\Exception $e) {
+                //     Log::warning($e->getMessage());
+                // }
+
                 // if ($load->isBot == 0 && Setting::first()->accept_load == 1) {
 
                 //     $firstLoad = FirstLoad::where('mobileNumberForCoordination', $load->mobileNumberForCoordination)->first();
