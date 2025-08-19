@@ -116,24 +116,10 @@ class DataConvertController extends Controller
     {
 
         $cargo = CargoConvertList::where([
-            ['cargo', 'like', '%' . 'نیسان پلاس' . '%'],
-            // ['operator_id', auth()->id()],
-            ['status', 0],
-            ['isBlocked', 0],
-            ['isDuplicate', 0],
-        ])
-            // ->orwhere([
-            //     // ['operator_id', auth()->id()],
-            //     ['cargo', 'like', '%' . 'مسقف' . '%'],
-            //     ['status', 0],
-            //     ['isBlocked', 0],
-            //     ['isDuplicate', 0],
-            // ])
-            ->orWhere([
                 ['operator_id', auth()->id()],
                 ['status', 0],
                 ['isBlocked', 0],
-                ['isDuplicate', 0]
+                ['isDuplicate', 0],
             ])
             ->orderby('id', 'desc')
             ->first();
