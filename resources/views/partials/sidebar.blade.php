@@ -742,7 +742,11 @@
                     </li>
                 @endif --}}
 
-
+                <li class="menu-item">
+                    <a class="menu-link" href="{{ route('freightInquiries.index') }}">
+                        <div data-i18n="Without menu">استعلام کرایه</div>
+                    </a>
+                </li>
                 @if (in_array('services', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/services') }}">
