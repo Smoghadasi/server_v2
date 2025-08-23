@@ -7,6 +7,11 @@
                 <div class="col-6">
                     اشتراک های دستی
                 </div>
+                <div class="col-6 text-end">
+                    <a class="btn btn-outline-primary btn-sm" href="{{ route('drivers-payment-report', ['mobileNumber' => $mobileNumber]) }}">
+                        گزارش تراکنش ها
+                    </a>
+                </div>
             </div>
         </h5>
         <div class="card-body">

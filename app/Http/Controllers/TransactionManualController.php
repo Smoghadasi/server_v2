@@ -281,6 +281,7 @@ class TransactionManualController extends Controller
 
     public function search(Request $request)
     {
+        $mobileNumber = $request->mobileNumber;
         $transactionManuals = TransactionManual::with('driver')
             ->when($request->mobileNumber !== null, function ($query) use ($request) {
                 return $query->whereHas('driver', function ($q) use ($request) {
@@ -332,7 +333,8 @@ class TransactionManualController extends Controller
         return view('admin.transactionManual.search', compact([
             'transactionManuals',
             'oldtransactionManuals',
-            'oldtransactionNonDrivers'
+            'oldtransactionNonDrivers',
+            'mobileNumber'
         ]));
     }
 }
