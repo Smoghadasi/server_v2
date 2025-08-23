@@ -39,7 +39,7 @@ class TransactionManual extends Model
                 ['driver_id', $this->driver_id]
             ])
                 ->select('id', 'created_at', 'date')
-                ->orderBy('created_at', 'asc')
+                ->orderBy('created_at', 'desc')
                 ->first();
             // $date = explode(' ', $transaction->created_at);
             return $transaction->date;

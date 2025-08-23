@@ -128,6 +128,10 @@ class TransactionManualController extends Controller
             } elseif ($transactionManual->amount == SIXMONTHS) {
                 $this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, 6, $transactionManual->type == 'gift' ? true : false);
             }
+        } else {
+            $transactionManual->result = $request->result;
+            $transactionManual->result_at = now();
+            $transactionManual->save();
         }
 
         TransactionManual::whereDriverId($transactionManual->driver_id)->delete();

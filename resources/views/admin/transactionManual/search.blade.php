@@ -8,7 +8,8 @@
                     اشتراک های دستی
                 </div>
                 <div class="col-6 text-end">
-                    <a class="btn btn-outline-primary btn-sm" href="{{ route('drivers-payment-report', ['mobileNumber' => $mobileNumber]) }}">
+                    <a class="btn btn-outline-primary btn-sm"
+                        href="{{ route('drivers-payment-report', ['mobileNumber' => $mobileNumber]) }}">
                         گزارش تراکنش ها
                     </a>
                 </div>
@@ -93,8 +94,10 @@
                                 <td>
                                     {{ $transactionManual->date }}
                                 </td>
-                                <td>{{ $transactionManual->description ? Str::limit($transactionManual->description, 20, '...') : '-' }}</td>
-                                <td>{{ $transactionManual->result ? Str::limit($transactionManual->result, 20, '...') : '-' }}</td>
+                                <td>{{ $transactionManual->description ? Str::limit($transactionManual->description, 20, '...') : '-' }}
+                                </td>
+                                <td>{{ $transactionManual->result ? Str::limit($transactionManual->result, 20, '...') : '-' }}
+                                </td>
 
                                 <td class="text-center">
                                     @if ($transactionManual->deleted_at != null)
@@ -144,11 +147,23 @@
                                                                         <div class="col-md-6">
                                                                             <label for="description"
                                                                                 class="form-label">وضعیت</label>
-                                                                            <select name="status" class="form-select"
+                                                                            <select name="status"
+                                                                                class="form-select status-select"
                                                                                 id="">
                                                                                 <option selected value="1">فعال
                                                                                 </option>
                                                                                 <option value="0">غیر فعال</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="col-md-6 toggleResultAdmin">
+                                                                            <select class="form-control form-select"
+                                                                                name="result" id="">
+                                                                                <option value="واریزی نداشتیم">واریزی
+                                                                                    نداشتیم</option>
+                                                                                <option
+                                                                                    value="مبلغ واریزی کمتر یا اشتباه است">
+                                                                                    مبلغ واریزی کمتر یا اشتباه است
+                                                                                </option>
                                                                             </select>
                                                                         </div>
                                                                     </div>
@@ -171,7 +186,8 @@
 
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-primary btn-sm text-nowrap" data-bs-toggle="modal"
+                                    <button type="button" class="btn btn-primary btn-sm text-nowrap"
+                                        data-bs-toggle="modal"
                                         data-bs-target="#adminMessageForm_{{ $transactionManual->id }}">
                                         ویرایش
                                     </button>
@@ -344,8 +360,9 @@
                         <tbody class="small text-right">
                             <?php $i = 1; ?>
                             @php
-                                $anotherTransactions = $oldtransactionManuals->merge($oldtransactionNonDrivers)
-                                                                    ->sortByDesc('miladiDate');
+                                $anotherTransactions = $oldtransactionManuals
+                                    ->merge($oldtransactionNonDrivers)
+                                    ->sortByDesc('miladiDate');
                             @endphp
 
 
@@ -601,6 +618,29 @@
 @section('script')
     <script src="{{ asset('js/persianDatepicker.min.js') }}"></script>
     <script>
+        $(document).ready(function() {
+            // رویداد تغییر وضعیت
+            $(document).on("change", ".status-select", function() {
+                let parent = $(this).closest(".row"); // ردیف مربوطه
+                if ($(this).val() == "1") {
+                    parent.find(".toggleResultAdmin").hide(); // فعال → مخفی
+                } else {
+                    parent.find(".toggleResultAdmin").show(); // غیر فعال → نمایش
+                }
+            });
+
+            // بارگذاری اولیه
+            $(".status-select").each(function() {
+                let parent = $(this).closest(".row");
+                if ($(this).val() == "1") {
+                    parent.find(".toggleResultAdmin").hide();
+                } else {
+                    parent.find(".toggleResultAdmin").show();
+                }
+            });
+        });
+
+
         $("#fromDate").persianDatepicker({
             formatDate: "YYYY/MM/DD",
         });
