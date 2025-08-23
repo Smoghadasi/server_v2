@@ -1,5 +1,11 @@
 @extends('layouts.dashboard')
-
+@section('css')
+    <style>
+        .modal-backdrop {
+            display: none !important;
+        }
+    </style>
+@endsection
 @section('content')
     <div class="card">
         <h5 class="card-header">
