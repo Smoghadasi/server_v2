@@ -118,66 +118,52 @@
                     </div>
                 </div>
             </form>
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>نام و نام خانوادگی</th>
-                            <th>شماره همراه</th>
-                            <th>ناوگان</th>
-                            {{-- <th>مبلغ</th> --}}
-                            {{-- <th>نوع</th> --}}
-                            <th>تاریخ اولین واریز</th>
-                            <th>تاریخ آخرین تماس</th>
-                            <th>تاریخ آخرین اشتراک</th>
-                            <th>پاسخ ادمین</th>
-                            {{-- <th>وضعیت</th> --}}
-                            {{-- <th>عملیات</th> --}}
-                        </tr>
-                    </thead>
-                    <tbody class="small text-right">
-                        <?php $i = 1; ?>
-                        @forelse ($transactionManuals as $key => $transactionManual)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
+            <div class="nav-align-top mb-4">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab"
+                            data-bs-target="#navs-top-home" aria-controls="navs-top-home" aria-selected="true">
+                            کارت به کارت
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" class="nav-link" role="tab" data-bs-toggle="tab"
+                            data-bs-target="#navs-top-profile" aria-controls="navs-top-profile" aria-selected="false">
+                            آنلاین
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" class="nav-link" role="tab" data-bs-toggle="tab"
+                            data-bs-target="#navs-top-messages" aria-controls="navs-top-messages" aria-selected="false">
+                            هدیه
+                        </button>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="navs-top-home" role="tabpanel">
+                        @include('admin.transactionManual.partials.transaction-table', [
+                            'transactionManuals' => $transactionManuals,
+                            'type' => 'کارت به کارت',
+                        ])
+                    </div>
 
-                                <td>
-                                    <a href="{{ route('transaction-manual.show', $transactionManual->driver_id) }}">
-                                        {{ $transactionManual->driver->name }}
-                                        {{ $transactionManual->driver->lastName }}
-                                        {{ '(' . $transactionManual->total . ')' }}
-                                    </a>
-                                </td>
+                    <div class="tab-pane fade" id="navs-top-profile" role="tabpanel">
+                        @include('admin.transactionManual.partials.transaction-table', [
+                            'transactionManuals' => $transactionManuals,
+                            'type' => 'آنلاین',
+                        ])
+                    </div>
 
-                                <td>{{ $transactionManual->driver->mobileNumber }}</td>
+                    <div class="tab-pane fade" id="navs-top-messages" role="tabpanel">
+                        @include('admin.transactionManual.partials.transaction-table', [
+                            'transactionManuals' => $transactionManuals,
+                            'type' => 'gift',
+                        ])
+                    </div>
 
-                                <td>{{ \App\Http\Controllers\FleetController::getFleetName($transactionManual->driver->fleet_id) }}
-                                </td>
-
-                                <td>
-                                    {{ $transactionManual->lastPaymentDate }}
-                                </td>
-                                <td>
-                                    {{ $transactionManual->firstPaymentDate }}
-                                </td>
-                                <td>
-                                    {{ $transactionManual->lastActiveDate }}
-                                </td>
-                                <td>
-                                    {{ $transactionManual->lastAdminMessage }}
-                                </td>
-                            </tr>
-                        @empty
-                            <tr class="text-center">
-                                <td colspan="10">
-                                    دیتا مورد نظر یافت نشد
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                </div>
             </div>
+
 
         </div>
     </div>
@@ -285,7 +271,7 @@
                                                                                 name="mobileNumber" class="form-control"
                                                                                 required placeholder="شماره موبایل" />
                                                                         </div>
-                                                                        <div class="col-md-6">
+                                                                        {{-- <div class="col-md-6">
                                                                             <label for="description"
                                                                                 class="form-label">وضعیت</label>
                                                                             <select name="status" class="form-select"
@@ -294,8 +280,18 @@
                                                                                 </option>
                                                                                 <option value="0">غیر فعال</option>
                                                                             </select>
-                                                                        </div>
+                                                                        </div> --}}
                                                                     </div>
+                                                                    {{-- <div class="row">
+                                                                        <div class="col-6">
+                                                                            <select class="form-control form-select" name="result" id="">
+                                                                                <option value="واریزی نداشتیم">واریزی نداشتیم</option>
+                                                                                <option value="مبلغ واریزی کمتر یا اشتباه است">
+                                                                                    مبلغ واریزی کمتر یا اشتباه است
+                                                                                </option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div> --}}
                                                                 </div>
                                                                 <div class="modal-footer">
                                                                     <button type="button"
