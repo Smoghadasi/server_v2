@@ -873,7 +873,6 @@ class PayController extends Controller
             try {
                 $numOfDays = getNumOfCurrentMonthDays();
             } catch (Exception $e) {
-
                 Log::warning("getNumOfCurrentMonthDays failed: " . $e->getMessage());
             }
 
@@ -889,10 +888,28 @@ class PayController extends Controller
 
             try {
                 if (!empty($driver->FCM_token) && $driver->version > 68) {
-                    $title = 'راننده عزیز، 🎉';
-                    $body  = "اعتبار برای شما فعال شد.\nهمین حالا می‌تونی با صاحب بار مورد نظرت تماس بگیری 📞";
+                    $today = date('Y/m/d');
+                    $persianDate = gregorianDateToPersian($today, '/');
 
-                    // dispatch(new SendNotificationJob($driver->FCM_token, $title, $body));
+                    // نگاشت ماه‌ها به تعداد روز
+                    $packageMonths = [
+                        '1' => '+30 day',
+                        '3' => '+90 day',
+                        '6' => '+180 day',
+                    ];
+
+                    // محاسبه تاریخ انقضا بر اساس پکیج
+                    $expireDate = '';
+                    if (!empty($packageMonths[$transaction->monthsOfThePackage])) {
+                        $expireDate = gregorianDateToPersian(
+                            date('Y/m/d', strtotime($packageMonths[$transaction->monthsOfThePackage])),
+                            '/'
+                        );
+                    }
+                    // پیام
+                    $title = 'راننده عزیز، 🎉';
+                    $body  = "خرید شما در تاریخ {$persianDate} با موفقیت انجام شد.\nتاریخ پایان اعتبار: {$expireDate} 📞";
+
                     $this->sendNotificationWeb($driver->FCM_token, $title, $body);
                 }
             } catch (\Exception $e) {
