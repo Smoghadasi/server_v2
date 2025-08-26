@@ -319,15 +319,22 @@ class DataConvertController extends Controller
 
     public function dataConvert($cargo)
     {
-        $prefixFreightConditions = array('صافی', 'صاف', 'هرتن', 'کرایه', 'قیمت');
-        $postfixFreightConditions = array('صافی', 'صاف', 'هرتن', 'کرایه', 'م', 'میلیون');
-        $originalText = $cargo->cargo;
-        $fleetsList = $this->getFleetsList();
-        $citiesList = $this->getCitiesList();
-        $provincesList = $this->getProvincesList();
-        $extraWords = $this->getExtraWords();
-        $originWords = $this->getOriginWords();
+        // Static conditions
+        $prefixFreightConditions = ['صافی', 'صاف', 'هرتن', 'کرایه', 'قیمت'];
+        $postfixFreightConditions = ['صافی', 'صاف', 'هرتن', 'کرایه', 'م', 'میلیون'];
+
+        $originalText = $cargo->cargo; // <-- add this back
+
+
+        // Load data lists once
+        $fleetsList      = $this->getFleetsList();
+        $citiesList      = $this->getCitiesList();
+        $provincesList   = $this->getProvincesList();
+        $extraWords      = $this->getExtraWords();
+        $originWords     = $this->getOriginWords();
         $equivalentWords = $this->getEquivalentWords();
+
+        // Clean text
         $cleanedText = $this->getCleanedText(
             $cargo->cargo,
             $fleetsList,
@@ -339,133 +346,63 @@ class DataConvertController extends Controller
             $postfixFreightConditions,
             $provincesList
         );
-        $cargoList = [];
+
+        // --- Initialize ---
+        $cargoList     = [];
+        $origins       = [];
+        $destinations  = [];
+        $fleets        = [];
+        $phoneNumbers  = $this->extractPhoneNumbers($cleanedText);
+        $firstCity     = '';
+        $originName    = '';
+        $originProvince = null;
         $currentOrigin = -1;
-        $originPrefixWord = false;
-        $originPostfixWord = false;
-        $cityName = '';
-        $isOrigin = false;
 
-        $firstCity = ''; // اگر هیچ مبدا پیدا نشده اولی شهر مبدا است
-        $origins = [];
-        $destinations = [];
-        $fleets = [];
-
-        $phoneNumbers = [];
-        $phoneNumber = '';
-
-
-        foreach ($cleanedText as $key => $item)
-            if (preg_match("/^[0]{1}\d{10}$/", $item))
-                $phoneNumbers[] = [
-                    'phoneNumber' => $item,
-                    'key' => $key
-                ];
-
-
-        $freight = 0;
-        $priceType = '';
-
-
+        // --- Process text tokens ---
         foreach ($cleanedText as $key => $item) {
 
-
+            // Fleet detection
             if (in_array($item, $fleetsList)) {
-                if (isset($cleanedText[$key - 1]))
-                    if ($cleanedText[$key - 1] == '[_]')
-                        $fleets = [];
+                if (($cleanedText[$key - 1] ?? null) === '[_]') {
+                    $fleets = [];
+                }
                 $fleets[$item] = $item;
             }
 
-            if (in_array($item, $citiesList) == true && strlen($firstCity) == 0)
+            // First city fallback
+            if (empty($firstCity) && in_array($item, $citiesList)) {
                 $firstCity = $item;
-
-            if ($originPostfixWord && strlen($cityName) && $isOrigin) {
-                $origins[] = $cityName;
-                $currentOrigin = $key;
-                $destinations = [];
-                //                $cargoList[$currentOrigin]['originName'] = $cityName;
-                $originName = $cityName;
-
-                $origin = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $originName)));
-                $provinceName = ProvinceCity::where('name', $origin)->where('parent_id', '!=', 0)->get();
-                $originProvince = $provinceName;
-
-                $cityName = '';
             }
 
-            if (in_array($item, $citiesList) == true) {
-                $cityName = $item;
-                $origin = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $cityName)));
-                $provinceName = ProvinceCity::where('name', $origin)->where('parent_id', '!=', 0)->get();
-            }
-            if ($originPrefixWord && strlen($cityName) && $isOrigin) {
-                $currentOrigin = $key;
-                //                $cargoList[$currentOrigin]['originName'] = $cityName;
-                $originName = $cityName;
-                $originProvince = $provinceName;
-                $origins[] = $cityName;
-                $destinations = [];
-                $cityName = '';
+            // Track origins/destinations
+            if ($this->isOriginMarker($item, $key, $cleanedText, $citiesList)) {
+                $originName     = $item;
+                $originProvince = $this->getProvince($item);
+                $origins[]      = $item;
+                $destinations   = [];
+                $currentOrigin  = $key;
+                continue;
             }
 
-            if (in_array($item, ['[از]']) == true) {
+            // Destination logic
+            if ($this->isDestination($item, $citiesList, $origins, $cleanedText, $key)) {
+                $cargoPhoneNumber = $this->getNearestPhone($phoneNumbers, $key);
+                $descProvinces    = $this->getProvince($item);
 
-                $originPrefixWord = true;
-                $originPostfixWord = false;
-                $isOrigin = true;
-            } else if (in_array($item, ['[به]']) == true && strlen($cityName)) {
-                $originPostfixWord = true;
-                $originPrefixWord = false;
-                $isOrigin = true;
-            } else
-                $isOrigin = false;
-
-            $cargoPhoneNumber = '';
-            foreach ($phoneNumbers as $phoneNumberItem)
-                if ($key < $phoneNumberItem['key']) {
-                    $cargoPhoneNumber = $phoneNumberItem['phoneNumber'];
-                    break;
-                }
-
-            if ($cargoPhoneNumber == '')
-                $cargoPhoneNumber = $phoneNumber;
-
-            if ($isOrigin == false && in_array($item, $origins) == false && in_array($item, $citiesList)) {
-                if (isset($cleanedText[$key + 1]) && !in_array($cleanedText[$key + 1], ['[به]'])) {
-                    $destinations[$currentOrigin][] = $item;
-                    if ($currentOrigin > -1) {
-                        $desc = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $item)));
-                        $descProvinces = ProvinceCity::where('name', $desc)->where('parent_id', '!=', 0)->get();
-                        if (isset($originProvince)) {
-                            $cargoList[] = [
-                                'origin' => $originName,
-                                'originProvince' => $originProvince,
-                                'destination' => $item,
-                                'descProvinces' => $descProvinces,
-                                'fleets' => $fleets,
-                                'mobileNumber' => $cargoPhoneNumber,
-                                'freight' => 0,
-                                'priceType' => 'توافقی'
-                            ];
-                        } else {
-                            $cargoList[] = [
-                                'origin' => $originName,
-                                'destination' => $item,
-                                'descProvinces' => $descProvinces,
-                                'fleets' => $fleets,
-                                'mobileNumber' => $cargoPhoneNumber,
-                                'freight' => 0,
-                                'priceType' => 'توافقی'
-                            ];
-                        }
-                        // return dd($cargoList);
-
-                    }
-                }
+                $cargoList[] = [
+                    'origin'         => $originName,
+                    'originProvince' => $originProvince,
+                    'destination'    => $item,
+                    'descProvinces'  => $descProvinces,
+                    'fleets'         => $fleets,
+                    'mobileNumber'   => $cargoPhoneNumber,
+                    'freight'        => 0,
+                    'priceType'      => 'توافقی'
+                ];
             }
         }
 
+        // --- Other Data ---
         $countOfCargos = CargoConvertList::where('operator_id', 0)
             ->where('isBlocked', 0)
             ->where('isDuplicate', 0)
@@ -473,8 +410,50 @@ class DataConvertController extends Controller
 
         $users = UserController::getOnlineAndOfflineUsers();
 
-        return view('admin.storeCargoForm', compact('cargoList', 'originalText', 'cargo', 'countOfCargos', 'users'));
+        return view('admin.storeCargoForm', compact('cargoList', 'cargo', 'countOfCargos', 'users', 'originalText'));
     }
+
+    private function extractPhoneNumbers(array $text): array
+    {
+        $phones = [];
+        foreach ($text as $key => $item) {
+            if (preg_match("/^0\d{10}$/", $item)) {
+                $phones[] = ['phoneNumber' => $item, 'key' => $key];
+            }
+        }
+        return $phones;
+    }
+
+    private function getProvince(string $city)
+    {
+        $city = str_replace(['[', ']', '_'], ['', '', ' '], $city);
+        return ProvinceCity::where('name', $city)->where('parent_id', '!=', 0)->get();
+    }
+
+    private function getNearestPhone(array $phones, int $currentKey): ?string
+    {
+        foreach ($phones as $phone) {
+            if ($currentKey < $phone['key']) {
+                return $phone['phoneNumber'];
+            }
+        }
+        return null;
+    }
+
+    private function isOriginMarker(string $item, int $key, array $text, array $citiesList): bool
+    {
+        return in_array($item, $citiesList) && (
+            ($text[$key - 1] ?? '') === '[از]' || ($text[$key + 1] ?? '') === '[به]'
+        );
+    }
+
+    private function isDestination(string $item, array $citiesList, array $origins, array $text, int $key): bool
+    {
+        return in_array($item, $citiesList)
+            && !in_array($item, $origins)
+            && ($text[$key + 1] ?? '') !== '[به]';
+    }
+
 
     // جابجایی حروف فارسی با حروف عربی
     private function replaceToPersianAlphabet($text)
