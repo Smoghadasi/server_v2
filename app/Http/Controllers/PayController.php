@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendNotificationJob;
 use App\Models\Bearing;
 use App\Models\Customer;
 use App\Models\Driver;
@@ -879,10 +880,25 @@ class PayController extends Controller
             $activeTimestamp = max(strtotime($driver->activeDate ?? 'now'), time());
             $extraDays = $transaction->monthsOfThePackage * $numOfDays;
             $driver->activeDate = date('Y-m-d', $activeTimestamp + $extraDays * 86400);
-            $driver->freeCalls = 3;
+            if ($driver->freeCalls > 3) {
+                $driver->freeCalls = 3;
+            }
             $driver->save();
 
             DB::commit();
+
+            try {
+                if (!empty($driver->FCM_token) && $driver->version > 68) {
+                    $title = 'راننده عزیز، 🎉';
+                    $body  = "اعتبار برای شما فعال شد.\nهمین حالا می‌تونی با صاحب بار مورد نظرت تماس بگیری 📞";
+
+                    // dispatch(new SendNotificationJob($driver->FCM_token, $title, $body));
+                    $this->sendNotificationWeb($driver->FCM_token, $title, $body);
+                }
+            } catch (\Exception $e) {
+                Log::warning('نوتیف مربوط به افزایش اعتبار راننده');
+                Log::warning($e->getMessage());
+            }
 
             return view('users.driverPayStatus', [
                 'message' => $this->getStatusMessage(100),
@@ -900,6 +916,75 @@ class PayController extends Controller
         }
     }
 
+    private function sendNotificationWeb($FCM_token, $title, $body, $loadId = '/')
+    {
+        $serviceAccountPath = base_path('public/assets/zarin-tarabar-firebase-adminsdk-9x6c3-7dbc939cac.json');
+        $serviceAccountJson = file_get_contents($serviceAccountPath);
+        $serviceAccount = json_decode($serviceAccountJson, true);
+
+        $clientEmail = $serviceAccount['client_email'];
+        $privateKey = $serviceAccount['private_key'];
+        $header = json_encode(['alg' => 'RS256', 'typ' => 'JWT']);
+        $now = time();
+        $expiration = $now + 3600;
+        $payload = json_encode([
+            'iss' => $clientEmail,
+            'scope' => 'https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/firebase.messaging',
+            'aud' => 'https://oauth2.googleapis.com/token',
+            'exp' => $expiration,
+            'iat' => $now
+        ]);
+
+        // Encode to base64
+        $base64UrlHeader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
+        $base64UrlPayload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
+        // Create the signature
+        $signatureInput = $base64UrlHeader . "." . $base64UrlPayload;
+        openssl_sign($signatureInput, $signature, $privateKey, 'sha256');
+        $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
+        // Create the JWT
+        $jwt = $base64UrlHeader . "." . $base64UrlPayload . "." . $base64UrlSignature;
+        // Exchange JWT for an access token
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://oauth2.googleapis.com/token');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
+            'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+            'assertion' => $jwt
+        ]));
+        $response = curl_exec($ch);
+        curl_close($ch);
+        $responseData = json_decode($response, true);
+        $accessToken = $responseData['access_token'];
+
+        $url = 'https://fcm.googleapis.com/v1/projects/zarin-tarabar/messages:send';
+        $notification = [
+            "message" => [
+                "token" => $FCM_token,
+                "notification" => [
+                    "title" => $title,
+                    "body" => $body
+                ],
+                "data" => [
+                    "route" => $loadId ? '/' . $loadId : '',
+                ]
+            ],
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Authorization: Bearer ' . $accessToken,
+            'Content-Type: application/json'
+        ]);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($notification));
+        curl_exec($ch);
+        curl_close($ch);
+    }
 
     public function verifyDriverPayZibal(Request $request)
     {
