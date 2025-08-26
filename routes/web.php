@@ -63,6 +63,7 @@ use App\Http\Controllers\VacationController;
 use App\Http\Controllers\VacationHourController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\WebNotificationController;
+use App\Jobs\SendNotificationJob;
 use App\Models\City;
 // use App\Models\Driver;
 use App\Models\Load;
@@ -111,9 +112,13 @@ Route::get('/conf', function () {
 });
 
 Route::get('hourClear', function () {
-    DB::table('loads')
-        ->where('created_at', '<', now()->subMinutes(60))
-        ->update(['urgent' => 0]);
+    // DB::table('loads')
+    //     ->where('created_at', '<', now()->subMinutes(60))
+    //     ->update(['urgent' => 0]);
+    $title = 'راننده عزیز، 🎉';
+    $body  = "اعتبار برای شما فعال شد.\nهمین حالا می‌تونی با صاحب بار مورد نظرت تماس بگیری 📞";
+
+    dispatch(new SendNotificationJob('f7AYrXxfRqSjd5k5VBGVjD:APA91bFJdMjIolJAgMKaZC5XPRy6RqNzVh_CBZsVgR3sOvW6q1acM7RJQIDW2emRTfU5GQTYvrZCckwDU0GW4DGOW6y1-3iNajR_2tqi68eEkf18Mgkx9uU', $title, $body));
 });
 
 Route::get('/cache', function () {
