@@ -169,34 +169,35 @@ class DataConvertController extends Controller
 
         if (isset($cargo->id)) {
             // Normalize and clean the cargo string
-            $removeEmojis = $this->removeEmojis($cargo->cargo);
-            $cleaned = $this->replaceToPersianAlphabet($removeEmojis);
-            $normalized = str_replace(["\n", "\r"], ' ', $cleaned);
-            $normalized = preg_replace(['/[\(\)]/', '/^:\s*/'], ['', ''], $normalized);
-            preg_match('/(?:\+98|0)\d{10}/', $removeEmojis, $matches);
-            // Split and clean words
-            $words = array_filter(array_map(function ($word) {
-                $word = preg_replace(['/[:]/u', '/\s+/u'], ['', ' '], $word);
-                return trim($word);
-            }, explode(' ', $normalized)));
-            // return $words;
 
-            // Check for fleet equivalents
-            $equivalents = Equivalent::whereIn('equivalentWord', $words)
-                ->where('type', 'fleet')
-                ->pluck('equivalentWord')
-                ->toArray();
+            // $removeEmojis = $this->removeEmojis($cargo->cargo);
+            // $cleaned = $this->replaceToPersianAlphabet($removeEmojis);
+            // $normalized = str_replace(["\n", "\r"], ' ', $cleaned);
+            // $normalized = preg_replace(['/[\(\)]/', '/^:\s*/'], ['', ''], $normalized);
+            // preg_match('/(?:\+98|0)\d{10}/', $removeEmojis, $matches);
+            // // Split and clean words
+            // $words = array_filter(array_map(function ($word) {
+            //     $word = preg_replace(['/[:]/u', '/\s+/u'], ['', ' '], $word);
+            //     return trim($word);
+            // }, explode(' ', $normalized)));
+            // // return $words;
 
-            $fleets = Fleet::whereIn('title', $words)
-                ->where('parent_id', '!=', '0')
-                ->pluck('title')
-                ->toArray();
-            // return $matches;
-            // Prepend default if no fleet equivalents found
-            if (empty($equivalents) && empty($fleets) && FleetlessNumbers::where('mobileNumber', $matches)->count() > 0) {
-                $cargo->cargo = "( نیسان پلاس ) \n" . $cargo->cargo;
-                $cargo->save();
-            }
+            // // Check for fleet equivalents
+            // $equivalents = Equivalent::whereIn('equivalentWord', $words)
+            //     ->where('type', 'fleet')
+            //     ->pluck('equivalentWord')
+            //     ->toArray();
+
+            // $fleets = Fleet::whereIn('title', $words)
+            //     ->where('parent_id', '!=', '0')
+            //     ->pluck('title')
+            //     ->toArray();
+            // // return $matches;
+            // // Prepend default if no fleet equivalents found
+            // if (empty($equivalents) && empty($fleets) && FleetlessNumbers::where('mobileNumber', $matches)->count() > 0) {
+            //     $cargo->cargo = "( نیسان پلاس ) \n" . $cargo->cargo;
+            //     $cargo->save();
+            // }
 
 
             $dictionary = Equivalent::where('type', 'fleet')
