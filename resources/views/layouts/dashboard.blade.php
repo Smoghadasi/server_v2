@@ -60,7 +60,7 @@
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="{{ asset('assets-sneat/js/config.js') }}"></script>
 
-    <script src="{{ asset('assets/js/sweetAlert.js') }}"></script>
+    {{-- <script src="{{ asset('assets/js/sweetAlert.js') }}"></script> --}}
 
     {{-- <link rel="stylesheet" href="{{ asset('css/persian-datepicker.css') }}"/>
     <script src="{{ asset('assets/js/persian-date.js') }}"></script>
@@ -144,7 +144,7 @@
 
 
 </head>
-<script src="{{ asset('js/chart.js') }}"></script>
+{{-- <script src="{{ asset('js/chart.js') }}"></script> --}}
 <body dir="rtl">
 <!-- Layout wrapper -->
 <div class="layout-wrapper layout-content-navbar">

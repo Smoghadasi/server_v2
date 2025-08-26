@@ -114,143 +114,106 @@ class DataConvertController extends Controller
 
     public function finalApprovalAndStoreCargo()
     {
+        $userId = auth()->id();
 
+        // ۱. پیدا کردن باری که قبلاً به اپراتور تخصیص داده شده
         $cargo = CargoConvertList::where([
-            ['operator_id', auth()->id()],
+            ['operator_id', $userId],
             ['status', 0],
             ['isBlocked', 0],
             ['isDuplicate', 0],
         ])
-            ->orderby('id', 'desc')
+            ->latest('id')
             ->first();
-        // return $cargo;
 
-        $operatorCargoListAccess = OperatorCargoListAccess::where('user_id', auth()->id())
-            ->select('fleet_id')
-            ->pluck('fleet_id')
-            ->toArray();
+        // ۲. اگر باری برای اپراتور نبود → دنبال بار آزاد مناسب بگرد
+        if (!$cargo) {
+            $operatorCargoListAccess = OperatorCargoListAccess::where('user_id', $userId)
+                ->pluck('fleet_id')
+                ->toArray();
 
-        if (!isset($cargo->id)) {
-            if (count($operatorCargoListAccess)) {
+            $dictionary = [];
+            if ($operatorCargoListAccess) {
                 $dictionary = Equivalent::where('type', 'fleet')
                     ->whereIn('original_word_id', $operatorCargoListAccess)
-                    ->select('equivalentWord')
                     ->pluck('equivalentWord')
                     ->toArray();
-                $conditions = [];
-
-                foreach ($dictionary as $item) {
-                    $conditions[] = ['cargo', 'LIKE', '%' . $item . '%'];
-
-                    $cargo = CargoConvertList::where(function ($q) use ($conditions) {
-                        return $q->orWhere($conditions);
-                    })
-                        ->where('operator_id', 0)
-                        ->where('status', 0)
-                        ->where('isBlocked', 0)
-                        ->where('isDuplicate', 0)
-                        ->orderby('id', 'asc')
-                        ->first();
-
-                    if (isset($cargo->id)) {
-                        break;
-                    }
-                }
             }
 
-            if (!isset($cargo->id))
-                $cargo = CargoConvertList::where('operator_id', 0)
-                    ->where('status', 0)
-                    ->orderby('id', 'asc')
-                    ->where('isBlocked', 0)
-                    ->where('isDuplicate', 0)
+            // اگر دیکشنری داریم → دنبال اولین باری بگرد که یکی از کلماتش داخل بار هست
+            if ($dictionary) {
+                $cargo = CargoConvertList::where(function ($q) use ($dictionary) {
+                    foreach ($dictionary as $word) {
+                        $q->orWhere('cargo', 'LIKE', "%{$word}%");
+                    }
+                })
+                    ->where([
+                        ['operator_id', 0],
+                        ['status', 0],
+                        ['isBlocked', 0],
+                        ['isDuplicate', 0],
+                    ])
+                    ->oldest('id')
                     ->first();
+            }
+
+            // اگر باز هم بار پیدا نشد → اولین بار آزاد عمومی
+            if (!$cargo) {
+                $cargo = CargoConvertList::where([
+                    ['operator_id', 0],
+                    ['status', 0],
+                    ['isBlocked', 0],
+                    ['isDuplicate', 0],
+                ])
+                    ->oldest('id')
+                    ->first();
+            }
         }
 
-        if (isset($cargo->id)) {
-            // // Normalize and clean the cargo string
-            // $removeEmojis = $this->removeEmojis($cargo->cargo);
-            // $cleaned = $this->replaceToPersianAlphabet($removeEmojis);
-            // $normalized = str_replace(["\n", "\r"], ' ', $cleaned);
-            // $normalized = preg_replace(['/[\(\)]/', '/^:\s*/'], ['', ''], $normalized);
-            // preg_match('/(?:\+98|0)\d{10}/', $removeEmojis, $matches);
-            // // Split and clean words
-            // $words = array_filter(array_map(function ($word) {
-            //     $word = preg_replace(['/[:]/u', '/\s+/u'], ['', ' '], $word);
-            //     return trim($word);
-            // }, explode(' ', $normalized)));
-            // // return $words;
-
-            // // Check for fleet equivalents
-            // $equivalents = Equivalent::whereIn('equivalentWord', $words)
-            //     ->where('type', 'fleet')
-            //     ->pluck('equivalentWord')
-            //     ->toArray();
-
-            // $fleets = Fleet::whereIn('title', $words)
-            //     ->where('parent_id', '!=', '0')
-            //     ->pluck('title')
-            //     ->toArray();
-            // // return $matches;
-            // // Prepend default if no fleet equivalents found
-            // if (empty($equivalents) && empty($fleets) && FleetlessNumbers::where('mobileNumber', $matches)->count() > 0) {
-            //     $cargo->cargo = "( نیسان پلاس ) \n" . $cargo->cargo;
-            //     $cargo->save();
-            // }
-
-
-            $dictionary = Equivalent::where('type', 'fleet')
-                ->whereIn('original_word_id', $operatorCargoListAccess)
-                ->select('equivalentWord')
-                ->pluck('equivalentWord')
-                ->toArray();
-            $conditions = [];
-            foreach ($dictionary as $item) {
-                $oldCargo = CargoConvertList::where('cargo', 'LIKE', '%' . $item . '%')
-                    ->where('id', $cargo->id)
-                    ->where('status', 0)
-                    ->where('isBlocked', 0)
-                    ->where('isDuplicate', 0)
-                    ->first();
-
-                if (isset($oldCargo->id)) {
-                    $oldCargo->operator_id = auth()->id();
-                    $oldCargo->save();
-                    return $this->dataConvert($oldCargo);
+        // ۳. اگر بار پیدا شد → مالکیت بده به اپراتور
+        if ($cargo) {
+            // بررسی اگر بار واقعاً جزو دیکشنری اپراتور هست
+            if (!empty($dictionary)) {
+                foreach ($dictionary as $word) {
+                    if (str_contains($cargo->cargo, $word)) {
+                        $cargo->operator_id = $userId;
+                        $cargo->save();
+                        return $this->dataConvert($cargo);
+                    }
                 }
-            }
 
-            foreach ($dictionary as $item) {
-                $newCargo = CargoConvertList::where('cargo', 'LIKE', '%' . $item . '%')
-                    ->where('operator_id', 0)
-                    ->where('isBlocked', 0)
-                    ->where('isDuplicate', 0)
-                    ->orderby('id', 'asc')
+                // اگر بار فعلی نبود، دنبال بار جدیدی که match کنه
+                $newCargo = CargoConvertList::where(function ($q) use ($dictionary) {
+                    foreach ($dictionary as $word) {
+                        $q->orWhere('cargo', 'LIKE', "%{$word}%");
+                    }
+                })
+                    ->where([
+                        ['operator_id', 0],
+                        ['status', 0],
+                        ['isBlocked', 0],
+                        ['isDuplicate', 0],
+                    ])
+                    ->oldest('id')
                     ->first();
 
-                if (isset($newCargo->id)) {
-
-
-                    $newCargo->operator_id = auth()->id();
+                if ($newCargo) {
+                    $newCargo->operator_id = $userId;
                     $newCargo->save();
                     return $this->dataConvert($newCargo);
                 }
             }
-            // $words = explode(' ', $cargo->cargo);
-            // $fleets = Fleet::whereIn('title', $words)->pluck('title')->toArray();
-            // return $fleets;
-            // if ($fleets == null) {
-            //     $cargo->cargo = "نیسان پلاس\n" . $cargo->cargo;
-            // }
 
-            $cargo->operator_id = auth()->id();
+            // در نهایت بار فعلی رو بده به اپراتور
+            $cargo->operator_id = $userId;
             $cargo->save();
             return $this->dataConvert($cargo);
         }
 
-
+        // ۴. اگر هیج باری نبود → برگرد به داشبورد
         return redirect(url('dashboard'))->with('danger', 'هیچ باری وجود ندارد');
     }
+
 
     private function removeEmojis($text)
     {
@@ -318,15 +281,17 @@ class DataConvertController extends Controller
 
     public function dataConvert($cargo)
     {
-        $prefixFreightConditions = array('صافی', 'صاف', 'هرتن', 'کرایه', 'قیمت');
-        $postfixFreightConditions = array('صافی', 'صاف', 'هرتن', 'کرایه', 'م', 'میلیون');
-        $originalText = $cargo->cargo;
-        $fleetsList = $this->getFleetsList();
-        $citiesList = $this->getCitiesList();
-        $provincesList = $this->getProvincesList();
-        $extraWords = $this->getExtraWords();
-        $originWords = $this->getOriginWords();
+        $prefixFreightConditions  = ['صافی', 'صاف', 'هرتن', 'کرایه', 'قیمت'];
+        $postfixFreightConditions = ['صافی', 'صاف', 'هرتن', 'کرایه', 'م', 'میلیون'];
+
+        $originalText   = $cargo->cargo;
+        $fleetsList     = $this->getFleetsList();
+        $citiesList     = $this->getCitiesList();
+        $provincesList  = $this->getProvincesList();
+        $extraWords     = $this->getExtraWords();
+        $originWords    = $this->getOriginWords();
         $equivalentWords = $this->getEquivalentWords();
+
         $cleanedText = $this->getCleanedText(
             $cargo->cargo,
             $fleetsList,
@@ -338,133 +303,84 @@ class DataConvertController extends Controller
             $postfixFreightConditions,
             $provincesList
         );
-        $cargoList = [];
+
+        // خروجی‌ها
+        $cargoList    = [];
+        $origins      = [];
+        $fleets       = [];
+        $phoneNumbers = $this->extractPhoneNumbers($cleanedText);
+
+        // وضعیت
+        $lastCity = '';
         $currentOrigin = -1;
-        $originPrefixWord = false;
-        $originPostfixWord = false;
-        $cityName = '';
-        $isOrigin = false;
-
-        $firstCity = ''; // اگر هیچ مبدا پیدا نشده اولی شهر مبدا است
-        $origins = [];
-        $destinations = [];
-        $fleets = [];
-
-        $phoneNumbers = [];
-        $phoneNumber = '';
-
-
-        foreach ($cleanedText as $key => $item)
-            if (preg_match("/^[0]{1}\d{10}$/", $item))
-                $phoneNumbers[] = [
-                    'phoneNumber' => $item,
-                    'key' => $key
-                ];
-
-
-        $freight = 0;
-        $priceType = '';
-
+        $originName = '';
+        $originProvince = null;
+        $expectNextCityToBeOrigin = false;
 
         foreach ($cleanedText as $key => $item) {
+            $token = trim($item);
 
-
-            if (in_array($item, $fleetsList)) {
-                if (isset($cleanedText[$key - 1]))
-                    if ($cleanedText[$key - 1] == '[_]')
-                        $fleets = [];
-                $fleets[$item] = $item;
+            // فلیت
+            if (in_array($token, $fleetsList)) {
+                if (($cleanedText[$key - 1] ?? null) === '[_]') {
+                    $fleets = [];
+                }
+                $fleets[$token] = $token;
+                continue;
             }
 
-            if (in_array($item, $citiesList) == true && strlen($firstCity) == 0)
-                $firstCity = $item;
-
-            if ($originPostfixWord && strlen($cityName) && $isOrigin) {
-                $origins[] = $cityName;
-                $currentOrigin = $key;
-                $destinations = [];
-                //                $cargoList[$currentOrigin]['originName'] = $cityName;
-                $originName = $cityName;
-
-                $origin = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $originName)));
-                $provinceName = ProvinceCity::where('name', $origin)->where('parent_id', '!=', 0)->get();
-                $originProvince = $provinceName;
-
-                $cityName = '';
+            // [از] → شهر بعدی مبدا
+            if ($token === '[از]' || $token === 'از') {
+                $expectNextCityToBeOrigin = true;
+                continue;
             }
 
-            if (in_array($item, $citiesList) == true) {
-                $cityName = $item;
-                $origin = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $cityName)));
-                $provinceName = ProvinceCity::where('name', $origin)->where('parent_id', '!=', 0)->get();
-            }
-            if ($originPrefixWord && strlen($cityName) && $isOrigin) {
-                $currentOrigin = $key;
-                //                $cargoList[$currentOrigin]['originName'] = $cityName;
-                $originName = $cityName;
-                $originProvince = $provinceName;
-                $origins[] = $cityName;
-                $destinations = [];
-                $cityName = '';
+            // [به] → شهر قبلی مبدا + شهر بعدی مقصد
+            if ($token === '[به]' || $token === 'به') {
+                if (!empty($lastCity)) {
+                    $originName    = $lastCity;
+                    $originProvince = $this->getProvince($originName);
+                    $origins[]     = $originName;
+                    $currentOrigin = $key;
+                }
+                continue;
             }
 
-            if (in_array($item, ['[از]']) == true) {
+            // اگر شهر است
+            if (in_array($token, $citiesList)) {
+                $lastCity = $token;
 
-                $originPrefixWord = true;
-                $originPostfixWord = false;
-                $isOrigin = true;
-            } else if (in_array($item, ['[به]']) == true && strlen($cityName)) {
-                $originPostfixWord = true;
-                $originPrefixWord = false;
-                $isOrigin = true;
-            } else
-                $isOrigin = false;
-
-            $cargoPhoneNumber = '';
-            foreach ($phoneNumbers as $phoneNumberItem)
-                if ($key < $phoneNumberItem['key']) {
-                    $cargoPhoneNumber = $phoneNumberItem['phoneNumber'];
-                    break;
+                // اگر انتظار داشتیم مبدا باشد (بعد از [از])
+                if ($expectNextCityToBeOrigin) {
+                    $originName     = $token;
+                    $originProvince = $this->getProvince($token);
+                    $origins[]      = $token;
+                    $currentOrigin  = $key;
+                    $lastCity       = '';
+                    $expectNextCityToBeOrigin = false;
+                    continue;
                 }
 
-            if ($cargoPhoneNumber == '')
-                $cargoPhoneNumber = $phoneNumber;
+                // اگر شهری غیر از مبداها آمد → مقصد
+                if (!in_array($token, $origins) && $currentOrigin > -1) {
+                    $cargoPhoneNumber = $this->getNearestPhone($phoneNumbers, $key);
+                    $descProvinces    = $this->getProvince($token);
 
-            if ($isOrigin == false && in_array($item, $origins) == false && in_array($item, $citiesList)) {
-                if (isset($cleanedText[$key + 1]) && !in_array($cleanedText[$key + 1], ['[به]'])) {
-                    $destinations[$currentOrigin][] = $item;
-                    if ($currentOrigin > -1) {
-                        $desc = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $item)));
-                        $descProvinces = ProvinceCity::where('name', $desc)->where('parent_id', '!=', 0)->get();
-                        if (isset($originProvince)) {
-                            $cargoList[] = [
-                                'origin' => $originName,
-                                'originProvince' => $originProvince,
-                                'destination' => $item,
-                                'descProvinces' => $descProvinces,
-                                'fleets' => $fleets,
-                                'mobileNumber' => $cargoPhoneNumber,
-                                'freight' => 0,
-                                'priceType' => 'توافقی'
-                            ];
-                        } else {
-                            $cargoList[] = [
-                                'origin' => $originName,
-                                'destination' => $item,
-                                'descProvinces' => $descProvinces,
-                                'fleets' => $fleets,
-                                'mobileNumber' => $cargoPhoneNumber,
-                                'freight' => 0,
-                                'priceType' => 'توافقی'
-                            ];
-                        }
-                        // return dd($cargoList);
-
-                    }
+                    $cargoList[] = [
+                        'origin'         => $originName,
+                        'originProvince' => $originProvince,
+                        'destination'    => $token,
+                        'descProvinces'  => $descProvinces,
+                        'fleets'         => $fleets,
+                        'mobileNumber'   => $cargoPhoneNumber,
+                        'freight'        => 0,
+                        'priceType'      => 'توافقی'
+                    ];
                 }
             }
         }
 
+        // آمار + کاربرها
         $countOfCargos = CargoConvertList::where('operator_id', 0)
             ->where('isBlocked', 0)
             ->where('isDuplicate', 0)
@@ -472,8 +388,56 @@ class DataConvertController extends Controller
 
         $users = UserController::getOnlineAndOfflineUsers();
 
-        return view('admin.storeCargoForm', compact('cargoList', 'originalText', 'cargo', 'countOfCargos', 'users'));
+        return view('admin.storeCargoForm', compact(
+            'cargoList',
+            'originalText',
+            'cargo',
+            'countOfCargos',
+            'users'
+        ));
     }
+
+    private function extractPhoneNumbers(array $text): array
+    {
+        $phones = [];
+        foreach ($text as $key => $item) {
+            if (preg_match("/^0\d{10}$/", $item)) {
+                $phones[] = ['phoneNumber' => $item, 'key' => $key];
+            }
+        }
+        return $phones;
+    }
+
+    private function getProvince(string $city)
+    {
+        $city = str_replace(['[', ']', '_'], ['', '', ' '], $city);
+        return ProvinceCity::where('name', $city)->where('parent_id', '!=', 0)->get();
+    }
+
+    private function getNearestPhone(array $phones, int $currentKey): ?string
+    {
+        foreach ($phones as $phone) {
+            if ($currentKey < $phone['key']) {
+                return $phone['phoneNumber'];
+            }
+        }
+        return null;
+    }
+
+    private function isOriginMarker(string $item, int $key, array $text, array $citiesList): bool
+    {
+        return in_array($item, $citiesList) && (
+            ($text[$key - 1] ?? '') === '[از]' || ($text[$key + 1] ?? '') === '[به]'
+        );
+    }
+
+    private function isDestination(string $item, array $citiesList, array $origins, array $text, int $key): bool
+    {
+        return in_array($item, $citiesList)
+            && !in_array($item, $origins)
+            && ($text[$key + 1] ?? '') !== '[به]';
+    }
+
 
     // جابجایی حروف فارسی با حروف عربی
     private function replaceToPersianAlphabet($text)
