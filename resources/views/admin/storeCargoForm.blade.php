@@ -1,4 +1,4 @@
-@extends('layouts.dashboard_optimize')
+@extends('layouts.dashboard')
 
 @section('content')
 
