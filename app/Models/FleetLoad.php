@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 class FleetLoad extends Model
 {
     protected $appends = ['numOfSelectedDrivers', 'title'];
-
+    protected $guarded = [];
 
     public function getNumOfSelectedDriversAttribute()
     {
