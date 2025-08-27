@@ -290,6 +290,7 @@ class DataConvertController extends Controller
         $provincesList  = $this->getProvincesList();
         $extraWords     = $this->getExtraWords();
         $originWords    = $this->getOriginWords();
+        // return dd($originWords);
         $equivalentWords = $this->getEquivalentWords();
 
         $cleanedText = $this->getCleanedText(
@@ -526,12 +527,15 @@ class DataConvertController extends Controller
     // دریافت لیست کلمات اصلی
     private function getOriginWords()
     {
-        $dictionary = Equivalent::get()->pluck('originalWord');
-        $array = [];
-        foreach ($dictionary as $item)
-            $array[] = str_replace(' ', '_', $item);
+        return Cache::remember('origin_words', 60 * 5, function () {
+            $dictionary = Equivalent::get()->pluck('originalWord');
+            $array = [];
+            foreach ($dictionary as $item) {
+                $array[] = str_replace(' ', '_', $item);
+            }
 
-        return $array;
+            return $array;
+        });
     }
 
     // دریافت لیست کلمات معادل
@@ -649,6 +653,7 @@ class DataConvertController extends Controller
 
         $cargo->status = true;
         $cargo->save();
+        // return dd($cargo);
         return back()->with('success', $counter . 'بار ثبت شد');
     }
 
