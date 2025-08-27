@@ -725,6 +725,7 @@ class DataConvertController extends Controller
 
             $load->fromCity = $this->getCityName($load->origin_city_id);
             $load->toCity   = $this->getCityName($load->destination_city_id);
+            $load->origin_state_id = AddressController::geStateIdFromCityId($load->origin_city_id);
 
             $load->loadingDate = gregorianDateToPersian(now()->format('Y-m-d'), '-');
             $load->time = time();
@@ -738,7 +739,11 @@ class DataConvertController extends Controller
             $load->date = gregorianDateToPersian(now()->format('Y/m/d'), '/');
             $load->dateTime = now()->format('H:i:s');
             $load->save();
+
+
             $fleet = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $fleet)));
+
+
 
             // ✅ fleet از cache
             $fleet_id = Fleet::where('title', $fleet)->first();
@@ -768,6 +773,12 @@ class DataConvertController extends Controller
                     'numOfFleets' => 1,
                     'userType' => $load->userType
                 ]);
+
+                $load->fleets = FleetLoad::join('fleets', 'fleets.id', 'fleet_loads.fleet_id')
+                    ->where('fleet_loads.load_id', $load->id)
+                    ->select('fleet_id', 'userType', 'suggestedPrice', 'numOfFleets', 'pic', 'title')
+                    ->get();
+                $load->save();
             }
 
             $counter++;
