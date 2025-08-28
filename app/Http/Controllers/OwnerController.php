@@ -264,7 +264,7 @@ class OwnerController extends Controller
                     $query->select(DB::raw(1))
                           ->from('loads')
                           ->whereColumn('loads.user_id', 'owners.id')
-                          ->where('loads.created_at', '>=', now()->subMonths(2));
+                          ->where('loads.created_at', '>=', now()->subMonths(1));
                 })
                 ->select('owners.*')
                 ->distinct()
