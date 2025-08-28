@@ -1910,10 +1910,18 @@ class DataConvertController extends Controller
             ->when($request->cargo !== null, function ($query) use ($request) {
                 $query->where('cargo', 'LIKE', '%' . $request->cargo . '%');
             })
+            ->when($request->type !== null, function ($query) use ($request) {
+                if ($request->type == 'block') {
+                    $query->where('isBlocked', 1);
+                } elseif ($request->type == 'duplicate') {
+                    $query->where('isDuplicate', 1);
+                }
+            })
             ->groupBy('cargo')
             ->having('total', '>', 1) // فقط تکراری‌ها
             ->orderByDesc('created_at')
             ->paginate(20);
+        // return $cargoList;
 
         return view('admin.duplicateCargo.index', compact('cargoList'));
     }

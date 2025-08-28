@@ -9,13 +9,22 @@
         <div class="card-body">
             <form method="get" action="{{ route('duplicateCargoFromCargoList') }}">
                 <div class="form-group">
-                    <div class="col-md-12 row">
-                        <div class="col-md-3">
-                            <input type="text" placeholder="بار مورد نظر..." class="form-control col-md-4"
+                    <div class="row">
+                        <div class="col-md-3 col-sm-12">
+                            <input type="text" placeholder="بار مورد نظر..." class="form-control"
                                 name="cargo" id="cargo" />
                         </div>
+                        <div class="col-md-2 col-sm-12">
+                            <select name="type" class="form-control form-select" id="">
+                                <option value="">همه</option>
+                                <option value="block">بلاک</option>
+                                <option value="duplicate">تکراری</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 col-sm-12">
+                            <button type="submit" class="btn btn-primary">جستجو</button>
+                        </div>
                     </div>
-                    <button type="submit" class="btn btn-primary m-2">جستجو</button>
                 </div>
             </form>
             <div class="table-responsive">
