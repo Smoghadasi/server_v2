@@ -88,36 +88,14 @@
                             <tr>
                                 <td>{{ ($owners->currentPage() - 1) * $owners->perPage() + ++$i }}</td>
                                 <td>
-                                    @if ($owner->bookmark)
-                                        <form style="display: contents" action="{{ route('bookmark.store') }}"
-                                            method="post">
-                                            @csrf
-                                            <input type="hidden" value="{{ $owner->id }}" name="user_id">
-                                            <input type="hidden" value="owner" name="type">
-                                            <button class="btn btn-link" type="submit">
-                                                <i class='bx bxs-bookmark-star'></i>
-                                            </button>
-                                        </form>
-                                    @else
-                                        <form style="display: contents" action="{{ route('bookmark.store') }}"
-                                            method="post">
-                                            @csrf
-                                            <input type="hidden" value="{{ $owner->id }}" name="user_id">
-                                            <input type="hidden" value="owner" name="type">
-                                            <button class="btn btn-link" type="submit">
-                                                <i class='bx bx-bookmark'></i>
-                                            </button>
-                                        </form>
-                                    @endif
+
                                     {{ $owner->name }} {{ $owner->lastName }}
                                     @if ($owner->status == 1)
                                         <span class="badge bg-success">فعال</span>
                                     @else
                                         <span class="badge bg-danger">غیر فعال</span>
                                     @endif
-                                    @if ($owner->moreDayLoad >= 3)
-                                        <span class="badge bg-primary">3+</span>
-                                    @endif
+
                                     @if ($owner->isAccepted == 1)
                                         <i class="menu-icon tf-icons bx bx-check-shield text-success"></i>
                                     @endif
@@ -154,7 +132,7 @@
                                 <td>{{ $owner->nationalCode }}</td>
                                 <td>{{ $owner->mobileNumber }}</td>
                                 <td>
-                                    <a href="{{ route('owner.loads', $owner->id) }}">{{ $owner->numOfLoads }}</a>
+                                    {{-- <a href="{{ route('owner.loads', $owner->id) }}">{{ $owner->numOfLoads }}</a> --}}
                                 </td>
                                 <td>
                                     {{ $owner->version ?? 1 }}
@@ -167,7 +145,7 @@
                                 </td>
 
                                 <td>
-                                    <a class="btn btn-sm btn-primary" href="{{ route('owner.show', $owner) }}">مشاهده</a>
+                                    <a class="btn btn-sm btn-primary" href="{{ route('owner.show', $owner->id) }}">مشاهده</a>
                                 </td>
                             </tr>
                             @empty

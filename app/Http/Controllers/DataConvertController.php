@@ -1918,7 +1918,7 @@ class DataConvertController extends Controller
                 }
             })
             ->groupBy('cargo')
-            ->having('total', '>', 1) // فقط تکراری‌ها
+            // ->having('total', '>', 1) // فقط تکراری‌ها
             ->orderByDesc('created_at')
             ->paginate(20);
         // return $cargoList;

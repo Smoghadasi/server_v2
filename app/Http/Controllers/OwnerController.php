@@ -8,6 +8,7 @@ use App\Models\Load;
 use App\Models\Owner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OwnerController extends Controller
 {
@@ -36,9 +37,9 @@ class OwnerController extends Controller
 
         // if (auth()->user()->role == 'admin') {
         $owners = Owner::orderByDesc('created_at')
-        ->when($request->isLimitLoad !== null, function ($query) use ($request) {
-            return $query->where('isLimitLoad', 1);
-        })
+            ->when($request->isLimitLoad !== null, function ($query) use ($request) {
+                return $query->where('isLimitLoad', 1);
+            })
             ->paginate(10)
             ->through(fn($owner) => $owner->makeHidden(['numOfLoads', 'moreDayLoad', 'ratingOwner']));
 
@@ -198,6 +199,8 @@ class OwnerController extends Controller
         $ownerBookmarkCount = Bookmark::where('type', 'owner')->count();
         $ownerLimitLoadCount = Owner::where('isLimitLoad', 1)->count();
 
+
+
         if ($request->has('fleet_id') || $request->has('isAccepted')) {
             if (auth()->user()->role == 'admin' || Auth::id() == 29) {
                 $owners = Owner::whereHas('loads', function ($q) use ($request) {
@@ -233,7 +236,34 @@ class OwnerController extends Controller
                 ->orderby('id', 'desc')
                 ->paginate(5000);
         }
-        return view('admin.owner.index', compact(
+
+        if ($request->has('isSecure')) {
+            $owners = DB::table('owners')
+                ->leftJoin('personal_access_tokens', function ($join) {
+                    $join->on('owners.id', '=', 'personal_access_tokens.tokenable_id')
+                        ->where('personal_access_tokens.tokenable_type', '=', 'App\\Models\\Owner');
+                })
+                ->when($request->has('isSecure'), function ($query) use ($request) {
+                    if ($request->isSecure == 1) {
+                        // فقط owners با توکن
+                        $query->whereNotNull('personal_access_tokens.id');
+                    } elseif ($request->isSecure == 0) {
+                        // فقط owners بدون توکن
+                        $query->whereNull('personal_access_tokens.id');
+                    }
+                })
+                // فیلتر fleet_id
+                ->when($request->fleet_id !== null, function ($query) use ($request) {
+                    $query->join('loads', 'owners.id', '=', 'loads.user_id')
+                        ->where('loads.userType', 'owner')
+                        ->where('loads.fleets', 'LIKE', '%fleet_id":' . $request->fleet_id . ',%'); // اگر لازم است soft delete را در نظر بگیرد
+                })
+                ->select('owners.*')
+                ->distinct()
+                ->paginate(20);
+        }
+
+        return view('admin.owner.withSecure', compact(
             'owners',
             'ownerPenddingCounts',
             'ownerRejectCounts',

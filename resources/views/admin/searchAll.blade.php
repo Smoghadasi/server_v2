@@ -20,7 +20,7 @@
                             <th>کد ملی</th>
                             <th>نوع ناوگان</th>
                             <th>تاریخ ثبت نام</th>
-                            <th>کد نسخه</th>
+                            <th>ورژن</th>
                             <th>شماره تلفن همراه</th>
                             <th>استان - شهر</th>
                             <th class="text-center">عملیات</th>
@@ -122,6 +122,7 @@
                             <th>کد ملی</th>
                             <th>شماره موبایل</th>
                             <th>بار ها</th>
+                            <th>ورژن</th>
                             <th class="text-center">تاریخ</th>
                             <th>عملیات</th>
                         </tr>
@@ -203,6 +204,9 @@
                                 </td>
                                 <td>
                                     <a href="{{ route('owner.loads', $owner->id) }}">{{ $owner->numOfLoads }}</a>
+                                </td>
+                                <td>
+                                    {{ $owner->version ?? 1 }}
                                 </td>
                                 @php
                                     $pieces = explode(' ', $owner->created_at);
