@@ -256,7 +256,15 @@ class OwnerController extends Controller
                 ->when($request->fleet_id !== null, function ($query) use ($request) {
                     $query->join('loads', 'owners.id', '=', 'loads.user_id')
                         ->where('loads.userType', 'owner')
+                        ->where('loads.userType', 'owner')
                         ->where('loads.fleets', 'LIKE', '%fleet_id":' . $request->fleet_id . ',%'); // اگر لازم است soft delete را در نظر بگیرد
+                })
+                // فیلتر owners که در یک ماه اخیر load گذاشته‌اند
+                ->whereExists(function ($query) {
+                    $query->select(DB::raw(1))
+                          ->from('loads')
+                          ->whereColumn('loads.user_id', 'owners.id')
+                          ->where('loads.created_at', '>=', now()->subMonths(2));
                 })
                 ->select('owners.*')
                 ->distinct()
