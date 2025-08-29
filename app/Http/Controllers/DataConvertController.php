@@ -702,8 +702,35 @@ class DataConvertController extends Controller
             $load->senderMobileNumber = $mobileNumber;
             $load->emergencyPhone = $mobileNumber;
             $load->cargoPattern = $cargoPattern;
-            $load->user_id = auth()->id();
-            $load->userType = ROLE_OPERATOR;
+            // $load->user_id = auth()->id();
+            // $load->userType = ROLE_OPERATOR;
+            if (isSendBotLoadOwner() == true) {
+                $owner = Owner::where('mobileNumber', $mobileNumber)->first();
+                if ($owner != null) {
+                    $load->user_id = $owner->id;
+                    $load->userType = ROLE_OWNER;
+                    $load->operator_id = auth()->id();
+                    $load->isBot = 1;
+                    if (BlockPhoneNumber::where(function ($query) use ($owner, $mobileNumber) {
+                        $query->where('nationalCode', $owner->nationalCode)
+                            ->orWhere('phoneNumber', $mobileNumber);
+                    })->where(function ($query) {
+                        $query->where('type', 'operator')
+                            ->orWhere('type', 'both');
+                    })->exists()) {
+                        return;
+                    }
+                } else {
+                    $load->user_id = auth()->id();
+                    $load->userType = ROLE_OPERATOR;
+                    $load->operator_id = auth()->id();
+                }
+            } else {
+                $load->user_id = auth()->id();
+                $load->userType = ROLE_OPERATOR;
+                $load->operator_id = auth()->id();
+            }
+
             $load->operator_id = auth()->id();
             $origin = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $origin)));
             $destination = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $destination)));
