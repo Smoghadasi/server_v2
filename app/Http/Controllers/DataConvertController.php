@@ -774,12 +774,8 @@ class DataConvertController extends Controller
             $load->deliveryTime = 24;
             $load->date = gregorianDateToPersian(now()->format('Y/m/d'), '/');
             $load->dateTime = now()->format('H:i:s');
-            $load->save();
-
 
             $fleet = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $fleet)));
-
-
 
             // ✅ fleet از cache
             $fleet_id = Fleet::where('title', $fleet)->first();
@@ -802,22 +798,109 @@ class DataConvertController extends Controller
                 $fleet_id = Fleet::where('title', str_replace('ی', 'ي', str_replace('ک', 'ك', $fleet)))->first();
             }
 
-            if ($fleet_id) {
-                FleetLoad::create([
-                    'load_id' => $load->id,
-                    'fleet_id' => $fleet_id->id,
-                    'numOfFleets' => 1,
-                    'userType' => $load->userType
-                ]);
+            $conditions = [
+                'mobileNumberForCoordination' => $load->mobileNumberForCoordination,
+                'origin_city_id' => $load->origin_city_id,
+                'destination_city_id' => $load->destination_city_id,
+                ['fleets', 'LIKE', '%fleet_id":' . $fleet_id->id . ',%']
+            ];
+            $loadDuplicate = Load::where($conditions)
+                ->where('userType', 'operator')
+                ->first();
+            $loadDuplicateOwnerBot = Load::where($conditions)
+                ->where('userType', 'owner')
+                ->where('isBot', 1)
+                ->first();
+            // return dd($loadDuplicate);
 
-                $load->fleets = FleetLoad::join('fleets', 'fleets.id', 'fleet_loads.fleet_id')
-                    ->where('fleet_loads.load_id', $load->id)
-                    ->select('fleet_id', 'userType', 'suggestedPrice', 'numOfFleets', 'pic', 'title')
-                    ->get();
+            if ($loadDuplicate || $loadDuplicateOwnerBot) {
+                collect([$loadDuplicate, $loadDuplicateOwnerBot])
+                    ->filter()
+                    ->each(fn($duplicate) => $duplicate->delete());
+
                 $load->save();
             }
 
-            $counter++;
+
+            $loadDuplicateOwner = Load::where($conditions)
+                ->where('userType', 'owner')
+                ->where('isBot', 0)
+                // ->withTrashed()
+                ->first();
+
+            if (is_null($loadDuplicate) && is_null($loadDuplicateOwner)) {
+                $load->save();
+            }
+
+
+            if (isset($load->id)) {
+                $counter++;
+
+                if ($fleet_id->id == 86) {
+                    $fleet_ids = [86, 87];
+                    foreach ($fleet_ids as $id) {
+                        $fleetLoad = new FleetLoad();
+                        $fleetLoad->load_id = $load->id;
+                        $fleetLoad->fleet_id = $id;
+                        $fleetLoad->numOfFleets = 1;
+                        $fleetLoad->userType = $load->userType;
+                        $fleetLoad->save();
+                    }
+                } else {
+                    $fleetLoad = new FleetLoad();
+                    $fleetLoad->load_id = $load->id;
+                    $fleetLoad->fleet_id = $fleet_id->id;
+                    $fleetLoad->numOfFleets = 1;
+                    $fleetLoad->userType = $load->userType;
+                    $fleetLoad->save();
+                }
+                try {
+                    $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+                    // Log::emergency("Error cargo report by 1371: ");
+
+                    $cargoReport = CargoReportByFleet::where('fleet_id', $fleetLoad->fleet_id)
+                        ->where('date', $persian_date)
+                        ->first();
+                    // Log::emergency("Error cargo report by 1376: ");
+
+                    if (isset($cargoReport->id)) {
+                        $cargoReport->count += 1;
+                        $cargoReport->save();
+                    } else {
+                        $cargoReportNew = new CargoReportByFleet;
+                        $cargoReportNew->fleet_id = $fleetLoad->fleet_id;
+                        $cargoReportNew->count = 1;
+                        $cargoReportNew->date = $persian_date;
+                        $cargoReportNew->save();
+                        // Log::emergency("Error cargo report by 1387: " . $cargoReportNew);
+
+                    }
+                } catch (Exception $e) {
+                    Log::emergency("Error cargo report by fleets: " . $e->getMessage());
+                }
+
+                if ($fleet_id) {
+
+
+                    $load->fleets = FleetLoad::join('fleets', 'fleets.id', 'fleet_loads.fleet_id')
+                        ->where('fleet_loads.load_id', $load->id)
+                        ->select('fleet_id', 'userType', 'suggestedPrice', 'numOfFleets', 'pic', 'title')
+                        ->get();
+                    $load->save();
+                }
+
+
+
+                try {
+                    $ownerLoadCount = Owner::where('mobileNumber', $load->mobileNumberForCoordination)->first();
+                    if ($ownerLoadCount) {
+                        $ownerLoadCount->loadCount += 1;
+                        $ownerLoadCount->save();
+                    }
+                } catch (\Exception $th) {
+                    //throw $th;
+                }
+            }
         });
     }
 
