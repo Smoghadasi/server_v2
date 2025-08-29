@@ -731,7 +731,7 @@ class DataConvertController extends Controller
                 $load->operator_id = auth()->id();
             }
 
-            $load->operator_id = auth()->id();
+            // $load->operator_id = auth()->id();
             $origin = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $origin)));
             $destination = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $destination)));
 
