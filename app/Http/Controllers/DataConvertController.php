@@ -723,6 +723,15 @@ class DataConvertController extends Controller
             $load->origin_city_id = $originCity->id ?? null;
             $load->destination_city_id = $destinationCity->id ?? null;
 
+            try {
+                $city = ProvinceCity::where('parent_id', '!=', 0)->find($load->origin_city_id);
+                if (isset($city->id)) {
+                    $load->latitude = $city->latitude;
+                    $load->longitude = $city->longitude;
+                }
+            } catch (\Exception $exception) {
+            }
+
             $load->fromCity = $this->getCityName($load->origin_city_id);
             $load->toCity   = $this->getCityName($load->destination_city_id);
             $load->origin_state_id = AddressController::geStateIdFromCityId($load->origin_city_id);
