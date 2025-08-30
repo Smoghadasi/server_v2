@@ -889,6 +889,18 @@ class DataConvertController extends Controller
                     $load->save();
                 }
 
+                try {
+                    // گزارش بار ها بر اساس اپراتور
+                    $loadOwnerCount = LoadOwnerCount::firstOrNew([
+                        'mobileNumber' => $mobileNumber,
+                        'persian_date' => $persian_date,
+                    ]);
+
+                    $loadOwnerCount->count = ($loadOwnerCount->count ?? 0) + 1;
+                    $loadOwnerCount->save();
+                } catch (\Exception $e) {
+                    Log::emergency($exception->getMessage());
+                }
 
 
                 try {
