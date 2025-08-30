@@ -6,7 +6,9 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class Load extends Model
 {
@@ -33,6 +35,19 @@ class Load extends Model
     public function driver()
     {
         return $this->hasOne(Driver::class);
+    }
+
+    public function hasToken()
+    {
+        try {
+            if ($this->userType == 'owner' && DB::table('personal_access_tokens')->where('tokenable_type', 'App\Models\Owner')->where('tokenable_id', $this->user_id)->exists()) {
+                return 1;
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+        return 0;
+
     }
 
     public function fleet()

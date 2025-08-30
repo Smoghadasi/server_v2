@@ -97,6 +97,9 @@
                                         href="{{ route('owner.show', $load->owner->id) }}">
                                         {{ $load->owner->name }} {{ $load->owner->lastName }}
                                     </a>
+                                    @if ($load->hasToken() == 1)
+                                        <i class="menu-icon tf-icons bx bx-check-shield text-primary"></i>
+                                    @endif
                                 </td>
                                 <td>
                                     @php
