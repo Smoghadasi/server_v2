@@ -5748,8 +5748,10 @@ class LoadController extends Controller
 
     public function searchLoads(Request $request)
     {
-
+        // return $request;
         $condition = [];
+        $startDate = persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00';
+        $endDate = persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:00';
 
         if ($request->origin_city_id != "0")
             $condition[] = ['origin_city_id', $request->origin_city_id];
@@ -5766,8 +5768,12 @@ class LoadController extends Controller
 
         $loads = Load::where($condition)
             ->withTrashed()
+            ->when($request->toDate !== null, function ($query) use ($request) {
+                return $query->whereBetween('created_at', [persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00', persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:59']);
+            })
             ->orderByDesc('created_at')
             ->paginate(20);
+        // return $loads;
         $firstDateLoad = LoadOwnerCount::where('mobileNumber', $request->mobileNumber)->first();
 
         $provinces = ProvinceCity::where('parent_id', '=', 0)->get();

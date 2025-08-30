@@ -34,7 +34,8 @@
                                 </select>
                             </div>
                             <div class="col-md-3">
-                                <select class="form-control form-select col-md-3" name="destination_city_id" id="destination_city_id">
+                                <select class="form-control form-select col-md-3" name="destination_city_id"
+                                    id="destination_city_id">
                                     <option value="0">شهر مقصد</option>
                                     @foreach ($cities as $city)
                                         <option value="{{ $city->id }}">
@@ -60,7 +61,7 @@
                             <div class="col-md-3">
                                 <select class="form-control form-select col-md-4" name="operator_id" id="operator_id">
                                     <option value="0">اپراتور</option>
-                                     @foreach ($operators as $operator)
+                                    @foreach ($operators as $operator)
                                         <option value="{{ $operator->id }}">
                                             {{ $operator->name }} {{ $operator->lastName }}
                                         </option>
@@ -71,6 +72,16 @@
                             <div class="col-md-3">
                                 <input type="text" placeholder="شماره تلفن صاحب بار" class="form-control col-md-4"
                                     name="mobileNumber" id="mobileNumber" />
+                            </div>
+                            <div class="col-md-3">
+                                <input class="form-control" type="text" id="fromDate" name="fromDate"
+                                    placeholder="از تاریخ" autocomplete="off" />
+                                <span id="span1"></span>
+                            </div>
+                            <div class="col-md-3">
+                                <input class="form-control" type="text" name="toDate" id="fromDate"
+                                    placeholder="تا تاریخ" autocomplete="off" />
+                                <span id="span2"></span>
                             </div>
 
                         </div>
@@ -86,8 +97,8 @@
                             </div>
                             <div class="col-md-2 col-sm-12" style="text-align: right">
 
-                            <td>
-                                {{ $firstDateLoad ? gregorianDateToPersian($firstDateLoad->created_at, '-', true) : '-' }}
+                                <td>
+                                    {{ $firstDateLoad ? gregorianDateToPersian($firstDateLoad->created_at, '-', true) : '-' }}
                             </div>
                             <div class="col-md-2 col-sm-12" style="text-align: right">
 
@@ -98,11 +109,10 @@
                             </div>
                             <div class="col-md-2 col-sm-12" style="text-align: right">
 
-                                    مجموع بار های ثبت شده : {{ $countLoads }}
+                                مجموع بار های ثبت شده : {{ $countLoads }}
                             </div>
 
                         </div>
-
                     @endif
                 </form>
                 <form action="{{ route('load.delete.all') }}" method="post" class="form-inline">
@@ -203,7 +213,6 @@
                                                 @case(-1)
                                                     در حال بررسی
                                                 @break
-
                                             @endswitch
                                         </td>
                                         <td>
@@ -290,4 +299,13 @@
         </div>
     </div>
 
-@stop
+@endsection
+
+@section('script')
+    <script src="{{ asset('js/persianDatepicker.min.js') }}"></script>
+
+    <script type="text/javascript">
+        $("#fromDate, #span1").persianDatepicker();
+        $("#toDate, #span2").persianDatepicker();
+    </script>
+@endsection
