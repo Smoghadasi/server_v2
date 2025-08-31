@@ -14,7 +14,7 @@ class WarehouseController extends Controller
      */
     public function index()
     {
-        $warehouse = Warehouse::where('status', 0)->orderByDesc('created_at')->firstOrFail();
+        $warehouse = Warehouse::where('status', 0)->orderBy('created_at', 'asc')->firstOrFail();
         return view('admin.warehouse.edit', compact('warehouse'));
     }
 
