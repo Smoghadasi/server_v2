@@ -11,23 +11,23 @@
                     <input type="hidden" name="key[]" value="">
 
                     <label class="col-lg-12 mb-2">تاریخ :
-                        {{ explode(' ', $driver->created_at)[1] }}
+                        {{ explode(' ', $warehouse->created_at)[1] }}
                         {{-- <input type="text" class="form-control" value="{{ $warehouse->cargo }}" name="title" placeholder="بدون عنوان"> --}}
                     </label>
-                    <label class="col-lg-6 mb-2">مبدا :
+                    {{-- <label class="col-lg-6 mb-2">مبدا :
                         <input type="text" class="form-control" value="{{ $warehouse->origin }}">
-                    </label>
+                    </label> --}}
 
 
-                    <label class="col-lg-6 mb-2">مقصد :
+                    {{-- <label class="col-lg-6 mb-2">مقصد :
                         <input type="text" class="form-control" value="{{ $warehouse->destination }}">
-                    </label>
+                    </label> --}}
 
-                    <label class="col-lg-12 mb-2">شماره تلفن :
+                    {{-- <label class="col-lg-12 mb-2">شماره تلفن :
                         <input type="text" class="form-control" value="{{ $warehouse->mobile_number }}">
-                    </label>
+                    </label> --}}
 
-                    <div class="col-lg-12 row mb-2">
+                    {{-- <div class="col-lg-12 row mb-2">
 
                         <label class="col-lg-6">قیمت :
                             <input type="text" class="form-control" value="{{ $warehouse->price }}">
@@ -51,18 +51,18 @@
                             </div>
 
                         </label>
-                    </div>
+                    </div> --}}
 
-                    <label class="col-lg-12 row mb-2">
+                    {{-- <label class="col-lg-12 row mb-2">
                         <lable class="col-lg-12">ناوگان :</lable>
                         <input type="text" class="form-control col-lg-4" name="fleets" value="{{ $warehouse->fleet }}">
-                    </label>
+                    </label> --}}
                     <label class="col-lg-6 row">دیتا :
                         <textarea class="form-control" name="data" rows="10">{{ $warehouse->data }}</textarea>
                     </label>
-                    <label class="col-lg-6 row">json :
+                    {{-- <label class="col-lg-6 row">json :
                         <textarea class="form-control" name="json" rows="10">{{ $warehouse->json }}</textarea>
-                    </label>
+                    </label> --}}
                 </div>
 
                 <div class="row form-group row mb-0">
