@@ -57,7 +57,7 @@
                         <lable class="col-lg-12">ناوگان :</lable>
                         <input type="text" class="form-control col-lg-4" name="fleets" value="{{ $warehouse->fleet }}">
                     </label> --}}
-                    <label class="col-lg-6 row">دیتا :
+                    <label class="col-lg-12 row">دیتا :
                         <textarea class="form-control" name="data" rows="10">{{ $warehouse->data }}</textarea>
                     </label>
                     {{-- <label class="col-lg-6 row">json :
