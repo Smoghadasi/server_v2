@@ -14,7 +14,7 @@ class WarehouseController extends Controller
      */
     public function index()
     {
-        $warehouse = Warehouse::where('status', 0)->first();
+        $warehouse = Warehouse::where('status', 0)->firstOrFail();
         return view('admin.warehouse.edit', compact('warehouse'));
     }
 
