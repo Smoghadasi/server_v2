@@ -1393,6 +1393,7 @@ class DriverController extends Controller
             if (Auth::user()->role === 'admin' || in_array(Auth::id(), [53, 29, 69, 75, 54, 77])) {
                 if ($this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, $request->month, $request->freeCalls, $driver->freeAcceptLoads)) {
                     $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+
                     $oneMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+30 day', time())), '/');
                     $threeMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+90 day', time())), '/');
                     $sixMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+180 day', time())), '/');
