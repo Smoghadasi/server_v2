@@ -15,10 +15,7 @@
                     @endif --}}
 
                     <label class="col-lg-12 mb-2">تاریخ :
-                        {{ gregorianDateToPersian($driver->created_at, '-', true) }}
-                        @if (isset(explode(' ', $driver->created_at)[1]))
-                            {{ explode(' ', $driver->created_at)[1] }}
-                        @endif
+                        {{ explode(' ', $driver->created_at)[1] }}
                     </label>
                     {{-- <label class="col-lg-6 mb-2">مبدا :
                         <input type="text" class="form-control" value="{{ $warehouse->origin }}">
