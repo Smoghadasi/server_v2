@@ -10,8 +10,9 @@
                 <div class="form-group row text-right alert alert-light border border-dark" style="color: #000000">
                     <input type="hidden" name="key[]" value="">
 
-                    <label class="col-lg-12 mb-2">عنوان :
-                        <input type="text" class="form-control" value="{{ $warehouse->cargo }}" name="title" placeholder="بدون عنوان">
+                    <label class="col-lg-12 mb-2">تاریخ :
+                        {{ explode(' ', $driver->created_at)[1] }}
+                        {{-- <input type="text" class="form-control" value="{{ $warehouse->cargo }}" name="title" placeholder="بدون عنوان"> --}}
                     </label>
                     <label class="col-lg-6 mb-2">مبدا :
                         <input type="text" class="form-control" value="{{ $warehouse->origin }}">
