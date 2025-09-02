@@ -1,6 +1,7 @@
 @extends('layouts.dashboard')
 @section('css')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.17.9/tagify.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
 @endsection
 
 @section('content')
@@ -59,8 +60,8 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="modalCenterTitle">جدید</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                    </button>
                                 </div>
 
                                 <form action="{{ route('manualNotification.store') }}" method="POST">
@@ -83,8 +84,9 @@
                                         @if ($groupNotification->groupType == 'driver')
                                             <div class="row g-2" id="multi">
                                                 <div class="col-12">
-                                                    <select class="form-control form-select" name="provinces[]" multiple>
-                                                        <option value="">استان مبدا</option>
+                                                    <select class="form-control form-select" id="select-province"
+                                                        name="provinces[]" multiple>
+                                                        <option value="all">انتخاب همه</option>
                                                         @foreach ($provinces as $province)
                                                             <option value="{{ $province->id }}">
                                                                 <?php echo str_replace('ك', 'ک', str_replace('ي', 'ی', $province->name)); ?>
@@ -93,9 +95,9 @@
                                                     </select>
                                                 </div>
                                                 <div class="col-12">
-                                                    <select class="form-control col-md-4" name="fleets[]" id="fleets"
-                                                        multiple>
-                                                        <option value="" disabled>نوع ناوگان</option>
+                                                    <select class="form-control col-md-4" name="fleets[]"
+                                                        id="select-fleets" multiple>
+                                                        <option value="all">انتخاب همه</option>
                                                         @foreach ($fleets as $fleet)
                                                             <option value="{{ $fleet->id }}">
                                                                 {{ \App\Http\Controllers\FleetController::getFleetName($fleet->parent_id) }}
@@ -104,10 +106,10 @@
                                                             </option>
                                                         @endforeach
                                                     </select>
-
                                                 </div>
+
                                                 <div class="col-12">
-                                                    <input name="count" type="number" value="10"
+                                                    <input name="count" type="number" value="10000"
                                                         class="form-control" placeholder="تعداد">
                                                 </div>
                                             </div>
@@ -175,6 +177,73 @@
 
     @section('script')
         <script src="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.17.9/tagify.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const element = document.getElementById('select-province');
+                const choices = new Choices(element, {
+                    searchEnabled: true,
+                    itemSelectText: '',
+                    shouldSort: false,
+                    removeItemButton: true,
+                    placeholderValue: 'انتخاب استان',
+                });
+
+                // وقتی گزینه "انتخاب همه" زده بشه
+                element.addEventListener('change', function(event) {
+                    const value = event.target.value;
+
+                    if (value === 'all') {
+                        // همه‌ی گزینه‌ها رو به جز "انتخاب همه" انتخاب می‌کنیم
+                        const allOptions = Array.from(element.options)
+                            .filter(opt => opt.value !== '' && opt.value !== 'all')
+                            .map(opt => opt.value);
+
+                        // پاک کردن انتخاب فعلی
+                        choices.removeActiveItems();
+
+                        // انتخاب همه استان‌ها
+                        allOptions.forEach(val => {
+                            choices.setChoiceByValue(val);
+                        });
+                    }
+                });
+
+                const fleetSelect = document.getElementById('select-fleets');
+                const fleetChoices = new Choices(fleetSelect, {
+                    searchEnabled: true,
+                    itemSelectText: '',
+                    shouldSort: false,
+                    removeItemButton: true,
+                    placeholderValue: 'انتخاب ناوگان',
+                });
+
+                // مدیریت انتخاب همه
+                fleetSelect.addEventListener('change', function() {
+                    const selectedValues = fleetChoices.getValue(true); // گرفتن مقدار انتخابی‌ها
+
+                    if (selectedValues.includes('all')) {
+                        // حذف انتخاب همه تا تکراری نمونه
+                        fleetChoices.removeActiveItemsByValue('all');
+
+                        // گرفتن همه‌ی گزینه‌ها بجز "انتخاب همه"
+                        const allOptions = Array.from(fleetSelect.options)
+                            .filter(opt => opt.value !== 'all')
+                            .map(opt => ({
+                                value: opt.value,
+                                label: opt.text
+                            }));
+
+                        // انتخاب همه ناوگان‌ها
+                        allOptions.forEach(opt => {
+                            fleetChoices.setChoiceByValue(opt.value);
+                        });
+                    }
+                });
+
+            });
+        </script>
 
         <script>
             const input = document.getElementById('mobileNumberGroup');

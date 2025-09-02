@@ -62,8 +62,9 @@ class GroupNotificationController extends Controller
         }])
             ->where('group_id', $groupNotification->id)
             ->paginate(20);
-        $provinces = Cache::remember('province', now()->addMinutes(60), function () {
-            return ProvinceCity::where('parent_id', 0)->get();
+        $transit = ['1297', '1298', '1299', '1300', '1301', '1302', '1303', '1304', '1305', '1306', '1307', '1308', '1309', '1310', '1311', '1312'];
+        $provinces = Cache::remember('province', now()->addMinutes(60), function () use ($transit) {
+            return ProvinceCity::where('parent_id', 0)->whereNotIn('id', $transit)->get();
         });
 
         $fleets = Cache::remember('fleets', now()->addMinutes(60), function () {
