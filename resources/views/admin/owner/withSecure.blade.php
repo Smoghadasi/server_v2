@@ -156,52 +156,10 @@
                         </tbody>
                     </table>
                     <div class="mt-2">
-                        @if ($owners->hasPages())
-                            <nav aria-label="Page navigation">
-                                <ul class="pagination">
-                                    {{-- Previous Page Link --}}
-                                    @if ($owners->onFirstPage())
-                                        <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
-                                    @else
-                                        <li class="page-item"><a class="page-link"
-                                                href="{{ $owners->previousPageUrl() }}&fleet_id={{ request('fleet_id') }}&isAccepted={{ request('isAccepted') }}&isLimitLoad={{ request('isLimitLoad') }}"
-                                                rel="prev">&laquo;</a></li>
-                                    @endif
-
-                                    {{-- Pagination Elements --}}
-                                    @foreach ($owners->getUrlRange(1, $owners->lastPage()) as $page => $url)
-                                        @if (
-                                            $page == 1 ||
-                                                $page == $owners->lastPage() ||
-                                                ($page >= $owners->currentPage() - 2 && $page <= $owners->currentPage() + 2))
-                                            @if ($page == $owners->currentPage())
-                                                <li class="page-item active"><span class="page-link">{{ $page }}</span>
-                                                </li>
-                                            @else
-                                                <li class="page-item"><a class="page-link"
-                                                        href="{{ $url }}&fleet_id={{ request('fleet_id') }}&isAccepted={{ request('isAccepted') }}&isLimitLoad={{ request('isLimitLoad') }}">{{ $page }}</a>
-                                                </li>
-                                            @endif
-                                        @elseif ($page == $owners->currentPage() - 3 || $page == $owners->currentPage() + 3)
-                                            <li class="page-item disabled"><span class="page-link">...</span></li>
-                                        @endif
-                                    @endforeach
-
-                                    {{-- Next Page Link --}}
-                                    @if ($owners->hasMorePages())
-                                        <li class="page-item"><a class="page-link"
-                                                href="{{ $owners->nextPageUrl() }}&fleet_id={{ request('fleet_id') }}&isAccepted={{ request('isAccepted') }}&isLimitLoad={{ request('isLimitLoad') }}"
-                                                rel="next">&raquo;</a></li>
-                                    @else
-                                        <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
-                                    @endif
-                                </ul>
-                            </nav>
-                        @endif
+                        {{ $owners->withQueryString()->links() }}
                     </div>
                 </div>
             </div>
         </div>
 
-
-    @stop
+    @endsection
