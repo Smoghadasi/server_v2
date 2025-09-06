@@ -320,14 +320,22 @@ class OwnerController extends Controller
         $ownerPenddingCounts = Owner::where('isAuth', 2)->count();
         $ownerRejectCounts = Owner::where('isAuth', 0)->count();
         $ownerAcceptCounts = Owner::where('isAuth', 1)->count();
+        $ownerRejectedCounts = Owner::where('isRejected', 1)->count();
+        $ownerBookmarkCount = Bookmark::where('type', 'owner')->count();
+        $ownerLimitLoadCount = Owner::where('isLimitLoad', 1)->count();
+        $fleets = Fleet::where('parent_id', '!=', 0)->get();
 
         return view('admin.owner.index', compact([
             'owners',
             'ownerPenddingCounts',
             'ownerRejectCounts',
             'ownerAcceptCounts',
+            'ownerRejectedCounts',
+            'ownerBookmarkCount',
+            'ownerLimitLoadCount',
             'loadsToday',
-            'loadsTodayOwner'
+            'loadsTodayOwner',
+            'fleets'
         ]));
     }
 }
