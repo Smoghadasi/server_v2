@@ -304,25 +304,14 @@ class OwnerController extends Controller
         $owners = Owner::query()
             ->select('owners.*')
             ->join('loads', function ($q) {
-                $q->on('loads.user_id', '=', 'owners.id')
+                $q->on('loads.owner_id', '=', 'owners.id')
                     ->where('loads.userType', 'owner');
                 // توجه: اینجا soft delete به‌طور پیش‌فرض حذف می‌شه
                 // اگر می‌خوای soft deleted ها هم بیان باید از relation استفاده کنی
             })
             ->join('fleet_loads', 'fleet_loads.load_id', '=', 'loads.id')
-            ->whereIn('fleet_loads.fleet_id', [
-                '82',
-                '83',
-                '84',
-                '85',
-                '86',
-                '87',
-                '45',
-                '46',
-                '47',
-                '48',
-                '63'
-            ])
+            ->whereIn('fleet_loads.fleet_id',
+                ['82','83','84','85','86','87','45','46','47','48','63'])
             ->where('owners.isAuth', 1)
             ->withCount([
                 'loads as num_of_loads' => function ($q) {
