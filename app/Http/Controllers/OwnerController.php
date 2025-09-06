@@ -262,9 +262,9 @@ class OwnerController extends Controller
                 // فیلتر owners که در یک ماه اخیر load گذاشته‌اند
                 ->whereExists(function ($query) {
                     $query->select(DB::raw(1))
-                          ->from('loads')
-                          ->whereColumn('loads.user_id', 'owners.id')
-                          ->where('loads.created_at', '>=', now()->subMonths(1));
+                        ->from('loads')
+                        ->whereColumn('loads.user_id', 'owners.id')
+                        ->where('loads.created_at', '>=', now()->subMonths(1));
                 })
                 ->select('owners.*')
                 ->distinct()
@@ -299,14 +299,31 @@ class OwnerController extends Controller
         return $ownerPenddingCounts;
     }
 
-    public function ownersNissan()
+    public function ownersNissan(Request $request)
     {
         $owners = Owner::whereHas('loads', function ($q) {
-            $q->whereIn('origin_city_id', [967, 570, 758, 522, 360, 45]);
-            $q->where('fleets', 'Like', '%fleet_id":' . 82 . ',%');
+            $q->whereHas('fleetLoads', function ($query) {
+                $query->whereIn(
+                    'fleet_id',
+                    ['82', '83', '84', '85', '86', '87', '45', '46', '47', '48', '63']
+                );
+            });
             $q->where('userType', 'owner');
+            $q->withTrashed();
         })
-            ->paginate();
+            ->where('isAuth', 1)
+            ->withCount(['loads as num_of_loads' => function ($q) {
+                $q->where('userType', 'owner')->withTrashed();
+            }]);
+
+        // اعمال فیلتر مرتب‌سازی
+        if ($request->filter_sort == 'most') {
+            $owners->orderByDesc('num_of_loads');
+        } elseif ($request->filter_sort == 'least') {
+            $owners->orderBy('num_of_loads');
+        }
+
+        $owners = $owners->paginate(20);
 
         $loadsToday = Load::where('userType', ROLE_OWNER)
             ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
@@ -323,9 +340,9 @@ class OwnerController extends Controller
         $ownerRejectedCounts = Owner::where('isRejected', 1)->count();
         $ownerBookmarkCount = Bookmark::where('type', 'owner')->count();
         $ownerLimitLoadCount = Owner::where('isLimitLoad', 1)->count();
-        $fleets = Fleet::where('parent_id', '!=', 0)->get();
-
-        return view('admin.owner.index', compact([
+        // $fleets = Fleet::where('parent_id', '!=', 0)->get();
+        // return $fleets;
+        return view('admin.owner.nissanKhavarLoads', compact([
             'owners',
             'ownerPenddingCounts',
             'ownerRejectCounts',
@@ -335,7 +352,7 @@ class OwnerController extends Controller
             'ownerLimitLoadCount',
             'loadsToday',
             'loadsTodayOwner',
-            'fleets'
+            // 'fleets'
         ]));
     }
 }
