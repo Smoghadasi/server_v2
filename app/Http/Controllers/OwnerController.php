@@ -323,7 +323,7 @@ class OwnerController extends Controller
             $owners->orderBy('num_of_loads');
         }
 
-        $owners = $owners->paginate(20);
+        $owners = $owners->paginate(10);
 
         $loadsToday = Load::where('userType', ROLE_OWNER)
             ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
