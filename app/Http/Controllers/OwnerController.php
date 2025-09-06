@@ -301,29 +301,46 @@ class OwnerController extends Controller
 
     public function ownersNissan(Request $request)
     {
-        $owners = Owner::whereHas('loads', function ($q) {
-            $q->whereHas('fleetLoads', function ($query) {
-                $query->whereIn(
-                    'fleet_id',
-                    ['82', '83', '84', '85', '86', '87', '45', '46', '47', '48', '63']
-                );
-            });
-            $q->where('userType', 'owner');
-            $q->withTrashed();
-        })
-            ->where('isAuth', 1)
-            ->withCount(['loads as num_of_loads' => function ($q) {
-                $q->where('userType', 'owner')->withTrashed();
-            }]);
+        $owners = Owner::query()
+            ->select('owners.*')
+            ->join('loads', function ($q) {
+                $q->on('loads.user_id', '=', 'owners.id')
+                    ->where('loads.userType', 'owner');
+                // توجه: اینجا soft delete به‌طور پیش‌فرض حذف می‌شه
+                // اگر می‌خوای soft deleted ها هم بیان باید از relation استفاده کنی
+            })
+            ->join('fleet_loads', 'fleet_loads.load_id', '=', 'loads.id')
+            ->whereIn('fleet_loads.fleet_id', [
+                '82',
+                '83',
+                '84',
+                '85',
+                '86',
+                '87',
+                '45',
+                '46',
+                '47',
+                '48',
+                '63'
+            ])
+            ->where('owners.isAuth', 1)
+            ->withCount([
+                'loads as num_of_loads' => function ($q) {
+                    $q->where('userType', 'owner')->withTrashed();
+                }
+            ])
+            ->groupBy('owners.id');
 
-        // اعمال فیلتر مرتب‌سازی
+        // مرتب‌سازی
         if ($request->filter_sort == 'most') {
             $owners->orderByDesc('num_of_loads');
         } elseif ($request->filter_sort == 'least') {
             $owners->orderBy('num_of_loads');
         }
 
+        // صفحه‌بندی
         $owners = $owners->paginate(10);
+
 
         $loadsToday = Load::where('userType', ROLE_OWNER)
             ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
