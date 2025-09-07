@@ -1314,15 +1314,22 @@ class DriverController extends Controller
     }
     public function driversActivitiesCall(Driver $driver)
     {
-        $driversActivitiesCallDates = DriverCall::with('driver')
-            // ->where('callingDate', now()->format('Y-m-d'))
-            ->where('driver_id', $driver->id)
-            ->orderByDesc('created_at')
-            ->paginate(20);
-        $driversActivitiesCallDatesCount = DriverCall::with('driver')
-            // ->where('callingDate', now()->format('Y-m-d'))
-            ->orderByDesc('created_at')
-            ->count();
+        if ($driver->subscriptionDate > now()) {
+            $driversActivitiesCallDates = collect();
+            $driversActivitiesCallDatesCount = 0;
+        } else {
+            $driversActivitiesCallDates = DriverCall::with('driver')
+                // ->where('callingDate', now()->format('Y-m-d'))
+                ->where('driver_id', $driver->id)
+                ->orderByDesc('created_at')
+                ->paginate(20);
+
+            $driversActivitiesCallDatesCount = DriverCall::with('driver')
+                // ->where('callingDate', now()->format('Y-m-d'))
+                ->orderByDesc('created_at')
+                ->count();
+        }
+
         return view('admin.driversActivitiesCallDate', compact('driversActivitiesCallDates', 'driversActivitiesCallDatesCount'));
     }
 
