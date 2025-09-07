@@ -1324,10 +1324,7 @@ class DriverController extends Controller
                 ->orderByDesc('created_at')
                 ->paginate(20);
 
-            $driversActivitiesCallDatesCount = DriverCall::with('driver')
-                // ->where('callingDate', now()->format('Y-m-d'))
-                ->where('driver_id', $driver->id)
-                ->count();
+            $driversActivitiesCallDatesCount = DriverCall::with('driver')->where('driver_id', $driver->id)->count();
         }
 
         return view('admin.driversActivitiesCallDate', compact('driversActivitiesCallDates', 'driversActivitiesCallDatesCount'));
