@@ -302,6 +302,7 @@ class OwnerController extends Controller
     public function ownersNissan(Request $request)
     {
         return true;
+
         $owners = Owner::query()
             ->select('owners.*')
             ->join('loads', function ($q) {
