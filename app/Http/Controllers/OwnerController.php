@@ -304,7 +304,7 @@ class OwnerController extends Controller
         $owners = Owner::query()
             ->select('owners.*')
             ->join('loads', function ($q) {
-                $q->on('loads.user_id', '=', 'owners.id')
+                $q->on('loads.owner_id', '=', 'owners.id')
                     ->where('loads.userType', 'owner');
                 // توجه: اینجا soft delete به‌طور پیش‌فرض حذف می‌شه
                 // اگر می‌خوای soft deleted ها هم بیان باید از relation استفاده کنی
