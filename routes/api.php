@@ -607,7 +607,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('sendNotifLoad/{load}', [LoadController::class, 'sendNotifLoad']);
 
         // درخواست اطلاعات صاحبان بار
-        Route::get('profile/{owner}', [OwnerController::class, 'profile']);
+        // Route::get('profile/{owner}', [OwnerController::class, 'profile']);
 
         // حذف بار توسط صاحب بار
         Route::delete('removeOwnerLoad/{load}/{owner}', [LoadController::class, 'removeOwnerLoad']);
