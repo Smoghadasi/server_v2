@@ -475,7 +475,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('checkDriverInquiry/{driver_id}/{load_id}', [LoadController::class, 'checkDriverInquiry']);
 
         // نزدیکترین بار به راننده
-        Route::post('searchTheNearestCargo/{driver}', [LoadController::class, 'searchTheNearestCargo']);
+        // Route::post('searchTheNearestCargo/{driver}', [LoadController::class, 'searchTheNearestCargo']);
 
         // درخواست لیست بارهای جدید برای راننده ها
         Route::get('requestNewLoadsForDrivers/{driver}', [LoadController::class, 'requestNewLoadsForDrivers']);
@@ -527,10 +527,10 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('callHistory/{driver}', [LoadController::class, 'callHistory']);
 
         // دریافت اطلاعات پروفایل راننده
-        Route::get('getDriverProfileInfo/{driver}', [DriverController::class, 'getDriverProfileInfo']);
+        // Route::get('getDriverProfileInfo/{driver}', [DriverController::class, 'getDriverProfileInfo']);
 
         // بروز رسانی اطلاعات راننده
-        Route::put('updateDriverProfileInfo/{driver}', [DriverController::class, 'updateProfileInfo']);
+        // Route::put('updateDriverProfileInfo/{driver}', [DriverController::class, 'updateProfileInfo']);
 
 
         Route::put('updateLocation/{driver}', [DriverController::class, 'updateLocation']);
@@ -599,10 +599,10 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::patch('profileImage/{owner}', [OwnerController::class, 'profileImage'])->name('auth.profileImage');
 
         // ثبت بار جدید
-        //  Route::post('createNewLoad', [LoadController::class, 'createNewLoad']);
+         Route::post('createNewLoad', [LoadController::class, 'createNewLoad']);
 
         // ثبت بار بصورت ارایه
-        // Route::post('createNewLoads', [LoadController::class, 'createNewLoads']);
+        Route::post('createNewLoads', [LoadController::class, 'createNewLoads']);
 
         Route::get('sendNotifLoad/{load}', [LoadController::class, 'sendNotifLoad']);
 
@@ -613,7 +613,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::delete('removeOwnerLoad/{load}/{owner}', [LoadController::class, 'removeOwnerLoad']);
 
         // تکرار بار
-        // Route::get('repeatOwnerLoad/{load}', [LoadController::class, 'repeatOwnerLoad']);
+        Route::get('repeatOwnerLoad/{load}', [LoadController::class, 'repeatOwnerLoad']);
 
         // درخواست اطلاعات بار
         Route::get('requestLoadInfo/{id}', [LoadController::class, 'requestLoadInfo']);
