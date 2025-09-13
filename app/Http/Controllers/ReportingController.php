@@ -959,13 +959,13 @@ class ReportingController extends Controller
         if ($index > 0) {
             $toDate = persianDateToGregorian($this->persianDateList[$index - 1] . '-01', '-');
 
-            return Customer::where([
+            return Owner::where([
                 ['created_at', '>=', $fromDate],
                 ['created_at', '<', $toDate]
             ])->count();
         }
 
-        return Customer::where('created_at', '>=', $fromDate)->count();
+        return Owner::where('created_at', '>=', $fromDate)->count();
     }
 
     //تعداد بار ثبت شده 30 روز قبل صاحب بار
