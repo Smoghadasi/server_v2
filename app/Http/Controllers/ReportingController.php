@@ -929,7 +929,7 @@ class ReportingController extends Controller
     // گزارش فعالیت صاحب بارها
     public function cargoOwnersActivityReport()
     {
-        $totalCargoOwners = Customer::count();
+        $totalCargoOwners = Owner::count();
 
         // روند افزایش باربری ها از 12 ماه قبل
         $increaseOfCargoOwnersSince12MonthsAgo = [];
