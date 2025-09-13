@@ -39,13 +39,13 @@
                     </td>
                 </tr>
 
-                <tr>
+                {{-- <tr>
                     <td>
                         <div class="text-center h6">هزینه وایزی توسط صاحب بار ها از 60 روز قبل</div>
                         <canvas id="depositDee60DaysInAdvance"
                                 style="width:100%;max-width:100%"></canvas>
                     </td>
-                </tr>
+                </tr> --}}
 
 
             </table>
@@ -142,7 +142,7 @@
     </script>
 
 
-    <script>
+    {{-- <script>
         //هزینه وایزی توسط صاحب بار ها از 60 روز قبل
         var xValues = [
             @foreach($depositDee60DaysInAdvance as $value)
@@ -169,7 +169,7 @@
                 legend: {display: false}
             }
         });
-    </script>
+    </script> --}}
 @stop
 
 
