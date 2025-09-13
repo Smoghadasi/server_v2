@@ -1,5 +1,7 @@
 @extends('layouts.dashboard')
-
+@section('css')
+    <script src="{{ asset('js/chart.js') }}"></script>
+@endsection
 @section('content')
 
     <div class="card">

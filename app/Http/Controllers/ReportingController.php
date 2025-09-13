@@ -977,12 +977,15 @@ class ReportingController extends Controller
             $dateFrom = date('Y-m-d', strtotime('-' . $day . 'day', time()));
             $dateTo = date('Y-m-d', strtotime('-' . ($day - 1) . 'day', time()));
 
-            $value = LoadBackup::where([
+            $value = Load::where([
                 ['created_at', '>=', $dateFrom . ' 00:00:00'],
                 ['created_at', '<', $dateTo . ' 00:00:00'],
-                ['userType', ROLE_CUSTOMER],
+                ['userType', ROLE_OWNER],
                 ['operator_id', 0],
-            ])->count();
+                ['isBot', 0],
+            ])
+            ->withTrashed()
+            ->count();
 
             $loadsCount[] = [
                 'value' => $value,
