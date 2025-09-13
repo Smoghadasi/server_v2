@@ -947,9 +947,9 @@ class ReportingController extends Controller
         $cargoOwnersLoadsByFleetInPrevious30Days = $this->getCargoOwnersLoadsByFleetInPrevious30Days();
 
         // هزینه وایزی توسط باربری ها از 60 روز قبل
-        $depositDee60DaysInAdvance = $this->getDepositDee60DaysInAdvance(ROLE_OWNER);
+        // $depositDee60DaysInAdvance = $this->getDepositDee60DaysInAdvance(ROLE_OWNER);
 
-        return view('admin.reporting.cargoOwnersActivityReport', compact('totalCargoOwners', 'increaseOfCargoOwnersSince12MonthsAgo', 'countOfCargoOwnersLoadsInPrevious30Days', 'cargoOwnersLoadsByFleetInPrevious30Days', 'depositDee60DaysInAdvance'));
+        return view('admin.reporting.cargoOwnersActivityReport', compact('totalCargoOwners', 'increaseOfCargoOwnersSince12MonthsAgo', 'countOfCargoOwnersLoadsInPrevious30Days', 'cargoOwnersLoadsByFleetInPrevious30Days'));
     }
 
     // روند افزایش صاحب بار ها از 12 ماه قبل
