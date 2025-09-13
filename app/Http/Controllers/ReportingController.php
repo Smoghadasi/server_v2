@@ -947,7 +947,7 @@ class ReportingController extends Controller
         $cargoOwnersLoadsByFleetInPrevious30Days = $this->getCargoOwnersLoadsByFleetInPrevious30Days();
 
         // هزینه وایزی توسط باربری ها از 60 روز قبل
-        $depositDee60DaysInAdvance = $this->getDepositDee60DaysInAdvance(ROLE_CARGo_OWNER);
+        $depositDee60DaysInAdvance = $this->getDepositDee60DaysInAdvance(ROLE_OWNER);
 
         return view('admin.reporting.cargoOwnersActivityReport', compact('totalCargoOwners', 'increaseOfCargoOwnersSince12MonthsAgo', 'countOfCargoOwnersLoadsInPrevious30Days', 'cargoOwnersLoadsByFleetInPrevious30Days', 'depositDee60DaysInAdvance'));
     }
@@ -999,7 +999,7 @@ class ReportingController extends Controller
     private function getCargoOwnersLoadsByFleetInPrevious30Days()
     {
         $loadsByFleets = FleetLoad::join('fleets', 'fleets.id', 'fleet_loads.fleet_id')
-            ->where('userType', ROLE_CARGo_OWNER)
+            ->where('userType', ROLE_OWNER)
             ->select('fleets.id', 'fleets.title', DB::raw('count(*) as total'))
             ->groupBy('fleets.id', 'fleets.title')
             ->orderBy('total', 'asc')
