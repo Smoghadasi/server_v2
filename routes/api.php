@@ -29,11 +29,13 @@ use App\Models\Customer;
 use App\Models\Dictionary;
 use App\Models\Driver;
 use App\Models\Equivalent;
+use App\Models\FleetlessNumbers;
 // use App\Models\Fleet;
 use App\Models\Load;
 use App\Models\ProvinceCity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -597,10 +599,10 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::patch('profileImage/{owner}', [OwnerController::class, 'profileImage'])->name('auth.profileImage');
 
         // ثبت بار جدید
-        Route::post('createNewLoad', [LoadController::class, 'createNewLoad']);
+        //  Route::post('createNewLoad', [LoadController::class, 'createNewLoad']);
 
         // ثبت بار بصورت ارایه
-        Route::post('createNewLoads', [LoadController::class, 'createNewLoads']);
+        // Route::post('createNewLoads', [LoadController::class, 'createNewLoads']);
 
         Route::get('sendNotifLoad/{load}', [LoadController::class, 'sendNotifLoad']);
 
@@ -611,7 +613,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::delete('removeOwnerLoad/{load}/{owner}', [LoadController::class, 'removeOwnerLoad']);
 
         // تکرار بار
-        Route::get('repeatOwnerLoad/{load}', [LoadController::class, 'repeatOwnerLoad']);
+        // Route::get('repeatOwnerLoad/{load}', [LoadController::class, 'repeatOwnerLoad']);
 
         // درخواست اطلاعات بار
         Route::get('requestLoadInfo/{id}', [LoadController::class, 'requestLoadInfo']);
@@ -689,21 +691,14 @@ Route::post('botData', function (Request $request) {
         $cities = ProvinceCity::whereIn('name', $words)->where('parent_id', '!=', 0)->pluck('name')->toArray();
         $equivalentWords = Equivalent::whereIn('equivalentWord', $words)->pluck('equivalentWord')->toArray();
         $blockNumbers = BlockPhoneNumber::whereIn('phoneNumber', $words)->pluck('phoneNumber')->toArray();
-        // $fleets = Fleet::whereIn('title', $words)->pluck('title')->toArray();
         if ($blockNumbers) {
-            DB::table('cargo_convert_lists')->updateOrInsert(
-                [
-                    'cargo' => $newText,
-                    'isBlocked' => 1
-                ],
-                [
-                    'cargo' => $newText,
-                    'isBlocked' => 1,
-                    'count' => DB::raw('COALESCE(count, 1) + 1'),
-                    'updated_at' => now(),
-                    'created_at' => now(),
-                ]
-            );
+            DB::table('cargo_convert_lists')->insert([
+                'cargo' => $newText,
+                'cargo_orginal' => $newText,
+                'isBlocked' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
             return response()->json(['message' => 'شماره مسدود است و ذخیره نشد.'], 409);
         }
 
@@ -734,34 +729,28 @@ Route::post('botData', function (Request $request) {
                     break;
                 }
             }
-            $data = [
-                'cargo'        => $newText,
-                'cargo_orginal' => $newText,
-                'isDuplicate'  => $isDuplicate ? 1 : 0,
-                'updated_at'   => now(),
-            ];
-
-            // اگر پیام تکراری بود، count افزایش می‌یابد یا در صورت نبود، رکورد ساخته می‌شود
             if ($isDuplicate) {
-                DB::table('cargo_convert_lists')->updateOrInsert(
-                    [
-                        'cargo_orginal' => $newText,
-                        'isDuplicate' => 1
-                    ],
-                    array_merge($data, [
-                        'count' => DB::raw('COALESCE(count, 1) + 1'),
-                        'created_at' => now(),
-                    ])
-                );
-
+                // ذخیره پیام جدید
+                DB::table('cargo_convert_lists')->insert([
+                    'cargo' => $newText,
+                    'cargo_orginal' => $newText,
+                    'isDuplicate' => 1,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
                 return response()->json(['message' => 'پیام بسیار مشابه است و ذخیره نشد.'], 409);
             }
-
-            // اگر پیام تکراری نبود، رکورد جدید با count = 1 ساخته می‌شود
-            DB::table('cargo_convert_lists')->insert(array_merge($data, [
-                'count'      => 1,
+            // if ($fleets == null) {
+            //     $newText = 'نیسان ' .  $newText;
+            // }
+            // ذخیره پیام جدید
+            DB::table('cargo_convert_lists')->insert([
+                'cargo' => $newText,
+                'cargo_orginal' => $newText,
                 'created_at' => now(),
-            ]));
+                'updated_at' => now(),
+            ]);
+
 
             return response()->json(['message' => 'پیام ذخیره شد.'], 201);
         }
@@ -775,34 +764,6 @@ Route::post('botData', function (Request $request) {
         \Illuminate\Support\Facades\Log::emergency($exception->getMessage());
         \Illuminate\Support\Facades\Log::emergency("------------------- End botData ERROR ---------------------");
     }
-
-
-    // try {
-    //     \Illuminate\Support\Facades\Log::emergency($request);
-    //     $data = convertFaNumberToEn($request->data);
-    //     preg_match('/0\d{2}/', $data, $matches);
-
-    //     $cargoConvertListCount = CargoConvertList::where([
-    //         ['cargo', $data],
-    //         ['created_at', '>', date('Y-m-d h:i:s', strtotime('-180 minute', time()))]
-    //     ])->count();
-    //     if ($cargoConvertListCount == 0 && isset($matches[0])) {
-    //         $cargoConvertList = new CargoConvertList();
-    //         $cargoConvertList->cargo = $data;
-    //         $cargoConvertList->message_id = $request->message_id;
-    //         $cargoConvertList->save();
-    //         // \Illuminate\Support\Facades\Log::emergency($cargoConvertList);
-    //         return 'OK';
-    //     }else{
-    //         return 'duplicate';
-    //     }
-    // } catch (Exception $exception) {
-    //     \Illuminate\Support\Facades\Log::emergency("------------------- botData ERROR ---------------------");
-    //     \Illuminate\Support\Facades\Log::emergency($exception->getMessage());
-    //     \Illuminate\Support\Facades\Log::emergency("------------------- End botData ERROR ---------------------");
-    // }
-
-    // return 'ERROR';
 });
 
 
