@@ -283,15 +283,7 @@
                                                                         </label>
                                                                 </div>
                                                             </li>
-                                                            <li>
-                                                                <div class="form-group">
-                                                                    <label>
-                                                                        <input type="checkbox" name="ownersNissan"
-                                                                            @if (in_array('ownersNissan', $user->userAccess)) checked @endif>
-                                                                        صاحبان بار نیسان
-                                                                    </label>
-                                                                </div>
-                                                            </li>
+
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
@@ -436,6 +428,15 @@
                                                                     </ul>
                                                                 </li>
                                                             </ul>
+                                                            <li>
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="ownersNissan"
+                                                                            @if (in_array('ownersNissan', $user->userAccess)) checked @endif>
+                                                                        صاحبان بار نیسان
+                                                                    </label>
+                                                                </div>
+                                                            </li>
                                                             <li>
                                                                 <div class="form-group">
                                                                     <label>
