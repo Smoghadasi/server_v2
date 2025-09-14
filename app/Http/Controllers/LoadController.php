@@ -779,6 +779,8 @@ class LoadController extends Controller
 
     public function createNewLoads(NewLoadRequest $request)
     {
+        Log::warning('owner createNewLoads-------------------------------------------');
+        Log::warning($request->user_id);
         try {
 
             if (\auth()->check()) {
