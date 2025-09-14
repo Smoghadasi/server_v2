@@ -972,11 +972,13 @@ class ReportingController extends Controller
     private function getCountOfCargoOwnersLoadsInPrevious30Days()
     {
         $loadsCount = [];
+        $usersCount = [];
 
         for ($day = 30; $day >= 0; $day--) {
-            $dateFrom = date('Y-m-d', strtotime('-' . $day . 'day', time()));
-            $dateTo = date('Y-m-d', strtotime('-' . ($day - 1) . 'day', time()));
+            $dateFrom = date('Y-m-d', strtotime('-' . $day . ' day', time()));
+            $dateTo = date('Y-m-d', strtotime('-' . ($day - 1) . ' day', time()));
 
+            // تعداد کل بارهای ثبت‌شده
             $value = Load::where([
                 ['created_at', '>=', $dateFrom . ' 00:00:00'],
                 ['created_at', '<', $dateTo . ' 00:00:00'],
@@ -984,16 +986,40 @@ class ReportingController extends Controller
                 ['operator_id', 0],
                 ['isBot', 0],
             ])
-            ->withTrashed()
-            ->count();
+                ->withTrashed()
+                ->count();
+
+            // تعداد کاربران یکتایی که در این روز بار ثبت کرده‌اند
+            $uniqueUsers = Load::where([
+                ['created_at', '>=', $dateFrom . ' 00:00:00'],
+                ['created_at', '<', $dateTo . ' 00:00:00'],
+                ['userType', ROLE_OWNER],
+                ['operator_id', 0],
+                ['isBot', 0],
+            ])
+                ->withTrashed()
+                ->distinct('user_id')
+                ->count('user_id');
+
+            $label = str_replace('-', '/', convertEnNumberToFa(gregorianDateToPersian($dateFrom, '-')));
 
             $loadsCount[] = [
                 'value' => $value,
-                'label' => str_replace('-', '/', convertEnNumberToFa(gregorianDateToPersian($dateFrom, '-')))
+                'label' => $label
+            ];
+
+            $usersCount[] = [
+                'value' => $uniqueUsers,
+                'label' => $label
             ];
         }
-        return $loadsCount;
+
+        return [
+            'loads' => $loadsCount,
+            'users' => $usersCount
+        ];
     }
+
 
     // ثبت بار به تفکیک ناوگان
     private function getCargoOwnersLoadsByFleetInPrevious30Days()

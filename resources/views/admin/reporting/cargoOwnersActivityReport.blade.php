@@ -20,22 +20,19 @@
                 <tr>
                     <td>
                         <div class="text-center h6">روند افزایش صاحب بار ها از 12 ماه قبل</div>
-                        <canvas id="increaseOfCargoOwnersSince12MonthsAgo"
-                                style="width:100%;max-width:100%"></canvas>
+                        <canvas id="increaseOfCargoOwnersSince12MonthsAgo" style="width:100%;max-width:100%"></canvas>
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <div class="text-center h6">تعداد بار ثبت شده 30 روز قبل</div>
-                        <canvas id="countOfCargoOwnersLoadsInPrevious30Days"
-                                style="width:100%;max-width:100%"></canvas>
+                        <canvas id="countOfCargoOwnersLoadsInPrevious30Days" style="width:100%;max-width:100%"></canvas>
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <div class="text-center h6">ثبت بار به تفکیک ناوگان از 30 روز قبل</div>
-                        <canvas id="cargoOwnersLoadsByFleetInPrevious30Days"
-                                style="width:100%;max-width:100%"></canvas>
+                        <canvas id="cargoOwnersLoadsByFleetInPrevious30Days" style="width:100%;max-width:100%"></canvas>
                     </td>
                 </tr>
 
@@ -56,12 +53,12 @@
     <script>
         // روند افزایش صاحب بار  ها از 12 ماه قبل
         var label = [
-            @foreach($increaseOfCargoOwnersSince12MonthsAgo as $item)
+            @foreach ($increaseOfCargoOwnersSince12MonthsAgo as $item)
                 "{{ $item['label'] }}",
             @endforeach
         ];
         var data = [
-            @foreach($increaseOfCargoOwnersSince12MonthsAgo as $item)
+            @foreach ($increaseOfCargoOwnersSince12MonthsAgo as $item)
                 "{{ $item['value'] }}",
             @endforeach
         ];
@@ -76,48 +73,73 @@
                 }]
             },
             options: {
-                legend: {display: false}
+                legend: {
+                    display: false
+                }
             }
         });
     </script>
 
     <script>
-        //تعداد بار ثبت شده 30 روز قبل شرکت های صاحب بار
-        var label = [
-            @foreach($countOfCargoOwnersLoadsInPrevious30Days as $item)
+        // داده‌های بارها
+        var labels = [
+            @foreach ($countOfCargoOwnersLoadsInPrevious30Days['loads'] as $item)
                 "{{ $item['label'] }}",
             @endforeach
         ];
-        var data = [
-            @foreach($countOfCargoOwnersLoadsInPrevious30Days as $item)
+        var loadsData = [
+            @foreach ($countOfCargoOwnersLoadsInPrevious30Days['loads'] as $item)
                 "{{ $item['value'] }}",
             @endforeach
-
         ];
+
+        // داده‌های کاربران یکتا
+        var usersData = [
+            @foreach ($countOfCargoOwnersLoadsInPrevious30Days['users'] as $item)
+                "{{ $item['value'] }}",
+            @endforeach
+        ];
+
         new Chart("countOfCargoOwnersLoadsInPrevious30Days", {
             type: "line",
             data: {
-                labels: label,
+                labels: labels,
                 datasets: [{
-                    data: data,
-                    borderColor: "blue",
-                    fill: false
-                }]
+                        label: "تعداد بارهای ثبت‌شده",
+                        data: loadsData,
+                        borderColor: "blue",
+                        fill: false,
+                        tension: 0.3
+                    },
+                    {
+                        label: "تعداد کاربران فعال",
+                        data: usersData,
+                        borderColor: "green",
+                        fill: false,
+                        tension: 0.3
+                    }
+                ]
             },
             options: {
-                legend: {display: false}
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true
+                    }
+                }
             }
         });
     </script>
 
+
     <script>
         var labels = [
-            @foreach($cargoOwnersLoadsByFleetInPrevious30Days as $key=>$item)
+            @foreach ($cargoOwnersLoadsByFleetInPrevious30Days as $key => $item)
                 "{{ $key }}",
             @endforeach
         ];
         var data = [
-            @foreach($cargoOwnersLoadsByFleetInPrevious30Days as $item)
+            @foreach ($cargoOwnersLoadsByFleetInPrevious30Days as $item)
                 "{{ $item }}",
             @endforeach
         ];
@@ -132,7 +154,9 @@
                 }]
             },
             options: {
-                legend: {display: false},
+                legend: {
+                    display: false
+                },
                 title: {
                     display: true,
 
@@ -145,12 +169,12 @@
     {{-- <script>
         //هزینه وایزی توسط صاحب بار ها از 60 روز قبل
         var xValues = [
-            @foreach($depositDee60DaysInAdvance as $value)
+            @foreach ($depositDee60DaysInAdvance as $value)
                 "{{ $value['label'] }}",
             @endforeach
         ];
         var data = [
-            @foreach($depositDee60DaysInAdvance as $value)
+            @foreach ($depositDee60DaysInAdvance as $value)
                 {{ $value['value'] }},
             @endforeach
 
@@ -171,6 +195,3 @@
         });
     </script> --}}
 @stop
-
-
-
