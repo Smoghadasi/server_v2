@@ -584,7 +584,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
 
     // برنامه جدید صاحب بار
-    // Route::group(['prefix' => 'owner'], function () {
+    Route::group(['prefix' => 'owner'], function () {
         // Route::post('register', [OwnerController::class, 'register']);
         // اعتبارسنجی کد فعال سازی برای باربری و صاحبان بار
         // Route::post('verifyActivationCodeForCustomerBearing', [LoginController::class, 'verifyActivationCodeForCustomerBearing']);
@@ -599,27 +599,27 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // Route::patch('profileImage/{owner}', [OwnerController::class, 'profileImage'])->name('auth.profileImage');
 
         // ثبت بار جدید
-        //  Route::post('createNewLoad', [LoadController::class, 'createNewLoad']);
+         Route::post('createNewLoad', [LoadController::class, 'createNewLoad']);
 
         // ثبت بار بصورت ارایه
-        // Route::post('createNewLoads', [LoadController::class, 'createNewLoads']);
+        Route::post('createNewLoads', [LoadController::class, 'createNewLoads']);
 
-        // Route::get('sendNotifLoad/{load}', [LoadController::class, 'sendNotifLoad']);
+        Route::get('sendNotifLoad/{load}', [LoadController::class, 'sendNotifLoad']);
 
         // درخواست اطلاعات صاحبان بار
         // Route::get('profile/{owner}', [OwnerController::class, 'profile']);
 
         // حذف بار توسط صاحب بار
-        // Route::delete('removeOwnerLoad/{load}/{owner}', [LoadController::class, 'removeOwnerLoad']);
+        Route::delete('removeOwnerLoad/{load}/{owner}', [LoadController::class, 'removeOwnerLoad']);
 
         // تکرار بار
-        // Route::get('repeatOwnerLoad/{load}', [LoadController::class, 'repeatOwnerLoad']);
+        Route::get('repeatOwnerLoad/{load}', [LoadController::class, 'repeatOwnerLoad']);
 
         // درخواست اطلاعات بار
-        // Route::get('requestLoadInfo/{id}', [LoadController::class, 'requestLoadInfo']);
+        Route::get('requestLoadInfo/{id}', [LoadController::class, 'requestLoadInfo']);
 
         // ویرایش اطلاعات بار
-        // Route::patch('editLoadInfo/{load}/{api}', [LoadController::class, 'editLoadInfo']);
+        Route::patch('editLoadInfo/{load}/{api}', [LoadController::class, 'editLoadInfo']);
 
         // درخواست لیست بارهای صاحبان بار
         // Route::get('requestCustomerLoadsLists/{id}', [LoadController::class, 'requestCustomerLoadsLists']);
@@ -648,7 +648,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         // درخواست نوتیفیکیشن صاحبان بار
         // Route::post('sendCustomNotificationOwner', [NotificationController::class, 'sendCustomNotificationOwner']);
-    // });
+    });
 
     // Route::prefix('test')->group(function () {
     //     Route::get('sendNotifLoad/{load}', [LoadController::class, 'sendNotifLoadTest']);
