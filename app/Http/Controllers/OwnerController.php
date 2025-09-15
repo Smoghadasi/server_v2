@@ -268,6 +268,7 @@ class OwnerController extends Controller
                 })
                 ->select('owners.*')
                 ->distinct()
+                ->orderBy('created_at', 'asc')
                 ->paginate(20);
         }
 
