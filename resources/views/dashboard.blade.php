@@ -62,7 +62,7 @@
                         <span class="float-right">
                             <i class="fas fa-angle-right"></i>
                         </span>
-                        <span class="badge bg-secondary">{{ $cargoAcceptsCount }}</span>
+                        {{-- <span class="badge bg-secondary">{{ $cargoAcceptsCount }}</span> --}}
                     </a>
                 </div>
             </div>
@@ -86,7 +86,22 @@
                 </div>
             </div>
         @endif
-        @if (in_array('dashboardAllBearing', auth()->user()->userAccess))
+        <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="card text-white bg-warning o-hidden h-100">
+
+                <div class="card-body">
+                    <div class="card-body-icon">
+                        <i class="fas fa-fw fa-building"></i>
+                    </div>
+                    <h1 class="text-center text-white">{{ $countOfScores }} </h1>
+                    <h2 class="text-center text-white">نظرات کاربران</h2>
+                </div>
+                <a class="card-footer text-white clearfix small z-1 btn btn-light" href="{{ route('score.index') }}">
+                    <span class="">لیست نظرات</span>
+                </a>
+            </div>
+        </div>
+        {{-- @if (in_array('dashboardAllBearing', auth()->user()->userAccess))
             <div class="col-xl-3 col-sm-6 mb-3">
                 <div class="card text-white bg-warning o-hidden h-100">
 
@@ -102,8 +117,8 @@
                     </a>
                 </div>
             </div>
-        @endif
-        @if (in_array('dashboardAllCustomers', auth()->user()->userAccess))
+        @endif --}}
+        {{-- @if (in_array('dashboardAllCustomers', auth()->user()->userAccess))
             <div class="col-xl-3 col-sm-6 mb-3">
                 <div class="card text-white bg-success o-hidden h-100">
                     <div class="card-body">
@@ -121,7 +136,7 @@
                     </a>
                 </div>
             </div>
-        @endif
+        @endif --}}
         @if (in_array('dashboardAllMessage', auth()->user()->userAccess))
             <div class="col-xl-3 col-sm-6 mb-3">
                 <div class="card text-white bg-danger o-hidden h-100">

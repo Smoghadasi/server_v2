@@ -47,6 +47,7 @@ use App\Http\Controllers\RadioController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReportingController;
 use App\Http\Controllers\RuleRegulationController;
+use App\Http\Controllers\ScoreController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SliderController;
@@ -177,6 +178,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         // استان ها و شهرها جدید
         Route::resource('provinceCity', ProvinceCityController::class)->middleware("operator");
+
+        // امتیاز و نظرات
+        Route::resource('score', ScoreController::class)->middleware("operator");
 
         // شهرها و استان ها
         Route::get('provincesAndCities', [AddressController::class, 'provincesAndCities'])->middleware('operator');

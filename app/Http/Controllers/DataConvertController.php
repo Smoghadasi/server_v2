@@ -836,24 +836,30 @@ class DataConvertController extends Controller
             if (isset($load->id)) {
                 $counter++;
 
-                if ($fleet_id->id == 86) {
-                    $fleet_ids = [86, 87];
-                    foreach ($fleet_ids as $id) {
-                        $fleetLoad = new FleetLoad();
-                        $fleetLoad->load_id = $load->id;
-                        $fleetLoad->fleet_id = $id;
-                        $fleetLoad->numOfFleets = 1;
-                        $fleetLoad->userType = $load->userType;
-                        $fleetLoad->save();
-                    }
-                } else {
-                    $fleetLoad = new FleetLoad();
-                    $fleetLoad->load_id = $load->id;
-                    $fleetLoad->fleet_id = $fleet_id->id;
-                    $fleetLoad->numOfFleets = 1;
-                    $fleetLoad->userType = $load->userType;
-                    $fleetLoad->save();
-                }
+                // if ($fleet_id->id == 86) {
+                //     $fleet_ids = [86, 87];
+                //     foreach ($fleet_ids as $id) {
+                //         $fleetLoad = new FleetLoad();
+                //         $fleetLoad->load_id = $load->id;
+                //         $fleetLoad->fleet_id = $id;
+                //         $fleetLoad->numOfFleets = 1;
+                //         $fleetLoad->userType = $load->userType;
+                //         $fleetLoad->save();
+                //     }
+                // } else {
+                //     $fleetLoad = new FleetLoad();
+                //     $fleetLoad->load_id = $load->id;
+                //     $fleetLoad->fleet_id = $fleet_id->id;
+                //     $fleetLoad->numOfFleets = 1;
+                //     $fleetLoad->userType = $load->userType;
+                //     $fleetLoad->save();
+                // }
+                $fleetLoad = new FleetLoad();
+                $fleetLoad->load_id = $load->id;
+                $fleetLoad->fleet_id = $fleet_id->id;
+                $fleetLoad->numOfFleets = 1;
+                $fleetLoad->userType = $load->userType;
+                $fleetLoad->save();
                 try {
                     $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
                     // Log::emergency("Error cargo report by 1371: ");

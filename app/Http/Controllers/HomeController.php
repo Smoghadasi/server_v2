@@ -15,6 +15,7 @@ use App\Models\Load;
 use App\Models\LoadBackup;
 use App\Models\Owner;
 use App\Models\Report;
+use App\Models\Score;
 use App\Models\SiteOption;
 use App\Models\TrackableItems;
 use App\Models\User;
@@ -49,10 +50,11 @@ class HomeController extends Controller
     {
         if (in_array('dashboard', auth()->user()->userAccess)) {
             try {
-                $cargoAcceptsCount = Load::where('status', BEFORE_APPROVAL)->count();
-                $countOfLoads = LoadBackup::count();
-                $countOfBearings = Bearing::count();
-                $countOfCustomers = Customer::count();
+                // $cargoAcceptsCount = Load::where('status', BEFORE_APPROVAL)->count();
+                $countOfLoads = Load::withTrashed()->count();
+                // $countOfBearings = Bearing::count();
+                // $countOfCustomers = Customer::count();
+                $countOfScores = Score::count();
                 $countOfOwners = Owner::count();
                 $countOfContactUses = ContactUs::count();
                 $countOfDrivers = Driver::count();
@@ -61,12 +63,13 @@ class HomeController extends Controller
 
                 return view('dashboard', compact(
                     'countOfLoads',
-                    'countOfBearings',
-                    'countOfCustomers',
+                    'countOfScores',
+                    // 'countOfBearings',
+                    // 'countOfCustomers',
                     'countOfContactUses',
                     'countOfDrivers',
                     'users',
-                    'cargoAcceptsCount',
+                    // 'cargoAcceptsCount',
                     'countOfOwners'
                 ));
             } catch (\Exception $exception) {
