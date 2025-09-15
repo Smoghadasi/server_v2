@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Support\Facades\DB;
 use SoapClient;
 
 class Owner extends Model
@@ -177,5 +178,17 @@ class Owner extends Model
     public function province()
     {
         return $this->belongsTo(ProvinceCity::class, 'province_id');
+    }
+
+    public function hasToken()
+    {
+        try {
+            if (DB::table('personal_access_tokens')->where('tokenable_type', 'App\Models\Owner')->where('tokenable_id', $this->id)->exists()) {
+                return 1;
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+        return 0;
     }
 }
