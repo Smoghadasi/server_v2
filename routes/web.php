@@ -1147,7 +1147,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     // پرداخت هزینه کنترل ناوگان
     Route::get('fleetControlPay/{numOfFleetControl}/{userType}/{user_id}', [PayController::class, 'fleetControlPay']);
     Route::get('verifyFleetControlPay', [PayController::class, 'verifyFleetControlPay']);
-    Route::get('dashboard', [HomeController::class, 'dashboard']);
 
     /******************************************************************************************************************/
 });

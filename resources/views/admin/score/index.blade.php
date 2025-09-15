@@ -52,7 +52,7 @@
                             </td>
 
                             <td>{{ $score->value }}</td>
-                            <td>{{ $score->description }}</td>
+                            <td>{{ $score->description ?? '-' }}</td>
 
                             @php
                                 $pieces = explode(' ', $score->created_at);

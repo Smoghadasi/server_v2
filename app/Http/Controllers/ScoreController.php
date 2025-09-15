@@ -18,6 +18,12 @@ class ScoreController extends Controller
             ->when($request->type !== null, function ($query) use ($request) {
                 $query->where('type', $request->type);
             })
+            ->when($request->owner_id !== null, function ($query) use ($request) {
+                $query->where('owner_id', $request->owner_id);
+            })
+            ->when($request->driver_id !== null, function ($query) use ($request) {
+                $query->where('driver_id', $request->driver_id);
+            })
             ->paginate(20);
         // return $scores;
         return view('admin.score.index', compact('scores'));

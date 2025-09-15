@@ -127,6 +127,15 @@
                         <label for="freeCalls" class="form-label">تماس رایگان</label>
                         <input type="text" class="form-control" disabled value="{{ $driver->freeCalls }}" />
                     </div>
+                    <div class="mb-3 col-md-6">
+                        <label for="freeCalls" class="form-label">امتیاز
+                            @if ($driver->ratingDriver != null)
+                                <a href="{{ route('score.index', ['driver_id' => $driver->id]) }}">(نظرات کاربران)</a>
+                            @endif
+                        </label>
+                        <input type="text" class="form-control" disabled value="{{ $driver->ratingDriver }}" />
+
+                    </div>
                 </div>
             </form>
             <div class="card">
@@ -153,7 +162,8 @@
                                     <div class="modal fade" id="searchFreeSubs" tabindex="-1" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered" role="document">
                                             <div class="modal-content">
-                                                <form action="{{ route('driver.detail', ['driver' => $driver]) }}" method="get">
+                                                <form action="{{ route('driver.detail', ['driver' => $driver]) }}"
+                                                    method="get">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title" id="searchFreeSubsTitle">جستجو اشتراک
                                                             رایگان

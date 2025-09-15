@@ -169,7 +169,12 @@
                             </div>
                         </div>
                         <div class="mb-3 col-md-6">
-                            <label for="ratingOwner" class="col-form-label">امتیاز</label>
+                            <label for="ratingOwner" class="col-form-label">امتیاز
+                                @if ($owner->ratingOwner != null)
+                                    <a href="{{ route('score.index', ['owner_id' => $owner->id]) }}">(نظرات کاربران)</a>
+                                @endif
+
+                            </label>
                             <div class="col-md-12">
                                 <input class="form-control" type="text" name="ratingOwner" disabled
                                     value="{{ $owner->ratingOwner == null ? 'بدون امتیاز' : $owner->ratingOwner }}"
