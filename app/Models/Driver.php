@@ -246,6 +246,11 @@ class Driver extends Authenticatable
         return $this->morphOne(Bookmark::class, 'userable');
     }
 
+    public function notificationUser()
+    {
+        return $this->morphOne(Bookmark::class, 'userable');
+    }
+
     public function unSuccessPayment($mobile)
     {
         $curl = curl_init();
