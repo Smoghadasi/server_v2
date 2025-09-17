@@ -1463,12 +1463,15 @@ class DriverController extends Controller
                             } else {
                                 $sms->freeSubscription($driver->mobileNumber, $persian_date, $sixMonth);
                             }
-
-                        $notificationUser = new NotificationUser();
-                        $notificationUser->type = 'driver';
-                        $notificationUser->visibility = 'private';
-                        $notificationUser->description = 'اعتبار برای شما فعال شد';
-                        $notificationUser->save();
+                        try {
+                            $notificationUser = new NotificationUser();
+                            $notificationUser->type = 'driver';
+                            $notificationUser->visibility = 'private';
+                            $notificationUser->description = 'اعتبار برای شما فعال شد';
+                            $notificationUser->save();
+                        } catch (\Throwable $th) {
+                            //throw $th;
+                        }
                     }
                     if ($request->freeCalls > 0) {
                         $free_subscription = new FreeSubscription();
@@ -1535,11 +1538,15 @@ class DriverController extends Controller
                             $sms->freeSubscription($driver->mobileNumber, $persian_date, $sixMonth);
                         }
                     }
-                    $notificationUser = new NotificationUser();
-                    $notificationUser->userType = 'driver';
-                    $notificationUser->visibility = 'private';
-                    $notificationUser->description = 'اعتبار برای شما فعال شد';
-                    $driver->notificationUser()->save($notificationUser);
+                    try {
+                        $notificationUser = new NotificationUser();
+                        $notificationUser->userType = 'driver';
+                        $notificationUser->visibility = 'private';
+                        $notificationUser->description = 'اعتبار برای شما فعال شد';
+                        $driver->notificationUser()->save($notificationUser);
+                    } catch (\Throwable $th) {
+                        //throw $th;
+                    }
                 }
                 if ($request->freeCalls > 0) {
                     $free_subscription = new FreeSubscription();
@@ -1551,12 +1558,16 @@ class DriverController extends Controller
                     $driver->freeCallTotal += $request->freeCalls;
                     $driver->save();
 
-                    // ارسال نوتیفیکیشن داخلی برای کاربر
-                    $notificationUser = new NotificationUser();
-                    $notificationUser->userType = 'driver';
-                    $notificationUser->visibility = 'private';
-                    $notificationUser->description = "{$request->freeCalls} تماس رایگان برای شما فعال شد.\nهمین حالا می‌تونی با صاحب بار مورد نظرت تماس بگیری 📞";
-                    $driver->notificationUser()->save($notificationUser);
+                    try {
+                        // ارسال نوتیفیکیشن داخلی برای کاربر
+                        $notificationUser = new NotificationUser();
+                        $notificationUser->userType = 'driver';
+                        $notificationUser->visibility = 'private';
+                        $notificationUser->description = "{$request->freeCalls} تماس رایگان برای شما فعال شد.\nهمین حالا می‌تونی با صاحب بار مورد نظرت تماس بگیری 📞";
+                        $driver->notificationUser()->save($notificationUser);
+                    } catch (\Throwable $th) {
+                        //throw $th;
+                    }
 
                     if (!empty($driver->FCM_token) && $driver->version > 68) {
                         $title = 'راننده عزیز، 🎉';
