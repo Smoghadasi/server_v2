@@ -1411,6 +1411,17 @@ class DriverController extends Controller
                         $free_subscription->save();
                         $driver->freeCallTotal += $request->freeCalls;
                         $driver->save();
+                        try {
+                            // ارسال نوتیفیکیشن داخلی برای کاربر
+                            $notificationUser = new NotificationUser();
+                            $notificationUser->userType = 'driver';
+                            $notificationUser->visibility = 'private';
+                            $notificationUser->description = "{$request->freeCalls} تماس رایگان برای شما فعال شد.\nهمین حالا می‌تونی با صاحب بار مورد نظرت تماس بگیری 📞";
+                            $driver->notificationUser()->save($notificationUser);
+                        } catch (\Throwable $th) {
+                            //throw $th;
+                        }
+
                         if (!empty($driver->FCM_token) && $driver->version > 68) {
                             $title = 'راننده عزیز، 🎉';
                             $body  = "{$request->freeCalls} تماس رایگان برای شما فعال شد.\nهمین حالا می‌تونی با صاحب بار مورد نظرت تماس بگیری 📞";
