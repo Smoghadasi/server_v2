@@ -18,6 +18,7 @@ use App\Models\Fleet;
 use App\Models\FleetLoad;
 use App\Models\FreeSubscription;
 use App\Models\Load;
+use App\Models\NotificationUser;
 use App\Models\OperatorDriverAuthMessage;
 use App\Models\Owner;
 use App\Models\ProvinceCity;
@@ -1392,7 +1393,6 @@ class DriverController extends Controller
     public function creditDriverExtending(Request $request, Driver $driver)
     {
         $setting = Setting::first();
-
         if ($request->month == 0) {
             if (Auth::user()->role === 'admin' || in_array(Auth::id(), [53, 29, 69, 75, 54, 77])) {
                 if ($this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, $request->month, $request->freeCalls, $driver->freeAcceptLoads)) {
@@ -1402,34 +1402,6 @@ class DriverController extends Controller
                     $threeMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+90 day', time())), '/');
                     $sixMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+180 day', time())), '/');
 
-                    if ($request->month > 0) {
-                        $free_subscription = new FreeSubscription();
-                        $free_subscription->type = AUTH_VALIDITY;
-                        $free_subscription->value = $request->month;
-                        $free_subscription->driver_id = $driver->id;
-                        $free_subscription->operator_id = Auth::id();
-                        $free_subscription->save();
-                        $sms = new Driver();
-
-                        if ($request->month == 1)
-                            if ($setting->sms_panel == 'SMSIR') {
-                                $sms->freeSubscriptionSmsIr($driver->mobileNumber, $persian_date, $oneMonth);
-                            } else {
-                                $sms->freeSubscription($driver->mobileNumber, $persian_date, $oneMonth);
-                            }
-                        if ($request->month == 3)
-                            if ($setting->sms_panel == 'SMSIR') {
-                                $sms->freeSubscriptionSmsIr($driver->mobileNumber, $persian_date, $threeMonth);
-                            } else {
-                                $sms->freeSubscription($driver->mobileNumber, $persian_date, $threeMonth);
-                            }
-                        if ($request->month == 6)
-                            if ($setting->sms_panel == 'SMSIR') {
-                                $sms->freeSubscriptionSmsIr($driver->mobileNumber, $persian_date, $sixMonth);
-                            } else {
-                                $sms->freeSubscription($driver->mobileNumber, $persian_date, $sixMonth);
-                            }
-                    }
                     if ($request->freeCalls > 0) {
                         $free_subscription = new FreeSubscription();
                         $free_subscription->type = AUTH_CALLS;
@@ -1491,6 +1463,12 @@ class DriverController extends Controller
                             } else {
                                 $sms->freeSubscription($driver->mobileNumber, $persian_date, $sixMonth);
                             }
+
+                        $notificationUser = new NotificationUser();
+                        $notificationUser->type = 'driver';
+                        $notificationUser->visibility = 'private';
+                        $notificationUser->description = 'اعتبار برای شما فعال شد';
+                        $notificationUser->save();
                     }
                     if ($request->freeCalls > 0) {
                         $free_subscription = new FreeSubscription();
@@ -1557,6 +1535,11 @@ class DriverController extends Controller
                             $sms->freeSubscription($driver->mobileNumber, $persian_date, $sixMonth);
                         }
                     }
+                    $notificationUser = new NotificationUser();
+                    $notificationUser->userType = 'driver';
+                    $notificationUser->visibility = 'private';
+                    $notificationUser->description = 'اعتبار برای شما فعال شد';
+                    $driver->notificationUser()->save($notificationUser);
                 }
                 if ($request->freeCalls > 0) {
                     $free_subscription = new FreeSubscription();
@@ -1567,6 +1550,14 @@ class DriverController extends Controller
                     $free_subscription->save();
                     $driver->freeCallTotal += $request->freeCalls;
                     $driver->save();
+
+                    // ارسال نوتیفیکیشن داخلی برای کاربر
+                    $notificationUser = new NotificationUser();
+                    $notificationUser->userType = 'driver';
+                    $notificationUser->visibility = 'private';
+                    $notificationUser->description = "{$request->freeCalls} تماس رایگان برای شما فعال شد.\nهمین حالا می‌تونی با صاحب بار مورد نظرت تماس بگیری 📞";
+                    $driver->notificationUser()->save($notificationUser);
+
                     if (!empty($driver->FCM_token) && $driver->version > 68) {
                         $title = 'راننده عزیز، 🎉';
                         $body  = "{$request->freeCalls} تماس رایگان برای شما فعال شد.\nهمین حالا می‌تونی با صاحب بار مورد نظرت تماس بگیری 📞";
