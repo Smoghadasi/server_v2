@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class SiteOption extends Model
 {
-    //
+    protected $fillable = ['isSecondPy'];
 }

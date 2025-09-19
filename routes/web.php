@@ -67,6 +67,7 @@ use App\Http\Controllers\WebNotificationController;
 use App\Models\City;
 // use App\Models\Driver;
 use App\Models\Load;
+use App\Models\SiteOption;
 use App\Models\State;
 
 use Illuminate\Support\Facades\Artisan;
@@ -1074,6 +1075,12 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         }
     });
 
+    Route::get('/changeRoute', function () {
+        return tap(SiteOption::first(), function ($site) {
+            $site->update(['isSecondPy' => !$site->isSecondPy]);
+        });
+    });
+
 
     // شارژ کیف پول
     Route::get('increaseWalletCharge/{amount}/{user_id}/{userType}', function ($amount, $user_id, $userType) {
@@ -1107,7 +1114,10 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     });
 
     /****************************************************************************************************************/
-    // عملیات بانکی و پرداخت
+
+    Route::get('paymentPackage/{packageName}/{driver}', [PayController::class, 'paymentPackage']);
+    Route::get('paymentPackageVerify', [PayController::class, 'paymentPackageVerify']);
+
 
     // شارژ کیف پول
     Route::get('chargeWallet/{amount}/{bearing_id}/{userType}', [PayController::class, 'pay']);
@@ -1135,6 +1145,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     // درگاه پرداخت سینا
     Route::get('payDriverSina/{packageName}/{driver}', [PayController::class, 'payDriverSina']);
     Route::post('verifyDriverPaySina', [PayController::class, 'verifyDriverPaySina']);
+
+
+
 
     /****************************************************************************************************************/
 

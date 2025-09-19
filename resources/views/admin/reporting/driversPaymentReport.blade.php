@@ -46,7 +46,7 @@
                                 <td>{{ $key + 1 }}</td>
                                 <td>{{ $transaction->amount }}</td>
                                 <td>
-                                    @if ($transaction->status > 2)
+                                    @if ($transaction->status > 2 || $transaction->status == '-52')
                                         <span class="alert alert-success m-1 p-1">
                                             پرداخت شده
                                         </span>
