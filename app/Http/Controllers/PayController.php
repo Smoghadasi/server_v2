@@ -1353,6 +1353,7 @@ class PayController extends Controller
                 $transaction->authority = $result->Authority;
                 $transaction->bank_name = ZARINPAL;
                 $transaction->status = 2;
+                $transaction->action = 'delete';
                 $transaction->amount = $amount;
                 $transaction->monthsOfThePackage = $monthsOfThePackage;
                 $transaction->save();
