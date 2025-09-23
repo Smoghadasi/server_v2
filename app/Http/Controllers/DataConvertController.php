@@ -667,9 +667,13 @@ class DataConvertController extends Controller
 
         $cargoPattern = $origin . $destination . $mobileNumber . $fleet;
 
-        // 🚀 چک Duplicate سریع‌تر
         if (
-            BlockPhoneNumber::where('phoneNumber', $mobileNumber)->exists() ||
+            BlockPhoneNumber::where('phoneNumber', $mobileNumber)
+            ->where(function ($query) {
+                $query->where('type', 'operator')
+                      ->orWhere('type', 'both');
+            })
+                ->exists() ||
             Load::where('cargoPattern', $cargoPattern)
             ->where('created_at', '>', now()->subMinutes(180))
             ->exists()
