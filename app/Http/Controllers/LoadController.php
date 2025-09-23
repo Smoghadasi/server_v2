@@ -396,763 +396,763 @@ class LoadController extends Controller
         }
     }
 
-    public function createNewLoad(NewLoadRequest $request)
+    public function createNewLoad(Request $request)
     {
         Log::warning('owner createNewLoads-------------------------------------------');
-        Log::warning($request->user_id);
-        try {
+        Log::warning($request);
+        // try {
 
-            if (\auth()->check()) {
-                if (UserActivityReport::where([
-                    ['created_at', '>', date('Y-m-d H:i:s', strtotime('-5 minute', time()))],
-                    ['user_id', \auth()->id()]
-                ])->count() == 0)
+        //     if (\auth()->check()) {
+        //         if (UserActivityReport::where([
+        //             ['created_at', '>', date('Y-m-d H:i:s', strtotime('-5 minute', time()))],
+        //             ['user_id', \auth()->id()]
+        //         ])->count() == 0)
 
-                    UserActivityReport::create(['user_id' => \auth()->id()]);
-            }
-        } catch (Exception $e) {
-            Log::emergency("-------------------------- UserActivityReport ----------------------------------------");
-            Log::emergency($e->getMessage());
-            Log::emergency("------------------------------------------------------------------");
-        }
+        //             UserActivityReport::create(['user_id' => \auth()->id()]);
+        //     }
+        // } catch (Exception $e) {
+        //     Log::emergency("-------------------------- UserActivityReport ----------------------------------------");
+        //     Log::emergency($e->getMessage());
+        //     Log::emergency("------------------------------------------------------------------");
+        // }
 
-        try {
-            $senderMobileNumber = isset($request->mobileNumberForCoordination) ? $request->mobileNumberForCoordination : $request->senderMobileNumber;
-            if (BlockPhoneNumber::where('phoneNumber', $senderMobileNumber)->count()) {
-                $message[1] = 'شماره تلفن وارد شده در لیست ممنوعه می باشد، و امکان ثبت بار با شماره تلفن ' . $senderMobileNumber .
-                    ' امکان پذیر نمی باشد. لطفا برای دلیل آن با ایران ترابر تماس بگیرید';
-                return [
-                    'result' => UN_SUCCESS,
-                    'message' => $message
-                ];
-            }
+        // try {
+        //     $senderMobileNumber = isset($request->mobileNumberForCoordination) ? $request->mobileNumberForCoordination : $request->senderMobileNumber;
+        //     if (BlockPhoneNumber::where('phoneNumber', $senderMobileNumber)->count()) {
+        //         $message[1] = 'شماره تلفن وارد شده در لیست ممنوعه می باشد، و امکان ثبت بار با شماره تلفن ' . $senderMobileNumber .
+        //             ' امکان پذیر نمی باشد. لطفا برای دلیل آن با ایران ترابر تماس بگیرید';
+        //         return [
+        //             'result' => UN_SUCCESS,
+        //             'message' => $message
+        //         ];
+        //     }
 
-            if (BlockedIp::where('ip', request()->ip())->count()) {
-                $message[1] = 'عدم ثبت بار به دلیل مسدود شدن IP';
-                return [
-                    'result' => UN_SUCCESS,
-                    'message' => $message
-                ];
-            }
-
-
-            // ثبت ip کاربر
-            try {
-                if ($request->userType == ROLE_OWNER) {
-                    $owner = Owner::where('mobileNumber', $senderMobileNumber)->first();
-
-                    if (isset($owner->id)) {
-                        $owner->ip = request()->ip();
-                        $owner->save();
-                    }
-                }
-            } catch (Exception $e) {
-                Log::emergency("=========================== Error Store Ip ================================");
-                Log::emergency($e->getMessage());
-                Log::emergency("========================= End Error Store Ip ==============================");
-            }
-        } catch (\Exception $exception) {
-        }
+        //     if (BlockedIp::where('ip', request()->ip())->count()) {
+        //         $message[1] = 'عدم ثبت بار به دلیل مسدود شدن IP';
+        //         return [
+        //             'result' => UN_SUCCESS,
+        //             'message' => $message
+        //         ];
+        //     }
 
 
-        try {
-            $message[1] = '';
-            $loadPic = null;
+        //     // ثبت ip کاربر
+        //     try {
+        //         if ($request->userType == ROLE_OWNER) {
+        //             $owner = Owner::where('mobileNumber', $senderMobileNumber)->first();
 
-            if (isset($request->marketing_price))
-                $request->marketing_price = $request->marketing_price;
-            else
-                $request->marketing_price = 0;
-
-            if (!isset($request->tenderTimeDuration))
-                $request->tenderTimeDuration = 15;
-
-            if ($request->image != "noImage") {
-                $loadPic = "pictures/loads/" . sha1(time() . $request->user_id) . ".jpg";
-                file_put_contents($loadPic, base64_decode($request->image));
-            }
-
-            DB::beginTransaction();
-
-            $load = new Load();
-            $load->title = strlen($request->title) > 0 ? $request->title : "بدون عنوان";
-            $load->weight = $request->weight;
-            $load->width = $this->convertNumbers($request->width, false);
-            $load->length = $this->convertNumbers($request->length, false);
-            $load->height = $this->convertNumbers($request->height, false);
-            $load->loadingAddress = $request->loadingAddress;
-            $load->dischargeAddress = $request->dischargeAddress;
-            $load->senderMobileNumber = $request->senderMobileNumber;
-            $load->receiverMobileNumber = $request->receiverMobileNumber;
-            $load->insuranceAmount = strlen($request->insuranceAmount) ? $request->insuranceAmount : 0;
-            $load->suggestedPrice = $request->suggestedPrice;
-            $load->marketing_price = $request->marketing_price;
-            $load->emergencyPhone = $request->emergencyPhone;
-            $load->dischargeTime = $request->dischargeTime;
-            $load->fleet_id = $request->fleet_id;
-            $load->load_type_id = $request->load_type_id;
-            $load->tenderTimeDuration = $request->tenderTimeDuration;
-            $load->packing_type_id = $request->packing_type_id;
-            $load->loadPic = $loadPic;
-            $load->user_id = $request->user_id;
-            $load->userType = $request->userType;
-            $load->loadMode = $request->loadMode;
-            $load->loadingHour = $request->loadingHour;
-            $load->loadingMinute = $request->loadingMinute;
-            $load->numOfTrucks = $request->numOfTrucks;
-            $load->originLatitude = $request->originLatitude;
-            $load->originLongitude = $request->originLongitude;
-            $load->destinationLatitude = $request->destinationLatitude;
-            $load->destinationLongitude = $request->destinationLongitude;
-            $load->date = gregorianDateToPersian(date('Y/m/d', time()), '/');
-            $load->dateTime = now()->format('H:i:s');
-
-            if (isset($request->origin_city_id) && isset($request->destination_city_id)) {
-
-                $load->origin_city_id = $request->origin_city_id;
-                $load->destination_city_id = $request->destination_city_id;
-
-                $load->fromCity = $this->getCityName($request->origin_city_id);
-                $load->toCity = $this->getCityName($request->destination_city_id);
-            } else {
-
-                $originCity = $this->getCountyFromFullAddress($request->loadingAddress);
-                $destinationCity = $this->getCountyFromFullAddress($request->dischargeAddress);
-
-                if (isset($originCity->id)) {
-                    $load->origin_city_id = $originCity->id;
-                    $load->fromCity = $originCity->state . ', ' . $originCity->name;
-                } else
-                    $load->fromCity = $request->loadingAddress;
-
-                if (isset($destinationCity->id)) {
-                    $load->destination_city_id = $destinationCity->id;
-                    $load->toCity = $destinationCity->state . ', ' . $destinationCity->name;
-                } else
-                    $load->toCity = $request->dischargeAddress;
+        //             if (isset($owner->id)) {
+        //                 $owner->ip = request()->ip();
+        //                 $owner->save();
+        //             }
+        //         }
+        //     } catch (Exception $e) {
+        //         Log::emergency("=========================== Error Store Ip ================================");
+        //         Log::emergency($e->getMessage());
+        //         Log::emergency("========================= End Error Store Ip ==============================");
+        //     }
+        // } catch (\Exception $exception) {
+        // }
 
 
-                $load->latitude = $load->originLatitude;
-                $load->longitude = $load->originLongitude;
-            }
-            try {
-                $city = ProvinceCity::find($request->origin_city_id);
-                if (isset($city->id)) {
-                    $load->latitude = $city->latitude;
-                    $load->longitude = $city->longitude;
-                }
-            } catch (\Exception $exception) {
-            }
+        // try {
+        //     $message[1] = '';
+        //     $loadPic = null;
 
-            $load->loadingDate = $request->loadingDate;
-            $load->time = time();
+        //     if (isset($request->marketing_price))
+        //         $request->marketing_price = $request->marketing_price;
+        //     else
+        //         $request->marketing_price = 0;
+
+        //     if (!isset($request->tenderTimeDuration))
+        //         $request->tenderTimeDuration = 15;
+
+        //     if ($request->image != "noImage") {
+        //         $loadPic = "pictures/loads/" . sha1(time() . $request->user_id) . ".jpg";
+        //         file_put_contents($loadPic, base64_decode($request->image));
+        //     }
+
+        //     DB::beginTransaction();
+
+        //     $load = new Load();
+        //     $load->title = strlen($request->title) > 0 ? $request->title : "بدون عنوان";
+        //     $load->weight = $request->weight;
+        //     $load->width = $this->convertNumbers($request->width, false);
+        //     $load->length = $this->convertNumbers($request->length, false);
+        //     $load->height = $this->convertNumbers($request->height, false);
+        //     $load->loadingAddress = $request->loadingAddress;
+        //     $load->dischargeAddress = $request->dischargeAddress;
+        //     $load->senderMobileNumber = $request->senderMobileNumber;
+        //     $load->receiverMobileNumber = $request->receiverMobileNumber;
+        //     $load->insuranceAmount = strlen($request->insuranceAmount) ? $request->insuranceAmount : 0;
+        //     $load->suggestedPrice = $request->suggestedPrice;
+        //     $load->marketing_price = $request->marketing_price;
+        //     $load->emergencyPhone = $request->emergencyPhone;
+        //     $load->dischargeTime = $request->dischargeTime;
+        //     $load->fleet_id = $request->fleet_id;
+        //     $load->load_type_id = $request->load_type_id;
+        //     $load->tenderTimeDuration = $request->tenderTimeDuration;
+        //     $load->packing_type_id = $request->packing_type_id;
+        //     $load->loadPic = $loadPic;
+        //     $load->user_id = $request->user_id;
+        //     $load->userType = $request->userType;
+        //     $load->loadMode = $request->loadMode;
+        //     $load->loadingHour = $request->loadingHour;
+        //     $load->loadingMinute = $request->loadingMinute;
+        //     $load->numOfTrucks = $request->numOfTrucks;
+        //     $load->originLatitude = $request->originLatitude;
+        //     $load->originLongitude = $request->originLongitude;
+        //     $load->destinationLatitude = $request->destinationLatitude;
+        //     $load->destinationLongitude = $request->destinationLongitude;
+        //     $load->date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+        //     $load->dateTime = now()->format('H:i:s');
+
+        //     if (isset($request->origin_city_id) && isset($request->destination_city_id)) {
+
+        //         $load->origin_city_id = $request->origin_city_id;
+        //         $load->destination_city_id = $request->destination_city_id;
+
+        //         $load->fromCity = $this->getCityName($request->origin_city_id);
+        //         $load->toCity = $this->getCityName($request->destination_city_id);
+        //     } else {
+
+        //         $originCity = $this->getCountyFromFullAddress($request->loadingAddress);
+        //         $destinationCity = $this->getCountyFromFullAddress($request->dischargeAddress);
+
+        //         if (isset($originCity->id)) {
+        //             $load->origin_city_id = $originCity->id;
+        //             $load->fromCity = $originCity->state . ', ' . $originCity->name;
+        //         } else
+        //             $load->fromCity = $request->loadingAddress;
+
+        //         if (isset($destinationCity->id)) {
+        //             $load->destination_city_id = $destinationCity->id;
+        //             $load->toCity = $destinationCity->state . ', ' . $destinationCity->name;
+        //         } else
+        //             $load->toCity = $request->dischargeAddress;
 
 
-            $load->weightPerTruck = isset($request->weightPerTruck) && $request->weightPerTruck > 0 ? $this->convertNumbers($request->weightPerTruck, false) : 0;
+        //         $load->latitude = $load->originLatitude;
+        //         $load->longitude = $load->originLongitude;
+        //     }
+        //     try {
+        //         $city = ProvinceCity::find($request->origin_city_id);
+        //         if (isset($city->id)) {
+        //             $load->latitude = $city->latitude;
+        //             $load->longitude = $city->longitude;
+        //         }
+        //     } catch (\Exception $exception) {
+        //     }
 
-            $load->bulk = isset($request->bulk) ? $request->bulk : 2;
-            $load->dangerousProducts = isset($request->dangerousProducts) ? $request->dangerousProducts : false;
-
-            $load->origin_state_id = AddressController::geStateIdFromCityId($request->origin_city_id);
-            $load->description = $request->description;
-            if ($load->suggestedPrice == 0 && $request->storeFor == ROLE_DRIVER)
-                $load->priceBased = 'توافقی';
-            else
-                $load->priceBased = $request->priceBased;
-
-            if ($request->userType == ROLE_TRANSPORTATION_COMPANY) {
-                $load->bearing_id = $request->user_id;
-                $load->proposedPriceForDriver = $request->suggestedPrice;
-            }
-
-            $load->operator_id = 0;
-            // ذخیره توسط اپراتور
-            try {
-                if (isset(\auth()->user()->role) && (\auth()->user()->role == ROLE_OPERATOR || \auth()->user()->role == ROLE_ADMIN)) {
-                    $load->operator_id = \auth()->id();
-                    $load->proposedPriceForDriver = $request->suggestedPrice;
-                    $load->status = ON_SELECT_DRIVER;
-                    $load->userType = ROLE_TRANSPORTATION_COMPANY;
-                }
-            } catch (Exception $e) {
-            }
-
-            if (isset($request->proposedPriceForDriver))
-                $load->proposedPriceForDriver = $this->convertNumbers($request->proposedPriceForDriver, false);
-
-            if ($request->loadMode == 'innerCity') {
-                $load->origin_latitude = $request->origin_latitude;
-                $load->origin_longitude = $request->origin_longitude;
-                $load->destination_latitude = $request->destination_latitude;
-                $load->destination_longitude = $request->destination_longitude;
-            }
-
-            if (isset($request->mobileNumberForCoordination)) {
-                $load->mobileNumberForCoordination = convertFaNumberToEn($request->mobileNumberForCoordination);
-            } else if (isset($request->senderMobileNumber)) {
-                $load->mobileNumberForCoordination = convertFaNumberToEn($request->senderMobileNumber);
-                $load->mobileNumberForCoordination = convertFaNumberToEn($request->senderMobileNumber);
-            }
+        //     $load->loadingDate = $request->loadingDate;
+        //     $load->time = time();
 
 
-            $load->status = 4;
-            $load->storeFor = $request->storeFor;
+        //     $load->weightPerTruck = isset($request->weightPerTruck) && $request->weightPerTruck > 0 ? $this->convertNumbers($request->weightPerTruck, false) : 0;
 
-            // if (isset($request->storeFor)) {
+        //     $load->bulk = isset($request->bulk) ? $request->bulk : 2;
+        //     $load->dangerousProducts = isset($request->dangerousProducts) ? $request->dangerousProducts : false;
+
+        //     $load->origin_state_id = AddressController::geStateIdFromCityId($request->origin_city_id);
+        //     $load->description = $request->description;
+        //     if ($load->suggestedPrice == 0 && $request->storeFor == ROLE_DRIVER)
+        //         $load->priceBased = 'توافقی';
+        //     else
+        //         $load->priceBased = $request->priceBased;
+
+        //     if ($request->userType == ROLE_TRANSPORTATION_COMPANY) {
+        //         $load->bearing_id = $request->user_id;
+        //         $load->proposedPriceForDriver = $request->suggestedPrice;
+        //     }
+
+        //     $load->operator_id = 0;
+        //     // ذخیره توسط اپراتور
+        //     try {
+        //         if (isset(\auth()->user()->role) && (\auth()->user()->role == ROLE_OPERATOR || \auth()->user()->role == ROLE_ADMIN)) {
+        //             $load->operator_id = \auth()->id();
+        //             $load->proposedPriceForDriver = $request->suggestedPrice;
+        //             $load->status = ON_SELECT_DRIVER;
+        //             $load->userType = ROLE_TRANSPORTATION_COMPANY;
+        //         }
+        //     } catch (Exception $e) {
+        //     }
+
+        //     if (isset($request->proposedPriceForDriver))
+        //         $load->proposedPriceForDriver = $this->convertNumbers($request->proposedPriceForDriver, false);
+
+        //     if ($request->loadMode == 'innerCity') {
+        //         $load->origin_latitude = $request->origin_latitude;
+        //         $load->origin_longitude = $request->origin_longitude;
+        //         $load->destination_latitude = $request->destination_latitude;
+        //         $load->destination_longitude = $request->destination_longitude;
+        //     }
+
+        //     if (isset($request->mobileNumberForCoordination)) {
+        //         $load->mobileNumberForCoordination = convertFaNumberToEn($request->mobileNumberForCoordination);
+        //     } else if (isset($request->senderMobileNumber)) {
+        //         $load->mobileNumberForCoordination = convertFaNumberToEn($request->senderMobileNumber);
+        //         $load->mobileNumberForCoordination = convertFaNumberToEn($request->senderMobileNumber);
+        //     }
 
 
-            //     if ($request->storeFor == ROLE_DRIVER) {
-            //         $load->status = ON_SELECT_DRIVER;
-            //         //                    $load->userType = ROLE_CARGo_OWNER;
-            //     } else if ($request->storeFor == ROLE_TRANSPORTATION_COMPANY) {
-            //     }
-            // }
+        //     $load->status = 4;
+        //     $load->storeFor = $request->storeFor;
 
-            $load->deliveryTime = isset($request->deliveryTime) && $request->deliveryTime > 0 ? $request->deliveryTime : 24;
+        //     // if (isset($request->storeFor)) {
 
-            if ($load->operator_id == NO_OPERATOR)
-                $load->urgent = true;
 
-            $load->save();
+        //     //     if ($request->storeFor == ROLE_DRIVER) {
+        //     //         $load->status = ON_SELECT_DRIVER;
+        //     //         //                    $load->userType = ROLE_CARGo_OWNER;
+        //     //     } else if ($request->storeFor == ROLE_TRANSPORTATION_COMPANY) {
+        //     //     }
+        //     // }
 
-            if (isset($request->dateOfCargoDeclaration)) {
+        //     $load->deliveryTime = isset($request->deliveryTime) && $request->deliveryTime > 0 ? $request->deliveryTime : 24;
 
-                $dateOfCargoDeclarations = explode(",", str_replace(" ", "", str_replace("[", "", str_replace("]", "", $request->dateOfCargoDeclaration))));
+        //     if ($load->operator_id == NO_OPERATOR)
+        //         $load->urgent = true;
 
-                for ($dateOfCargoDeclarationIndex = 0; $dateOfCargoDeclarationIndex < count($dateOfCargoDeclarations); $dateOfCargoDeclarationIndex++) {
-                    if (strlen($dateOfCargoDeclarations[$dateOfCargoDeclarationIndex]) > 0) {
-                        $dateOfCargoDeclaration = new DateOfCargoDeclaration();
-                        $dateOfCargoDeclaration->load_id = $load->id;
-                        $dateOfCargoDeclaration->declarationDate = $dateOfCargoDeclarations[$dateOfCargoDeclarationIndex];
-                        $dateOfCargoDeclaration->save();
-                    }
-                }
-            }
+        //     $load->save();
 
-            if (isset($load->id) && isset($request->fleetList)) {
+        //     if (isset($request->dateOfCargoDeclaration)) {
 
-                if ($request->userType == ROLE_TRANSPORTATION_COMPANY) {
-                    try {
-                        $tender = new Tender();
-                        $tender->load_id = $load->id;
-                        $tender->bearing_id = $request->user_id;
-                        $tender->suggestedPrice = $request->suggestedPrice;
-                        $tender->status = 0;
-                        $tender->save();
-                    } catch (\Exception $e) {
-                        Log::emergency($e->getMessage());
-                    }
-                } else if ($request->userType == "customer") {
-                    try {
-                        $customer = Customer::find($request->user_id);
-                        if (isset($customer->freeLoads)) {
-                            $customer->freeLoads--;
-                            $customer->save();
-                        }
-                    } catch (\Exception $e) {
-                        Log::emergency("Error Save Load for customer: " . $e->getMessage());
-                    }
-                }
+        //         $dateOfCargoDeclarations = explode(",", str_replace(" ", "", str_replace("[", "", str_replace("]", "", $request->dateOfCargoDeclaration))));
 
-                foreach ($request->fleetList as $item) {
+        //         for ($dateOfCargoDeclarationIndex = 0; $dateOfCargoDeclarationIndex < count($dateOfCargoDeclarations); $dateOfCargoDeclarationIndex++) {
+        //             if (strlen($dateOfCargoDeclarations[$dateOfCargoDeclarationIndex]) > 0) {
+        //                 $dateOfCargoDeclaration = new DateOfCargoDeclaration();
+        //                 $dateOfCargoDeclaration->load_id = $load->id;
+        //                 $dateOfCargoDeclaration->declarationDate = $dateOfCargoDeclarations[$dateOfCargoDeclarationIndex];
+        //                 $dateOfCargoDeclaration->save();
+        //             }
+        //         }
+        //     }
 
-                    $fleetLoad = new FleetLoad();
-                    $fleetLoad->load_id = $load->id;
-                    $fleetLoad->fleet_id = $item['fleet_id'];
-                    $fleetLoad->numOfFleets = $item['numOfFleets'];
-                    $fleetLoad->userType = $load->userType;
-                    if ($request->userType == ROLE_TRANSPORTATION_COMPANY) {
-                        $load->proposedPriceForDriver = $request->suggestedPrice;
-                        $transportationCompany = Bearing::find($request->user_id);
-                        $transportationCompany->countOfLoadsAfterValidityDate -= 1;
-                        $transportationCompany->save();
-                    }
-                    $fleetLoad->save();
-                }
+        //     if (isset($load->id) && isset($request->fleetList)) {
 
-                try {
+        //         if ($request->userType == ROLE_TRANSPORTATION_COMPANY) {
+        //             try {
+        //                 $tender = new Tender();
+        //                 $tender->load_id = $load->id;
+        //                 $tender->bearing_id = $request->user_id;
+        //                 $tender->suggestedPrice = $request->suggestedPrice;
+        //                 $tender->status = 0;
+        //                 $tender->save();
+        //             } catch (\Exception $e) {
+        //                 Log::emergency($e->getMessage());
+        //             }
+        //         } else if ($request->userType == "customer") {
+        //             try {
+        //                 $customer = Customer::find($request->user_id);
+        //                 if (isset($customer->freeLoads)) {
+        //                     $customer->freeLoads--;
+        //                     $customer->save();
+        //                 }
+        //             } catch (\Exception $e) {
+        //                 Log::emergency("Error Save Load for customer: " . $e->getMessage());
+        //             }
+        //         }
 
-                    $load->fleets = FleetLoad::join('fleets', 'fleets.id', 'fleet_loads.fleet_id')
-                        ->where('fleet_loads.load_id', $load->id)
-                        ->select('fleet_id', 'userType', 'suggestedPrice', 'numOfFleets', 'pic', 'title')
-                        ->get();
+        //         foreach ($request->fleetList as $item) {
 
-                    $fleets = json_decode($load->fleets, true);
-                    $loadDuplicates = Load::where('userType', 'operator')
-                        ->where('mobileNumberForCoordination', $load->mobileNumberForCoordination)
-                        ->where('origin_city_id', $request->origin_city_id)
-                        ->where('destination_city_id', $request->destination_city_id)
-                        ->where('fleets', 'LIKE', '%' . $fleets[0]['fleet_id'] . '%')
-                        ->get();
-                    // return $loadDuplicates;
+        //             $fleetLoad = new FleetLoad();
+        //             $fleetLoad->load_id = $load->id;
+        //             $fleetLoad->fleet_id = $item['fleet_id'];
+        //             $fleetLoad->numOfFleets = $item['numOfFleets'];
+        //             $fleetLoad->userType = $load->userType;
+        //             if ($request->userType == ROLE_TRANSPORTATION_COMPANY) {
+        //                 $load->proposedPriceForDriver = $request->suggestedPrice;
+        //                 $transportationCompany = Bearing::find($request->user_id);
+        //                 $transportationCompany->countOfLoadsAfterValidityDate -= 1;
+        //                 $transportationCompany->save();
+        //             }
+        //             $fleetLoad->save();
+        //         }
 
-                    if (count($loadDuplicates) > 0) {
-                        foreach ($loadDuplicates as $loadDuplicate) {
-                            $loadDuplicate->delete();
-                        }
-                    }
+        //         try {
 
-                    $load->save();
-                } catch (\Exception $exception) {
-                    Log::emergency("---------------------------------------------------------");
-                    Log::emergency($exception->getMessage());
-                    Log::emergency("---------------------------------------------------------");
-                }
+        //             $load->fleets = FleetLoad::join('fleets', 'fleets.id', 'fleet_loads.fleet_id')
+        //                 ->where('fleet_loads.load_id', $load->id)
+        //                 ->select('fleet_id', 'userType', 'suggestedPrice', 'numOfFleets', 'pic', 'title')
+        //                 ->get();
 
-                try {
-                    $backup = new LoadBackup();
-                    $backup->id = $load->id;
-                    $backup->title = $load->title;
-                    $backup->weight = $load->weight;
-                    $backup->width = $load->width;
-                    $backup->length = $load->length;
-                    $backup->height = $load->height;
-                    $backup->loadingAddress = $load->loadingAddress;
-                    $backup->dischargeAddress = $load->dischargeAddress;
-                    $backup->senderMobileNumber = $load->senderMobileNumber;
-                    $backup->receiverMobileNumber = $load->receiverMobileNumber;
-                    $backup->insuranceAmount = $load->insuranceAmount;
-                    $backup->suggestedPrice = $load->suggestedPrice;
-                    $backup->marketing_price = $load->marketing_price;
-                    $backup->emergencyPhone = $load->emergencyPhone;
-                    $backup->dischargeTime = $load->dischargeTime;
-                    $backup->fleet_id = $load->fleet_id;
-                    $backup->load_type_id = $load->load_type_id;
-                    $backup->tenderTimeDuration = $load->tenderTimeDuration;
-                    $backup->packing_type_id = $load->packing_type_id;
-                    $backup->loadPic = $load->loadPic;
-                    $backup->user_id = $load->user_id;
-                    $backup->loadMode = $load->loadMode;
-                    $backup->loadingHour = $load->loadingHour;
-                    $backup->loadingMinute = $load->loadingMinute;
-                    $backup->numOfTrucks = $load->numOfTrucks;
-                    $backup->origin_city_id = $load->origin_city_id;
-                    $backup->destination_city_id = $load->destination_city_id;
-                    $backup->fromCity = $load->fromCity;
-                    $backup->toCity = $load->toCity;
-                    $backup->loadingDate = $load->loadingDate;
-                    $backup->time = $load->time;
-                    $backup->latitude = $load->latitude;
-                    $backup->longitude = $load->longitude;
-                    $backup->weightPerTruck = $load->weightPerTruck;
-                    $backup->bulk = $load->bulk;
-                    $backup->dangerousProducts = $load->dangerousProducts;
-                    $backup->origin_state_id = $load->origin_state_id;
-                    $backup->description = $load->description;
-                    $backup->priceBased = $load->priceBased;
-                    $backup->bearing_id = $load->bearing_id;
-                    $backup->proposedPriceForDriver = $load->proposedPriceForDriver;
-                    $backup->operator_id = $load->operator_id;
-                    $backup->userType = $load->userType;
-                    $backup->origin_longitude = $load->origin_longitude;
-                    $backup->destination_longitude = $load->destination_longitude;
-                    $backup->mobileNumberForCoordination = $load->mobileNumberForCoordination;
-                    $backup->storeFor = $load->storeFor;
-                    $backup->status = $load->status;
-                    $backup->fleets = $load->fleets;
-                    $backup->deliveryTime = $load->deliveryTime;
-                    $backup->save();
-                } catch (\Exception $e) {
-                    Log::emergency("========================= Load Backup ==================================");
-                    Log::emergency($e->getMessage());
-                    Log::emergency("==============================================================");
-                }
+        //             $fleets = json_decode($load->fleets, true);
+        //             $loadDuplicates = Load::where('userType', 'operator')
+        //                 ->where('mobileNumberForCoordination', $load->mobileNumberForCoordination)
+        //                 ->where('origin_city_id', $request->origin_city_id)
+        //                 ->where('destination_city_id', $request->destination_city_id)
+        //                 ->where('fleets', 'LIKE', '%' . $fleets[0]['fleet_id'] . '%')
+        //                 ->get();
+        //             // return $loadDuplicates;
 
-                DB::commit();
-                return [
-                    'result' => SUCCESS,
-                    'load_id' => $load->id
-                ];
-            }
-        } catch (\Exception $exception) {
-            DB::rollBack();
-            Log::emergency("----------------------ثبت بار جدید-----------------------");
-            Log::emergency($exception);
-            Log::emergency("---------------------------------------------------------");
-        }
+        //             if (count($loadDuplicates) > 0) {
+        //                 foreach ($loadDuplicates as $loadDuplicate) {
+        //                     $loadDuplicate->delete();
+        //                 }
+        //             }
 
-        $message[1] = 'خطا! لطفا دوباره تلاش کنید';
-        return [
-            'result' => UN_SUCCESS,
-            'message' => $message
-        ];
+        //             $load->save();
+        //         } catch (\Exception $exception) {
+        //             Log::emergency("---------------------------------------------------------");
+        //             Log::emergency($exception->getMessage());
+        //             Log::emergency("---------------------------------------------------------");
+        //         }
+
+        //         try {
+        //             $backup = new LoadBackup();
+        //             $backup->id = $load->id;
+        //             $backup->title = $load->title;
+        //             $backup->weight = $load->weight;
+        //             $backup->width = $load->width;
+        //             $backup->length = $load->length;
+        //             $backup->height = $load->height;
+        //             $backup->loadingAddress = $load->loadingAddress;
+        //             $backup->dischargeAddress = $load->dischargeAddress;
+        //             $backup->senderMobileNumber = $load->senderMobileNumber;
+        //             $backup->receiverMobileNumber = $load->receiverMobileNumber;
+        //             $backup->insuranceAmount = $load->insuranceAmount;
+        //             $backup->suggestedPrice = $load->suggestedPrice;
+        //             $backup->marketing_price = $load->marketing_price;
+        //             $backup->emergencyPhone = $load->emergencyPhone;
+        //             $backup->dischargeTime = $load->dischargeTime;
+        //             $backup->fleet_id = $load->fleet_id;
+        //             $backup->load_type_id = $load->load_type_id;
+        //             $backup->tenderTimeDuration = $load->tenderTimeDuration;
+        //             $backup->packing_type_id = $load->packing_type_id;
+        //             $backup->loadPic = $load->loadPic;
+        //             $backup->user_id = $load->user_id;
+        //             $backup->loadMode = $load->loadMode;
+        //             $backup->loadingHour = $load->loadingHour;
+        //             $backup->loadingMinute = $load->loadingMinute;
+        //             $backup->numOfTrucks = $load->numOfTrucks;
+        //             $backup->origin_city_id = $load->origin_city_id;
+        //             $backup->destination_city_id = $load->destination_city_id;
+        //             $backup->fromCity = $load->fromCity;
+        //             $backup->toCity = $load->toCity;
+        //             $backup->loadingDate = $load->loadingDate;
+        //             $backup->time = $load->time;
+        //             $backup->latitude = $load->latitude;
+        //             $backup->longitude = $load->longitude;
+        //             $backup->weightPerTruck = $load->weightPerTruck;
+        //             $backup->bulk = $load->bulk;
+        //             $backup->dangerousProducts = $load->dangerousProducts;
+        //             $backup->origin_state_id = $load->origin_state_id;
+        //             $backup->description = $load->description;
+        //             $backup->priceBased = $load->priceBased;
+        //             $backup->bearing_id = $load->bearing_id;
+        //             $backup->proposedPriceForDriver = $load->proposedPriceForDriver;
+        //             $backup->operator_id = $load->operator_id;
+        //             $backup->userType = $load->userType;
+        //             $backup->origin_longitude = $load->origin_longitude;
+        //             $backup->destination_longitude = $load->destination_longitude;
+        //             $backup->mobileNumberForCoordination = $load->mobileNumberForCoordination;
+        //             $backup->storeFor = $load->storeFor;
+        //             $backup->status = $load->status;
+        //             $backup->fleets = $load->fleets;
+        //             $backup->deliveryTime = $load->deliveryTime;
+        //             $backup->save();
+        //         } catch (\Exception $e) {
+        //             Log::emergency("========================= Load Backup ==================================");
+        //             Log::emergency($e->getMessage());
+        //             Log::emergency("==============================================================");
+        //         }
+
+        //         DB::commit();
+        //         return [
+        //             'result' => SUCCESS,
+        //             'load_id' => $load->id
+        //         ];
+        //     }
+        // } catch (\Exception $exception) {
+        //     DB::rollBack();
+        //     Log::emergency("----------------------ثبت بار جدید-----------------------");
+        //     Log::emergency($exception);
+        //     Log::emergency("---------------------------------------------------------");
+        // }
+
+        // $message[1] = 'خطا! لطفا دوباره تلاش کنید';
+        // return [
+        //     'result' => UN_SUCCESS,
+        //     'message' => $message
+        // ];
     }
 
-    public function createNewLoads(NewLoadRequest $request)
+    public function createNewLoads(Request $request)
     {
         Log::warning('owner createNewLoads-------------------------------------------');
-        Log::warning($request->user_id);
-        try {
+        Log::warning($request);
+        // try {
 
-            if (\auth()->check()) {
-                if (UserActivityReport::where([
-                    ['created_at', '>', date('Y-m-d H:i:s', strtotime('-5 minute', time()))],
-                    ['user_id', \auth()->id()]
-                ])->count() == 0)
+        //     if (\auth()->check()) {
+        //         if (UserActivityReport::where([
+        //             ['created_at', '>', date('Y-m-d H:i:s', strtotime('-5 minute', time()))],
+        //             ['user_id', \auth()->id()]
+        //         ])->count() == 0)
 
-                    UserActivityReport::create(['user_id' => \auth()->id()]);
-            }
-        } catch (Exception $e) {
-            Log::emergency("-------------------------- UserActivityReport ----------------------------------------");
-            Log::emergency($e->getMessage());
-            Log::emergency("------------------------------------------------------------------");
-        }
+        //             UserActivityReport::create(['user_id' => \auth()->id()]);
+        //     }
+        // } catch (Exception $e) {
+        //     Log::emergency("-------------------------- UserActivityReport ----------------------------------------");
+        //     Log::emergency($e->getMessage());
+        //     Log::emergency("------------------------------------------------------------------");
+        // }
 
-        try {
-            $senderMobileNumber = isset($request->mobileNumberForCoordination) ? $request->mobileNumberForCoordination : $request->senderMobileNumber;
-            $owner = Owner::where('mobileNumber', $senderMobileNumber)->first();
+        // try {
+        //     $senderMobileNumber = isset($request->mobileNumberForCoordination) ? $request->mobileNumberForCoordination : $request->senderMobileNumber;
+        //     $owner = Owner::where('mobileNumber', $senderMobileNumber)->first();
 
-            if (BlockPhoneNumber::where(function ($query) use ($owner, $senderMobileNumber) {
-                $query->where('nationalCode', $owner->nationalCode)
-                    ->orWhere('phoneNumber', $senderMobileNumber);
-            })->where(function ($query) {
-                $query->where('type', 'owner')
-                    ->orWhere('type', 'both');
-            })->exists()) {
-                $message[1] = 'شماره تلفن وارد شده در لیست ممنوعه می باشد، و امکان ثبت بار با شماره تلفن ' . $senderMobileNumber .
-                    ' امکان پذیر نمی باشد. لطفا برای دلیل آن با ایران ترابر تماس بگیرید';
+        //     if (BlockPhoneNumber::where(function ($query) use ($owner, $senderMobileNumber) {
+        //         $query->where('nationalCode', $owner->nationalCode)
+        //             ->orWhere('phoneNumber', $senderMobileNumber);
+        //     })->where(function ($query) {
+        //         $query->where('type', 'owner')
+        //             ->orWhere('type', 'both');
+        //     })->exists()) {
+        //         $message[1] = 'شماره تلفن وارد شده در لیست ممنوعه می باشد، و امکان ثبت بار با شماره تلفن ' . $senderMobileNumber .
+        //             ' امکان پذیر نمی باشد. لطفا برای دلیل آن با ایران ترابر تماس بگیرید';
 
-                return [
-                    'result' => UN_SUCCESS,
-                    'message' => $message
-                ];
-            }
-
-
-            // if (BlockedIp::where('ip', request()->ip())->count()) {
-            //     $message[1] = 'عدم ثبت بار به دلیل مسدود شدن IP';
-            //     return [
-            //         'result' => UN_SUCCESS,
-            //         'message' => $message
-            //     ];
-            // }
+        //         return [
+        //             'result' => UN_SUCCESS,
+        //             'message' => $message
+        //         ];
+        //     }
 
 
-            // ثبت ip کاربر
-            try {
-                if ($request->userType == ROLE_OWNER) {
-
-                    if (isset($owner->id)) {
-                        $owner->ip = request()->ip();
-                        $owner->save();
-                    }
-                }
-            } catch (Exception $e) {
-                Log::emergency("=========================== Error Store Ip ================================");
-                Log::emergency($e->getMessage());
-                Log::emergency("========================= End Error Store Ip ==============================");
-            }
-        } catch (\Exception $exception) {
-        }
-        foreach ($request->destinationCities as $key => $destination_city) {
-
-            $owner->loadCount += 1;
-            $owner->save();
-
-            try {
-                $message[1] = '';
-                $loadPic = null;
-
-                $request->marketing_price = $request->marketing_price ?? 0;
-
-                if (!isset($request->tenderTimeDuration))
-                    $request->tenderTimeDuration = 15;
-
-                if ($request->image != "noImage") {
-                    $loadPic = "pictures/loads/" . sha1(time() . $request->user_id) . ".jpg";
-                    file_put_contents($loadPic, base64_decode($request->image));
-                }
-
-                DB::beginTransaction();
-
-                $load = new Load();
-                $load->title = strlen($request->title) > 0 ? $request->title : "بدون عنوان";
-                $load->weight = $request->weight;
-                $load->width = $this->convertNumbers($request->width, false);
-                $load->length = $this->convertNumbers($request->length, false);
-                $load->height = $this->convertNumbers($request->height, false);
-                // $load->loadingAddress = $request->loadingAddress;
-                // $load->dischargeAddress = $request->dischargeAddress;
-                $load->senderMobileNumber = $request->senderMobileNumber;
-                $load->receiverMobileNumber = $request->receiverMobileNumber;
-                $load->insuranceAmount = strlen($request->insuranceAmount) ? $request->insuranceAmount : 0;
-                $load->suggestedPrice = $request->suggestedPrice;
-                $load->marketing_price = $request->marketing_price;
-                $load->emergencyPhone = $request->emergencyPhone;
-                $load->dischargeTime = $request->dischargeTime;
-                $load->fleet_id = $request->fleet_id;
-                $load->load_type_id = $request->load_type_id;
-                $load->tenderTimeDuration = $request->tenderTimeDuration;
-                $load->packing_type_id = $request->packing_type_id;
-                $load->loadPic = $loadPic;
-                $load->user_id = $request->user_id;
-                $load->userType = $request->userType;
-                $load->loadMode = $request->loadMode;
-                $load->loadingHour = $request->loadingHour;
-                $load->loadingMinute = $request->loadingMinute;
-                $load->numOfTrucks = $request->numOfTrucks;
-                $load->date = gregorianDateToPersian(date('Y/m/d', time()), '/');
-                $load->dateTime = now()->format('H:i:s');
-
-                $load->originLatitude = $request->originLatitude;
-                $load->originLongitude = $request->originLongitude;
-
-                $load->destinationLatitude = $request->destinationLatitudes[$key];
-                $load->destinationLongitude = $request->destinationLongitudes[$key];
-
-                $load->origin_city_id = $request->origin_city_id;
-                $load->destination_city_id = $destination_city;
-
-                $load->fromCity = $this->getCityName($request->origin_city_id);
-                $load->toCity = $this->getCityName($destination_city);
-                try {
-                    $city = ProvinceCity::find($request->origin_city_id);
-                    if (isset($city->id)) {
-                        $load->latitude = $city->latitude;
-                        $load->longitude = $city->longitude;
-                    }
-                } catch (\Exception $exception) {
-                }
+        //     // if (BlockedIp::where('ip', request()->ip())->count()) {
+        //     //     $message[1] = 'عدم ثبت بار به دلیل مسدود شدن IP';
+        //     //     return [
+        //     //         'result' => UN_SUCCESS,
+        //     //         'message' => $message
+        //     //     ];
+        //     // }
 
 
-                $load->loadingDate = $request->loadingDate;
-                $load->time = time();
+        //     // ثبت ip کاربر
+        //     try {
+        //         if ($request->userType == ROLE_OWNER) {
+
+        //             if (isset($owner->id)) {
+        //                 $owner->ip = request()->ip();
+        //                 $owner->save();
+        //             }
+        //         }
+        //     } catch (Exception $e) {
+        //         Log::emergency("=========================== Error Store Ip ================================");
+        //         Log::emergency($e->getMessage());
+        //         Log::emergency("========================= End Error Store Ip ==============================");
+        //     }
+        // } catch (\Exception $exception) {
+        // }
+        // foreach ($request->destinationCities as $key => $destination_city) {
+
+        //     $owner->loadCount += 1;
+        //     $owner->save();
+
+        //     try {
+        //         $message[1] = '';
+        //         $loadPic = null;
+
+        //         $request->marketing_price = $request->marketing_price ?? 0;
+
+        //         if (!isset($request->tenderTimeDuration))
+        //             $request->tenderTimeDuration = 15;
+
+        //         if ($request->image != "noImage") {
+        //             $loadPic = "pictures/loads/" . sha1(time() . $request->user_id) . ".jpg";
+        //             file_put_contents($loadPic, base64_decode($request->image));
+        //         }
+
+        //         DB::beginTransaction();
+
+        //         $load = new Load();
+        //         $load->title = strlen($request->title) > 0 ? $request->title : "بدون عنوان";
+        //         $load->weight = $request->weight;
+        //         $load->width = $this->convertNumbers($request->width, false);
+        //         $load->length = $this->convertNumbers($request->length, false);
+        //         $load->height = $this->convertNumbers($request->height, false);
+        //         // $load->loadingAddress = $request->loadingAddress;
+        //         // $load->dischargeAddress = $request->dischargeAddress;
+        //         $load->senderMobileNumber = $request->senderMobileNumber;
+        //         $load->receiverMobileNumber = $request->receiverMobileNumber;
+        //         $load->insuranceAmount = strlen($request->insuranceAmount) ? $request->insuranceAmount : 0;
+        //         $load->suggestedPrice = $request->suggestedPrice;
+        //         $load->marketing_price = $request->marketing_price;
+        //         $load->emergencyPhone = $request->emergencyPhone;
+        //         $load->dischargeTime = $request->dischargeTime;
+        //         $load->fleet_id = $request->fleet_id;
+        //         $load->load_type_id = $request->load_type_id;
+        //         $load->tenderTimeDuration = $request->tenderTimeDuration;
+        //         $load->packing_type_id = $request->packing_type_id;
+        //         $load->loadPic = $loadPic;
+        //         $load->user_id = $request->user_id;
+        //         $load->userType = $request->userType;
+        //         $load->loadMode = $request->loadMode;
+        //         $load->loadingHour = $request->loadingHour;
+        //         $load->loadingMinute = $request->loadingMinute;
+        //         $load->numOfTrucks = $request->numOfTrucks;
+        //         $load->date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+        //         $load->dateTime = now()->format('H:i:s');
+
+        //         $load->originLatitude = $request->originLatitude;
+        //         $load->originLongitude = $request->originLongitude;
+
+        //         $load->destinationLatitude = $request->destinationLatitudes[$key];
+        //         $load->destinationLongitude = $request->destinationLongitudes[$key];
+
+        //         $load->origin_city_id = $request->origin_city_id;
+        //         $load->destination_city_id = $destination_city;
+
+        //         $load->fromCity = $this->getCityName($request->origin_city_id);
+        //         $load->toCity = $this->getCityName($destination_city);
+        //         try {
+        //             $city = ProvinceCity::find($request->origin_city_id);
+        //             if (isset($city->id)) {
+        //                 $load->latitude = $city->latitude;
+        //                 $load->longitude = $city->longitude;
+        //             }
+        //         } catch (\Exception $exception) {
+        //         }
 
 
-                $load->weightPerTruck = isset($request->weightPerTruck) && $request->weightPerTruck > 0 ? $this->convertNumbers($request->weightPerTruck, false) : 0;
-
-                $load->bulk = isset($request->bulk) ? $request->bulk : 2;
-                $load->dangerousProducts = isset($request->dangerousProducts) ? $request->dangerousProducts : false;
-
-                $load->origin_state_id = AddressController::geStateIdFromCityId($request->origin_city_id);
-                $load->description = $request->description;
-                if ($load->suggestedPrice == 0 && $request->storeFor == ROLE_DRIVER)
-                    $load->priceBased = 'توافقی';
-                else
-                    $load->priceBased = $request->priceBased;
-
-                if ($request->userType == ROLE_TRANSPORTATION_COMPANY) {
-                    $load->bearing_id = $request->user_id;
-                    $load->proposedPriceForDriver = $request->suggestedPrice;
-                }
-
-                $load->operator_id = 0;
-
-                if (isset($request->proposedPriceForDriver))
-                    $load->proposedPriceForDriver = $this->convertNumbers($request->proposedPriceForDriver, false);
-
-                if ($request->loadMode == 'innerCity') {
-                    $load->origin_latitude = $request->origin_latitude;
-                    $load->origin_longitude = $request->origin_longitude;
-                    $load->destination_latitude = $request->destination_latitude;
-                    $load->destination_longitude = $request->destination_longitude;
-                }
-
-                if (isset($request->mobileNumberForCoordination)) {
-                    $load->mobileNumberForCoordination = convertFaNumberToEn($request->mobileNumberForCoordination);
-                } else if (isset($request->senderMobileNumber)) {
-                    $load->mobileNumberForCoordination = convertFaNumberToEn($request->senderMobileNumber);
-                    $load->mobileNumberForCoordination = convertFaNumberToEn($request->senderMobileNumber);
-                }
+        //         $load->loadingDate = $request->loadingDate;
+        //         $load->time = time();
 
 
-                $load->status = 4;
-                $load->storeFor = $request->storeFor;
+        //         $load->weightPerTruck = isset($request->weightPerTruck) && $request->weightPerTruck > 0 ? $this->convertNumbers($request->weightPerTruck, false) : 0;
 
-                $load->deliveryTime = isset($request->deliveryTime) && $request->deliveryTime > 0 ? $request->deliveryTime : 24;
+        //         $load->bulk = isset($request->bulk) ? $request->bulk : 2;
+        //         $load->dangerousProducts = isset($request->dangerousProducts) ? $request->dangerousProducts : false;
 
-                if ($load->operator_id == NO_OPERATOR)
-                    $load->urgent = true;
+        //         $load->origin_state_id = AddressController::geStateIdFromCityId($request->origin_city_id);
+        //         $load->description = $request->description;
+        //         if ($load->suggestedPrice == 0 && $request->storeFor == ROLE_DRIVER)
+        //             $load->priceBased = 'توافقی';
+        //         else
+        //             $load->priceBased = $request->priceBased;
 
-                $load->save();
-                if (Load::where('userType', ROLE_OWNER)->where('user_id', $owner->id)->withTrashed()->count() == 1) {
-                    $sms = new Load();
-                    $sms->firstLoad($owner->mobileNumber);
-                }
+        //         if ($request->userType == ROLE_TRANSPORTATION_COMPANY) {
+        //             $load->bearing_id = $request->user_id;
+        //             $load->proposedPriceForDriver = $request->suggestedPrice;
+        //         }
 
-                if (isset($request->dateOfCargoDeclaration)) {
+        //         $load->operator_id = 0;
 
-                    $dateOfCargoDeclarations = explode(",", str_replace(" ", "", str_replace("[", "", str_replace("]", "", $request->dateOfCargoDeclaration))));
+        //         if (isset($request->proposedPriceForDriver))
+        //             $load->proposedPriceForDriver = $this->convertNumbers($request->proposedPriceForDriver, false);
 
-                    for ($dateOfCargoDeclarationIndex = 0; $dateOfCargoDeclarationIndex < count($dateOfCargoDeclarations); $dateOfCargoDeclarationIndex++) {
-                        if (strlen($dateOfCargoDeclarations[$dateOfCargoDeclarationIndex]) > 0) {
-                            $dateOfCargoDeclaration = new DateOfCargoDeclaration();
-                            $dateOfCargoDeclaration->load_id = $load->id;
-                            $dateOfCargoDeclaration->declarationDate = $dateOfCargoDeclarations[$dateOfCargoDeclarationIndex];
-                            $dateOfCargoDeclaration->save();
-                        }
-                    }
-                }
+        //         if ($request->loadMode == 'innerCity') {
+        //             $load->origin_latitude = $request->origin_latitude;
+        //             $load->origin_longitude = $request->origin_longitude;
+        //             $load->destination_latitude = $request->destination_latitude;
+        //             $load->destination_longitude = $request->destination_longitude;
+        //         }
 
-
-
-                if (isset($load->id) && isset($request->fleetList)) {
-
-                    $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
-
-                    try {
-                        // گزارش بار ها بر اساس اپراتور
-                        $loadOwnerCount = LoadOwnerCount::firstOrNew([
-                            'mobileNumber' => $load->mobileNumberForCoordination,
-                            'persian_date' => $persian_date,
-                        ]);
-
-                        $loadOwnerCount->count = ($loadOwnerCount->count ?? 0) + 1;
-                        $loadOwnerCount->save();
-                    } catch (\Exception $e) {
-                        Log::emergency($exception->getMessage());
-                    }
-
-                    foreach ($request->fleetList as $item) {
-
-                        $fleetLoad = new FleetLoad();
-                        $fleetLoad->load_id = $load->id;
-                        $fleetLoad->fleet_id = $item['fleet_id'];
-                        $fleetLoad->numOfFleets = $item['numOfFleets'];
-                        $fleetLoad->userType = $load->userType;
-                        $fleetLoad->save();
+        //         if (isset($request->mobileNumberForCoordination)) {
+        //             $load->mobileNumberForCoordination = convertFaNumberToEn($request->mobileNumberForCoordination);
+        //         } else if (isset($request->senderMobileNumber)) {
+        //             $load->mobileNumberForCoordination = convertFaNumberToEn($request->senderMobileNumber);
+        //             $load->mobileNumberForCoordination = convertFaNumberToEn($request->senderMobileNumber);
+        //         }
 
 
-                        // $fleet_khavar = ['45', '47', '46', '64'];
-                        // if (in_array($fleetLoad->fleet_id, $fleet_khavar)) {
-                        //     $notification = new Notification();
-                        //     $notification->message = "یک بار جدید با ناوگان خاور ($load->fromCity) به ($load->toCity) ثبت شد";
-                        //     $notification->link = route('loadInfo', $fleetLoad->load_id);
-                        //     $notification->save();
-                        // }
+        //         $load->status = 4;
+        //         $load->storeFor = $request->storeFor;
 
-                        try {
-                            $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+        //         $load->deliveryTime = isset($request->deliveryTime) && $request->deliveryTime > 0 ? $request->deliveryTime : 24;
 
-                            $cargoReport = CargoReportByFleet::where('fleet_id', $fleetLoad->fleet_id)
-                                ->where('date', $persian_date)
-                                ->first();
+        //         if ($load->operator_id == NO_OPERATOR)
+        //             $load->urgent = true;
 
-                            if (isset($cargoReport->id)) {
-                                $cargoReport->count_owner += 1;
-                                $cargoReport->save();
-                            } else {
-                                $cargoReportNew = new CargoReportByFleet;
-                                $cargoReportNew->fleet_id = $fleetLoad->fleet_id;
-                                $cargoReportNew->count_owner = 1;
-                                $cargoReportNew->date = $persian_date;
-                                $cargoReportNew->save();
-                                // Log::emergency("Error cargo report by 1387: " . $cargoReportNew);
+        //         $load->save();
+        //         if (Load::where('userType', ROLE_OWNER)->where('user_id', $owner->id)->withTrashed()->count() == 1) {
+        //             $sms = new Load();
+        //             $sms->firstLoad($owner->mobileNumber);
+        //         }
 
-                            }
-                        } catch (Exception $e) {
-                            Log::emergency("Error cargo report by fleets: " . $e->getMessage());
-                        }
-                    }
+        //         if (isset($request->dateOfCargoDeclaration)) {
 
-                    try {
+        //             $dateOfCargoDeclarations = explode(",", str_replace(" ", "", str_replace("[", "", str_replace("]", "", $request->dateOfCargoDeclaration))));
 
-                        $load->fleets = FleetLoad::join('fleets', 'fleets.id', 'fleet_loads.fleet_id')
-                            ->where('fleet_loads.load_id', $load->id)
-                            ->select('fleet_id', 'userType', 'suggestedPrice', 'numOfFleets', 'pic', 'title')
-                            ->get();
-
-                        $fleets = json_decode($load->fleets, true);
-                        $loadDuplicates = Load::where('mobileNumberForCoordination', $load->mobileNumberForCoordination)
-                            ->where('origin_city_id', $request->origin_city_id)
-                            ->where('destination_city_id', $request->destination_city_id)
-                            ->where('fleets', 'LIKE', '%' . $fleets[0]['fleet_id'] . '%')
-                            ->get();
-                        // return $loadDuplicates;
-
-                        if (count($loadDuplicates) > 0) {
-                            foreach ($loadDuplicates as $loadDuplicate) {
-                                $loadDuplicate->delete();
-                            }
-                        }
-
-                        $load->save();
-                    } catch (\Exception $exception) {
-                        Log::emergency("---------------------------------------------------------");
-                        Log::emergency($exception->getMessage());
-                        Log::emergency("---------------------------------------------------------");
-                    }
-                    DB::commit();
-                }
-            } catch (\Exception $exception) {
-                DB::rollBack();
-                Log::emergency("----------------------ثبت بار جدید-----------------------");
-                Log::emergency($exception);
-                Log::emergency("---------------------------------------------------------");
-            }
-
-            try {
-                $backup = new LoadBackup();
-                $backup->id = $load->id;
-                $backup->title = $load->title;
-                $backup->weight = $load->weight;
-                $backup->width = $load->width;
-                $backup->length = $load->length;
-                $backup->height = $load->height;
-                $backup->loadingAddress = $load->loadingAddress;
-                $backup->dischargeAddress = $load->dischargeAddress;
-                $backup->senderMobileNumber = $load->senderMobileNumber;
-                $backup->receiverMobileNumber = $load->receiverMobileNumber;
-                $backup->insuranceAmount = $load->insuranceAmount;
-                $backup->suggestedPrice = $load->suggestedPrice;
-                $backup->marketing_price = $load->marketing_price;
-                $backup->emergencyPhone = $load->emergencyPhone;
-                $backup->dischargeTime = $load->dischargeTime;
-                $backup->fleet_id = $load->fleet_id;
-                $backup->load_type_id = $load->load_type_id;
-                $backup->tenderTimeDuration = $load->tenderTimeDuration;
-                $backup->packing_type_id = $load->packing_type_id;
-                $backup->loadPic = $load->loadPic;
-                $backup->user_id = $load->user_id;
-                $backup->loadMode = $load->loadMode;
-                $backup->loadingHour = $load->loadingHour;
-                $backup->loadingMinute = $load->loadingMinute;
-                $backup->numOfTrucks = $load->numOfTrucks;
-                $backup->origin_city_id = $load->origin_city_id;
-                $backup->destination_city_id = $load->destination_city_id;
-                $backup->fromCity = $load->fromCity;
-                $backup->toCity = $load->toCity;
-                $backup->loadingDate = $load->loadingDate;
-                $backup->time = $load->time;
-                $backup->latitude = $load->latitude;
-                $backup->longitude = $load->longitude;
-                $backup->weightPerTruck = $load->weightPerTruck;
-                $backup->bulk = $load->bulk;
-                $backup->dangerousProducts = $load->dangerousProducts;
-                $backup->origin_state_id = $load->origin_state_id;
-                $backup->description = $load->description;
-                $backup->priceBased = $load->priceBased;
-                $backup->bearing_id = $load->bearing_id;
-                $backup->proposedPriceForDriver = $load->proposedPriceForDriver;
-                $backup->operator_id = $load->operator_id;
-                $backup->userType = $load->userType;
-                $backup->origin_longitude = $load->origin_longitude;
-                $backup->destination_longitude = $load->destination_longitude;
-                $backup->mobileNumberForCoordination = $load->mobileNumberForCoordination;
-                $backup->storeFor = $load->storeFor;
-                $backup->status = $load->status;
-                $backup->fleets = $load->fleets;
-                $backup->deliveryTime = $load->deliveryTime;
-                $backup->save();
-            } catch (\Exception $e) {
-                Log::emergency("========================= Load Backup ==================================");
-                Log::emergency($e->getMessage());
-                Log::emergency("==============================================================");
-            }
-        }
-        if (isset($load->id)) {
-            return [
-                'result' => SUCCESS,
-                'load_id' => $load->id
-            ];
-        }
+        //             for ($dateOfCargoDeclarationIndex = 0; $dateOfCargoDeclarationIndex < count($dateOfCargoDeclarations); $dateOfCargoDeclarationIndex++) {
+        //                 if (strlen($dateOfCargoDeclarations[$dateOfCargoDeclarationIndex]) > 0) {
+        //                     $dateOfCargoDeclaration = new DateOfCargoDeclaration();
+        //                     $dateOfCargoDeclaration->load_id = $load->id;
+        //                     $dateOfCargoDeclaration->declarationDate = $dateOfCargoDeclarations[$dateOfCargoDeclarationIndex];
+        //                     $dateOfCargoDeclaration->save();
+        //                 }
+        //             }
+        //         }
 
 
-        $message[1] = 'خطا! لطفا دوباره تلاش کنید';
-        return [
-            'result' => UN_SUCCESS,
-            'message' => $message
-        ];
+
+        //         if (isset($load->id) && isset($request->fleetList)) {
+
+        //             $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+
+        //             try {
+        //                 // گزارش بار ها بر اساس اپراتور
+        //                 $loadOwnerCount = LoadOwnerCount::firstOrNew([
+        //                     'mobileNumber' => $load->mobileNumberForCoordination,
+        //                     'persian_date' => $persian_date,
+        //                 ]);
+
+        //                 $loadOwnerCount->count = ($loadOwnerCount->count ?? 0) + 1;
+        //                 $loadOwnerCount->save();
+        //             } catch (\Exception $e) {
+        //                 Log::emergency($exception->getMessage());
+        //             }
+
+        //             foreach ($request->fleetList as $item) {
+
+        //                 $fleetLoad = new FleetLoad();
+        //                 $fleetLoad->load_id = $load->id;
+        //                 $fleetLoad->fleet_id = $item['fleet_id'];
+        //                 $fleetLoad->numOfFleets = $item['numOfFleets'];
+        //                 $fleetLoad->userType = $load->userType;
+        //                 $fleetLoad->save();
+
+
+        //                 // $fleet_khavar = ['45', '47', '46', '64'];
+        //                 // if (in_array($fleetLoad->fleet_id, $fleet_khavar)) {
+        //                 //     $notification = new Notification();
+        //                 //     $notification->message = "یک بار جدید با ناوگان خاور ($load->fromCity) به ($load->toCity) ثبت شد";
+        //                 //     $notification->link = route('loadInfo', $fleetLoad->load_id);
+        //                 //     $notification->save();
+        //                 // }
+
+        //                 try {
+        //                     $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+
+        //                     $cargoReport = CargoReportByFleet::where('fleet_id', $fleetLoad->fleet_id)
+        //                         ->where('date', $persian_date)
+        //                         ->first();
+
+        //                     if (isset($cargoReport->id)) {
+        //                         $cargoReport->count_owner += 1;
+        //                         $cargoReport->save();
+        //                     } else {
+        //                         $cargoReportNew = new CargoReportByFleet;
+        //                         $cargoReportNew->fleet_id = $fleetLoad->fleet_id;
+        //                         $cargoReportNew->count_owner = 1;
+        //                         $cargoReportNew->date = $persian_date;
+        //                         $cargoReportNew->save();
+        //                         // Log::emergency("Error cargo report by 1387: " . $cargoReportNew);
+
+        //                     }
+        //                 } catch (Exception $e) {
+        //                     Log::emergency("Error cargo report by fleets: " . $e->getMessage());
+        //                 }
+        //             }
+
+        //             try {
+
+        //                 $load->fleets = FleetLoad::join('fleets', 'fleets.id', 'fleet_loads.fleet_id')
+        //                     ->where('fleet_loads.load_id', $load->id)
+        //                     ->select('fleet_id', 'userType', 'suggestedPrice', 'numOfFleets', 'pic', 'title')
+        //                     ->get();
+
+        //                 $fleets = json_decode($load->fleets, true);
+        //                 $loadDuplicates = Load::where('mobileNumberForCoordination', $load->mobileNumberForCoordination)
+        //                     ->where('origin_city_id', $request->origin_city_id)
+        //                     ->where('destination_city_id', $request->destination_city_id)
+        //                     ->where('fleets', 'LIKE', '%' . $fleets[0]['fleet_id'] . '%')
+        //                     ->get();
+        //                 // return $loadDuplicates;
+
+        //                 if (count($loadDuplicates) > 0) {
+        //                     foreach ($loadDuplicates as $loadDuplicate) {
+        //                         $loadDuplicate->delete();
+        //                     }
+        //                 }
+
+        //                 $load->save();
+        //             } catch (\Exception $exception) {
+        //                 Log::emergency("---------------------------------------------------------");
+        //                 Log::emergency($exception->getMessage());
+        //                 Log::emergency("---------------------------------------------------------");
+        //             }
+        //             DB::commit();
+        //         }
+        //     } catch (\Exception $exception) {
+        //         DB::rollBack();
+        //         Log::emergency("----------------------ثبت بار جدید-----------------------");
+        //         Log::emergency($exception);
+        //         Log::emergency("---------------------------------------------------------");
+        //     }
+
+        //     try {
+        //         $backup = new LoadBackup();
+        //         $backup->id = $load->id;
+        //         $backup->title = $load->title;
+        //         $backup->weight = $load->weight;
+        //         $backup->width = $load->width;
+        //         $backup->length = $load->length;
+        //         $backup->height = $load->height;
+        //         $backup->loadingAddress = $load->loadingAddress;
+        //         $backup->dischargeAddress = $load->dischargeAddress;
+        //         $backup->senderMobileNumber = $load->senderMobileNumber;
+        //         $backup->receiverMobileNumber = $load->receiverMobileNumber;
+        //         $backup->insuranceAmount = $load->insuranceAmount;
+        //         $backup->suggestedPrice = $load->suggestedPrice;
+        //         $backup->marketing_price = $load->marketing_price;
+        //         $backup->emergencyPhone = $load->emergencyPhone;
+        //         $backup->dischargeTime = $load->dischargeTime;
+        //         $backup->fleet_id = $load->fleet_id;
+        //         $backup->load_type_id = $load->load_type_id;
+        //         $backup->tenderTimeDuration = $load->tenderTimeDuration;
+        //         $backup->packing_type_id = $load->packing_type_id;
+        //         $backup->loadPic = $load->loadPic;
+        //         $backup->user_id = $load->user_id;
+        //         $backup->loadMode = $load->loadMode;
+        //         $backup->loadingHour = $load->loadingHour;
+        //         $backup->loadingMinute = $load->loadingMinute;
+        //         $backup->numOfTrucks = $load->numOfTrucks;
+        //         $backup->origin_city_id = $load->origin_city_id;
+        //         $backup->destination_city_id = $load->destination_city_id;
+        //         $backup->fromCity = $load->fromCity;
+        //         $backup->toCity = $load->toCity;
+        //         $backup->loadingDate = $load->loadingDate;
+        //         $backup->time = $load->time;
+        //         $backup->latitude = $load->latitude;
+        //         $backup->longitude = $load->longitude;
+        //         $backup->weightPerTruck = $load->weightPerTruck;
+        //         $backup->bulk = $load->bulk;
+        //         $backup->dangerousProducts = $load->dangerousProducts;
+        //         $backup->origin_state_id = $load->origin_state_id;
+        //         $backup->description = $load->description;
+        //         $backup->priceBased = $load->priceBased;
+        //         $backup->bearing_id = $load->bearing_id;
+        //         $backup->proposedPriceForDriver = $load->proposedPriceForDriver;
+        //         $backup->operator_id = $load->operator_id;
+        //         $backup->userType = $load->userType;
+        //         $backup->origin_longitude = $load->origin_longitude;
+        //         $backup->destination_longitude = $load->destination_longitude;
+        //         $backup->mobileNumberForCoordination = $load->mobileNumberForCoordination;
+        //         $backup->storeFor = $load->storeFor;
+        //         $backup->status = $load->status;
+        //         $backup->fleets = $load->fleets;
+        //         $backup->deliveryTime = $load->deliveryTime;
+        //         $backup->save();
+        //     } catch (\Exception $e) {
+        //         Log::emergency("========================= Load Backup ==================================");
+        //         Log::emergency($e->getMessage());
+        //         Log::emergency("==============================================================");
+        //     }
+        // }
+        // if (isset($load->id)) {
+        //     return [
+        //         'result' => SUCCESS,
+        //         'load_id' => $load->id
+        //     ];
+        // }
+
+
+        // $message[1] = 'خطا! لطفا دوباره تلاش کنید';
+        // return [
+        //     'result' => UN_SUCCESS,
+        //     'message' => $message
+        // ];
     }
 
     public function sendNotifLoad(Load $load)
