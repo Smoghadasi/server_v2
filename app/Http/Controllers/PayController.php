@@ -667,13 +667,13 @@ class PayController extends Controller
 
         switch ($driverPackagesInfo['data'][$packageName]['price']) {
             case MONTHLY:
-                $amount = '1350000';
+                $amount = '2500000';
                 break;
             case TRIMESTER:
-                $amount = '3500000';
+                $amount = '6500000';
                 break;
             case SIXMONTHS:
-                $amount = '7000000';
+                $amount = '12500000';
                 break;
         }
         $amountOrginal = $driverPackagesInfo['data'][$packageName]['price'];
@@ -769,9 +769,9 @@ class PayController extends Controller
         $price = $driverPackagesInfo['data'][$packageName]['price'];
 
         $amount = match ($price) {
-            MONTHLY => '1350000',
-            TRIMESTER => '3500000',
-            SIXMONTHS => '7000000',
+            MONTHLY => '2500000',
+            TRIMESTER => '6500000',
+            SIXMONTHS => '12500000',
             default => '0'
         };
 

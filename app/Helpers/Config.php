@@ -216,9 +216,9 @@ function getCustomerPackagesInfo()
     ];
 }
 
-const MONTHLY = 135000;
-const TRIMESTER = 350000;
-const SIXMONTHS = 700000;
+const MONTHLY = 250000;
+const TRIMESTER = 650000;
+const SIXMONTHS = 1250000;
 
 function getCustomerCallPackagesInfo()
 {
