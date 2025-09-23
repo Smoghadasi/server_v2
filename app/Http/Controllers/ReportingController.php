@@ -193,6 +193,7 @@ class ReportingController extends Controller
         $yesterdayDate = date('Y-m-d', strtotime('-1 day', time())) . ' 00:00:00';
         $weekDate = date('Y-m-d', strtotime('last friday')) . ' 23:59:59';
         $monthDate = $this->getMonthDate();
+        $lastMonthDate = $this->getLastMonthDate();
 
         $drivers = [
             'total' => Driver::count(),
@@ -322,6 +323,9 @@ class ReportingController extends Controller
                 ['created_at', '>=', $monthDate],
                 ['status', '>', 2]
             ])->sum('amount'),
+            'lastMonth' => Transaction::whereBetween('created_at', [$lastMonthDate, $monthDate])
+                ->where('status', '>', 2)
+                ->sum('amount'),
             'drivers' => Transaction::where([
                 ['created_at', '>', $weekDate],
                 ['status', '>', 2],
@@ -1438,6 +1442,7 @@ class ReportingController extends Controller
     /*******************************************************************************************************/
 
     /**
+     * تاریخ شروع ماه جاری
      * @return string
      */
     private function getMonthDate(): string
@@ -1448,6 +1453,33 @@ class ReportingController extends Controller
         else
             $monthDate = date('Y-m-d', strtotime('-30 day', time())) . ' 00:00:00';
         return $monthDate;
+    }
+
+    /**
+     * تاریخ شروع ماه قبل
+     * @return string
+     */
+    private function getLastMonthDate(): string
+    {
+        $monthDate = explode('-', gregorianDateToPersian(date('Y-m-d', time()), '-'));
+        if (isset($monthDate[0]) && isset($monthDate[1])) {
+            // یک ماه از ماه جاری کم می‌کنیم
+            $year = (int)$monthDate[0];
+            $month = (int)$monthDate[1] - 1;
+
+            if ($month <= 0) {
+                $month = 12;
+                $year--;
+            }
+
+            $month = str_pad($month, 2, '0', STR_PAD_LEFT);
+
+            $lastMonthDate = persianDateToGregorian($year . '-' . $month . '-01', '-') . ' 00:00:00';
+        } else {
+            $lastMonthDate = date('Y-m-d', strtotime('-60 day', time())) . ' 00:00:00';
+        }
+
+        return $lastMonthDate;
     }
 
     /****************************************************************************************************/

@@ -77,7 +77,14 @@
                         <td>تعداد بار ثبت شده امروز : {{ number_format($owners['toDayLoads']) }}</td>
                         <td>تعداد بار ثبت شده امروز : {{ number_format($cargoOwners['toDayLoads']) }}</td>
                         <td></td>
-                        <td>درآمد ماه : {{ number_format($incomes['month']) }}</td>
+                        <td>
+                            درآمد ماه : {{ number_format($incomes['month']) }}
+                            @if (Auth()->user()->role == 'admin')
+                                <br />
+                                درآمد ماه قبل : {{ number_format($incomes['lastMonth']) }}
+                            @endif
+
+                        </td>
                     </tr>
                     <tr>
                         <td></td>
