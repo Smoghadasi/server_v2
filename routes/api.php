@@ -34,7 +34,6 @@ use App\Models\FleetlessNumbers;
 use App\Models\Load;
 use App\Models\ProvinceCity;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
@@ -600,27 +599,27 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // Route::patch('profileImage/{owner}', [OwnerController::class, 'profileImage'])->name('auth.profileImage');
 
         // ثبت بار جدید
-        Route::post('createNewLoad', [LoadController::class, 'createNewLoad']);
+        //  Route::post('createNewLoad', [LoadController::class, 'createNewLoad']);
 
         // ثبت بار بصورت ارایه
-        Route::post('createNewLoads', [LoadController::class, 'createNewLoads']);
+        // Route::post('createNewLoads', [LoadController::class, 'createNewLoads']);
 
-        Route::get('sendNotifLoad/{load}', [LoadController::class, 'sendNotifLoad']);
+        // Route::get('sendNotifLoad/{load}', [LoadController::class, 'sendNotifLoad']);
 
         // درخواست اطلاعات صاحبان بار
         // Route::get('profile/{owner}', [OwnerController::class, 'profile']);
 
         // حذف بار توسط صاحب بار
-        Route::delete('removeOwnerLoad/{load}/{owner}', [LoadController::class, 'removeOwnerLoad']);
+        // Route::delete('removeOwnerLoad/{load}/{owner}', [LoadController::class, 'removeOwnerLoad']);
 
         // تکرار بار
-        Route::get('repeatOwnerLoad/{load}', [LoadController::class, 'repeatOwnerLoad']);
+        // Route::get('repeatOwnerLoad/{load}', [LoadController::class, 'repeatOwnerLoad']);
 
         // درخواست اطلاعات بار
-        Route::get('requestLoadInfo/{id}', [LoadController::class, 'requestLoadInfo']);
+        // Route::get('requestLoadInfo/{id}', [LoadController::class, 'requestLoadInfo']);
 
         // ویرایش اطلاعات بار
-        Route::patch('editLoadInfo/{load}/{api}', [LoadController::class, 'editLoadInfo']);
+        // Route::patch('editLoadInfo/{load}/{api}', [LoadController::class, 'editLoadInfo']);
 
         // درخواست لیست بارهای صاحبان بار
         // Route::get('requestCustomerLoadsLists/{id}', [LoadController::class, 'requestCustomerLoadsLists']);
@@ -770,17 +769,6 @@ Route::post('botData', function (Request $request) {
 
 
 Route::post('botData1', function (Request $request) {
-
-    // کلید شمارش درخواست‌ها
-    $cacheKey = 'botData_requests';
-
-    // اگر قبلاً وجود نداره، با مقدار 0 ایجاد کن و تا 1 ساعت نگه دار
-    if (!Cache::has($cacheKey)) {
-        Cache::put($cacheKey, 0, now()->addHour());
-    }
-
-    // افزایش شمارنده
-    $count = Cache::increment($cacheKey);
 
     try {
         foreach ($request->data as $value) {
