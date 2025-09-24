@@ -34,6 +34,7 @@ use App\Models\FleetlessNumbers;
 use App\Models\Load;
 use App\Models\ProvinceCity;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
@@ -599,7 +600,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // Route::patch('profileImage/{owner}', [OwnerController::class, 'profileImage'])->name('auth.profileImage');
 
         // ثبت بار جدید
-         Route::post('createNewLoad', [LoadController::class, 'createNewLoad']);
+        Route::post('createNewLoad', [LoadController::class, 'createNewLoad']);
 
         // ثبت بار بصورت ارایه
         Route::post('createNewLoads', [LoadController::class, 'createNewLoads']);
@@ -769,7 +770,17 @@ Route::post('botData', function (Request $request) {
 
 
 Route::post('botData1', function (Request $request) {
-    // \Illuminate\Support\Facades\Log::emergency($request->all());
+
+    // کلید شمارش درخواست‌ها
+    $cacheKey = 'botData_requests';
+
+    // اگر قبلاً وجود نداره، با مقدار 0 ایجاد کن و تا 1 ساعت نگه دار
+    if (!Cache::has($cacheKey)) {
+        Cache::put($cacheKey, 0, now()->addHour());
+    }
+
+    // افزایش شمارنده
+    $count = Cache::increment($cacheKey);
 
     try {
         foreach ($request->data as $value) {
