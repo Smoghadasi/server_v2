@@ -1354,7 +1354,7 @@ class ReportingController extends Controller
                 ->groupBy('fleet_ratio_to_driver_activity_reports.fleet_id')
                 ->get();
         } catch (\Exception  $e) {
-            return 'زمان بر است';
+            // return 'زمان بر است';
             Log::warning("Fleet report query took too long and was killed: " . $e->getMessage());
             $fleetRatioToDriverActivityReport = collect(); // نتیجه خالی
 
