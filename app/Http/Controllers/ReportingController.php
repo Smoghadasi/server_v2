@@ -1329,7 +1329,6 @@ class ReportingController extends Controller
             $toDate = $request->toDate;
         }
         try {
-            DB::statement("SET SESSION MAX_EXECUTION_TIME=10000"); // حداکثر 10 ثانیه (10000 میلی‌ثانیه)
 
             $fleetRatioToDriverActivityReport = FleetRatioToDriverActivityReport::whereBetween('persianDate', [$fromDate, $toDate])
                 ->leftJoin('drivers', 'drivers.fleet_id', '=', 'fleet_ratio_to_driver_activity_reports.fleet_id')
@@ -1356,7 +1355,7 @@ class ReportingController extends Controller
         } catch (\Exception  $e) {
             // return 'زمان بر است';
             Log::warning("Fleet report query took too long and was killed: " . $e->getMessage());
-            $fleetRatioToDriverActivityReport = collect(); // نتیجه خالی
+            // $fleetRatioToDriverActivityReport = collect(); // نتیجه خالی
 
         }
 
