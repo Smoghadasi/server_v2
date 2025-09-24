@@ -2069,6 +2069,16 @@ class DriverController extends Controller
                 $body  = "احراز هویت شما با موفقیت تایید شد 📞";
                 $this->sendNotificationWeb($driver->FCM_token, $title, $body);
             }
+            try {
+                // ارسال نوتیفیکیشن داخلی برای کاربر
+                $notificationUser = new NotificationUser();
+                $notificationUser->userType = 'driver';
+                $notificationUser->visibility = 'private';
+                $notificationUser->description = "احراز هویت شما با موفقیت تایید شد";
+                $driver->notificationUser()->save($notificationUser);
+            } catch (\Throwable $th) {
+                //throw $th;
+            }
         } else {
             if ($request->authLevel == DRIVER_AUTH_GOLD_PENDING) {
                 $driver->authLevel = DRIVER_AUTH_SILVER;
@@ -2078,10 +2088,23 @@ class DriverController extends Controller
             }
             $driver->authLevel = $driver->authLevelOld;
 
-            if ($driver->version >= 68 && $driver->FCM_token != null) {
-                $title = 'راننده عزیز';
-                $body  = "احراز هویت شما رد شد";
-                $this->sendNotificationWeb($driver->FCM_token, $title, $body);
+
+
+
+            try {
+                if ($driver->version >= 68 && $driver->FCM_token != null) {
+                    $title = 'راننده عزیز';
+                    $body  = "احراز هویت شما رد شد";
+                    $this->sendNotificationWeb($driver->FCM_token, $title, $body);
+                }
+                // ارسال نوتیفیکیشن داخلی برای کاربر
+                $notificationUser = new NotificationUser();
+                $notificationUser->userType = 'driver';
+                $notificationUser->visibility = 'private';
+                $notificationUser->description = "احراز هویت شما رد شد";
+                $driver->notificationUser()->save($notificationUser);
+            } catch (\Throwable $th) {
+                //throw $th;
             }
         }
         $driver->save();
