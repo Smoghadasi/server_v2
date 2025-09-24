@@ -1,5 +1,8 @@
 @extends('layouts.dashboard')
-
+@section('css')
+    <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    <script src="{{ asset('js/chart.js') }}"></script>
+@endsection
 @section('content')
 
     <ol class="breadcrumb">

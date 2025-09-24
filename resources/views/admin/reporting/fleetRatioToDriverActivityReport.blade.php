@@ -1,10 +1,12 @@
 @extends('layouts.dashboard')
 @section('css')
     <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
     <script src="{{ asset('js/chart.js') }}"></script>
 @endsection
 
 @section('content')
+
 
     <div class="card">
         <h5 class="card-header">
@@ -51,21 +53,29 @@
                     @endif
                     @endif
                 >
-                    <td>{{ number_format($fleetRatioToDriverActivityReport->sum('countOfAllDrivers')) }}</td>
-                    <td>{{ number_format($fleetRatioToDriverActivityReport->sum('countOfActiveDrivers')) }}</td>
-                    <td>{{ number_format($fleetRatioToDriverActivityReport->sum('countOfActiveDriverAccounts')) }}</td>
-                    <td>{{ number_format($fleetRatioToDriverActivityReport->sum('countOfOperatorsLoads')) }}</td>
-                    <td>{{ number_format($fleetRatioToDriverActivityReport->sum('countOfCargoOwnersLoads')) }}</td>
-                    <td>{{ number_format($fleetRatioToDriverActivityReport->sum('countOfTransportationsLoads')) }}</td>
+                    <td>{{{ number_format($fleetRatioToDriverActivityReport->sum('countOfAllDrivers')) }}}</td>
+                    <td>{{{ number_format($fleetRatioToDriverActivityReport->sum('countOfActiveDrivers')) }}}</td>
+                    <td>
+                        کارت به کارت: {{ $fleetRatioToDriverActivityReport->sum('countOfCardToCard') }} |
+                        آنلاین: {{ $fleetRatioToDriverActivityReport->sum('countOfOnline') }} |
+                        هدیه: {{ $fleetRatioToDriverActivityReport->sum('countOfGift') }}
+                    </td>
+                    <td>{{{ number_format($fleetRatioToDriverActivityReport->sum('countOfOperatorsLoads')) }}}</td>
+                    <td>{{{ number_format($fleetRatioToDriverActivityReport->sum('countOfCargoOwnersLoads')) }}}</td>
+                    <td>{{{ number_format($fleetRatioToDriverActivityReport->sum('countOfTransportationsLoads')) }}}</td>
                     <td>{{ number_format($fleetRatioToDriverActivityReport->sum('countOfAllLoads')) }}</td>
 
                     @if($fleetRatioToDriverActivityReport->sum('countOfActiveDrivers') > 0)
-                        <td>{{ number_format(($fleetRatioToDriverActivityReport->sum('countOfAllLoads') / $fleetRatioToDriverActivityReport->sum('countOfActiveDrivers')), 1) }}</td>
+                        <td>
+                            {{ number_format(($fleetRatioToDriverActivityReport->sum('countOfAllLoads') / $fleetRatioToDriverActivityReport->sum('countOfActiveDrivers')) , 1) }}
+                        </td>
                     @else
                         <td>0</td>
                     @endif
 
                 </tr>
+
+
                 </tbody>
             </table>
 
@@ -76,6 +86,7 @@
                     <th>ناوگان</th>
                     <th>تعداد کل</th>
                     <th>تعداد فعال</th>
+                    <th>تعداد اکانت فعال</th>
                     <th>تعداد اکانت فعال</th>
                     <th>تعداد بار اپراتورها</th>
                     <th>تعداد بار باربریها</th>
@@ -96,22 +107,31 @@
                         @endif
                     >
                         <td>{{ $key + 1 }}</td>
-                        <td>{{ $item->fleetName }}</td>
-                        <td>{{ number_format($item->countOfAllDrivers) }}</td>
-                        <td>{{ number_format($item->countOfActiveDrivers) }}</td>
-                        <td>{{ number_format($item->countOfActiveDriverAccounts) }}</td>
-                        <td>{{ number_format($item->countOfOperatorsLoads) }}</td>
-                        <td>{{ number_format($item->countOfCargoOwnersLoads) }}</td>
-                        <td>{{ number_format($item->countOfTransportationsLoads) }}</td>
+                        <td>{{{ $item->fleetName }}}</td>
+                        <td>{{{ number_format($item->countOfAllDrivers) }}}</td>
+                        <td>{{{ number_format($item->countOfActiveDrivers) }}}</td>
+                        <td>{{{ number_format($item->countOfActiveDriverAccounts) }}}</td>
+                        <td>
+                            کارت به کارت: {{ $item->countOfCardToCard }} |
+                            آنلاین: {{ $item->countOfOnline }} |
+                            هدیه: {{ $item->countOfGift }}
+                        </td>
+                        <td>{{{ number_format($item->countOfOperatorsLoads) }}}</td>
+                        <td>{{{ number_format($item->countOfCargoOwnersLoads) }}}</td>
+                        <td>{{{ number_format($item->countOfTransportationsLoads) }}}</td>
                         <td>{{ number_format($item->countOfAllLoads) }}</td>
 
                         @if($item->countOfActiveDrivers > 0)
-                            <td>{{ number_format(($item->countOfAllLoads / $item->countOfActiveDrivers), 1) }}</td>
+                            <td>
+                                {{ number_format(($item->countOfAllLoads / $item->countOfActiveDrivers) , 1) }}
+                            </td>
                         @else
                             <td>0</td>
                         @endif
+
                     </tr>
                 @endforeach
+
                 </tbody>
             </table>
 
@@ -136,79 +156,141 @@
     </div>
 
     <script>
-        // Reusable function for all charts
-        function toggleDataSeries(e) {
-            e.dataSeries.visible = !(e.dataSeries.visible ?? true);
-            e.chart.render();
-        }
 
-        let chart1 = new CanvasJS.Chart("fleetRatioToDriverActivityDiagram", {
+        let chart = new CanvasJS.Chart("fleetRatioToDriverActivityDiagram", {
             animationEnabled: true,
-            axisY: { title: "تعداد" },
-            toolTip: { shared: true },
-            legend: { cursor: "pointer", itemclick: toggleDataSeries },
+            // exportEnabled: true,
+
+            axisY: {
+                title: "تعداد"
+            },
+            toolTip: {
+                shared: true
+            },
+            legend: {
+                cursor: "pointer",
+                itemclick: toggleDataSeries
+            },
             data: [
+
                 {
                     type: "spline",
                     name: "بار به راننده",
                     showInLegend: true,
                     dataPoints: [
-                        @foreach($fleetRatioToDriverActivityDiagram as $item)
-                        { label: "{{ $item->date }}", y: {{ $item->value }} },
+                            @foreach($fleetRatioToDriverActivityDiagram as $item)
+                        {
+                            label: "{{ $item->date }}", y: {{ $item->value }}
+                        },
                         @endforeach
                     ]
                 }
             ]
         });
-        chart1.render();
 
-        let chart2 = new CanvasJS.Chart("activeDriverRatioToAllDriverDiagram", {
+        chart.render();
+
+        function toggleDataSeries(e) {
+            if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                e.dataSeries.visible = false;
+            } else {
+                e.dataSeries.visible = true;
+            }
+            chart.render();
+        }
+
+    </script>
+
+    <script>
+
+        let chart = new CanvasJS.Chart("activeDriverRatioToAllDriverDiagram", {
             animationEnabled: true,
-            axisY: { title: "تعداد" },
-            toolTip: { shared: true },
-            legend: { cursor: "pointer", itemclick: toggleDataSeries },
+            // exportEnabled: true,
+
+            axisY: {
+                title: "تعداد"
+            },
+            toolTip: {
+                shared: true
+            },
+            legend: {
+                cursor: "pointer",
+                itemclick: toggleDataSeries
+            },
             data: [
                 {
                     type: "spline",
-                    name: "راننده فعال به کل راننده",
+                    name: "رااننده فعال به کل راننده",
                     showInLegend: true,
                     dataPoints: [
-                        @php $countOfDrivers = $allDrivers; @endphp
-                        @foreach($fleetRatioToDriverActivityDiagram as $item)
-                        @php $countOfDrivers += $item->countOfDrivers; @endphp
-                        { label: "{{ $item->date }}", y: {{ number_format($item->countOfActiveDrivers / $countOfDrivers , 2) }} },
+                            @php $countOfDrivers = $allDrivers; @endphp
+                            @foreach($fleetRatioToDriverActivityDiagram as $item)
+                            @php $countOfDrivers += $item->countOfDrivers; @endphp
+                        {
+                            label: "{{ $item->date }}",
+                            y: {{ number_format($item->countOfActiveDrivers / $countOfDrivers , 2) }}
+                        },
                         @endforeach
                     ]
                 }
             ]
         });
-        chart2.render();
 
-        let chart3 = new CanvasJS.Chart("activeDriverAndAllDriverDiagram", {
+        chart.render();
+
+        function toggleDataSeries(e) {
+            if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                e.dataSeries.visible = false;
+            } else {
+                e.dataSeries.visible = true;
+            }
+            chart.render();
+        }
+
+    </script>
+
+    <script>
+
+        let chart = new CanvasJS.Chart("activeDriverAndAllDriverDiagram", {
             animationEnabled: true,
-            axisY: { title: "تعداد" },
-            toolTip: { shared: true },
-            legend: { cursor: "pointer", itemclick: toggleDataSeries },
+            // exportEnabled: true,
+
+            axisY: {
+                title: "تعداد"
+            },
+            toolTip: {
+                shared: true
+            },
+            legend: {
+                cursor: "pointer",
+                itemclick: toggleDataSeries
+            },
             data: [
                 {
                     type: "spline",
-                    name: "کل رانندگان",
+                    name: " کل رانندگان",
                     showInLegend: true,
                     dataPoints: [
-                        @php $countOfDrivers = $allDrivers; @endphp
-                        @foreach($fleetRatioToDriverActivityDiagram as $item)
-                        @php $countOfDrivers += $item->countOfDrivers; @endphp
-                        { label: "{{ $item->date }}", y: {{ $countOfDrivers }} },
+                            @php $countOfDrivers = $allDrivers; @endphp
+                            @foreach($fleetRatioToDriverActivityDiagram as $item)
+                            @php $countOfDrivers += $item->countOfDrivers; @endphp
+                        {
+                            label: "{{ $item->date }}",
+                            y: {{ $countOfDrivers }}
+                        },
                         @endforeach
                     ]
                 },
                 {
                     type: "spline",
-                    name: "رانندگان فعال",
+                    name: "راانندگان فعال",
                     showInLegend: true,
                     dataPoints: [
-                        @foreach($fleetRatioToDriverActivityDiagram as $item)
-                        { label: "{{ $item->date }}", y: {{ $item->countOfActiveDrivers }} },
+                            @foreach($fleetRatioToDriverActivityDiagram as $item)
+                        {
+                            label: "{{ $item->date }}",
+                            y: {{ $item->countOfActiveDrivers }}
+                        },
                         @endforeach
                     ]
                 },
@@ -217,28 +299,56 @@
                     name: "کل بارها",
                     showInLegend: true,
                     dataPoints: [
-                        @foreach($fleetRatioToDriverActivityDiagram as $item)
-                        { label: "{{ $item->date }}", y: {{ $item->countOfAllLoads }} },
+                            @foreach($fleetRatioToDriverActivityDiagram as $item)
+                        {
+                            label: "{{ $item->date }}", y: {{ $item->countOfAllLoads }}
+                        },
                         @endforeach
                     ]
                 }
             ]
         });
-        chart3.render();
 
-        let chart4 = new CanvasJS.Chart("LoadsAndDriversDiagram", {
+        chart.render();
+
+        function toggleDataSeries(e) {
+            if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                e.dataSeries.visible = false;
+            } else {
+                e.dataSeries.visible = true;
+            }
+            chart.render();
+        }
+
+    </script>
+
+    <script>
+
+        let chart = new CanvasJS.Chart("LoadsAndDriversDiagram", {
             animationEnabled: true,
-            axisY: { title: "تعداد" },
-            toolTip: { shared: true },
-            legend: { cursor: "pointer", itemclick: toggleDataSeries },
+            // exportEnabled: true,
+
+            axisY: {
+                title: "تعداد"
+            },
+            toolTip: {
+                shared: true
+            },
+            legend: {
+                cursor: "pointer",
+                itemclick: toggleDataSeries
+            },
             data: [
+
                 {
                     type: "spline",
                     name: "راننده های فعال",
                     showInLegend: true,
                     dataPoints: [
-                        @foreach($fleetRatioToDriverActivityDiagram as $item)
-                        { label: "{{ $item->date }}", y: {{ $item->countOfActiveDrivers }} },
+                            @foreach($fleetRatioToDriverActivityDiagram as $item)
+                        {
+                            label: "{{ $item->date }}", y: {{ $item->countOfActiveDrivers }}
+                        },
                         @endforeach
                     ]
                 },
@@ -247,14 +357,31 @@
                     name: "کل بارها",
                     showInLegend: true,
                     dataPoints: [
-                        @foreach($fleetRatioToDriverActivityDiagram as $item)
-                        { label: "{{ $item->date }}", y: {{ $item->countOfAllLoads }} },
+                            @foreach($fleetRatioToDriverActivityDiagram as $item)
+                        {
+                            label: "{{ $item->date }}", y: {{ $item->countOfAllLoads }}
+                        },
                         @endforeach
                     ]
                 }
             ]
         });
-        chart4.render();
+
+        chart.render();
+
+        function toggleDataSeries(e) {
+            if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                e.dataSeries.visible = false;
+            } else {
+                e.dataSeries.visible = true;
+            }
+            chart.render();
+        }
+
+
     </script>
 
 @stop
+
+
+

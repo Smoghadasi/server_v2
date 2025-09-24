@@ -1328,22 +1328,39 @@ class ReportingController extends Controller
             $fromDate = $request->fromDate;
             $toDate = $request->toDate;
         }
+        try {
+            DB::statement("SET SESSION MAX_EXECUTION_TIME=10000"); // حداکثر 10 ثانیه (10000 میلی‌ثانیه)
 
-        $fleetRatioToDriverActivityReport = FleetRatioToDriverActivityReport::where([
-            ['persianDate', '>=', $fromDate],
-            ['persianDate', '<=', $toDate]
-        ])
-            ->select('fleet_id')
-            ->selectRaw('sum(countOfDrivers) as countOfDrivers')
-            ->selectRaw('sum(countOfActiveDrivers) as countOfActiveDrivers')
-            ->selectRaw('avg(countOfActiveDriverAccounts) as countOfActiveDriverAccounts')
-            ->selectRaw('sum(countOfOperatorsLoads) as countOfOperatorsLoads')
-            ->selectRaw('sum(countOfCargoOwnersLoads) as countOfCargoOwnersLoads')
-            ->selectRaw('sum(countOfTransportationsLoads) as countOfTransportationsLoads')
-            ->selectRaw('sum(countOfOperatorsLoads) + sum(countOfCargoOwnersLoads) + sum(countOfTransportationsLoads) as countOfAllLoads')
-            ->groupBy('fleet_id')
-            ->get();
+            $fleetRatioToDriverActivityReport = FleetRatioToDriverActivityReport::whereBetween('persianDate', [$fromDate, $toDate])
+                ->leftJoin('drivers', 'drivers.fleet_id', '=', 'fleet_ratio_to_driver_activity_reports.fleet_id')
+                ->leftJoin('transactions', function ($join) {
+                    $join->on('transactions.user_id', '=', 'drivers.id')
+                        ->where('transactions.status', '>', 2)
+                        ->where('transactions.userType', 'driver');
+                })
+                ->select('fleet_ratio_to_driver_activity_reports.fleet_id')
+                ->selectRaw('SUM(fleet_ratio_to_driver_activity_reports.countOfDrivers) AS countOfDrivers')
+                ->selectRaw('SUM(fleet_ratio_to_driver_activity_reports.countOfActiveDrivers) AS countOfActiveDrivers')
+                ->selectRaw('AVG(fleet_ratio_to_driver_activity_reports.countOfActiveDriverAccounts) AS countOfActiveDriverAccounts')
+                ->selectRaw('SUM(fleet_ratio_to_driver_activity_reports.countOfOperatorsLoads) AS countOfOperatorsLoads')
+                ->selectRaw('SUM(fleet_ratio_to_driver_activity_reports.countOfCargoOwnersLoads) AS countOfCargoOwnersLoads')
+                ->selectRaw('SUM(fleet_ratio_to_driver_activity_reports.countOfTransportationsLoads) AS countOfTransportationsLoads')
+                ->selectRaw('(SUM(fleet_ratio_to_driver_activity_reports.countOfOperatorsLoads)
+                  + SUM(fleet_ratio_to_driver_activity_reports.countOfCargoOwnersLoads)
+                  + SUM(fleet_ratio_to_driver_activity_reports.countOfTransportationsLoads)) AS countOfAllLoads')
+                ->selectRaw("SUM(CASE WHEN transactions.payment_type = 'cardToCard' THEN 1 ELSE 0 END) AS countOfCardToCard")
+                ->selectRaw("SUM(CASE WHEN transactions.payment_type = 'online' THEN 1 ELSE 0 END) AS countOfOnline")
+                ->selectRaw("SUM(CASE WHEN transactions.payment_type = 'gift' THEN 1 ELSE 0 END) AS countOfGift")
+                ->groupBy('fleet_ratio_to_driver_activity_reports.fleet_id')
+                ->get();
+        } catch (\Exception  $e) {
+            return 'زمان بر است';
+            Log::warning("Fleet report query took too long and was killed: " . $e->getMessage());
+            $fleetRatioToDriverActivityReport = collect(); // نتیجه خالی
 
+        }
+
+        // return $fleetRatioToDriverActivityReport;
         $fleetRatioToDriverActivityDiagram = FleetRatioToDriverActivityReport::where([
             ['persianDate', '>=', $fromDate],
             ['persianDate', '<=', $toDate]
