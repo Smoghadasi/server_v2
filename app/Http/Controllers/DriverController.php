@@ -2063,6 +2063,12 @@ class DriverController extends Controller
                 $driver->authLevel = DRIVER_AUTH_SILVER;
             }
             $driver->authLevelOld = $driver->authLevel;
+
+            if ($driver->version >= 68 && $driver->FCM_token != null) {
+                $title = 'راننده عزیز، 🎉';
+                $body  = "احراز هویت شما با موفقیت تایید شد 📞";
+                $this->sendNotificationWeb($driver->FCM_token, $title, $body);
+            }
         } else {
             if ($request->authLevel == DRIVER_AUTH_GOLD_PENDING) {
                 $driver->authLevel = DRIVER_AUTH_SILVER;
@@ -2071,6 +2077,12 @@ class DriverController extends Controller
                 $driver->authLevel = DRIVER_AUTH_UN_AUTH;
             }
             $driver->authLevel = $driver->authLevelOld;
+
+            if ($driver->version >= 68 && $driver->FCM_token != null) {
+                $title = 'راننده عزیز';
+                $body  = "احراز هویت شما رد شد";
+                $this->sendNotificationWeb($driver->FCM_token, $title, $body);
+            }
         }
         $driver->save();
 
