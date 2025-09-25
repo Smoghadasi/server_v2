@@ -81,7 +81,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     // درخواست لیست شهرهای یک استان خاص
     Route::post('requestCitiesList', [AddressController::class, 'requestCitiesList']);
     Route::get('requestCitiesListOfState/{state_id}', [AddressController::class, 'requestCitiesListOfState']);
-    Route::get('ipAddress/{driver_id}', [DriverController::class, 'ipAddress']);
 
     Route::post('storeDistanceCalculate', [LoadController::class, 'storeDistanceCalculate']);
 
@@ -198,11 +197,8 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     // راننده
     /********************************************************************************************/
 
-    // درخواست اطلاعات پروفایل رانننده
-    Route::get('driver/requestProfileInfo/{driver_id}', [DriverController::class, 'requestProfileInfo']);
 
     // درخواست لیست بارهای راننده
-    Route::get('driver/requestDriverLoadsList/{driver_id}', [LoadController::class, 'requestDriverLoadsList']);
 
     // درخواست تغییر ناوگان راننده
     Route::post('driver/requestChangeFleet', [DriverController::class, 'requestChangeFleet']);
@@ -211,10 +207,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     Route::post('driver/confirmLoad', [DriverController::class, 'confirmLoad']);
 
     // درخواست لیست باریهای جدید برای راننده
-    Route::get('driver/requestNewLoadsForDriver/{driver_id}', [LoadController::class, 'requestNewLoadsForDriver']);
 
-    // درخواست نوتیفیکیشن بارهای جدید
-    Route::post('driver/requestNewLoadsNotification/{driver_id}', [DriverController::class, 'requestNewLoadsNotification']);
 
     // افزودن مسیر
     Route::post('driver/addPath', [DriverController::class, 'addPath']);
@@ -236,12 +229,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
     // درخواست لیست قیمت های استعلام بار برای باربری
     Route::get('bearing/requestInquiriesOfLoad/{load_id}', [LoadController::class, 'requestInquiriesOfLoad']);
-
-    // لیست مسیرهای راننده و لیست تمام شهرها
-    Route::get('driver/requestPathsListAndAllCitiesList/{driver_id}', [DriverController::class, 'requestPathsListAndAllCitiesList']);
-
-    // درخواست اطلاعات پروفایل راننده
-    Route::get('driver/requestDriverProfileInfo/{driver_id}', [DriverController::class, 'requestDriverProfileInfo']);
 
     // حذف مسیر پیشفرض راننده
     Route::post('driver/removePath', [DriverController::class, 'removePath']);
@@ -342,8 +329,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     // باربری
     /********************************************************************************************/
 
-    // درخواست لیست بارها برای باربری
-    Route::get('bearing/requestNewLoads/{bearing_id}', [LoadController::class, 'requestNewLoads']);
 
     // درخواست اطلاعات راننده انتخاب شده
     Route::post('bearing/requestDriverInfo', [DriverController::class, 'requestDriverInfo']);
@@ -357,8 +342,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     // چک کردن باربری انتخاب شده برای بار
     Route::post('bearing/checkSelectedBearingOfLoad', [LoadController::class, 'checkSelectedBearingOfLoad']);
 
-    // درخواست اطلاعات باربری
-    Route::get('bearing/requestBearingInfo/{id}', [BearingController::class, 'requestBearingInfo']);
 
     // درخواست لیست قیمت های استعلام بار
     Route::get('bearing/requestInquiriesOfLoad/{load_id}', [LoadController::class, 'requestInquiriesOfLoad']);
@@ -401,151 +384,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     Route::get('customer/requestPackingTypes', [PackingTypeController::class, 'requestPackingTypes']);
 
     /***********************************************************************************************/
-    // ذخیره توکن فایر ببس
-    Route::post('bearing/saveMyFireBaseToken', [BearingController::class, 'saveMyFireBaseToken']);
-    Route::post('customer/saveMyFireBaseToken', [CustomerController::class, 'saveMyFireBaseToken']);
-
-
-    Route::group(['prefix' => 'customer'], function () {
-        // درخواست ثبت نام صاحب بار
-        Route::post('registerCustomer', [RegisterController::class, 'registerCustomer']);
-
-        // توقف مناقصه به صورت دستی
-        Route::post('stopTenderManually/{load}', [TenderController::class, 'stopTenderManually']);
-
-        // انتقاد یا شکایت صاحب بار
-        Route::post('storeComplaintCustomer/{customer}', [ComplaintController::class, 'storeComplaintCustomer']);
-
-        // پیگیری انتقاد یا شکایت صاحب بار
-        Route::post('getComplaintCustomerResult/{id}', [ComplaintController::class, 'getComplaintCustomerResult']);
-
-
-        // اضافه کردن ناوگان به بار توسط صاحب بار
-        Route::post('addFleetToLoadByCustomer', [LoadController::class, 'addFleetToLoadByCustomer']);
-
-        // حذف ناوگان از بار
-        Route::delete('removeFleetOfLoadByCustomer/{fleetLoad}', [LoadController::class, 'removeFleetOfLoadByCustomer']);
-
-        // بررسی وضعیت شارژ اکانت صاحب بار
-        Route::get('checkCustomerAccountChargeStatus/{customer}/{action}', [CustomerController::class, 'checkCustomerAccountChargeStatus']);
-
-        // درخواست اطلاعات مشتری
-        Route::get('requestCustomerInfo/{customer}', [CustomerController::class, 'requestCustomerInfo']);
-    });
-
-    Route::group(['prefix' => 'transportationCompany'], function () {
-
-        Route::get('requestSuggestionPrice/{transportationCompany_id}/{load_id}', [TenderController::class, 'requestTransportationCompanySuggestionPrice']);
-
-        // درخواست لیست بارهای جدید برای باربری
-        Route::get('requestNewLoads/{transportationCompany_id}', [LoadController::class, 'requestNewLoads']);
-
-        // اضافه کردن ناوگان به بار توسط باربری
-        Route::post('addFleetToLoadByTransportationCompany', [LoadController::class, 'addFleetToLoadByTransportationCompany']);
-
-        // حذف ناوگان انتخاب شده از لیست توسط باربری
-        Route::get('removeFleetToLoadByTransportationCompany/{fleet_load_id}', [LoadController::class, 'removeFleetToLoadByTransportationCompany']);
-
-        // درخواست اطلاعات رانندگان درحال حمل بار
-        Route::get('requestDriversInfoOfCargo/{driver}', [LoadController::class, 'requestDriversInfoOfCargo']);
-
-        // بررسی اعتبار حساب کاربری شرکت باربری
-        Route::get('checkUserAccountCredit/{id}', [BearingController::class, 'checkUserAccountCredit']);
-
-        // درخواست لیست رانندگان بار
-        Route::get('requestLoadDriversList/{load}', [LoadController::class, 'requestLoadDriversList']);
-
-        // پرداخت شارژ ماهیانه از کیف پول
-        Route::post('payMonthlyChargeFromWallet', [BearingController::class, 'payMonthlyChargeFromWallet']);
-
-
-        // انتقاد یا شکایت راننده از صاحب بار یا باربری
-        Route::post('storeComplaintTransportationCompany/{transportationCompany}', [ComplaintController::class, 'storeComplaintTransportationCompany']);
-
-        // پیگیری انتقاد یا شکایت راننده از صاحب بار یا باربری
-        Route::post('getComplaintTransportationCompanyResult/{transportationCompany}', [ComplaintController::class, 'getComplaintTransportationCompanyResult']);
-    });
-
-
-    Route::group(['prefix' => 'driver'], function () {
-
-        Route::get('radio', [RadioController::class, 'index']);
-
-        // بررسی ثبت درخواست حمل توسط راننده
-        Route::get('checkDriverInquiry/{driver_id}/{load_id}', [LoadController::class, 'checkDriverInquiry']);
-
-        // نزدیکترین بار به راننده
-        // Route::post('searchTheNearestCargo/{driver}', [LoadController::class, 'searchTheNearestCargo']);
-
-        // درخواست لیست بارهای جدید برای راننده ها
-        Route::get('requestNewLoadsForDrivers/{driver}', [LoadController::class, 'requestNewLoadsForDrivers']);
-
-        // جستجوی بار توسط راننده
-        Route::post('searchLoadForDriver/{driver}', [LoadController::class, 'searchLoadForDriver']);
-
-        // بررسی وضعیت شارژ راننده برای تماس
-        Route::get('checkDriverStatusForCalling/{driver}/{phoneNumber?}/{load_id?}/{latitude?}/{longitude?}', [DriverController::class, 'checkDriverStatusForCalling']);
-
-        Route::get('getPackagesInfo', [DriverController::class, 'getPackagesInfo']);
-
-        Route::get('getLoadListFromDate/{driver}/{day}/{fleetId?}', [LoadController::class, 'getLoadListFromDate']);
-
-        // بارهای موجود در مقصد
-        Route::post('LoadsInDestinationCity/{driver}/{city}', [LoadController::class, 'LoadsInDestinationCity']);
-
-        // انتقاد یا شکایت راننده از صاحب بار یا باربری
-        Route::post('storeComplaintDriver/{driver}', [ComplaintController::class, 'storeComplaintDriver']);
-
-        // پیگیری انتقاد یا شکایت راننده از صاحب بار یا باربری
-        Route::post('getComplaintDriverResult/{driver}', [ComplaintController::class, 'getComplaintDriverResult']);
-
-        // لیست شکایات و انتقادات راننده
-        Route::get('getComplaintDriver/{driver}', [ComplaintController::class, 'getComplaintDriver']);
-
-        // بررسی وضعیت شارژ راننده برای قبول بار
-        Route::get('checkDriverStatusForAcceptLoad/{driver}', [DriverController::class, 'checkDriverStatusForAcceptLoad']);
-
-        // دریافت اطلاعات بار برای راننده
-        Route::get('getLoadInfo/{load_id}/{driver_id}', [LoadController::class, 'getLoadInfoForDriver']);
-
-        // دریافت جزئیات بار برای راننده
-        Route::get('loadDetail/{load_id}/{driver_id}', [LoadController::class, 'loadDetail']);
-
-        Route::post('report', [ApiReportController::class, 'store']);
-
-
-        Route::group(['prefix' => 'v2'], function () {
-            // درخواست لیست بارهای جدید (ورژن 2)
-            Route::get('requestNewLoads/{driver}', [LoadController::class, 'requestNewLoadsForDriversV2']);
-        });
-
-        // دریافت لیست بارها برای راننده به صورت صفحه بندی شده
-        // از نسخه 52 به بعد این امکان را دارند
-        Route::get('getNewLoadForDriver/{driver}/{lastLoadId}', [LoadController::class, 'getNewLoadForDriver']);
-
-        // تاریخچه تماس راننده
-        Route::get('callHistory/{driver}', [LoadController::class, 'callHistory']);
-
-        // دریافت اطلاعات پروفایل راننده
-        // Route::get('getDriverProfileInfo/{driver}', [DriverController::class, 'getDriverProfileInfo']);
-
-        // بروز رسانی اطلاعات راننده
-        // Route::put('updateDriverProfileInfo/{driver}', [DriverController::class, 'updateProfileInfo']);
-
-
-        Route::put('updateLocation/{driver}', [DriverController::class, 'updateLocation']);
-
-        //
-        Route::get('driverAppVersion/{driver}/{version}', [DriverController::class, 'driverAppVersion']);
-
-
-        Route::get('requestNewLoads/{driver}', [LoadController::class, 'requestNewLoadsForDriversV2']);
-
-        Route::get('driverMessages/{mobileNumber}', [ContactUsController::class, 'driverMessages']);
-
-        // ذخیره توکن رانندگان
-        Route::patch('saveMyFireBaseToken/{driver}', [DriverController::class, 'saveMyFireBaseToken']);
-    });
 
     // وب سرویس های عمومی
     Route::group(['prefix' => 'public'], function () {
@@ -581,78 +419,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
             'tel' => TELL
         ]);
     });
-
-
-    // برنامه جدید صاحب بار
-    Route::group(['prefix' => 'owner'], function () {
-        // Route::post('register', [OwnerController::class, 'register']);
-        // اعتبارسنجی کد فعال سازی برای باربری و صاحبان بار
-        // Route::post('verifyActivationCodeForCustomerBearing', [LoginController::class, 'verifyActivationCodeForCustomerBearing']);
-
-        // احراز هویت صاحب بار
-        // Route::put('authOwner/{owner}', [OwnerController::class, 'authOwner'])->name('auth.owner');
-
-        // احراز هویت باربری
-        // Route::put('authBearing/{owner}', [OwnerController::class, 'authBearing'])->name('auth.bearing');
-
-        // تغییر عکس پروفایل کاربری
-        // Route::patch('profileImage/{owner}', [OwnerController::class, 'profileImage'])->name('auth.profileImage');
-
-        // ثبت بار جدید
-        //  Route::post('createNewLoad', [LoadController::class, 'createNewLoad']);
-
-        // ثبت بار بصورت ارایه
-        // Route::post('createNewLoads', [LoadController::class, 'createNewLoads']);
-
-        // Route::get('sendNotifLoad/{load}', [LoadController::class, 'sendNotifLoad']);
-
-        // درخواست اطلاعات صاحبان بار
-        // Route::get('profile/{owner}', [OwnerController::class, 'profile']);
-
-        // حذف بار توسط صاحب بار
-        // Route::delete('removeOwnerLoad/{load}/{owner}', [LoadController::class, 'removeOwnerLoad']);
-
-        // تکرار بار
-        // Route::get('repeatOwnerLoad/{load}', [LoadController::class, 'repeatOwnerLoad']);
-
-        // درخواست اطلاعات بار
-        // Route::get('requestLoadInfo/{id}', [LoadController::class, 'requestLoadInfo']);
-
-        // ویرایش اطلاعات بار
-        // Route::patch('editLoadInfo/{load}/{api}', [LoadController::class, 'editLoadInfo']);
-
-        // درخواست لیست بارهای صاحبان بار
-        // Route::get('requestCustomerLoadsLists/{id}', [LoadController::class, 'requestCustomerLoadsLists']);
-
-        // درخواست لیست بارهای بایگانی صاحبان بار
-        // Route::get('requestCustomerLoadsTrashed/{id}', [LoadController::class, 'requestCustomerLoadsTrashed']);
-
-        // انتقاد یا شکایت صاحب بار
-        // Route::post('storeComplaintOwner/{owner}', [ComplaintController::class, 'storeComplaintOwner']);
-
-        // پیگیری انتقاد یا شکایت صاحب بار
-        // Route::post('getComplaintOwnerResult/{owner}', [ComplaintController::class, 'getComplaintOwnerResult']);
-
-        // Route::get('provinceCities', [ProvinceCityController::class, 'index']);
-
-        // Route::post('report', [ApiReportController::class, 'store']);
-
-        // انتخاب راننده برای بار توسط صاحب بار
-        // Route::post('selectDriverForLoadByOwner', [LoadController::class, 'selectDriverForLoadByOwner']);
-
-        // فعال یا غیرفعال نوتیفیکیشن
-        // Route::put('changeNotificationFunction', [NotificationController::class, 'changeNotificationFunction']);
-
-        // ذخیره توکن فایر ببس
-        // Route::patch('saveMyFireBaseToken/{owner}', [OwnerController::class, 'saveMyFireBaseToken']);
-
-        // درخواست نوتیفیکیشن صاحبان بار
-        // Route::post('sendCustomNotificationOwner', [NotificationController::class, 'sendCustomNotificationOwner']);
-    });
-
-    // Route::prefix('test')->group(function () {
-    //     Route::get('sendNotifLoad/{load}', [LoadController::class, 'sendNotifLoadTest']);
-    // });
 });
 
 
@@ -766,34 +532,6 @@ Route::post('botData', function (Request $request) {
     }
 });
 
-
-
-Route::post('botData1', function (Request $request) {
-
-    try {
-        foreach ($request->data as $value) {
-            $data = convertFaNumberToEn($value);
-            preg_match('/09\d{2}/', $data, $matches);
-
-            $cargoConvertListCount = CargoConvertList::where([
-                ['cargo', $data],
-                // ['message_id', $request->message_id],
-                ['created_at', '>', date('Y-m-d h:i:s', strtotime('-180 minute', time()))]
-            ])->count();
-            if ($cargoConvertListCount == 0 && isset($matches[0])) {
-                $cargoConvertList = new CargoConvertList();
-                $cargoConvertList->cargo = $data;
-                $cargoConvertList->save();
-            }
-        }
-
-        return 'OK';
-    } catch (Exception $exception) {
-        \Illuminate\Support\Facades\Log::emergency("------------------- botData ERROR ---------------------");
-        \Illuminate\Support\Facades\Log::emergency($exception->getMessage());
-        \Illuminate\Support\Facades\Log::emergency("------------------- End botData ERROR ---------------------");
-    }
-});
 
 Route::get('dictionary', function () {
     return Dictionary::select('original_word_id', 'type', 'equivalentWord')->get();
