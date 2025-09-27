@@ -312,71 +312,101 @@ class DataConvertController extends Controller
         $phoneNumbers = $this->extractPhoneNumbers($cleanedText);
 
         // وضعیت
-        $lastCity = '';
         $currentOrigin = -1;
         $originName = '';
         $originProvince = null;
-        $expectNextCityToBeOrigin = false;
+        $cityName = '';
+        $firstCity = '';
+        $destinations = [];
+        $fleets = [];
+        $phoneNumber = '';
 
         foreach ($cleanedText as $key => $item) {
-            $token = trim($item);
 
-            // فلیت
-            if (in_array($token, $fleetsList)) {
+            // ۱. شناسایی ناوگان‌ها
+            if (in_array($item, $fleetsList)) {
                 if (($cleanedText[$key - 1] ?? null) === '[_]') {
                     $fleets = [];
                 }
-                $fleets[$token] = $token;
-                continue;
+                $fleets[$item] = $item;
             }
 
-            // [از] → شهر بعدی مبدا
-            if ($token === '[از]' || $token === 'از') {
-                $expectNextCityToBeOrigin = true;
-                continue;
+            // ۲. شناسایی اولین شهر
+            if (!$firstCity && in_array($item, $citiesList)) {
+                $firstCity = $item;
             }
 
-            // [به] → شهر قبلی مبدا + شهر بعدی مقصد
-            if ($token === '[به]' || $token === 'به') {
-                if (!empty($lastCity)) {
-                    $originName    = $lastCity;
-                    $originProvince = $this->getProvince($originName);
-                    $origins[]     = $originName;
-                    $currentOrigin = $key;
+            // ۳. شناسایی شهر
+            $provinceName = null;
+            if (in_array($item, $citiesList)) {
+                $cityName = $item;
+                $origin   = str_replace(['_', '[', ']'], [' ', '', ''], $cityName);
+                $provinceName = ProvinceCity::where('name', $origin)
+                    ->where('parent_id', '!=', 0)
+                    ->get();
+            }
+
+            // ۴. تشخیص کلمات کلیدی
+            $isOrigin = false;
+            if ($item === '[از]') {
+                $originPrefixWord  = true;
+                $originPostfixWord = false;
+                $isOrigin = true;
+            } elseif ($item === '[به]' && $cityName) {
+                $originPostfixWord = true;
+                $originPrefixWord  = false;
+                $isOrigin = true;
+            }
+
+            // ۵. تعیین مبدأ
+            if ($isOrigin && $cityName) {
+                $originName = $cityName;
+                $originProvince = $provinceName;
+                $origins[] = $cityName;
+                $currentOrigin = $key;
+                $cityName = '';
+                $destinations = [];
+            }
+
+            // ۶. تعیین شماره تماس مرتبط با بار
+            $cargoPhoneNumber = '';
+            foreach ($phoneNumbers as $phoneNumberItem) {
+                if ($key < $phoneNumberItem['key']) {
+                    $cargoPhoneNumber = $phoneNumberItem['phoneNumber'];
+                    break;
                 }
-                continue;
+            }
+            if (!$cargoPhoneNumber) {
+                $cargoPhoneNumber = $phoneNumber;
             }
 
-            // اگر شهر است
-            if (in_array($token, $citiesList)) {
-                $lastCity = $token;
+            // ۷. تشخیص مقصد و ساخت لیست بارها
+            if (!$isOrigin && !in_array($item, $origins) && in_array($item, $citiesList)) {
+                if (($cleanedText[$key + 1] ?? null) !== '[به]') {
+                    $destinations[$currentOrigin][] = $item;
 
-                // اگر انتظار داشتیم مبدا باشد (بعد از [از])
-                if ($expectNextCityToBeOrigin) {
-                    $originName     = $token;
-                    $originProvince = $this->getProvince($token);
-                    $origins[]      = $token;
-                    $currentOrigin  = $key;
-                    $lastCity       = '';
-                    $expectNextCityToBeOrigin = false;
-                    continue;
-                }
+                    if ($currentOrigin > -1) {
+                        $desc = str_replace(['_', '[', ']'], [' ', '', ''], $item);
+                        $descProvinces = ProvinceCity::where('name', $desc)
+                            ->where('parent_id', '!=', 0)
+                            ->get();
 
-                // اگر شهری غیر از مبداها آمد → مقصد
-                if (!in_array($token, $origins) && $currentOrigin > -1) {
-                    $cargoPhoneNumber = $this->getNearestPhone($phoneNumbers, $key);
-                    $descProvinces    = $this->getProvince($token);
+                        $cargoItem = [
+                            'origin'        => $originName,
+                            'destination'   => $item,
+                            'descProvinces' => $descProvinces,
+                            'fleets'        => $fleets,
+                            'mobileNumber'  => $cargoPhoneNumber,
+                            'freight'       => 0,
+                            'priceType'     => 'توافقی',
+                        ];
 
-                    $cargoList[] = [
-                        'origin'         => $originName,
-                        'originProvince' => $originProvince,
-                        'destination'    => $token,
-                        'descProvinces'  => $descProvinces,
-                        'fleets'         => $fleets,
-                        'mobileNumber'   => $cargoPhoneNumber,
-                        'freight'        => 0,
-                        'priceType'      => 'توافقی'
-                    ];
+                        if ($originProvince) {
+                            $cargoItem['originProvince'] = $originProvince;
+                        }
+
+                        $cargoList[] = $cargoItem;
+                    }
                 }
             }
         }
@@ -671,9 +701,9 @@ class DataConvertController extends Controller
             BlockPhoneNumber::where('phoneNumber', $mobileNumber)
             ->where(function ($query) {
                 $query->where('type', 'operator')
-                      ->orWhere('type', 'both');
+                    ->orWhere('type', 'both');
             })
-                ->exists() ||
+            ->exists() ||
             Load::where('cargoPattern', $cargoPattern)
             ->where('created_at', '>', now()->subMinutes(180))
             ->exists()
