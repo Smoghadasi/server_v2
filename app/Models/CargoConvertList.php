@@ -19,7 +19,7 @@ class CargoConvertList extends Model
         $current = $this->cargo_orginal;
 
         // گرفتن تمام رکوردها (غیر از رکورد فعلی)
-        $all = CargoConvertList::where('rejected', 1)->where('id', '!=', $this->id)->get();
+        $all = CargoConvertList::where('id', '!=', $this->id)->get();
 
         foreach ($all as $item) {
             $distance = levenshtein(mb_strtolower($current), mb_strtolower($item->cargo_orginal));
