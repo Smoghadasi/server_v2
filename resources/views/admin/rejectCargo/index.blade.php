@@ -31,7 +31,7 @@
                 </tr>
                 @foreach ($cargoList as $cargo)
                     <tr>
-                        <td @class(['text-danger' => $cargo->checkExists() == 0])>
+                        <td @class(['text-primary' => $cargo->checkExists() == 0])>
                             {{ $cargo->cargo }}
                         </td>
                         <td class="text-nowrap">
