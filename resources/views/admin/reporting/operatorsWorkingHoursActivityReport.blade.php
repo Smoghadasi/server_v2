@@ -24,52 +24,54 @@
 
             <table class="table">
                 <thead>
-                <tr>
-                    <th>#</th>
-                    <th>نام اپراتور</th>
-                    <th>ساعت شروع</th>
-                    <th>ساعت پایان</th>
-                    <th>میزان فعالیت به دقیقه / ساعت</th>
-                    <th>تعداد بار های ثبت شده</th>
-                    <th>
-                        وضعیت فعلی ( <span class="text-success">آنلاین</span> / <span class="text-danger">آفلاین</span> )
-                    </th>
-                    <th>گزارش</th>
-                </tr>
+                    <tr>
+                        <th>#</th>
+                        <th>نام اپراتور</th>
+                        <th>ساعت شروع</th>
+                        <th>ساعت پایان</th>
+                        <th>میزان فعالیت به دقیقه / ساعت</th>
+                        <th>تعداد بار های ثبت شده</th>
+                        <th>
+                            وضعیت فعلی ( <span class="text-success">آنلاین</span> / <span class="text-danger">آفلاین</span>
+                            )
+                        </th>
+                        <th>گزارش</th>
+                    </tr>
                 </thead>
                 <tbody>
-                @php
-                    $i=1;
-                @endphp
+                    @php
+                        $i = 1;
+                    @endphp
 
-                @foreach($users as $user)
+                    @foreach ($users as $user)
+                        <tr>
+                            <td>{{ $i++ }}</td>
+                            <td>{{ $user->name }} {{ $user->lastName }}</td>
+                            @php
+                                $time = explode(' ', $user->firstLoad()->created_at);
+                            @endphp
+                            <td>{{ $time[1] }}</td>
 
-                    <tr>
-                        <td>{{ $i++ }}</td>
-                        <td>{{ $user->name }} {{ $user->lastName }}</td>
-                        <td>{{ $user->firstLoad()->created_at->format('H:i:s') }}</td>
 
-                        <td>{{ $user->lastLoad()->created_at->format('H:i:s') }}</td>
-                        <td>{{ $user->userActivityReport * 5 }} / {{ (($user->userActivityReport * 5) % 60) }}
-                            : {{ intdiv($user->userActivityReport * 5, 60) }}
-                        </td>
-                        <td>
-                            {{ $user->numOfLoads() }}
-                        </td>
-                        <td>
-                            @if(Cache::has('user-is-online-' . $user->user_id))
-                                <span class="text-success">آنلاین</span>
-                            @else
-                                <span class="text-danger">آفلاین</span>
-                            @endif
-                        </td>
-                    </tr>
-                @endforeach
+
+                            <td></td>
+                            <td>{{ $user->userActivityReport * 5 }} / {{ ($user->userActivityReport * 5) % 60 }}
+                                : {{ intdiv($user->userActivityReport * 5, 60) }}
+                            </td>
+                            <td>
+                                {{ $user->numOfLoads() }}
+                            </td>
+                            <td>
+                                @if (Cache::has('user-is-online-' . $user->user_id))
+                                    <span class="text-success">آنلاین</span>
+                                @else
+                                    <span class="text-danger">آفلاین</span>
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
     </div>
 @stop
-
-
-
