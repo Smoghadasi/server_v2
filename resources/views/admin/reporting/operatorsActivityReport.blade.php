@@ -1,5 +1,7 @@
 @extends('layouts.dashboard')
-
+@section('css')
+    <script src="{{ asset('js/chart.js') }}"></script>
+@endsection
 @section('content')
 
     <ol class="breadcrumb">
@@ -11,27 +13,27 @@
     <div class="container text-right">
         <table class="table table-bordered">
 
-            <tr>
+            {{-- <tr>
                 <td>
                     <div class="text-center h6">تعداد بار ثبت شده 30 روز قبل</div>
                     <canvas id="countOfOperatorsLoadsInPrevious30Days"
                             style="width:100%;max-width:100%"></canvas>
                 </td>
-            </tr>
+            </tr> --}}
 
-            <tr>
+            {{-- <tr>
                 <td>
                     <div class="text-center h6">تعداد بار ثبت شده 30 روز قبل به تفکیک اپراتور</div>
                     <div id="countOfOperatorsLoadsInPrevious30DaysByOperator" style="height: 370px; width: 100%;"></div>
                 </td>
-            </tr>
+            </tr> --}}
 
-            <tr>
+            {{-- <tr>
                 <td>
                     <div class="text-center h6">تعداد بار ثبت شده بصورت هفته به هفته به تفکیک اپراتور</div>
                     <div id="operatorActivityReportOnAWeeklyBasis" style="height: 370px; width: 100%;"></div>
                 </td>
-            </tr>
+            </tr> --}}
 
 {{--            <tr>--}}
 {{--                <td>--}}
@@ -41,13 +43,13 @@
 {{--                </td>--}}
 {{--            </tr>--}}
 
-            <tr>
+            {{-- <tr>
                 <td>
                     <div class="text-center h6">ثبت بار به تفکیک اپراتور در هفته گذشته</div>
                     <canvas id="loadRegistrationByOperatorInPastWeek"
                             style="width:100%;max-width:100%"></canvas>
                 </td>
-            </tr>
+            </tr> --}}
 
 
             <tr>
@@ -61,7 +63,7 @@
 
         </table>
     </div>
-    <script>
+    {{-- <script>
         //تعداد بار ثبت شده  30 روز قبل
         var label = [
             @foreach($countOfOperatorsLoadsInPrevious30Days as $item)
@@ -88,58 +90,11 @@
                 legend: {display: false}
             }
         });
-    </script>
+    </script> --}}
 
-    <script>
 
-        //تعداد بار ثبت شده 30 روز قبل به تفکیک اپراتور
 
-        var chart = new CanvasJS.Chart("countOfOperatorsLoadsInPrevious30DaysByOperator", {
-            animationEnabled: true,
-            // exportEnabled: true,
-
-            axisY: {
-                title: "تعداد بار"
-            },
-            toolTip: {
-                shared: true
-            },
-            legend: {
-                cursor: "pointer",
-                itemclick: toggleDataSeries
-            },
-            data: [
-                    @foreach($countOfOperatorsLoadsInPrevious30DaysByOperator as $item)
-                {
-                    type: "spline",
-                    name: "{{ $item['name'] }}",
-                    showInLegend: true,
-                    dataPoints: [
-                            @foreach($item['data'] as $data)
-                        {
-                            label: "{{ $data['label'] }}", y: {{ $data['value'] }}
-                        },
-                        @endforeach
-                    ]
-                },
-                @endforeach
-            ]
-        });
-
-        chart.render();
-
-        function toggleDataSeries(e) {
-            if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-                e.dataSeries.visible = false;
-            } else {
-                e.dataSeries.visible = true;
-            }
-            chart.render();
-        }
-
-    </script>
-
-    <script>
+    {{-- <script>
 
         //تعداد بار ثبت شده 30 روز قبل به تفکیک اپراتور
 
@@ -186,7 +141,7 @@
             chart.render();
         }
 
-    </script>
+    </script> --}}
 
 {{--    <script>--}}
 {{--        // ثبت بار به تفکیک اپراتور--}}
@@ -220,7 +175,7 @@
 {{--        });--}}
 {{--    </script>--}}
 
-    <script>
+    {{-- <script>
         // ثبت بار به تفکیک اپراتور
         var labels = [
             @foreach($getLoadRegistrationByOperatorInPastWeek as $item)
@@ -250,7 +205,7 @@
                 }
             }
         });
-    </script>
+    </script> --}}
 
     <script>
         // ثبت بار به تفکیک ناوگان

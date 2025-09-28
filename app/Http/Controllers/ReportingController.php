@@ -1065,7 +1065,7 @@ class ReportingController extends Controller
         $getLoadRegistrationByOperatorInPastWeek = []; // $this->getLoadRegistrationByOperatorInPastWeek();
 
         // ثبت بار به تفکیک ناوگان
-        $operatorsLoadsByFleet = []; // $this->getOperatorsLoadsByFleet();
+        $operatorsLoadsByFleet = $this->getOperatorsLoadsByFleet();
 
 
         return view('admin.reporting.operatorsActivityReport', compact('countOfOperatorsLoadsInPrevious30Days', 'loadRegistrationByOperator', 'operatorsLoadsByFleet', 'countOfOperatorsLoadsInPrevious30DaysByOperator', 'operatorActivityReportOnAWeeklyBasis', 'getLoadRegistrationByOperatorInPastWeek'));
