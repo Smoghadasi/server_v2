@@ -88,7 +88,7 @@
                                                                 name="mobileNumber" class="form-control"
                                                                 required placeholder="شماره موبایل" />
                                                         </div>
-                                                        {{-- <div class="col-md-6">
+                                                        <div class="col-md-6">
                                                             <label for="description"
                                                                 class="form-label">وضعیت</label>
                                                             <select name="status" class="form-select"
@@ -97,7 +97,7 @@
                                                                 </option>
                                                                 <option value="0">غیر فعال</option>
                                                             </select>
-                                                        </div> --}}
+                                                        </div>
                                                     </div>
                                                     {{-- <div class="row">
                                                         <div class="col-6">
