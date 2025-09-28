@@ -1620,11 +1620,11 @@ class ReportingController extends Controller
         }
 
         $users = UserActivityReport::join('users', 'users.id', 'user_activity_reports.user_id')
-            // ->where([
-            //     // ['users.status', 1],
-            //     // ['user_activity_reports.created_at', '>', persianDateToGregorian($fromDate, '/') . ' 00:00:00'],
-            //     // ['user_activity_reports.created_at', '<', persianDateToGregorian($toDate, '/') . ' 23:59:59']
-            // ])
+            ->where([
+                ['users.status', 1],
+                ['user_activity_reports.created_at', '>', persianDateToGregorian($fromDate, '/') . ' 00:00:00'],
+                ['user_activity_reports.created_at', '<', persianDateToGregorian($toDate, '/') . ' 23:59:59']
+            ])
             ->select('users.name', 'users.lastName', 'user_activity_reports.user_id', DB::raw('count(*) as userActivityReport'))
             ->groupBy('user_activity_reports.user_id')
             ->get();
