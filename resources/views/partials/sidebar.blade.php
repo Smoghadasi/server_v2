@@ -435,13 +435,13 @@
                         </a>
                     </li>
                 @endif
-                @if (in_array('bearingActivities', auth()->user()->userAccess))
+                {{-- @if (in_array('bearingActivities', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/transportationCompaniesActivityReport') }}">
                             <div data-i18n="Without menu">فعالیت باربری ها</div>
                         </a>
                     </li>
-                @endif
+                @endif --}}
 
 
                 @if (in_array('cargoOwnersActivityReport', auth()->user()->userAccess))
@@ -455,6 +455,13 @@
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/operatorsActivityReport') }}">
                             <div data-i18n="Without menu"> فعالیت اپراتورها</div>
+                        </a>
+                    </li>
+                @endif
+                @if (in_array('operatorsWorkingHoursActivityReport', auth()->user()->userAccess))
+                    <li class="menu-item">
+                        <a class="menu-link" href="{{ url('admin/operatorsWorkingHoursActivityReport') }}">
+                            <div data-i18n="Without menu">میزان فعالیت اپراتورها</div>
                         </a>
                     </li>
                 @endif
@@ -674,13 +681,7 @@
                         </a>
                     </li>
                 @endif
-                @if (in_array('operatorsWorkingHoursActivityReport', auth()->user()->userAccess))
-                    <li class="menu-item">
-                        <a class="menu-link" href="{{ url('admin/operatorsWorkingHoursActivityReport') }}">
-                            <div data-i18n="Without menu">میزان فعالیت اپراتورها</div>
-                        </a>
-                    </li>
-                @endif
+
                 <li class="menu-item">
                     <a class="menu-link" href="{{ route('limitCall.index') }}">
                         <div data-i18n="Without menu"> شماره های محدود شده</div>
