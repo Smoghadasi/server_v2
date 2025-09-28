@@ -50,8 +50,8 @@
                         <td>{{ $user->firstLoad()?->created_at->format('H:i:s') ?? '-' }}</td>
 
                         <td>{{ $user->lastLoad()?->created_at->format('H:i:s') ?? '-' }}</td>
-                        <td>{{ $user->userActivityReport * 5 }} / {{ (($user->userActivityReport * 5) % 60) }}
-                            : {{ intdiv($user->userActivityReport * 5, 60) }}
+                        <td>{{ $user->userActivityReport * 5 }} دقیقه  | {{ (($user->userActivityReport * 5) % 60) }}
+                            : {{ intdiv($user->userActivityReport * 5, 60) }} ساعت
                         </td>
                         <td>{{ $user->numOfLoads() }}</td>
                         <td>
@@ -60,6 +60,9 @@
                             @else
                                 <span class="text-danger">آفلاین</span>
                             @endif
+                        </td>
+                        <td>
+                            <button class="btn btn-primary btn-sm">گزارش گیری</button>
                         </td>
                     </tr>
                 @endforeach
