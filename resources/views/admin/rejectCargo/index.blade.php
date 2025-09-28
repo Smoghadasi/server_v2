@@ -31,7 +31,9 @@
                 </tr>
                 @foreach ($cargoList as $cargo)
                     <tr>
-                        <td>{{ $cargo->cargo }}</td>
+                        <td @class(['text-danger' => $cargo->checkExists() == 0])>
+                            {{ $cargo->cargo }}
+                        </td>
                         <td class="text-nowrap">
                             <span class="badge bg-label-primary">
                                 {{ $cargo->operator->name }} {{ $cargo->operator->lastName }}
