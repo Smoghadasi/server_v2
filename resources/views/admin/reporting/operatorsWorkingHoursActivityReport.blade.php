@@ -47,12 +47,13 @@
                     <tr>
                         <td>{{ $i++ }}</td>
                         <td>{{ $user->name }} {{ $user->lastName }}</td>
-                        <td></td>
-                        <td></td>
+                        <td>{{ $user->firstLoad()?->created_at->format('H:i:s') ?? '-' }}</td>
+
+                        <td>{{ $user->lastLoad()?->created_at->format('H:i:s') ?? '-' }}</td>
                         <td>{{ $user->userActivityReport * 5 }} / {{ (($user->userActivityReport * 5) % 60) }}
                             : {{ intdiv($user->userActivityReport * 5, 60) }}
                         </td>
-                        <td></td>
+                        <td>{{ $user->numOfLoads() }}</td>
                         <td>
                             @if(Cache::has('user-is-online-' . $user->user_id))
                                 <span class="text-success">آنلاین</span>
