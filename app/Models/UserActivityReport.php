@@ -19,6 +19,7 @@ class UserActivityReport extends Model
         return Load::where('userType', 'operator')
             ->where('user_id', $this->user_id)
             ->where('created_at', '>=', Carbon::today())
+            ->withTrashed()
             ->first();
     }
 
@@ -28,6 +29,7 @@ class UserActivityReport extends Model
             ->where('user_id', $this->user_id)
             ->where('created_at', '>=', Carbon::today())
             ->orderByDesc('created_at')
+            ->withTrashed()
             ->first();
     }
 
@@ -36,6 +38,7 @@ class UserActivityReport extends Model
         return Load::where('userType', 'operator')
             ->where('user_id', $this->user_id)
             ->where('created_at', '>=', Carbon::today())
+            ->withTrashed()
             ->count();
     }
 }
