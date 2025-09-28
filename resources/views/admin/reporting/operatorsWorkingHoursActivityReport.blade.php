@@ -27,11 +27,14 @@
                 <tr>
                     <th>#</th>
                     <th>نام اپراتور</th>
-                    <th>میزان فعالیت به دقیقه</th>
-                    <th>میزان فعالیت به ساعت</th>
+                    <th>ساعت شروع</th>
+                    <th>ساعت پایان</th>
+                    <th>میزان فعالیت به دقیقه / ساعت</th>
+                    <th>تعداد بار های ثبت شده</th>
                     <th>
                         وضعیت فعلی ( <span class="text-success">آنلاین</span> / <span class="text-danger">آفلاین</span> )
                     </th>
+                    <th>گزارش</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -44,10 +47,12 @@
                     <tr>
                         <td>{{ $i++ }}</td>
                         <td>{{ $user->name }} {{ $user->lastName }}</td>
-                        <td>
-                            {{ $user->userActivityReport * 5 }}</td>
-                        <td>{{ (($user->userActivityReport * 5) % 60) }}
-                            : {{ intdiv($user->userActivityReport * 5, 60) }}</td>
+                        <td>{{ $user->firstLoad() }}</td>
+                        <td></td>
+                        <td>{{ $user->userActivityReport * 5 }} / {{ (($user->userActivityReport * 5) % 60) }}
+                            : {{ intdiv($user->userActivityReport * 5, 60) }}
+                        </td>
+                        <td></td>
                         <td>
                             @if(Cache::has('user-is-online-' . $user->user_id))
                                 <span class="text-success">آنلاین</span>
