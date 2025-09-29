@@ -1046,7 +1046,7 @@ class ReportingController extends Controller
     //    }
 
     // گزارش فعالیت اپرتورها
-    public function operatorsActivityReport()
+    public function operatorsActivityReport($operator_id = null)
     {
 
         //تعداد بار ثبت شده 30 روز قبل
@@ -1065,7 +1065,7 @@ class ReportingController extends Controller
         $getLoadRegistrationByOperatorInPastWeek = []; // $this->getLoadRegistrationByOperatorInPastWeek();
 
         // ثبت بار به تفکیک ناوگان
-        $operatorsLoadsByFleet = $this->getOperatorsLoadsByFleet(25);
+        $operatorsLoadsByFleet = $this->getOperatorsLoadsByFleet($operator_id);
 
 
         return view('admin.reporting.operatorsActivityReport', compact('countOfOperatorsLoadsInPrevious30Days', 'loadRegistrationByOperator', 'operatorsLoadsByFleet', 'countOfOperatorsLoadsInPrevious30DaysByOperator', 'operatorActivityReportOnAWeeklyBasis', 'getLoadRegistrationByOperatorInPastWeek'));

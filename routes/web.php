@@ -145,9 +145,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     });
 
 
-    Route::get('/marketerLogin', function () {
-        return view('auth/marketerLogin');
-    });
+    // Route::get('/marketerLogin', function () {
+    //     return view('auth/marketerLogin');
+    // });
 
 
     // مسیریابی های اپراتور های سیستم
@@ -744,7 +744,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         /*******************************************************************************************************/
 
         // گزارش فعالیت اپراتورها
-        Route::get('operatorsActivityReport', [ReportingController::class, 'operatorsActivityReport'])->middleware('operator');
+        Route::get('operatorsActivityReport/{operator_id?}', [ReportingController::class, 'operatorsActivityReport'])->middleware('operator');
 
         // گزارش فعالیت رانندگان نیسان در 24 ساعت گشته
         //        Route::get('daysActivityNissan', [ReportingController::class, 'daysActivityNissan'])->middleware('operator');
@@ -1049,31 +1049,31 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
     Route::get('cargoConvertLists', [DataConvertController::class, 'cargoConvertLists'])->middleware('operator')->name('delete.duplicate');
 
-    Route::get('insertStates', function () {
-        $para = new ParameterController();
+    // Route::get('insertStates', function () {
+    //     $para = new ParameterController();
 
-        $para->setArrayOfStates();
-        $array = $para->getArrayOfStates();
+    //     $para->setArrayOfStates();
+    //     $array = $para->getArrayOfStates();
 
-        for ($i = 1; $i <= count($array); $i++) {
-            $state = new State();
-            $state->name = $array[$i];
-            $state->country_id = 1;
-            $state->save();
-        }
-    });
+    //     for ($i = 1; $i <= count($array); $i++) {
+    //         $state = new State();
+    //         $state->name = $array[$i];
+    //         $state->country_id = 1;
+    //         $state->save();
+    //     }
+    // });
 
-    Route::get('insertCities/{state_id}', function ($state_id) {
-        $para = new ParameterController();
-        $para->setArrayOfCities($state_id);
-        $array = $para->getArrayOfCities();
-        for ($i = 1; $i <= count($array); $i++) {
-            $city = new City();
-            $city->name = $array[$i];
-            $city->state_id = $state_id;
-            $city->save();
-        }
-    });
+    // Route::get('insertCities/{state_id}', function ($state_id) {
+    //     $para = new ParameterController();
+    //     $para->setArrayOfCities($state_id);
+    //     $array = $para->getArrayOfCities();
+    //     for ($i = 1; $i <= count($array); $i++) {
+    //         $city = new City();
+    //         $city->name = $array[$i];
+    //         $city->state_id = $state_id;
+    //         $city->save();
+    //     }
+    // });
 
     Route::get('/changeRoute', function () {
         return tap(SiteOption::first(), function ($site) {
@@ -1083,35 +1083,35 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
 
     // شارژ کیف پول
-    Route::get('increaseWalletCharge/{amount}/{user_id}/{userType}', function ($amount, $user_id, $userType) {
-        $p = new PayController();
-        return $p->bpPayRequest($amount, $user_id, $userType);
-    });
+    // Route::get('increaseWalletCharge/{amount}/{user_id}/{userType}', function ($amount, $user_id, $userType) {
+    //     $p = new PayController();
+    //     return $p->bpPayRequest($amount, $user_id, $userType);
+    // });
 
     // شارژ کیف پول راننده
-    Route::get('increaseDriverWalletCharge/{driver_id}', function ($driver_id) {
-        $p = new PayController();
-        return $p->bpPayRequest($p->expenseForDriver(), $driver_id, 'driver');
-    });
+    // Route::get('increaseDriverWalletCharge/{driver_id}', function ($driver_id) {
+    //     $p = new PayController();
+    //     return $p->bpPayRequest($p->expenseForDriver(), $driver_id, 'driver');
+    // });
 
-    Route::get('increaseDriverWalletChargeGibar/{driver_id}', function ($driver_id) {
-        $p = new PayController();
-        //    return $p->bpPayRequest($p->expenseForDriver(), $driver_id, 'driver_gibar');
-        return $p->bpPayRequest(100, $driver_id, 'driver_gibar');
-    });
+    // Route::get('increaseDriverWalletChargeGibar/{driver_id}', function ($driver_id) {
+    //     $p = new PayController();
+    //     //    return $p->bpPayRequest($p->expenseForDriver(), $driver_id, 'driver_gibar');
+    //     return $p->bpPayRequest(100, $driver_id, 'driver_gibar');
+    // });
 
     Route::post('payCallBack', [PayController::class, 'bpVerifyRequest']);
 
     // پرداخت از طریق وب
-    Route::post('chargeWallet', [PayController::class, 'chargeWallet']);
+    // Route::post('chargeWallet', [PayController::class, 'chargeWallet']);
 
     // ادرس بازگشت به کیف پول
-    Route::post('payCallBackWeb', [PayController::class, 'payCallBackWeb']);
+    // Route::post('payCallBackWeb', [PayController::class, 'payCallBackWeb']);
 
 
-    Route::get('registerCustomer', function () {
-        return view('auth.registerCustomer');
-    });
+    // Route::get('registerCustomer', function () {
+    //     return view('auth.registerCustomer');
+    // });
 
     /****************************************************************************************************************/
 
@@ -1120,7 +1120,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
 
     // شارژ کیف پول
-    Route::get('chargeWallet/{amount}/{bearing_id}/{userType}', [PayController::class, 'pay']);
+    // Route::get('chargeWallet/{amount}/{bearing_id}/{userType}', [PayController::class, 'pay']);
     Route::get('dashboard', [HomeController::class, 'dashboard']);
 
     // تایید عملیات
@@ -1151,15 +1151,15 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
     /****************************************************************************************************************/
 
-    Route::get('payCustomer/{packageName}/{customer}/{action?}', [PayController::class, 'payCustomer']);
+    // Route::get('payCustomer/{packageName}/{customer}/{action?}', [PayController::class, 'payCustomer']);
     // تایید عملیات
-    Route::get('verifyCustomerPay', [PayController::class, 'verifyCustomerPay']);
+    // Route::get('verifyCustomerPay', [PayController::class, 'verifyCustomerPay']);
 
     /******************************************************************************************************************/
 
     // پرداخت هزینه کنترل ناوگان
-    Route::get('fleetControlPay/{numOfFleetControl}/{userType}/{user_id}', [PayController::class, 'fleetControlPay']);
-    Route::get('verifyFleetControlPay', [PayController::class, 'verifyFleetControlPay']);
+    // Route::get('fleetControlPay/{numOfFleetControl}/{userType}/{user_id}', [PayController::class, 'fleetControlPay']);
+    // Route::get('verifyFleetControlPay', [PayController::class, 'verifyFleetControlPay']);
 
     /******************************************************************************************************************/
 });
