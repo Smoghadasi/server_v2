@@ -744,7 +744,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         /*******************************************************************************************************/
 
         // گزارش فعالیت اپراتورها
-        Route::get('operatorsActivityReport/{operator_id?}', [ReportingController::class, 'operatorsActivityReport'])->middleware('operator');
+        Route::get('operatorsActivityReport/{operator_id?}', [ReportingController::class, 'operatorsActivityReport'])
+            ->name('operatorsActivityReport')
+            ->middleware('operator');
 
         // گزارش فعالیت رانندگان نیسان در 24 ساعت گشته
         //        Route::get('daysActivityNissan', [ReportingController::class, 'daysActivityNissan'])->middleware('operator');

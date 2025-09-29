@@ -69,7 +69,9 @@
                                 @endif
                             </td>
                             <td>
-                                <button disabled class="btn btn-primary btn-sm">گزارش گیری</button>
+                                <a class="btn btn-primary btn-sm" href="{{ route('operatorsActivityReport', ['operator_id' => $user->user_id]) }}">
+                                    گزارش گیری
+                                </a>
                             </td>
                         </tr>
                     @endforeach
