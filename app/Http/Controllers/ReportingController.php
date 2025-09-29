@@ -1065,7 +1065,7 @@ class ReportingController extends Controller
         $getLoadRegistrationByOperatorInPastWeek = []; // $this->getLoadRegistrationByOperatorInPastWeek();
 
         // ثبت بار به تفکیک ناوگان
-        $operatorsLoadsByFleet = $this->getOperatorsLoadsByFleet();
+        $operatorsLoadsByFleet = $this->getOperatorsLoadsByFleet(25);
 
 
         return view('admin.reporting.operatorsActivityReport', compact('countOfOperatorsLoadsInPrevious30Days', 'loadRegistrationByOperator', 'operatorsLoadsByFleet', 'countOfOperatorsLoadsInPrevious30DaysByOperator', 'operatorActivityReportOnAWeeklyBasis', 'getLoadRegistrationByOperatorInPastWeek'));
@@ -1204,12 +1204,14 @@ class ReportingController extends Controller
         return [];
     }
 
-    // ثبت بار به تفکیک ناوگان توسط اپراتور ها
-    private function getOperatorsLoadsByFleet()
+    private function getOperatorsLoadsByFleet($userId = null)
     {
-        $loadsByFleets = FleetLoad::join('fleets', 'fleets.id', 'fleet_loads.fleet_id')
-            ->join('load_backups', 'load_backups.id', 'fleet_loads.load_id')
-            ->where('load_backups.operator_id', '>', 0)
+        $loadsByFleets = FleetLoad::join('fleets', 'fleets.id', '=', 'fleet_loads.fleet_id')
+            ->join('loads', 'loads.id', '=', 'fleet_loads.load_id')
+            ->where('loads.operator_id', '>', 0)
+            ->when($userId, function ($query) use ($userId) {
+                return $query->where('loads.operator_id', $userId);
+            })
             ->select('fleets.id', 'fleets.title', DB::raw('count(*) as total'))
             ->groupBy('fleets.id', 'fleets.title')
             ->orderBy('total', 'asc')
@@ -1217,6 +1219,7 @@ class ReportingController extends Controller
 
         return $loadsByFleets;
     }
+
 
     /*******************************************************************************************************/
 
