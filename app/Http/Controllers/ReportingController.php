@@ -229,6 +229,11 @@ class ReportingController extends Controller
             ])->count(),
             'week' => Owner::where('created_at', '>', $weekDate)->count(),
             'month' => Owner::where('created_at', '>=', $monthDate)->count(),
+            'fullAuth' => Owner::where('isAccepted', 1)->count(),
+            'weekLoads' => Load::where([
+                ['created_at', '>', $weekDate],
+                ['operator_id', 0]
+            ])->withTrashed()->count(),
             'toDayLoads' => Load::where([
                 ['created_at', '>', $todayDate],
                 ['userType', ROLE_OWNER],
@@ -252,56 +257,12 @@ class ReportingController extends Controller
             ])->count()
         ];
 
-        $cargoOwners = [
-            'total' => Customer::count(),
-            'toDay' => Customer::where('created_at', '>', $todayDate)->count(),
-            'yesterday' => Customer::where([
-                ['created_at', '>', $yesterdayDate],
-                ['created_at', '<', $todayDate]
-            ])->count(),
-            'week' => Customer::where('created_at', '>', $weekDate)->count(),
-            'month' => Customer::where('created_at', '>=', $monthDate)->count(),
-            'toDayLoads' => LoadBackup::where([
-                ['created_at', '>', $todayDate],
-                ['userType', ROLE_CUSTOMER],
-                ['operator_id', 0]
-            ])->count(),
-            'yesterdayLoads' => LoadBackup::where([
-                ['created_at', '>', $yesterdayDate],
-                ['created_at', '<', $todayDate],
-                ['userType', ROLE_CUSTOMER],
-                ['operator_id', 0]
-            ])->count(),
-            'weekLoads' => LoadBackup::where([
-                ['created_at', '>', $weekDate],
-                ['userType', ROLE_CUSTOMER],
-                ['operator_id', 0]
-            ])->count(),
-            'monthLoads' => LoadBackup::where([
-                ['created_at', '>=', $monthDate],
-                ['userType', ROLE_CUSTOMER],
-                ['operator_id', 0]
-            ])->count()
-        ];
 
         $operators = [
-            'toDayLoads' => LoadBackup::where([
+            'toDayLoads' => Load::where([
                 ['created_at', '>', $todayDate],
                 ['operator_id', '>', 0]
-            ])->count(),
-            'yesterdayLoads' => LoadBackup::where([
-                ['created_at', '>', $yesterdayDate],
-                ['created_at', '<', $todayDate],
-                ['operator_id', '>', 0]
-            ])->count(),
-            'weekLoads' => LoadBackup::where([
-                ['created_at', '>', $weekDate],
-                ['operator_id', '>', 0]
-            ])->count(),
-            'monthLoads' => LoadBackup::where([
-                ['created_at', '>=', $monthDate],
-                ['operator_id', '>', 0]
-            ])->count()
+            ])->withTrashed()->count(),
         ];
 
         $incomes = [
@@ -330,24 +291,14 @@ class ReportingController extends Controller
                 ['created_at', '>', $weekDate],
                 ['status', '>', 2],
                 ['userType', ROLE_DRIVER]
-            ])->sum('amount'),
-            'transportationCompany' => Transaction::where([
-                ['created_at', '>', $weekDate],
-                ['status', '>', 2],
-                ['userType', ROLE_TRANSPORTATION_COMPANY]
-            ])->sum('amount'),
-            'cargoOwner' => Transaction::where([
-                ['created_at', '>', $weekDate],
-                ['status', '>', 2],
-                ['userType', ROLE_CARGo_OWNER]
-            ])->sum('amount'),
+            ])->sum('amount')
         ];
 
 
         //تعداد بار ثبت شده 30 روز قبل
         $countOfLoadsInPrevious30Days = []; // $this->countOfLoadsInPrevious30Days();
 
-        return view('admin.reporting.summaryOfDaysReport', compact('drivers', 'owners', 'cargoOwners', 'operators', 'incomes', 'countOfLoadsInPrevious30Days'));
+        return view('admin.reporting.summaryOfDaysReport', compact('drivers', 'owners', 'operators', 'incomes', 'countOfLoadsInPrevious30Days'));
     }
 
     // هزینه وایزی توسط کاربران از 60 روز قبل
