@@ -69,7 +69,7 @@
                     <tr>
                         <td></td>
                         <td>
-                            بیشترین بار ثبت شده هفته : 0
+                            بیشترین بار ثبت شده هفته : {{ number_format($owners['weekLoads']) }}
                         </td>
                         <td></td>
                         <td>درآمد دیروز : {{ number_format($incomes['yesterday']) }}</td>
