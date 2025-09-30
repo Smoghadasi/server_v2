@@ -17,7 +17,7 @@
         <tbody class="small">
             @foreach ($drivers as $driver)
                 <tr>
-                    <td></td>
+                    <td>{{ $loop->iteration }}</td>
                     <td>
                         <form style="display: contents" action="{{ route('bookmark.store') }}" method="post">
                             @csrf
