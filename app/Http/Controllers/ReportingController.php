@@ -213,7 +213,6 @@ class ReportingController extends Controller
                 ->where('status', '>', 2)
                 ->where('payment_type', 'online')
                 ->count(),
-            'todayPayment' => Transaction::where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')->where('status', '>', 2)->count(),
             'toDay' => Driver::where('created_at', '>', $todayDate)->count(),
             'yesterday' => Driver::where([
                 ['created_at', '>', $yesterdayDate],
