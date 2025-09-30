@@ -53,47 +53,59 @@ class DriverController extends Controller
 
     public function driverSummery($type)
     {
-        if ($type == 'todayPayment') {
-            $drivers = Driver::with('transactions')->whereHas('transactions', function ($q) {
-                $q->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00');
-                $q->where('status', '>', 2);
-            })->paginate(50);
-        }
-        if ($type == 'todayOnline') {
-            $drivers = Driver::with(['transactions' => function ($query) {
-                $query->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00');
-                $query->where('status', '>', 2);
-                $query->where('payment_type', 'online');
-            }])->whereHas('transactions', function ($q) {
-                $q->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00');
-                $q->where('status', '>', 2);
-                $q->where('payment_type', 'online');
-            })->paginate(50);
-        }
-        if ($type == 'todayCartToCart') {
-            $drivers = Driver::with(['transactions' => function ($query) {
-                $query->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00');
-                $query->where('status', '>', 2);
-                $query->where('payment_type', 'cardToCard');
-            }])->whereHas('transactions', function ($q) {
-                $q->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00');
-                $q->where('status', '>', 2);
-                $q->where('payment_type', 'cardToCard');
-            })->paginate(50);
-        }
-        if ($type == 'todayGift') {
-            $drivers = Driver::with(['transactions' => function ($query) {
-                $query->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00');
-                $query->where('status', '>', 2);
-                $query->where('payment_type', 'gift');
-            }])->whereHas('transactions', function ($q) {
-                $q->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00');
-                $q->where('status', '>', 2);
-                $q->where('payment_type', 'gift');
-            })->paginate(200);
-        }
-        return view('admin.driver.summery', compact('drivers'));
+        $today = date('Y-m-d') . ' 00:00:00';
+
+        // Map type to payment_type if applicable
+        $paymentTypes = [
+            'todayOnline'     => 'online',
+            'todayCartToCart' => 'cardToCard',
+            'todayGift'       => 'gift',
+        ];
+
+        $paymentType = $paymentTypes[$type] ?? null;
+
+        // Common query builder with optional payment_type
+        $transactionFilter = function ($q) use ($today, $paymentType) {
+            $q->where('created_at', '>', $today)
+                ->where('status', '>', 2);
+
+            if ($paymentType) {
+                $q->where('payment_type', $paymentType);
+            }
+        };
+
+        // Fetch all drivers with today’s transactions
+        $drivers = Driver::with(['transactions' => $transactionFilter])
+            ->whereHas('transactions', $transactionFilter)
+            ->get();
+
+        // Helper function for package-specific drivers
+        $getDriversByPackage = function ($months) use ($today, $paymentType) {
+            return Driver::with('transactions')
+                ->whereHas('transactions', function ($q) use ($months, $today, $paymentType) {
+                    $q->where('monthsOfThePackage', $months)
+                        ->where('created_at', '>', $today)
+                        ->where('status', '>', 2);
+
+                    if ($paymentType) {
+                        $q->where('payment_type', $paymentType);
+                    }
+                })
+                ->get();
+        };
+
+        $oneMonthDrivers   = $getDriversByPackage(1);
+        $threeMonthDrivers = $getDriversByPackage(3);
+        $sixMonthDrivers   = $getDriversByPackage(6);
+
+        return view('admin.driver.summery', compact(
+            'drivers',
+            'oneMonthDrivers',
+            'threeMonthDrivers',
+            'sixMonthDrivers'
+        ));
     }
+
 
     // لیست رانندگان برای ادمین
     public function adminDrivers($drivers = [], $showSearchResult = false)
