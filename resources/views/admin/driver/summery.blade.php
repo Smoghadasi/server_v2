@@ -5,16 +5,13 @@
     <h5 class="card-header">رانندگان</h5>
     <div class="card-body">
 
-        <div class="col-lg-12 alert alert-info">
-            تعداد یافته ها : {{ $drivers->count() }} راننده
-        </div>
 
         <div class="nav-align-top mb-4">
             <ul class="nav nav-tabs" role="tablist">
-                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#all">کل</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#one">یک ماهه</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#three">سه ماهه</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#six">شش ماهه</button></li>
+                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#all">کل ({{ $drivers->count() }})</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#one">یک ماهه ({{ $oneMonthDrivers->count() }})</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#three">سه ماهه ({{ $threeMonthDrivers->count() }})</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#six">شش ماهه ({{ $sixMonthDrivers->count() }})</button></li>
             </ul>
 
             <div class="tab-content">
