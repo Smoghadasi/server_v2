@@ -69,7 +69,7 @@
                     <tr>
                         <td></td>
                         <td>
-                            بیشترین بار ثبت شده هفته : {{ number_format($operators['weekLoads']) }}
+                            بیشترین بار ثبت شده هفته : 0
                         </td>
                         <td></td>
                         <td>درآمد دیروز : {{ number_format($incomes['yesterday']) }}</td>
@@ -77,7 +77,7 @@
                     <tr>
                         <td></td>
                         <td>
-                            کمترین بار ثبت شده هفته : {{ number_format($operators['weekLoads']) }}
+                            کمترین بار ثبت شده هفته : 0
                         </td>
                         <td></td>
                         <td>درآمد هفته : {{ number_format($incomes['week']) }}</td>
@@ -100,7 +100,7 @@
                         <td></td>
                         <td colspan="2">
                             جمع کل بارهای دیروز :
-                            {{ number_format($owners['yesterdayLoads'] + $operators['yesterdayLoads']) }}
+                            {{ number_format($owners['yesterdayLoads']) }}
                         </td>
                         <td></td>
                     </tr>
