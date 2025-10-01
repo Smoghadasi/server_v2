@@ -65,7 +65,7 @@
                         </div>
                     </td>
                 </tr>
-                @if (auth()->user()->role == 'admin' || Auth::id() == 29)
+                @if (auth()->user()->role == 'admin')
                     <tr>
                         <td>
                             <div class="text-center h6"> هزینه وایزی توسط راننده ها از 60 روز قبل</div>
