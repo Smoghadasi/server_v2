@@ -113,7 +113,7 @@
 
                             {{-- مبدا --}}
                             <label class="col-lg-6 mb-2">مبدا :
-                                <input type="text" class="form-control" disabled name="origin_{{ $key }}"
+                                <input type="text" class="form-control" name="origin_{{ $key }}"
                                     value="{{ $item['origin'] ?? '' }}">
                             </label>
                             <input type="hidden" name="originState_{{ $key }}"
@@ -121,7 +121,7 @@
 
                             {{-- مقصد --}}
                             <label class="col-lg-6 mb-2">مقصد :
-                                <input type="text" class="form-control" disabled name="destination_{{ $key }}"
+                                <input type="text" class="form-control" name="destination_{{ $key }}"
                                     value="{{ $item['destination'] ?? '' }}">
                             </label>
                             <input type="hidden" name="destinationState_{{ $key }}"

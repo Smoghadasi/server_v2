@@ -1302,6 +1302,7 @@ class DataConvertPlusController extends Controller
     }
     public function storeCargoSmart($origin, $originState, $destination, $destinationState, $mobileNumber, $description, $fleet, $title, &$counter, $cargoId)
     {
+        // return dd($origin);
         if (!strlen(trim($origin)) || $origin == null || $origin == 'null' || !strlen(trim($destination)) || $destination == null || $destination == 'null' || !strlen($fleet) || !strlen($mobileNumber))
             return;
 
