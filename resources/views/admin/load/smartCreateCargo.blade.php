@@ -111,21 +111,40 @@
                                     value="{{ $item['title'] ?? '' }}" placeholder="بدون عنوان">
                             </label>
 
-                            {{-- مبدا --}}
+                            <input type="hidden" class="form-control" name="origin_{{ $key }}"
+                                value="{{ $item['origin'] }}">
+
                             <label class="col-lg-6 mb-2">مبدا :
+                                <select class="form-select" name="originState_{{ $key }}" required id="">
+                                    @foreach ($item['origins'] as $province)
+                                        <option value="{{ $province->parent_id }}">
+                                            {{ $item['origin'] }} - {{ $province->state }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </label>
+
+                            {{-- مبدا --}}
+                            {{-- <label class="col-lg-6 mb-2">مبدا :
                                 <input type="text" class="form-control" name="origin_{{ $key }}"
                                     value="{{ $item['origin'] ?? '' }}">
                             </label>
                             <input type="hidden" name="originState_{{ $key }}"
-                                value="{{ $item['origin_id'] ?? '' }}">
+                                value="{{ $item['origin_id'] ?? '' }}"> --}}
 
                             {{-- مقصد --}}
+                            <input type="hidden" class="form-control" name="destination_{{ $key }}"
+                                value="{{ $item['destination'] }}">
+
                             <label class="col-lg-6 mb-2">مقصد :
-                                <input type="text" class="form-control" name="destination_{{ $key }}"
-                                    value="{{ $item['destination'] ?? '' }}">
+                                <select class="form-select" name="destinationState_{{ $key }}" required id="">
+                                    @foreach ($item['destinations'] as $province)
+                                        <option value="{{ $province->parent_id }}">
+                                            {{ $item['destination'] }} - {{ $province->state }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </label>
-                            <input type="hidden" name="destinationState_{{ $key }}"
-                                value="{{ $item['destination_id'] ?? '' }}">
 
                             {{-- شماره تلفن --}}
                             <label class="col-lg-12 mb-2">شماره تلفن :
@@ -163,7 +182,7 @@
                             <input type="hidden" class="form-control" name="fleetId_{{ $key }}"
                                 value="{{ $item['fleet_id'] ?? '' }}">
                             <label class="col-lg-12 mb-2">ناوگان :
-                                <input type="text" class="form-control" name="fleets_{{ $key }}"
+                                <input required type="text" class="form-control" name="fleets_{{ $key }}"
                                     value="{{ $item['fleet'] ?? '' }}">
                             </label>
 

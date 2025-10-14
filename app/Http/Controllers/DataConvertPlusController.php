@@ -33,8 +33,8 @@ class DataConvertPlusController extends Controller
         $cargo = CargoConvertList::where([
             ['operator_id', $userId],
             ['status', 0],
-            ['isBlocked', 0],
-            ['isDuplicate', 0],
+            // ['isBlocked', 0],
+            // ['isDuplicate', 0],
         ])
             ->latest('id')
             ->first();
@@ -1504,7 +1504,6 @@ class DataConvertPlusController extends Controller
     // ذخیره دسته ای بارها
     public function storeMultiCargoSmart(Request $request, CargoConvertList $cargo)
     {
-        // return $request;
         try {
             $expiresAt = now()->addMinutes(3);
             $userId = Auth::id();
@@ -1543,7 +1542,7 @@ class DataConvertPlusController extends Controller
             Log::emergency($e->getMessage());
             Log::emergency("------------------------------------------------------------------");
         }
-        // return dd($request);
+        return $request;
         $counter = 0;
         foreach ($request->key as $key) {
             $origin = "origin_" . $key;
@@ -1586,7 +1585,7 @@ class DataConvertPlusController extends Controller
     }
     public function storeCargoSmart($origin, $originState, $destination, $destinationState, $mobileNumber, $description, $fleet, $title, &$counter, $cargoId)
     {
-        // return dd($origin);
+        // return $origin;
         if (!strlen(trim($origin)) || $origin == null || $origin == 'null' || !strlen(trim($destination)) || $destination == null || $destination == 'null' || !strlen($fleet) || !strlen($mobileNumber))
             return;
 
@@ -1664,11 +1663,11 @@ class DataConvertPlusController extends Controller
 
 
             $originCity = ProvinceCity::where('name', 'like', '%' . $origin)
-                ->where('id', $originState)
+                ->where('parent_id', $originState)
                 ->first();
 
             $destinationCity = ProvinceCity::where('name', 'like', '%' . $destination)
-                ->where('id', $destinationState)
+                ->where('parent_id', $destinationState)
                 ->first();
             // return dd($originCity);
             // Log::alert($destinationState);
