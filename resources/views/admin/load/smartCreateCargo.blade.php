@@ -116,7 +116,7 @@
                                 <select class="form-select" name="originState_{{ $key }}" required id="">
                                     @foreach ($item['origins'] as $province)
                                         <option value="{{ $province->parent_id }}">
-                                            {{ $province->name }} - {{ $province->state }}
+                                            {{ $province->name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -129,7 +129,7 @@
                                 <select class="form-select" name="destinationState_{{ $key }}" required id="">
                                     @foreach ($item['destinations'] as $province)
                                         <option value="{{ $province->parent_id }}">
-                                            {{ $province->name }} - {{ $province->state }}
+                                            {{ $province->name }}
                                         </option>
                                     @endforeach
                                 </select>
