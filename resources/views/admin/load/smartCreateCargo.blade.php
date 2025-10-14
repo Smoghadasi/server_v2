@@ -113,29 +113,19 @@
 
                             {{-- مبدا --}}
                             <label class="col-lg-6 mb-2">مبدا :
-                                <select class="form-select" name="originState_{{ $key }}" required id="">
-                                    @foreach ($item['origins'] as $province)
-                                        <option value="{{ $province->parent_id }}">
-                                            {{ $province->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <input type="text" class="form-control" name="origin_{{ $key }}"
+                                    value="{{ $item['origin'] ?? '' }}">
                             </label>
-
-                            <input type="hidden" name="origin_{{ $key }}" value="{{ $item['origin'] ?? '' }}">
+                            <input type="hidden" name="originState_{{ $key }}"
+                                value="{{ $item['origin_id'] ?? '' }}">
 
                             {{-- مقصد --}}
                             <label class="col-lg-6 mb-2">مقصد :
-                                <select class="form-select" name="destinationState_{{ $key }}" required id="">
-                                    @foreach ($item['destinations'] as $province)
-                                        <option value="{{ $province->parent_id }}">
-                                            {{ $province->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <input type="text" class="form-control" name="destination_{{ $key }}"
+                                    value="{{ $item['destination'] ?? '' }}">
                             </label>
-
-                            <input type="hidden" name="destination_{{ $key }}" value="{{ $item['destination'] ?? '' }}">
+                            <input type="hidden" name="destinationState_{{ $key }}"
+                                value="{{ $item['destination_id'] ?? '' }}">
 
                             {{-- شماره تلفن --}}
                             <label class="col-lg-12 mb-2">شماره تلفن :
@@ -149,7 +139,7 @@
                                     <input type="text" class="form-control"
                                         onkeyup="separate('freight_{{ $key }}'); priceType('priceType_{{ $key }}',this.value)"
                                         id="freight_{{ $key }}" name="freight_{{ $key }}"
-                                        value="0">
+                                        value="{{ $item['price'] ?? '' }}">
                                 </label>
                                 <label class="col-lg-6">نوع قیمت :
                                     <div class="col-lg-12">
