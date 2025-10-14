@@ -113,23 +113,33 @@
 
                             {{-- مبدا --}}
                             <label class="col-lg-6 mb-2">مبدا :
-                                <input type="text" class="form-control" name="origin_{{ $key }}"
-                                    value="{{ $item['origin'] ?? '' }}">
+                                <select class="form-select" name="originState_{{ $key }}" required id="">
+                                    @foreach ($item['origins'] as $province)
+                                        <option value="{{ $province->parent_id }}">
+                                            {{ $province->name }} - {{ $province->state }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </label>
-                            <input type="hidden" name="originState_{{ $key }}"
-                                value="{{ $item['origin_id'] ?? '' }}">
+
+                            <input type="hidden" name="origin_{{ $key }}" value="{{ $item['origin'] ?? '' }}">
 
                             {{-- مقصد --}}
                             <label class="col-lg-6 mb-2">مقصد :
-                                <input type="text" class="form-control" name="destination_{{ $key }}"
-                                    value="{{ $item['destination'] ?? '' }}">
+                                <select class="form-select" name="destinationState_{{ $key }}" required id="">
+                                    @foreach ($item['destinations'] as $province)
+                                        <option value="{{ $province->parent_id }}">
+                                            {{ $province->name }} - {{ $province->state }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </label>
-                            <input type="hidden" name="destinationState_{{ $key }}"
-                                value="{{ $item['destination_id'] ?? '' }}">
+
+                            <input type="hidden" name="destination_{{ $key }}" value="{{ $item['destination'] ?? '' }}">
 
                             {{-- شماره تلفن --}}
                             <label class="col-lg-12 mb-2">شماره تلفن :
-                                <input type="text" class="form-control"  name="mobileNumber_{{ $key }}"
+                                <input type="text" class="form-control" name="mobileNumber_{{ $key }}"
                                     value="{{ $item['phoneNumber'] ?? '' }}">
                             </label>
 

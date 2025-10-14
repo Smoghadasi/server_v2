@@ -2,316 +2,303 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BlockPhoneNumber;
-use App\Models\CargoConvertList;
-use App\Models\CargoReportByFleet;
-use App\Models\Equivalent;
-use App\Models\Fleet;
-use App\Models\FleetLoad;
-use App\Models\Load;
-use App\Models\OperatorCargoListAccess;
-use App\Models\Owner;
-use App\Models\ProvinceCity;
-use App\Models\User;
-use App\Models\UserActivityReport;
-use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 
-class DataConvertPlusController extends Controller
+class StoreLoadController extends Controller
 {
-    public function smartStoreCargo()
-    {
-        $userId = auth()->id();
-
-        // ۱. پیدا کردن باری که قبلاً به اپراتور تخصیص داده شده
-        $cargo = CargoConvertList::where([
-            ['operator_id', $userId],
-            ['status', 0],
-            ['isBlocked', 0],
-            ['isDuplicate', 0],
-        ])
-            ->latest('id')
-            ->first();
-
-        // ۲. اگر باری برای اپراتور نبود → دنبال بار آزاد مناسب بگرد
-        if (!$cargo) {
-            $operatorCargoListAccess = OperatorCargoListAccess::where('user_id', $userId)
-                ->pluck('fleet_id')
-                ->toArray();
-
-            $dictionary = [];
-            if ($operatorCargoListAccess) {
-                $dictionary = Equivalent::where('type', 'fleet')
-                    ->whereIn('original_word_id', $operatorCargoListAccess)
-                    ->pluck('equivalentWord')
-                    ->toArray();
-            }
-
-            // اگر دیکشنری داریم → دنبال اولین باری بگرد که یکی از کلماتش داخل بار هست
-            if ($dictionary) {
-                $cargo = CargoConvertList::where(function ($q) use ($dictionary) {
-                    foreach ($dictionary as $word) {
-                        $q->orWhere('cargo', 'LIKE', "%{$word}%");
-                    }
-                })
-                    ->where([
-                        ['operator_id', 0],
-                        ['status', 0],
-                        ['isBlocked', 0],
-                        ['isDuplicate', 0],
-                    ])
-                    ->oldest('id')
-                    ->first();
-            }
-
-            // اگر باز هم بار پیدا نشد → اولین بار آزاد عمومی
-            if (!$cargo) {
-                $cargo = CargoConvertList::where([
-                    ['operator_id', 0],
-                    ['status', 0],
-                    ['isBlocked', 0],
-                    ['isDuplicate', 0],
-                ])
-                    ->oldest('id')
-                    ->first();
-            }
-        }
-
-        // ۳. اگر بار پیدا شد → مالکیت بده به اپراتور
-        if ($cargo) {
-            // بررسی اگر بار واقعاً جزو دیکشنری اپراتور هست
-            if (!empty($dictionary)) {
-                foreach ($dictionary as $word) {
-                    if (str_contains($cargo->cargo, $word)) {
-                        $cargo->operator_id = $userId;
-                        $cargo->save();
-                        return $this->getLoadFromTel($cargo);
-                    }
-                }
-
-                // اگر بار فعلی نبود، دنبال بار جدیدی که match کنه
-                $newCargo = CargoConvertList::where(function ($q) use ($dictionary) {
-                    foreach ($dictionary as $word) {
-                        $q->orWhere('cargo', 'LIKE', "%{$word}%");
-                    }
-                })
-                    ->where([
-                        ['operator_id', 0],
-                        ['status', 0],
-                        ['isBlocked', 0],
-                        ['isDuplicate', 0],
-                    ])
-                    ->oldest('id')
-                    ->first();
-
-                if ($newCargo) {
-                    $newCargo->operator_id = $userId;
-                    $newCargo->save();
-                    return $this->getLoadFromTel($newCargo);
-                }
-            }
-
-            // در نهایت بار فعلی رو بده به اپراتور
-            $cargo->operator_id = $userId;
-            $cargo->save();
-            return $this->getLoadFromTel($cargo);
-        }
-
-        // ۴. اگر هیج باری نبود → برگرد به داشبورد
-        return redirect(url('dashboard'))->with('danger', 'هیچ باری وجود ندارد');
-    }
-
-    public function dataConvertSmart($cargo)
-    {
-        $text = $cargo->cargo;
-
-        // نرمال‌سازی و آماده‌سازی متن
-        $normalizedText = str_replace(["\r\n", "\r"], "\n", trim($text));
-        $flatText = preg_replace('/\s+/', ' ', $normalizedText);
-        $flatText = preg_replace('/\b(کرایه|وزن|بار|تخلیه|نوع بار|کل)\b/u', '', $flatText);
-        $lines = array_values(array_filter(array_map('trim', explode("\n", $normalizedText))));
-
-        // کش دیتاهای ثابت
-        $fleetMap = cache()->remember('fleet_map', 60, fn() => DB::table('fleets')->pluck('id', 'title')->toArray());
-        $cityMap = cache()->remember('city_map', 60, fn() => DB::table('province_cities')->pluck('id', 'name')->toArray());
-        $parentCityMap = cache()->remember('parent_city_map', 60, fn() => DB::table('province_cities')->pluck('parent_id', 'name')->toArray());
-
-        $equivalentWordsMap = method_exists($this, 'getEquivalentWords') ? $this->getEquivalentWords() : [];
-
-        // آماده‌سازی لیست ناوگان‌ها
-        $fleetTitles = array_unique(array_merge(array_keys($fleetMap), array_keys($equivalentWordsMap)));
-        usort($fleetTitles, fn($a, $b) => mb_strlen($b) <=> mb_strlen($a));
-        $fleetPattern = implode('|', array_map('preg_quote', $fleetTitles));
-
-        // لیست شهرها
-        $cityTitles = array_keys($cityMap);
-        usort($cityTitles, fn($a, $b) => mb_strlen($b) <=> mb_strlen($a));
-        $cityPattern = implode('|', array_map('preg_quote', $cityTitles));
-
-        // شماره تماس
-        preg_match_all('/\b09\d{9}\b/u', $text, $phoneMatches);
-        $phone = $phoneMatches[0][0] ?? null;
-
-        preg_match_all("/\b($cityPattern)\b/u", $flatText, $cityMatches);
-        $allCities = $cityMatches[0] ?? [];
-
-        // استخراج مبدا اولیه
-        $origin = null;
-        if (preg_match("/(?:از|بارگیری(?:\s+از)?|مبدا)\s*(?:در\s*)?($cityPattern)/u", $flatText, $match)) {
-            $origin = $match[1];
-        } elseif (count($allCities) >= 2) {
-            $origin = reset($allCities); // اولین شهر را به عنوان مبدا قرار دهید
-        }
-
-        $results = [];
-        $lastOrigin = $origin;
-
-        foreach ($lines as $line) {
-            $line = preg_replace('/\b(کرایه|وزن|بار|تخلیه|نوع بار|کل)\b/u', '', $line);
-
-            // شماره تماس در خط
-            if (preg_match('/\b09\d{9}\b/u', $line, $m)) {
-                $phone = $m[0];
-                $line = preg_replace('/\b09\d{9}\b/u', '', $line);
-            }
-
-            // تشخیص ناوگان
-            preg_match_all("/\b($fleetPattern)\b/u", $line, $fleetMatches);
-            $fleets = array_unique(array_map(fn($f) => $equivalentWordsMap[$f] ?? $f, $fleetMatches[0]));
-
-            // مسیر "شهر به شهر"
-            if (preg_match_all("/\b($cityPattern)\b\s+به\s+\b($cityPattern)\b/u", $line, $routeMatches, PREG_SET_ORDER)) {
-                foreach ($routeMatches as $match) {
-                    foreach ($fleets ?: [null] as $fleet) {
-                        $originName = ProvinceCity::where('name', $match[1])
-                            ->where('parent_id', '!=', 0)
-                            ->get(['id', 'name', 'parent_id']);
-                        $destinationName = ProvinceCity::where('name', $match[2])
-                            ->where('parent_id', '!=', 0)
-                            ->get(['id', 'name', 'parent_id']);
-                        $results[] = [
-                            'fleet' => $fleet,
-                            'fleet_id' => $fleetMap[$fleet] ?? null,
-                            'origin' => $match[1], // مبدا
-                            'originProvince' => $originName, // مبدا
-
-                            'destination' => $match[2], // مقصد
-                            'destinationProvince' => $destinationName, // مقصد
-                            'phone' => $phone,
-                            'freight' => 0,
-                            'priceType' => 'توافقی'
-
-                        ];
-                    }
-                    $lastOrigin = $match[1];
-                }
-                continue;
-            }
-
-            // حالت مقصد بدون مبدا (مبدا از قبل ذخیره شده)
-            if ($lastOrigin && !empty($fleets)) {
-                preg_match_all("/\b($cityPattern)\b/u", $line, $citiesInLine);
-                foreach ($citiesInLine[0] ?? [] as $dest) {
-                    if ($dest !== $lastOrigin) { // جلوگیری از ثبت مجدد مبدا به عنوان مقصد
-                        foreach ($fleets as $fleet) {
-                            $originName = ProvinceCity::where('name', $lastOrigin)
-                                ->where('parent_id', '!=', 0)
-                                ->get(['id', 'name', 'parent_id']);
-                            $destinationName = ProvinceCity::where('name', $dest)
-                                ->where('parent_id', '!=', 0)
-                                ->get(['id', 'name', 'parent_id']);
-                            $results[] = [
-                                'fleet' => $fleet,
-                                'fleet_id' => $fleetMap[$fleet] ?? null,
-                                'origin' => $lastOrigin, // مبدا
-                                'originProvince' => $originName, // مبدا
-
-                                'destination' => $dest, // مقصد
-                                'destinationProvince' => $destinationName, // مقصد
-                                'phone' => $phone,
-                                'freight' => 0,
-                                'priceType' => 'توافقی'
-
-                            ];
-                        }
-                    }
-                }
-            }
-        }
-
-        // fallback
-        if (empty($results) && $origin && count($allCities) >= 2) {
-            $destinations = array_filter($allCities, fn($c) => $c !== $origin);
-            foreach ($fleetTitles as $f) {
-                if (Str::contains($flatText, $f)) {
-                    $fleet = $equivalentWordsMap[$f] ?? $f;
-                    foreach ($destinations as $dest) {
-                        $originName = ProvinceCity::where('name', $origin)
-                            ->where('parent_id', '!=', 0)
-                            ->get(['id', 'name', 'parent_id']);
-                        $destinationName = ProvinceCity::where('name', $dest)
-                            ->get(['id', 'name', 'parent_id']);
-                        // return $destinationName;
-                        $results[] = [
-                            'fleet' => $fleet,
-                            'fleet_id' => $fleetMap[$fleet] ?? null,
-                            'origin' => $origin, // مبدا
-                            'originProvince' => $originName, // مبدا
-
-                            'destination' => $dest,
-                            'destinationProvince' => $destinationName ?? null,
-                            'phone' => $phone,
-                            'freight' => 0,
-                            'priceType' => 'توافقی'
-
-                        ];
-                    }
-                }
-            }
-        }
-
-        // حذف تکراری‌ها
-        $uniqueResults = collect($results)->unique(fn($item) => ($item['fleet'] ?? '') . '-' . $item['origin'] . '-' . $item['destination'] . '-' . ($item['phone'] ?? ''))->values()->all();
-        // return $uniqueResults;
-        // اطلاعات تکمیلی برای نمایش
-        $countOfCargos = CargoConvertList::where('operator_id', 0)->count();
-        $users = UserController::getOnlineAndOfflineUsers();
-
-        return view('admin.load.smartCreateCargo', compact('cargo', 'countOfCargos', 'users', 'uniqueResults'));
-    }
-
-
     /** واژه‌های باری (برای عنوان) که نباید ناوگان حساب شوند */
     private array $cargoWords = [
-        'تره بار',
-        'اثاثیه',
-        'خشکبار',
-        'یونجه',
-        'کود مرغی',
-        'قطعات',
-        'آهن',
-        'نخود',
-        'گوجه',
+
+        'سیب',
+        'گلابی',
+        'پرتقال',
+        'نارنگی',
+        'لیمو ترش',
+        'گریپ‌فروت',
+        'نارنج',
+        'هلو',
+        'شلیل',
+        'آلو',
+        'گیلاس',
+        'آلبالو',
+        'زردآلو',
+        'انگور',
+        'انبه',
+        'موز',
+        'آناناس',
+        'پاپایا',
+        'نارگیل',
+        'خرما',
+        'انجیر',
+        'کشمش',
+        'سنجد',
+        'تمشک',
+        'شاه‌توت',
+        'توت‌فرنگی',
+        'خرمالو',
         'خیار',
+        'خیار چنبر',
+        'گوجه فرنگی',
+        'بادمجان',
+        'فلفل دلمه‌ای',
+        'فلفل تند',
+        'کدو سبز',
+        'کدو حلوایی',
+        'کدو تنبل',
+        'بامیه',
+        'هندوانه',
+        'خربزه',
+        'طالبی',
+        'گرمک',
+        'فلفل سبز',
+        'فلفل قرمز',
+        'فلفل دلمه‌ای رنگی',
+        'گندم',
+        'جو',
+        'ذرت',
         'برنج',
-        'پلیسه',
-        'لوله',
-        'سبک بار',
-        'روبار',
-        'روباری',
-        'کنارباری',
+        'علوفه',
+        'یونجه',
+        'بذر',
+        'کود شیمیایی',
+        'کود مرغ',
+        'کود حیوانی',
+        'لبنیات',
+        'گوشت و مرغ',
+        'خشکبار',
+        'آرد',
+        'شکر',
+        'تخم مرغ',
+        'نوشابه',
+        'میوه',
+        'سبزیجات',
+        'صیفی‌جات',
+        'نهال',
+        'اثاثیه منزل',
+        'اثات منزل',
+        'مبلمان',
+        'کلاف مبل',
+        'صندلی',
+        'روکش صندلی',
+        'وسایل منزل',
+        'وسایل اداری',
+        'وسایل فروشگاهی',
+        'لوازم کابینت',
+        'لوازمات',
+        'یراق و ابزار آلات',
+        'ابزار صنعتی',
+        'لوازم آزمایشگاهی',
+        'تجهیزات کارگاهی',
+        'چادر',
+        'پالت',
+        'بشکه',
+        'کانتینر',
+        'دمپایی',
+        'پوست گاو',
+        'پوست گوسفند',
+        'پووست گاو',
+        'پووست گوسفند',
+        'جعبه خالی',
+        'نصف بار',
+        'میلگرد',
+        'تیرآهن',
+        'نبشی',
+        'ناودانی',
+        'شمش فولادی',
+        'تسمه فولادی',
+        'مفتول',
+        'ورق سیاه',
+        'ورق روغنی',
+        'ورق گالوانیزه',
+        'ورق رنگی',
+        'ورق استیل',
+        'پروفیل',
+        'لوله فولادی',
+        'ریل فولادی',
+        'توری فلزی',
+        'پیچ فولادی',
+        'مهره فولادی',
+        'قطعات فلزی',
+        'قطعات ریختگی',
+        'چرخ‌دنده',
+        'یاتاقان',
+        'آهن',
         'چوب',
-        'مرکبات',
-        'مرکبات سبد',
-        'اسپیکر',
-        'کف تره باری',
-        'چادر'
+        'چوب راش',
+        'سنگ',
+        'سنگ ساختمانی',
+        'کاشی',
+        'کاشی و سرامیک',
+        'سیمان',
+        'گچ',
+        'ماسه',
+        'شن',
+        'بلوک',
+        'آجر',
+        'پوکه معدنی',
+        'ایزوگام',
+        'بارگیری ساعت ۲',
+        'بارگیری ساعت دو',
+        'بارگیری ساعت ۳',
+        'بارگیری ساعت سه',
+        'بارگیری ساعت ۴',
+        'بارگیری ساعت چهار',
+        'بارگیری ساعت ۵',
+        'بارگیری ساعت پنج',
+        'بارگیری ساعت ۶',
+        'بارگیری ساعت شش',
+        'بارگیری ساعت ۷',
+        'بارگیری ساعت هفت',
+        'بارگیری ساعت ۸',
+        'بارگیری ساعت هشت',
+        'بارگیری ساعت ۹',
+        'بارگیری ساعت نه',
+        'بارگیری ساعت ۱۰',
+        'بارگیری ساعت ده',
+        'بارگیری ساعت ۱۱',
+        'بارگیری ساعت یازده',
+        'بارگیری ساعت ۱۲',
+        'بارگیری ساعت دوازده',
+        'بارگیری ساعت ۱۳',
+        'بارگیری ساعت سیزده',
+        'بارگیری ساعت ۱۴',
+        'بارگیری ساعت چهارده',
+        'بارگیری ساعت ۱۵',
+        'بارگیری ساعت پانزده',
+        'بارگیری ساعت ۱۶',
+        'بارگیری ساعت شانزده',
+        'بارگیری ساعت ۱۷',
+        'بارگیری ساعت هفده',
+        'بارگیری ساعت ۱۸',
+        'بارگیری ساعت هجده',
+        'بارگیری ساعت ۱۹',
+        'بارگیری ساعت نوزده',
+        'بارگیری ساعت ۲۰',
+        'بارگیری ساعت بیست',
+        'بارگیری ساعت ۲۱',
+        'بارگیری ساعت بیست‌ویک',
+        'بارگیری ساعت ۲۲',
+        'بارگیری ساعت بیست‌ودو',
+        'بارگیری ساعت ۲۳',
+        'بارگیری ساعت بیست‌وسه',
+        'بارگیری ساعت ۲۴',
+        'بارگیری ساعت بیست‌وچهار',
+        'بارگیری = ساعت ۲',
+        'بارگیری = ساعت دو',
+        'بارگیری = ساعت ۳',
+        'بارگیری = ساعت سه',
+        'بارگیری = ساعت ۴',
+        'بارگیری = ساعت چهار',
+        'بارگیری = ساعت ۵',
+        'بارگیری = ساعت پنج',
+        'بارگیری = ساعت ۶',
+        'بارگیری = ساعت شش',
+        'بارگیری = ساعت ۷',
+        'بارگیری = ساعت هفت',
+        'بارگیری = ساعت ۸',
+        'بارگیری = ساعت هشت',
+        'بارگیری = ساعت ۹',
+        'بارگیری = ساعت نه',
+        'بارگیری = ساعت ۱۰',
+        'بارگیری = ساعت ده',
+        'بارگیری = ساعت ۱۱',
+        'بارگیری = ساعت یازده',
+        'بارگیری = ساعت ۱۲',
+        'بارگیری = ساعت دوازده',
+        'بارگیری = ساعت ۱۳',
+        'بارگیری = ساعت سیزده',
+        'بارگیری = ساعت ۱۴',
+        'بارگیری = ساعت چهارده',
+        'بارگیری = ساعت ۱۵',
+        'بارگیری = ساعت پانزده',
+        'بارگیری = ساعت ۱۶',
+        'بارگیری = ساعت شانزده',
+        'بارگیری = ساعت ۱۷',
+        'بارگیری = ساعت هفده',
+        'بارگیری = ساعت ۱۸',
+        'بارگیری = ساعت هجده',
+        'بارگیری = ساعت ۱۹',
+        'بارگیری = ساعت نوزده',
+        'بارگیری = ساعت ۲۰',
+        'بارگیری = ساعت بیست',
+        'بارگیری = ساعت ۲۱',
+        'بارگیری = ساعت بیست‌ویک',
+        'بارگیری = ساعت ۲۲',
+        'بارگیری = ساعت بیست‌ودو',
+        'بارگیری = ساعت ۲۳',
+        'بارگیری = ساعت بیست‌وسه',
+        'بارگیری = ساعت ۲۴',
+        'بارگیری = ساعت بیست‌وچهار',
+        'بارگیری شنبه',
+        'بارگیری یک‌شنبه',
+        'بارگیری دوشنبه',
+        'بارگیری سه‌شنبه',
+        'بارگیری چهارشنبه',
+        'بارگیری پنج‌شنبه',
+        'بارگیری جمعه',
+        'بارگیری امروز صبح',
+        'بارگیری امروز بعد از ظهر',
+        'بارگیری امروز عصر',
+        'بارگیری امروز شب',
+        'بارگیری فردا صبح',
+        'بارگیری فردا بعد از ظهر',
+        'بارگیری فردا عصر',
+        'بارگیری فردا شب',
+        'بارگیری امشب',
+        'آماده بارگیری',
+        'بارگیری دوجا',
+        'بارگیری سه‌جا',
+        'بارگیری چندجا',
+        'فوری',
+        'فردا بارگیری',
+        'چادر الزامی است',
+        'وزن بار ۱ کیلو',
+        'وزن بار ۲ کیلو',
+        'وزن بار ۳ کیلو',
+        'وزن بار ۵ کیلو',
+        'وزن بار ۱۰ کیلو',
+        'وزن بار ۲۰ کیلو',
+        'وزن بار ۳۰ کیلو',
+        'وزن بار ۵۰ کیلو',
+        'وزن بار ۱۰۰ کیلو',
+        'وزن بار ۵۰۰ کیلو',
+        'وزن بار ۱۰۰۰ کیلو',
+        'وزن بار ۲۰۰۰ کیلو',
+        'وزن بار ۵۰۰۰ کیلو',
+        'وزن بار ۱۰۰۰۰ کیلو',
+        'وزن بار ۱ تن',
+        'وزن بار ۲ تن',
+        'وزن بار ۳ تن',
+        'وزن بار ۵ تن',
+        'وزن بار ۱۰ تن',
+        'وزن بار ۲۰ تن',
+        'وزن بار ۳۰ تن',
+        'وزن بار ۵۰ تن',
+        'وزن بار ۱۰۰ تن',
+        'وزن ۱ کیلو',
+        'وزن ۲ کیلو',
+        'وزن ۳ کیلو',
+        'وزن ۵ کیلو',
+        'وزن ۱۰ کیلو',
+        'وزن ۲۰ کیلو',
+        'وزن ۳۰ کیلو',
+        'وزن ۵۰ کیلو',
+        'وزن ۱۰۰ کیلو',
+        'وزن ۵۰۰ کیلو',
+        'وزن ۱۰۰۰ کیلو',
+        'وزن ۲۰۰۰ کیلو',
+        'وزن ۵۰۰۰ کیلو',
+        'وزن ۱۰۰۰۰ کیلو',
+        'وزن ۱ تن',
+        'وزن ۲ تن',
+        'وزن ۳ تن',
+        'وزن ۵ تن',
+        'وزن ۱۰ تن',
+        'وزن ۲۰ تن',
+        'وزن ۳۰ تن',
+        'وزن ۵۰ تن',
+        'وزن ۱۰۰ تن'
     ];
 
     /** نگاشت هم‌ارزی برخی واژه‌ها برای عنوان (مثلا روبار→روباری) */
@@ -319,11 +306,10 @@ class DataConvertPlusController extends Controller
         'روبار' => 'روباری',
     ];
 
-    public function getLoadFromTel($cargo)
+    public function getLoadFromTel(Request $request)
     {
         // return $request;
-        $raw = $cargo->cargo;
-        // $raw = (string) $request->input('text', '');
+        $raw = (string) $request->input('text', '');
         $raw = trim($raw);
         if ($raw === '') {
             return response()->json(['success' => false, 'message' => 'متن ورودی خالی است.']);
@@ -333,8 +319,8 @@ class DataConvertPlusController extends Controller
         $text = $this->normalizeText($raw);
 
         // 2) داده‌های پایه از DB
-        $citiesById = DB::table('province_cities')->where('parent_id', '!=', 0)->pluck('name', 'id')->toArray(); // id => name
-        $fleetsById = DB::table('fleets')->where('parent_id', '!=', 0)->pluck('title', 'id')->toArray();        // id => title
+        $citiesById = DB::table('province_cities')->pluck('name', 'id')->toArray(); // id => name
+        $fleetsById = DB::table('fleets')->pluck('title', 'id')->toArray();        // id => title
 
         // 3) معادل‌ها (equivalents)
         [$cityLexicon, $fleetLexicon] = $this->buildLexicons($citiesById, $fleetsById);
@@ -370,7 +356,6 @@ class DataConvertPlusController extends Controller
 
         // 7) سگمنت‌بندی فقط بر اساس ناوگان
         $segments = $this->splitByFleets($text, $fleetPattern);
-
         // 8) زمینه‌های کل متن
         $globalContextOrigin =
             $this->getContextOrigin($text, $cityPattern, $cityLexicon)
@@ -468,26 +453,12 @@ class DataConvertPlusController extends Controller
             $usedOrigins      = $origins ?: [null];
             $usedDestinations = $destinations ?: [null];
 
-            // $destinationName = ProvinceCity::where('name', $match[2])
-            //     ->where('parent_id', '!=', 0)
-            //     ->get(['id', 'name', 'parent_id']);
-
             foreach ($usedFleetList as $fleetTitle) {
                 foreach ($usedOrigins as $originCity) {
                     foreach ($usedDestinations as $destCity) {
-
-                        $origins = ProvinceCity::where('name', $originCity)
-                            ->where('parent_id', '!=', 0)
-                            ->get(['id', 'name', 'parent_id']);
-                        $destinations = ProvinceCity::where('name', $destCity)
-                            // ->where('parent_id', '!=', 0)
-                            ->get(['id', 'name', 'parent_id']);
-
                         $record = [
                             'fleet'           => $fleetTitle,
                             'fleet_id'        => $fleetTitle ? ($fleetsByTitle[$fleetTitle] ?? null) : null,
-                            'origins'          => $origins,
-                            'destinations'          => $destinations,
                             'origin'          => $originCity,
                             'origin_id'       => $originCity ? ($citiesByName[$originCity] ?? null) : null,
                             'destination'     => $destCity,
@@ -517,8 +488,6 @@ class DataConvertPlusController extends Controller
                 $this->pushUniqueLoad($allLoads, [
                     'fleet'           => $fleetTitle,
                     'fleet_id'        => $fleetTitle ? ($fleetsByTitle[$fleetTitle] ?? null) : null,
-                    'origins'          => $origins,
-                    'destinations'          => $destinations,
                     'origin'          => $originCity,
                     'origin_id'       => $originCity ? ($citiesByName[$originCity] ?? null) : null,
                     'destination'     => $destCity,
@@ -531,19 +500,11 @@ class DataConvertPlusController extends Controller
                 ]);
             }
         }
-        $uniqueResults = array_values($allLoads);
-        $countOfCargos = CargoConvertList::where('operator_id', 0)
-            ->where('isBlocked', 0)
-            ->where('isDuplicate', 0)
-            ->count();
-        $users = UserController::getOnlineAndOfflineUsers();
-        // return $uniqueResults;
-        return view('admin.load.smartCreateCargo', compact('cargo', 'countOfCargos', 'users', 'uniqueResults'));
 
-        // return response()->json([
-        //     'success' => true,
-        //     'data'    => array_values($allLoads),
-        // ], 200, [], JSON_UNESCAPED_UNICODE);
+        return response()->json([
+            'success' => true,
+            'data'    => array_values($allLoads),
+        ], 200, [], JSON_UNESCAPED_UNICODE);
     }
 
     // ---------------------- Lexicon (equivalents) ----------------------
@@ -575,6 +536,7 @@ class DataConvertPlusController extends Controller
             ->where('type', 'fleet')
             ->select('original_word_id', 'equivalentWord')
             ->get();
+
         foreach ($equivFleets as $row) {
             $canonTitle = $fleetsById[$row->original_word_id] ?? null;
             if (!$canonTitle) continue;
@@ -1231,386 +1193,5 @@ class DataConvertPlusController extends Controller
         ]);
         if (!isset($loads[$key])) $loads[$key] = $record;
         else if (empty($loads[$key]['title']) && !empty($record['title'])) $loads[$key] = $record;
-    }
-
-    // ذخیره دسته ای بارها
-    public function storeMultiCargoSmart(Request $request, CargoConvertList $cargo)
-    {
-        try {
-            $expiresAt = now()->addMinutes(3);
-            $userId = Auth::id();
-
-            Cache::put("user-is-active-$userId", true, $expiresAt);
-            User::whereId($userId)->update(['last_active' => now()]);
-        } catch (Exception $e) {
-            Log::emergency("UserActivityActiveOnlineReport - Error: " . $e->getMessage());
-        }
-
-
-
-        $keys = $request->input('key'); // لیست کلیدهای موجود در درخواست
-        $rules = [];
-        $messages = [];
-        foreach ($keys as $key) {
-            $rules["mobileNumber_{$key}"] = 'required|digits:11';
-            $messages["mobileNumber_{$key}.required"] = "شماره تلفن {$key} الزامی است.";
-            $messages["mobileNumber_{$key}.digits"] = "شماره تلفن {$key} باید دقیقا ۱۱ رقم باشد.";
-        }
-
-        $validator = Validator::make($request->all(), $rules, $messages);
-
-        if ($validator->fails()) {
-            return back()->with('danger', 'شماره موبایل کمتر از 11 رقم است')->withErrors($validator)->withInput();
-        }
-        try {
-
-            if (UserActivityReport::where([
-                ['created_at', '>', date('Y-m-d H:i:s', strtotime('-5 minute', time()))],
-                ['user_id', \auth()->id()]
-            ])->count() == 0)
-                UserActivityReport::create(['user_id' => \auth()->id()]);
-        } catch (Exception $e) {
-            Log::emergency("-------------------------- UserActivityReport ----------------------------------------");
-            Log::emergency($e->getMessage());
-            Log::emergency("------------------------------------------------------------------");
-        }
-        // return dd($request);
-        $counter = 0;
-        foreach ($request->key as $key) {
-            $origin = "origin_" . $key;
-            $originState = "originState_" . $key;
-            $destination = "destination_" . $key;
-            $destinationState = "destinationState_" . $key;
-            $mobileNumber = "mobileNumber_" . $key;
-            $description = "description_" . $key;
-            $fleet = "fleets_" . $key;
-            $title = "title_" . $key;
-            // $freight = "freight_" . $key;
-            // $priceType = "priceType_" . $key;
-            // $pattern = "pattern_" . $key;
-            try {
-                $this->storeCargoSmart(
-                    $request->$origin,
-                    $request->$originState,
-                    $request->$destination,
-                    $request->$destinationState,
-                    $request->$mobileNumber,
-                    $request->$description,
-                    $request->$fleet,
-                    $request->$title,
-                    // $request->$freight,
-                    // $request->$priceType,
-
-                    // $request->$pattern,
-                    $counter,
-                    $cargo->id
-                );
-            } catch (\Exception $exception) {
-                return $exception;
-                Log::emergency("storeMultiCargo : " . $exception->getMessage());
-            }
-        }
-
-        $cargo->status = true;
-        $cargo->save();
-        return back()->with('success', $counter . 'بار ثبت شد');
-    }
-    public function storeCargoSmart($origin, $originState, $destination, $destinationState, $mobileNumber, $description, $fleet, $title, &$counter, $cargoId)
-    {
-        if (!strlen(trim($origin)) || $origin == null || $origin == 'null' || !strlen(trim($destination)) || $destination == null || $destination == 'null' || !strlen($fleet) || !strlen($mobileNumber))
-            return;
-
-        substr($mobileNumber, 0, 1) !== '0' ? $mobileNumber = '0' . $mobileNumber : $mobileNumber;
-
-        $cargoPattern = '';
-
-        try {
-            $cargoPattern = $origin . $destination . $mobileNumber . $fleet;
-
-            if (
-                BlockPhoneNumber::where('phoneNumber', $mobileNumber)->exists() ||
-                Load::where('cargoPattern', $cargoPattern)
-                ->where('created_at', '>', now()->subMinutes(180))
-                ->first()
-            ) {
-                return;
-            }
-        } catch (\Exception $exception) {
-            Log::emergency(str_repeat("-", 75));
-            Log::emergency("خطای جستجوی تکراری");
-            Log::emergency($exception->getMessage());
-            Log::emergency(str_repeat("-", 75));
-            return;
-        }
-
-
-        try {
-
-            DB::beginTransaction();
-            $load = new Load();
-            $load->title = strlen($title) == 0 ? 'بدون عنوان' : $title;
-            $load->cargo_convert_list_id = $cargoId;
-            $load->senderMobileNumber = $mobileNumber;
-            $load->emergencyPhone = $mobileNumber;
-            $load->load_type_id = 0;
-            $load->tenderTimeDuration = 0;
-            $load->packing_type_id = 0;
-            $owner = Owner::where('mobileNumber', $mobileNumber)->first();
-            if (isSendBotLoadOwner() == true) {
-                if ($owner != null) {
-                    $load->user_id = $owner->id;
-                    $load->userType = ROLE_OWNER;
-                    $load->operator_id = auth()->id();
-                    $load->isBot = 1;
-                    if (BlockPhoneNumber::where(function ($query) use ($owner, $mobileNumber) {
-                        $query->where('nationalCode', $owner->nationalCode)
-                            ->orWhere('phoneNumber', $mobileNumber);
-                    })->where(function ($query) {
-                        $query->where('type', 'operator')
-                            ->orWhere('type', 'both');
-                    })->exists()) {
-                        return;
-                    }
-                } else {
-                    $load->user_id = auth()->id();
-                    $load->userType = ROLE_OPERATOR;
-                    $load->operator_id = auth()->id();
-                }
-            } else {
-                $load->user_id = auth()->id();
-                $load->userType = ROLE_OPERATOR;
-                $load->operator_id = auth()->id();
-            }
-            // $load->urgent = 0;
-            $load->loadMode = 'outerCity';
-            $load->loadingHour = 0;
-            $load->loadingMinute = 0;
-            // $load->numOfTrucks = 1;
-            $load->cargoPattern = $cargoPattern;
-
-            $origin = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $origin)));
-            $destination = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $destination)));
-
-
-
-            $originCity = ProvinceCity::where('name', 'like', '%' . $origin)->where('parent_id', $originState)->first();
-            $destinationCity = ProvinceCity::where('name', 'like', '%' . $destination)->where('parent_id', $destinationState)->first();
-
-            // return dd($destinationCity);
-            // Log::alert($destinationState);
-            // Log::alert($destinationState);
-
-            $load->origin_city_id = $originCity->id;
-            $load->destination_city_id = $destinationCity->id;
-
-            $load->fromCity = $this->getCityName($load->origin_city_id);
-            $load->toCity = $this->getCityName($load->destination_city_id);
-
-            $load->loadingDate = gregorianDateToPersian(date('Y-m-d', time()), '-');
-            $load->time = time();
-
-            try {
-                $city = ProvinceCity::where('parent_id', '!=', 0)->find($load->origin_city_id);
-                if (isset($city->id)) {
-                    $load->latitude = $city->latitude;
-                    $load->longitude = $city->longitude;
-                }
-            } catch (\Exception $exception) {
-            }
-
-            $load->weightPerTruck = 0;
-
-            $load->bulk = 2;
-            $load->dangerousProducts = false;
-
-            $load->origin_state_id = AddressController::geStateIdFromCityId($load->origin_city_id);
-            $load->description = $description ?? '';
-
-            $load->mobileNumberForCoordination = $mobileNumber;
-            $load->storeFor = ROLE_DRIVER;
-            $load->status = ON_SELECT_DRIVER;
-            $load->deliveryTime = 24;
-
-            $load->date = gregorianDateToPersian(date('Y/m/d', time()), '/');
-            $load->dateTime = now()->format('H:i:s');
-
-
-
-            // $loadDuplicateHour = Load::where('userType', 'operator')
-            //     ->where('mobileNumberForCoordination', $load->mobileNumberForCoordination)
-            //     ->where('origin_city_id', $load->origin_city_id)
-            //     ->where('destination_city_id', $load->destination_city_id)
-            //     ->where('cargoPattern', 'LIKE', '%' . $fleet . '%')
-            //     ->first();
-
-            $fleet = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $fleet)));
-
-            $fleet_id = Fleet::where('title', $fleet)->first();
-            if (!isset($fleet_id->id)) {
-                $fleet_id = Fleet::where('title', str_replace('ك', 'ک', $fleet))->first();
-            }
-            if (!isset($fleet_id->id)) {
-                $fleet_id = Fleet::where('title', str_replace('ي', 'ی', $fleet))->first();
-            }
-            if (!isset($fleet_id->id)) {
-                $fleet_id = Fleet::where('title', str_replace('ي', 'ی', str_replace('ك', 'ک', $fleet)))->first();
-            }
-            if (!isset($fleet_id->id)) {
-                $fleet_id = Fleet::where('title', str_replace('ک', 'ك', $fleet))->first();
-            }
-            if (!isset($fleet_id->id)) {
-                $fleet_id = Fleet::where('title', str_replace('ی', 'ي', $fleet))->first();
-            }
-            if (!isset($fleet_id->id)) {
-                $fleet_id = Fleet::where('title', str_replace('ی', 'ي', str_replace('ک', 'ك', $fleet)))->first();
-            }
-
-            $conditions = [
-                'mobileNumberForCoordination' => $load->mobileNumberForCoordination,
-                'origin_city_id' => $load->origin_city_id,
-                'destination_city_id' => $load->destination_city_id,
-                ['fleets', 'LIKE', '%fleet_id":' . $fleet_id->id . ',%']
-            ];
-            $loadDuplicate = Load::where($conditions)
-                ->where('userType', 'operator')
-                ->first();
-
-            $loadDuplicateOwner = Load::where($conditions)
-                ->where('userType', 'owner')
-                ->where('isBot', 0)
-                ->first();
-
-            if (is_null($loadDuplicate) && is_null($loadDuplicateOwner)) {
-                $load->save();
-            }
-            // return dd($load)
-
-            if (isset($load->id)) {
-
-                $counter++;
-
-                if (isset($fleet_id->id)) {
-                    $fleetLoad = new FleetLoad();
-                    $fleetLoad->load_id = $load->id;
-                    $fleetLoad->fleet_id = $fleet_id->id;
-                    $fleetLoad->numOfFleets = 1;
-                    $fleetLoad->userType = $load->userType;
-                    $fleetLoad->save();
-
-                    try {
-                        $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
-                        // Log::emergency("Error cargo report by 1371: ");
-
-                        $cargoReport = CargoReportByFleet::where('fleet_id', $fleetLoad->fleet_id)
-                            ->where('date', $persian_date)
-                            ->first();
-                        // Log::emergency("Error cargo report by 1376: ");
-
-                        if (isset($cargoReport->id)) {
-                            $cargoReport->count += 1;
-                            $cargoReport->save();
-                        } else {
-                            $cargoReportNew = new CargoReportByFleet;
-                            $cargoReportNew->fleet_id = $fleetLoad->fleet_id;
-                            $cargoReportNew->count = 1;
-                            $cargoReportNew->date = $persian_date;
-                            $cargoReportNew->save();
-                            // Log::emergency("Error cargo report by 1387: " . $cargoReportNew);
-
-                        }
-                    } catch (Exception $e) {
-                        Log::emergency("Error cargo report by fleets: " . $e->getMessage());
-                    }
-                }
-
-                try {
-
-                    $load->fleets = FleetLoad::join('fleets', 'fleets.id', 'fleet_loads.fleet_id')
-                        ->where('fleet_loads.load_id', $load->id)
-                        ->select('fleet_id', 'userType', 'suggestedPrice', 'numOfFleets', 'pic', 'title')
-                        ->get();
-
-                    // if ($loadDuplicate === null) {
-                    $load->save();
-                    // $this->sendLoadToOtherWeb($load);
-
-                    // }
-                } catch (\Exception $exception) {
-                    Log::emergency("---------------------------------------------------------");
-                    Log::emergency($exception->getMessage());
-                    Log::emergency("---------------------------------------------------------");
-                }
-                try {
-                    $ownerLoadCount = Owner::where('mobileNumber', $load->mobileNumberForCoordination)->first();
-                    if ($ownerLoadCount) {
-                        $ownerLoadCount->loadCount += 1;
-                        $ownerLoadCount->save();
-                    }
-                } catch (\Exception $th) {
-                    //throw $th;
-                }
-            }
-
-
-            DB::commit();
-        } catch (\Exception $exception) {
-
-            DB::rollBack();
-
-            Log::emergency("----------------------ثبت بار جدید-----------------------");
-            Log::emergency($exception);
-            Log::emergency("---------------------------------------------------------");
-        }
-    }
-
-    private function getCityName($city_id)
-    {
-        try {
-            $city = ProvinceCity::where('id', $city_id)->where('parent_id', '!=', 0)->select('name', 'parent_id')->first();
-            $state = ProvinceCity::where('id', $city->parent_id)->first();
-            if (isset($city->name))
-                return $state->name . ', ' . $city->name;
-        } catch (\Exception $e) {
-        }
-        return '';
-    }
-    private function getCityId($cityName)
-    {
-        try {
-            $city = ProvinceCity::where('name', $cityName)->where('parent_id', '!=', 0)->select('id')->first();
-            if (!isset($city->id)) {
-                $city = ProvinceCity::where('name', str_replace('ک', 'ك', $cityName))->where('parent_id', '!=', 0)->select('id')->first();
-            }
-            if (!isset($city->id)) {
-                $city = ProvinceCity::where('name', str_replace('ی', 'ي', $cityName))->where('parent_id', '!=', 0)->select('id')->first();
-            }
-            if (!isset($city->id)) {
-                $city = ProvinceCity::where('name', str_replace('ی', 'ي', str_replace('ک', 'ك', $cityName)))->where('parent_id', '!=', 0)->select('id')->first();
-            }
-            if (isset($city->id))
-                return $city->id;
-        } catch (\Exception $e) {
-        }
-
-
-        return 0;
-    }
-
-    private function getEquivalentWords(): array
-    {
-        static $cache = null;
-        if (!$cache) {
-            $equivalents = Equivalent::get(['equivalentWord', 'original_word_id']);
-            $fleetTitles = DB::table('fleets')->pluck('title', 'id'); // [id => title]
-            $cache = [];
-
-            foreach ($equivalents as $equiv) {
-                $title = $fleetTitles[$equiv->original_word_id] ?? null;
-                if ($title) {
-                    $cache[$equiv->equivalentWord] = $title;
-                }
-            }
-        }
-        return $cache; // ['نیسانی' => 'نیسان', ...]
     }
 }
