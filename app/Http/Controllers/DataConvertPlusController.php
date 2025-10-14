@@ -333,8 +333,8 @@ class DataConvertPlusController extends Controller
         $text = $this->normalizeText($raw);
 
         // 2) داده‌های پایه از DB
-        $citiesById = DB::table('province_cities')->pluck('name', 'id')->toArray(); // id => name
-        $fleetsById = DB::table('fleets')->pluck('title', 'id')->toArray();        // id => title
+        $citiesById = DB::table('province_cities')->where('parent_id', '!=', 0)->pluck('name', 'id')->toArray(); // id => name
+        $fleetsById = DB::table('fleets')->where('parent_id', '!=', 0)->pluck('title', 'id')->toArray();        // id => title
 
         // 3) معادل‌ها (equivalents)
         [$cityLexicon, $fleetLexicon] = $this->buildLexicons($citiesById, $fleetsById);
