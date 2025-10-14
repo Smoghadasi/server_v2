@@ -27,88 +27,103 @@ class DataConvertPlusController extends Controller
 {
     public function smartStoreCargo()
     {
+        $userId = auth()->id();
 
+        // ۱. پیدا کردن باری که قبلاً به اپراتور تخصیص داده شده
         $cargo = CargoConvertList::where([
-            ['operator_id', auth()->id()],
+            ['operator_id', $userId],
             ['status', 0],
             ['isBlocked', 0],
             ['isDuplicate', 0],
         ])
-            ->orderby('id', 'desc')
+            ->latest('id')
             ->first();
-        $operatorCargoListAccess = OperatorCargoListAccess::where('user_id', auth()->id())
-            ->select('fleet_id')
-            ->pluck('fleet_id')
-            ->toArray();
 
-        if (!isset($cargo->id)) {
-            if (count($operatorCargoListAccess)) {
+        // ۲. اگر باری برای اپراتور نبود → دنبال بار آزاد مناسب بگرد
+        if (!$cargo) {
+            $operatorCargoListAccess = OperatorCargoListAccess::where('user_id', $userId)
+                ->pluck('fleet_id')
+                ->toArray();
+
+            $dictionary = [];
+            if ($operatorCargoListAccess) {
                 $dictionary = Equivalent::where('type', 'fleet')
                     ->whereIn('original_word_id', $operatorCargoListAccess)
-                    ->select('equivalentWord')
                     ->pluck('equivalentWord')
                     ->toArray();
-                $conditions = [];
+            }
 
-                foreach ($dictionary as $item) {
-                    $conditions[] = ['cargo', 'LIKE', '%' . $item . '%'];
+            // اگر دیکشنری داریم → دنبال اولین باری بگرد که یکی از کلماتش داخل بار هست
+            if ($dictionary) {
+                $cargo = CargoConvertList::where(function ($q) use ($dictionary) {
+                    foreach ($dictionary as $word) {
+                        $q->orWhere('cargo', 'LIKE', "%{$word}%");
+                    }
+                })
+                    ->where([
+                        ['operator_id', 0],
+                        ['status', 0],
+                        ['isBlocked', 0],
+                        ['isDuplicate', 0],
+                    ])
+                    ->oldest('id')
+                    ->first();
+            }
 
-                    $cargo = CargoConvertList::where(function ($q) use ($conditions) {
-                        return $q->orWhere($conditions);
-                    })
-                        ->where('operator_id', 0)
-                        ->orderby('id', 'asc')
-                        ->first();
+            // اگر باز هم بار پیدا نشد → اولین بار آزاد عمومی
+            if (!$cargo) {
+                $cargo = CargoConvertList::where([
+                    ['operator_id', 0],
+                    ['status', 0],
+                    ['isBlocked', 0],
+                    ['isDuplicate', 0],
+                ])
+                    ->oldest('id')
+                    ->first();
+            }
+        }
 
-                    if (isset($cargo->id)) {
-                        break;
+        // ۳. اگر بار پیدا شد → مالکیت بده به اپراتور
+        if ($cargo) {
+            // بررسی اگر بار واقعاً جزو دیکشنری اپراتور هست
+            if (!empty($dictionary)) {
+                foreach ($dictionary as $word) {
+                    if (str_contains($cargo->cargo, $word)) {
+                        $cargo->operator_id = $userId;
+                        $cargo->save();
+                        return $this->getLoadFromTel($cargo);
                     }
                 }
-            }
 
-            if (!isset($cargo->id))
-                $cargo = CargoConvertList::where('operator_id', 0)->orderby('id', 'asc')->first();
-        }
-        if (isset($cargo->id)) {
-
-            $dictionary = Equivalent::where('type', 'fleet')
-                ->whereIn('original_word_id', $operatorCargoListAccess)
-                ->select('equivalentWord')
-                ->pluck('equivalentWord')
-                ->toArray();
-            $conditions = [];
-            foreach ($dictionary as $item) {
-                $oldCargo = CargoConvertList::where('cargo', 'LIKE', '%' . $item . '%')
-                    ->where('id', $cargo->id)
-                    ->where('status', 0)
+                // اگر بار فعلی نبود، دنبال بار جدیدی که match کنه
+                $newCargo = CargoConvertList::where(function ($q) use ($dictionary) {
+                    foreach ($dictionary as $word) {
+                        $q->orWhere('cargo', 'LIKE', "%{$word}%");
+                    }
+                })
+                    ->where([
+                        ['operator_id', 0],
+                        ['status', 0],
+                        ['isBlocked', 0],
+                        ['isDuplicate', 0],
+                    ])
+                    ->oldest('id')
                     ->first();
 
-                if (isset($oldCargo->id)) {
-                    $oldCargo->operator_id = auth()->id();
-                    $oldCargo->save();
-                    return $this->getLoadFromTel($oldCargo);
-                }
-            }
-
-            foreach ($dictionary as $item) {
-                $newCargo = CargoConvertList::where('cargo', 'LIKE', '%' . $item . '%')
-                    ->where('operator_id', 0)
-                    ->orderby('id', 'asc')
-                    ->first();
-
-                if (isset($newCargo->id)) {
-                    $newCargo->operator_id = auth()->id();
+                if ($newCargo) {
+                    $newCargo->operator_id = $userId;
                     $newCargo->save();
                     return $this->getLoadFromTel($newCargo);
                 }
             }
 
-            $cargo->operator_id = auth()->id();
+            // در نهایت بار فعلی رو بده به اپراتور
+            $cargo->operator_id = $userId;
             $cargo->save();
             return $this->getLoadFromTel($cargo);
         }
 
-
+        // ۴. اگر هیج باری نبود → برگرد به داشبورد
         return redirect(url('dashboard'))->with('danger', 'هیچ باری وجود ندارد');
     }
 
@@ -501,7 +516,10 @@ class DataConvertPlusController extends Controller
             }
         }
         $uniqueResults = array_values($allLoads);
-        $countOfCargos = CargoConvertList::where('operator_id', 0)->count();
+        $countOfCargos = CargoConvertList::where('operator_id', 0)
+            ->where('isBlocked', 0)
+            ->where('isDuplicate', 0)
+            ->count();
         $users = UserController::getOnlineAndOfflineUsers();
         // return $uniqueResults;
         return view('admin.load.smartCreateCargo', compact('cargo', 'countOfCargos', 'users', 'uniqueResults'));
