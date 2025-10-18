@@ -1042,6 +1042,7 @@ class DataConvertPlusController extends Controller
 
     public function storeCargoSmart($origin, $originState, $destination, $destinationState, $mobileNumber, $description, $fleet, $title, &$counter, $cargoId)
     {
+
         if (!strlen(trim($origin)) || $origin == null || $origin == 'null' || !strlen(trim($destination)) || $destination == null || $destination == 'null' || !strlen($fleet) || !strlen($mobileNumber))
             return;
 
@@ -1115,8 +1116,6 @@ class DataConvertPlusController extends Controller
 
             $origin = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $origin)));
             $destination = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $destination)));
-
-
 
             $originCity = ProvinceCity::where('name', 'like', '%' . $origin)
                 ->where('parent_id', $originState)
@@ -1301,6 +1300,57 @@ class DataConvertPlusController extends Controller
             Log::emergency($exception);
             Log::emergency("---------------------------------------------------------");
         }
+    }
+
+    private function getCityName($city_id)
+    {
+        try {
+            $city = ProvinceCity::where('id', $city_id)->where('parent_id', '!=', 0)->select('name', 'parent_id')->first();
+            $state = ProvinceCity::where('id', $city->parent_id)->first();
+            if (isset($city->name))
+                return $state->name . ', ' . $city->name;
+        } catch (\Exception $e) {
+        }
+        return '';
+    }
+    private function getCityId($cityName)
+    {
+        try {
+            $city = ProvinceCity::where('name', $cityName)->where('parent_id', '!=', 0)->select('id')->first();
+            if (!isset($city->id)) {
+                $city = ProvinceCity::where('name', str_replace('ک', 'ك', $cityName))->where('parent_id', '!=', 0)->select('id')->first();
+            }
+            if (!isset($city->id)) {
+                $city = ProvinceCity::where('name', str_replace('ی', 'ي', $cityName))->where('parent_id', '!=', 0)->select('id')->first();
+            }
+            if (!isset($city->id)) {
+                $city = ProvinceCity::where('name', str_replace('ی', 'ي', str_replace('ک', 'ك', $cityName)))->where('parent_id', '!=', 0)->select('id')->first();
+            }
+            if (isset($city->id))
+                return $city->id;
+        } catch (\Exception $e) {
+        }
+
+
+        return 0;
+    }
+
+    private function getEquivalentWords(): array
+    {
+        static $cache = null;
+        if (!$cache) {
+            $equivalents = Equivalent::get(['equivalentWord', 'original_word_id']);
+            $fleetTitles = DB::table('fleets')->pluck('title', 'id'); // [id => title]
+            $cache = [];
+
+            foreach ($equivalents as $equiv) {
+                $title = $fleetTitles[$equiv->original_word_id] ?? null;
+                if ($title) {
+                    $cache[$equiv->equivalentWord] = $title;
+                }
+            }
+        }
+        return $cache; // ['نیسانی' => 'نیسان', ...]
     }
 
     // ---------------------- Lexicon (equivalents) ----------------------
