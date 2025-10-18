@@ -105,6 +105,14 @@
                         <div class="form-group row text-right alert alert-light border border-dark" style="color: #000000">
                             <input type="hidden" name="key[]" value="{{ $key }}">
 
+                            @foreach (['origin', 'destination', 'fleet'] as $field)
+                                @if (empty($item[$field]))
+                                    <label class="col-lg-12 mb-2 text-end">
+                                        <span class="text-danger" style="font-size: 30px">X</span>
+                                    </label>
+                                @endif
+                            @endforeach
+
                             {{-- عنوان --}}
                             <label class="col-lg-12 mb-2">عنوان :
                                 <input type="text" class="form-control" name="title_{{ $key }}"
