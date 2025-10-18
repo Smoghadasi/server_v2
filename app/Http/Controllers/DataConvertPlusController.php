@@ -1152,15 +1152,14 @@ class DataConvertPlusController extends Controller
 
             if (!$hasKW) {
                 // A - B  /  A / B  /  A , B
-                $rePair = '/\b(' . $cityPattern . ')\b\s*(?:[-–—\/,]\s*)\b(' . $cityPattern . ')\b/u';
-                $t = preg_replace_callback($rePair, function ($m) use ($cityLexicon) {
-                    $a = $this->toCanonicalCity($m[1], $cityLexicon) ?? trim($m[1]);
-                    $b = $this->toCanonicalCity($m[2], $cityLexicon) ?? trim($m[2]);
-                    if ($a !== '' && $b !== '') {
-                        return $a; // زوج برچسبی → شهر را نگه‌دار
-                    }
-                    return $m[0];
-                }, $t);
+                $rePair = '/\b([[:alpha:]\p{L}\s]+)\b\s*(?:[-–—\/,]\s*)\b([[:alpha:]\p{L}\s]+)\b/u';
+
+$t = preg_replace_callback($rePair, function ($m) use ($cityLexicon) {
+    $a = $this->toCanonicalCity($m[1], $cityLexicon);
+    $b = $this->toCanonicalCity($m[2], $cityLexicon);
+    if ($a && $b) return $a;
+    return $m[0];
+}, $t);
 
                 // A(B) → A
                 $t = preg_replace('/\b(' . $cityPattern . ')\s*\(\s*(' . $cityPattern . ')\s*\)/u', '$1', $t);
