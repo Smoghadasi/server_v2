@@ -12,6 +12,7 @@ use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DataConvertController;
+use App\Http\Controllers\DataConvertPlusController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\FleetController;
 use App\Http\Controllers\LoadController;
@@ -430,6 +431,8 @@ Route::get('DidarCallBack', function () {
 });
 
 Route::post('extractData', [DataConvertController::class, 'extractData']);
+
+Route::post('testApi', [DataConvertPlusController::class, 'testApi']);
 
 
 Route::get('dictionary', function () {
