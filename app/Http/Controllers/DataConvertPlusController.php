@@ -957,6 +957,352 @@ class DataConvertPlusController extends Controller
         // ], 200, [], JSON_UNESCAPED_UNICODE);
     }
 
+    // ذخیره دسته ای بارها
+    public function storeMultiCargoSmart(Request $request, CargoConvertList $cargo)
+    {
+        try {
+            $expiresAt = now()->addMinutes(3);
+            $userId = Auth::id();
+
+            Cache::put("user-is-active-$userId", true, $expiresAt);
+            User::whereId($userId)->update(['last_active' => now()]);
+        } catch (Exception $e) {
+            Log::emergency("UserActivityActiveOnlineReport - Error: " . $e->getMessage());
+        }
+
+
+
+        $keys = $request->input('key'); // لیست کلیدهای موجود در درخواست
+        $rules = [];
+        $messages = [];
+        foreach ($keys as $key) {
+            $rules["mobileNumber_{$key}"] = 'required|digits:11';
+            $messages["mobileNumber_{$key}.required"] = "شماره تلفن {$key} الزامی است.";
+            $messages["mobileNumber_{$key}.digits"] = "شماره تلفن {$key} باید دقیقا ۱۱ رقم باشد.";
+        }
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return back()->with('danger', 'شماره موبایل کمتر از 11 رقم است')->withErrors($validator)->withInput();
+        }
+        try {
+
+            if (UserActivityReport::where([
+                ['created_at', '>', date('Y-m-d H:i:s', strtotime('-5 minute', time()))],
+                ['user_id', \auth()->id()]
+            ])->count() == 0)
+                UserActivityReport::create(['user_id' => \auth()->id()]);
+        } catch (Exception $e) {
+            Log::emergency("-------------------------- UserActivityReport ----------------------------------------");
+            Log::emergency($e->getMessage());
+            Log::emergency("------------------------------------------------------------------");
+        }
+        // return $request;
+        $counter = 0;
+        foreach ($request->key as $key) {
+            $origin = "origin_" . $key;
+            $originState = "originState_" . $key;
+            $destination = "destination_" . $key;
+            $destinationState = "destinationState_" . $key;
+            $mobileNumber = "mobileNumber_" . $key;
+            $description = "description_" . $key;
+            $fleet = "fleets_" . $key;
+            $title = "title_" . $key;
+            // $freight = "freight_" . $key;
+            // $priceType = "priceType_" . $key;
+            // $pattern = "pattern_" . $key;
+            try {
+                $this->storeCargoSmart(
+                    $request->$origin,
+                    $request->$originState,
+                    $request->$destination,
+                    $request->$destinationState,
+                    $request->$mobileNumber,
+                    $request->$description,
+                    $request->$fleet,
+                    $request->$title,
+                    // $request->$freight,
+                    // $request->$priceType,
+
+                    // $request->$pattern,
+                    $counter,
+                    $cargo->id
+                );
+            } catch (\Exception $exception) {
+                return $exception;
+                Log::emergency("storeMultiCargo : " . $exception->getMessage());
+            }
+        }
+
+        $cargo->status = true;
+        $cargo->save();
+        return back()->with('success', $counter . 'بار ثبت شد');
+    }
+
+    public function storeCargoSmart($origin, $originState, $destination, $destinationState, $mobileNumber, $description, $fleet, $title, &$counter, $cargoId)
+    {
+        if (!strlen(trim($origin)) || $origin == null || $origin == 'null' || !strlen(trim($destination)) || $destination == null || $destination == 'null' || !strlen($fleet) || !strlen($mobileNumber))
+            return;
+
+        substr($mobileNumber, 0, 1) !== '0' ? $mobileNumber = '0' . $mobileNumber : $mobileNumber;
+
+        $cargoPattern = '';
+
+        try {
+            $cargoPattern = $origin . $destination . $mobileNumber . $fleet;
+
+            if (
+                BlockPhoneNumber::where('phoneNumber', $mobileNumber)->exists() ||
+                Load::where('cargoPattern', $cargoPattern)
+                ->where('created_at', '>', now()->subMinutes(180))
+                ->exists()
+            ) {
+                return;
+            }
+        } catch (\Exception $exception) {
+            Log::emergency(str_repeat("-", 75));
+            Log::emergency("خطای جستجوی تکراری");
+            Log::emergency($exception->getMessage());
+            Log::emergency(str_repeat("-", 75));
+            return;
+        }
+
+
+        try {
+
+            DB::beginTransaction();
+            $load = new Load();
+            $load->title = strlen($title) == 0 ? 'بدون عنوان' : $title;
+            $load->cargo_convert_list_id = $cargoId;
+            $load->senderMobileNumber = $mobileNumber;
+            $load->emergencyPhone = $mobileNumber;
+            $load->load_type_id = 0;
+            $load->tenderTimeDuration = 0;
+            $load->packing_type_id = 0;
+            $owner = Owner::where('mobileNumber', $mobileNumber)->first();
+            if (isSendBotLoadOwner() == true) {
+                if ($owner != null) {
+                    $load->user_id = $owner->id;
+                    $load->userType = ROLE_OWNER;
+                    $load->operator_id = auth()->id();
+                    $load->isBot = 1;
+                    if (BlockPhoneNumber::where(function ($query) use ($owner, $mobileNumber) {
+                        $query->where('nationalCode', $owner->nationalCode)
+                            ->orWhere('phoneNumber', $mobileNumber);
+                    })->where(function ($query) {
+                        $query->where('type', 'operator')
+                            ->orWhere('type', 'both');
+                    })->exists()) {
+                        return;
+                    }
+                } else {
+                    $load->user_id = auth()->id();
+                    $load->userType = ROLE_OPERATOR;
+                    $load->operator_id = auth()->id();
+                }
+            } else {
+                $load->user_id = auth()->id();
+                $load->userType = ROLE_OPERATOR;
+                $load->operator_id = auth()->id();
+            }
+            // $load->urgent = 0;
+            $load->loadMode = 'outerCity';
+            $load->loadingHour = 0;
+            $load->loadingMinute = 0;
+            // $load->numOfTrucks = 1;
+            $load->cargoPattern = $cargoPattern;
+
+            $origin = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $origin)));
+            $destination = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $destination)));
+
+
+
+            $originCity = ProvinceCity::where('name', 'like', '%' . $origin)
+                ->where('parent_id', $originState)
+                ->first();
+
+            $destinationCity = ProvinceCity::where('name', 'like', '%' . $destination)
+                ->where('parent_id', $destinationState)
+                ->first();
+            Log::alert($destinationState);
+            Log::alert($destinationState);
+
+            $load->origin_city_id = $originCity->id;
+            $load->destination_city_id = $destinationCity->id;
+
+            $load->fromCity = $this->getCityName($load->origin_city_id);
+            $load->toCity = $this->getCityName($load->destination_city_id);
+
+            $load->loadingDate = gregorianDateToPersian(date('Y-m-d', time()), '-');
+            $load->time = time();
+
+            try {
+                $city = ProvinceCity::where('parent_id', '!=', 0)->find($load->origin_city_id);
+                if (isset($city->id)) {
+                    $load->latitude = $city->latitude;
+                    $load->longitude = $city->longitude;
+                }
+            } catch (\Exception $exception) {
+            }
+
+            $load->weightPerTruck = 0;
+
+            $load->bulk = 2;
+            $load->dangerousProducts = false;
+
+            $load->origin_state_id = AddressController::geStateIdFromCityId($load->origin_city_id);
+            $load->description = $description ?? '';
+
+            $load->mobileNumberForCoordination = $mobileNumber;
+            $load->storeFor = ROLE_DRIVER;
+            $load->status = ON_SELECT_DRIVER;
+            $load->deliveryTime = 24;
+
+            $load->date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+            $load->dateTime = now()->format('H:i:s');
+
+
+
+            // $loadDuplicateHour = Load::where('userType', 'operator')
+            //     ->where('mobileNumberForCoordination', $load->mobileNumberForCoordination)
+            //     ->where('origin_city_id', $load->origin_city_id)
+            //     ->where('destination_city_id', $load->destination_city_id)
+            //     ->where('cargoPattern', 'LIKE', '%' . $fleet . '%')
+            //     ->first();
+
+            $fleet = str_replace('_', ' ', str_replace('[', '', str_replace(']', '', $fleet)));
+
+            $fleet_id = Fleet::where('title', $fleet)->first();
+            if (!isset($fleet_id->id)) {
+                $fleet_id = Fleet::where('title', str_replace('ك', 'ک', $fleet))->first();
+            }
+            if (!isset($fleet_id->id)) {
+                $fleet_id = Fleet::where('title', str_replace('ي', 'ی', $fleet))->first();
+            }
+            if (!isset($fleet_id->id)) {
+                $fleet_id = Fleet::where('title', str_replace('ي', 'ی', str_replace('ك', 'ک', $fleet)))->first();
+            }
+            if (!isset($fleet_id->id)) {
+                $fleet_id = Fleet::where('title', str_replace('ک', 'ك', $fleet))->first();
+            }
+            if (!isset($fleet_id->id)) {
+                $fleet_id = Fleet::where('title', str_replace('ی', 'ي', $fleet))->first();
+            }
+            if (!isset($fleet_id->id)) {
+                $fleet_id = Fleet::where('title', str_replace('ی', 'ي', str_replace('ک', 'ك', $fleet)))->first();
+            }
+
+            $conditions = [
+                'mobileNumberForCoordination' => $load->mobileNumberForCoordination,
+                'origin_city_id' => $load->origin_city_id,
+                'destination_city_id' => $load->destination_city_id,
+                ['fleets', 'LIKE', '%fleet_id":' . $fleet_id->id . ',%']
+            ];
+            $loadDuplicate = Load::where($conditions)
+                ->where('userType', 'operator')
+                ->first();
+
+            $loadDuplicateOwner = Load::where($conditions)
+                ->where('userType', 'owner')
+                ->where('isBot', 0)
+                ->first();
+
+            if (is_null($loadDuplicate) && is_null($loadDuplicateOwner)) {
+                $load->save();
+            }
+
+
+            if (isset($load->id)) {
+
+                $counter++;
+
+                if (isset($fleet_id->id)) {
+                    if ($fleet_id->id == 86) {
+                        $fleet_ids = [86, 87];
+                        foreach ($fleet_ids as $id) {
+                            $fleetLoad = new FleetLoad();
+                            $fleetLoad->load_id = $load->id;
+                            $fleetLoad->fleet_id = $id;
+                            $fleetLoad->numOfFleets = 1;
+                            $fleetLoad->userType = $load->userType;
+                            $fleetLoad->save();
+                        }
+                    } else {
+                        $fleetLoad = new FleetLoad();
+                        $fleetLoad->load_id = $load->id;
+                        $fleetLoad->fleet_id = $fleet_id->id;
+                        $fleetLoad->numOfFleets = 1;
+                        $fleetLoad->userType = $load->userType;
+                        $fleetLoad->save();
+                    }
+
+                    try {
+                        $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+                        // Log::emergency("Error cargo report by 1371: ");
+
+                        $cargoReport = CargoReportByFleet::where('fleet_id', $fleetLoad->fleet_id)
+                            ->where('date', $persian_date)
+                            ->first();
+                        // Log::emergency("Error cargo report by 1376: ");
+
+                        if (isset($cargoReport->id)) {
+                            $cargoReport->count += 1;
+                            $cargoReport->save();
+                        } else {
+                            $cargoReportNew = new CargoReportByFleet;
+                            $cargoReportNew->fleet_id = $fleetLoad->fleet_id;
+                            $cargoReportNew->count = 1;
+                            $cargoReportNew->date = $persian_date;
+                            $cargoReportNew->save();
+                            // Log::emergency("Error cargo report by 1387: " . $cargoReportNew);
+
+                        }
+                    } catch (Exception $e) {
+                        Log::emergency("Error cargo report by fleets: " . $e->getMessage());
+                    }
+                }
+
+                try {
+
+                    $load->fleets = FleetLoad::join('fleets', 'fleets.id', 'fleet_loads.fleet_id')
+                        ->where('fleet_loads.load_id', $load->id)
+                        ->select('fleet_id', 'userType', 'suggestedPrice', 'numOfFleets', 'pic', 'title')
+                        ->get();
+
+                    // if ($loadDuplicate === null) {
+                    $load->save();
+                    // $this->sendLoadToOtherWeb($load);
+
+                    // }
+                } catch (\Exception $exception) {
+                    Log::emergency("---------------------------------------------------------");
+                    Log::emergency($exception->getMessage());
+                    Log::emergency("---------------------------------------------------------");
+                }
+                try {
+                    $ownerLoadCount = Owner::where('mobileNumber', $load->mobileNumberForCoordination)->first();
+                    if ($ownerLoadCount) {
+                        $ownerLoadCount->loadCount += 1;
+                        $ownerLoadCount->save();
+                    }
+                } catch (\Exception $th) {
+                    //throw $th;
+                }
+            }
+
+
+            DB::commit();
+        } catch (\Exception $exception) {
+
+            DB::rollBack();
+
+            Log::emergency("----------------------ثبت بار جدید-----------------------");
+            Log::emergency($exception);
+            Log::emergency("---------------------------------------------------------");
+        }
+    }
+
     // ---------------------- Lexicon (equivalents) ----------------------
 
     /**
