@@ -1152,18 +1152,31 @@ class DataConvertPlusController extends Controller
 
             if (!$hasKW) {
                 // A - B  /  A / B  /  A , B
-                $rePair = '/\b([[:alpha:]\p{L}\s]+)\b\s*(?:[-–—\/,]\s*)\b([[:alpha:]\p{L}\s]+)\b/u';
+                $rePair = '/\b([\p{L}\s]+?)\b\s*(?:[-–—\/,]\s*)\b([\p{L}\s]+?)\b/u';
 
-$t = preg_replace_callback($rePair, function ($m) use ($cityLexicon) {
-    $a = $this->toCanonicalCity($m[1], $cityLexicon);
-    $b = $this->toCanonicalCity($m[2], $cityLexicon);
-    if ($a && $b) return $a;
-    return $m[0];
-}, $t);
+                $t = preg_replace_callback($rePair, function ($m) use ($cityLexicon) {
+                    $a = $this->toCanonicalCity(trim($m[1]), $cityLexicon);
+                    $b = $this->toCanonicalCity(trim($m[2]), $cityLexicon);
+                    // Keep one city if both are valid
+                    if ($a && $b) {
+                        return $a;
+                    }
+                    return $m[0];
+                }, $t);
 
-                // A(B) → A
-                $t = preg_replace('/\b(' . $cityPattern . ')\s*\(\s*(' . $cityPattern . ')\s*\)/u', '$1', $t);
+                // A(B) → A   — safer version (no massive regex)
+                $reParen = '/\b([\p{L}\s]+?)\s*\(\s*([\p{L}\s]+?)\s*\)/u';
+                $t = preg_replace_callback($reParen, function ($m) use ($cityLexicon) {
+                    $a = $this->toCanonicalCity(trim($m[1]), $cityLexicon);
+                    $b = $this->toCanonicalCity(trim($m[2]), $cityLexicon);
+                    // Keep A only if both are recognized cities
+                    if ($a && $b) {
+                        return $a;
+                    }
+                    return $m[0];
+                }, $t);
             }
+
 
             $out[] = $t;
         }
