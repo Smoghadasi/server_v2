@@ -1919,11 +1919,27 @@ class DataConvertPlusController extends Controller
 
     private function simpleCityToCity(string $text, string $cityPattern, array $cityLexicon): ?array
     {
-        if (preg_match("/\b($cityPattern)\b\s*(?:به|-|تا)\s*\b($cityPattern)\b/u", $text, $m)) {
-            $o = $this->toCanonicalCity($m[1], $cityLexicon) ?? trim($m[1]);
-            $d = $this->toCanonicalCity($m[2], $cityLexicon) ?? trim($m[2]);
-            [$o, $d] = $this->filterParentCities([$o, $d]); // اگر یکی parent بود، child می‌ماند و جفت ممکن است نامعتبر شود
-            if (!empty($o) && !empty($d)) return [$o, $d];
+        // یک اتصال مسیر پیدا کن (به/تا یا خط تیره)
+        if (!preg_match('/\b(?:به|تا)\b|[-–—]/u', $text, $m, PREG_OFFSET_CAPTURE)) {
+            return null;
+        }
+
+        $op = $m[0][0];
+        $pos = $m[0][1];
+
+        $left  = trim(mb_substr($text, 0, $pos));
+        $right = trim(mb_substr($text, $pos + mb_strlen($op)));
+
+        // از الگوی بزرگ فقط یک‌بار در هر سمت استفاده می‌کنیم
+        $leftCities  = $this->collectCitiesOrdered($left,  $cityPattern, $cityLexicon);
+        $rightCities = $this->collectCitiesOrdered($right, $cityPattern, $cityLexicon);
+
+        $o = $leftCities ? end($leftCities) : null;   // آخرین شهرِ قبل از اتصال
+        $d = $rightCities[0] ?? null;                 // اولین شهرِ بعد از اتصال
+
+        if ($o && $d) {
+            [$o, $d] = $this->filterParentCities([$o, $d]);
+            if ($o && $d && $o !== $d) return [$o, $d];
         }
         return null;
     }
