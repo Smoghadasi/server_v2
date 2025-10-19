@@ -72,7 +72,7 @@
                     <td>{{ \App\Http\Controllers\FleetController::getFleetName($driver->fleet_id) }}</td>
                     <td>{{ $driver->version ?? '-' }}</td>
                     <td>{{ $driver->mobileNumber }}</td>
-                    <td>{{ $driver->transactions->last()->bank_name }}</td>
+                    <td>{{ $driver->transactions->last()->bank_name }} ({{ $driver->transactions->last()->monthsOfThePackage }})</td>
 
                     <td>
                         {{ gregorianDateToPersian($driver->created_at, '-', true) }}
@@ -96,6 +96,7 @@
                             {{ explode(' ', $driver->activeDate)[1] }}
                         @endif
                     </td>
+
                     <td>
                         <a class="btn btn-primary" href="{{ url('admin/driverInfo', $driver->id) }}">جزئیات</a>
                     </td>
