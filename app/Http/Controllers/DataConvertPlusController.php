@@ -1603,12 +1603,17 @@ class DataConvertPlusController extends Controller
             $isKW     = preg_match('/\b(?:مبدا|مبدأ|بارگیری|از|به|تا|ب|تخلیه|مقصد|مقصدها)\b/u', $t);
             if ($hasPhone || $hasPrice || $isKW) break;
 
-            if (preg_match('/^(?:(?P<title>' . $cargoAlt . ')\s+)?(?P<city>' . $cityPattern . ')\b/iu', $t, $mm)) {
-                if (!empty($mm['title'])) $titles[] = $this->aliasTitle($mm['title']);
-                $canon = $this->toCanonicalCity($mm['city'], $cityLexicon) ?? trim($mm['city']);
-                if ($canon !== '' && !in_array($canon, $destinations, true)) $destinations[] = $canon;
-                continue;
+            try {
+                if (preg_match('/^(?:(?P<title>' . $cargoAlt . ')\s+)?(?P<city>' . $cityPattern . ')\b/iu', $t, $mm)) {
+                    if (!empty($mm['title'])) $titles[] = $this->aliasTitle($mm['title']);
+                    $canon = $this->toCanonicalCity($mm['city'], $cityLexicon) ?? trim($mm['city']);
+                    if ($canon !== '' && !in_array($canon, $destinations, true)) $destinations[] = $canon;
+                    continue;
+                }
+            } catch (\Exception $e) {
+                Log::warning($e);
             }
+
 
             if (preg_match('/^\s*(?P<city>' . $cityPattern . ')\b/u', $t, $mm2)) {
                 $canon = $this->toCanonicalCity($mm2['city'], $cityLexicon) ?? trim($mm2['city']);
