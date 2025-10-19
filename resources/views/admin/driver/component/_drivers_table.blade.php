@@ -9,6 +9,7 @@
                 <th>نوع ناوگان</th>
                 <th>کد نسخه</th>
                 <th>شماره تلفن همراه</th>
+                <th>بانک</th>
                 <th>تاریخ ثبت نام</th>
                 <th>تاریخ واریزی</th>
                 <th class="text-center">عملیات</th>
@@ -70,6 +71,7 @@
                     <td>{{ \App\Http\Controllers\FleetController::getFleetName($driver->fleet_id) }}</td>
                     <td>{{ $driver->version ?? '-' }}</td>
                     <td>{{ $driver->mobileNumber }}</td>
+                    <td>{{ $driver->transactions->last()->bank_name }}</td>
 
                     <td>
                         {{ gregorianDateToPersian($driver->created_at, '-', true) }}
