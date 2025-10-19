@@ -149,7 +149,6 @@ class DataConvertPlusController extends Controller
         usort($norm, fn($a, $b) => mb_strlen($b, 'UTF-8') <=> mb_strlen($a, 'UTF-8'));
 
         return $norm;
-
     }
 
     protected function normalizeForLexicon(string $s): string
@@ -952,24 +951,12 @@ class DataConvertPlusController extends Controller
                 $counter++;
 
                 if (isset($fleet_id->id)) {
-                    if ($fleet_id->id == 86) {
-                        $fleet_ids = [86, 87];
-                        foreach ($fleet_ids as $id) {
-                            $fleetLoad = new FleetLoad();
-                            $fleetLoad->load_id = $load->id;
-                            $fleetLoad->fleet_id = $id;
-                            $fleetLoad->numOfFleets = 1;
-                            $fleetLoad->userType = $load->userType;
-                            $fleetLoad->save();
-                        }
-                    } else {
-                        $fleetLoad = new FleetLoad();
-                        $fleetLoad->load_id = $load->id;
-                        $fleetLoad->fleet_id = $fleet_id->id;
-                        $fleetLoad->numOfFleets = 1;
-                        $fleetLoad->userType = $load->userType;
-                        $fleetLoad->save();
-                    }
+                    $fleetLoad = new FleetLoad();
+                    $fleetLoad->load_id = $load->id;
+                    $fleetLoad->fleet_id = $fleet_id->id;
+                    $fleetLoad->numOfFleets = 1;
+                    $fleetLoad->userType = $load->userType;
+                    $fleetLoad->save();
 
                     try {
                         $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
