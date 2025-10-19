@@ -30,6 +30,7 @@ use App\Http\Controllers\GroupNotificationController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LimitCallController;
 use App\Http\Controllers\LoadController;
+use App\Http\Controllers\LoadTitleController;
 use App\Http\Controllers\LoginHistoryController;
 use App\Http\Controllers\ManualNotificationController;
 use App\Http\Controllers\MarketerController;
@@ -172,6 +173,13 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('equivalents', [DataConvertController::class, 'equivalents'])
             ->middleware('operator')
             ->name('equivalent.index');
+
+        // Route::get('loadTitles', [DataConvertController::class, 'loadTitles'])
+        //     ->middleware('operator')
+        //     ->name('loadTitle.index');
+
+        Route::resource('loadTitles', LoadTitleController::class)->middleware("operator");
+
 
         Route::post('addWordToEquivalent', [DataConvertController::class, 'addWordToEquivalent'])->middleware('operator');
         Route::delete('removeEquivalentWord/{equivalent}', [DataConvertController::class, 'removeEquivalentWord'])->middleware('operator')->name('removeEquivalentWord');

@@ -279,6 +279,11 @@
                         </a>
                     </li>
                 @endif
+                <li class="menu-item">
+                    <a class="menu-link" href="{{ route('loadTitles.index') }}">
+                        <div data-i18n="Without menu">عنوان ثبت بار</div>
+                    </a>
+                </li>
 
                 @if (in_array('confirmLoads', auth()->user()->userAccess))
                     <li class="menu-item">
