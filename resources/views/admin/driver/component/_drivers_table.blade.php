@@ -12,6 +12,7 @@
                 <th>بانک</th>
                 <th>تاریخ ثبت نام</th>
                 <th>تاریخ واریزی</th>
+                <th>تاریخ اتمام اشتراک</th>
                 <th class="text-center">عملیات</th>
             </tr>
         </thead>
@@ -87,6 +88,12 @@
                             @endif
                         @else
                             -
+                        @endif
+                    </td>
+                    <td>
+                        {{ gregorianDateToPersian($driver->activeDate, '-', true) }}
+                        @if (isset(explode(' ', $driver->activeDate)[1]))
+                            {{ explode(' ', $driver->activeDate)[1] }}
                         @endif
                     </td>
                     <td>

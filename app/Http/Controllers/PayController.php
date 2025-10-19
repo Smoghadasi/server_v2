@@ -748,12 +748,6 @@ class PayController extends Controller
 
     public function payDriverSina($packageName, Driver $driver)
     {
-        $anotherMerchant = in_array($driver->id, [45050, 95120, 128319, 95120, 1469, 131114, 180206, 24721, 175343, 68704, 46445, 68739, 50140, 59334, 203099, 416219]);
-        $site = SiteOption::first();
-        if (!$anotherMerchant && $site->isSecondPy == 1 && $packageName == 'monthly') {
-            return redirect("/paymentPackage/{$packageName}/{$driver->id}");
-        }
-
         $driverPackagesInfo = getDriverPackagesInfo();
         if (!isset($driverPackagesInfo['data'][$packageName]['price'])) {
             return abort(404);
@@ -1040,20 +1034,30 @@ class PayController extends Controller
                     $activeDate = date("Y-m-d H:i:s", time() + $numOfDays * 24 * 60 * 60 * $transaction->monthsOfThePackage);
                     $driver = Driver::find($transaction->user_id);
 
-                    try {
-                        $date = new \DateTime($driver->activeDate);
-                        $time = $date->getTimestamp();
-                        if ($time < time())
-                            $activeDate = date('Y-m-d', time() + $transaction->monthsOfThePackage * $numOfDays * 24 * 60 * 60);
-                        else
-                            $activeDate = date('Y-m-d', $time + $transaction->monthsOfThePackage * $numOfDays * 24 * 60 * 60);
-                    } catch (\Exception $e) {
-                    }
-                    $driver->activeDate = $activeDate;
-                    // خاور و نیسان
-                    $driver->freeCalls = 3;
+                    // try {
+                    //     $date = new \DateTime($driver->activeDate);
+                    //     $time = $date->getTimestamp();
+                    //     if ($time < time())
+                    //         $activeDate = date('Y-m-d', time() + $transaction->monthsOfThePackage * $numOfDays * 24 * 60 * 60);
+                    //     else
+                    //         $activeDate = date('Y-m-d', $time + $transaction->monthsOfThePackage * $numOfDays * 24 * 60 * 60);
+                    // } catch (\Exception $e) {
+                    // }
+                    // $driver->activeDate = $activeDate;
+                    // // خاور و نیسان
+                    // $driver->freeCalls = 3;
 
-                    // $driver->freeAcceptLoads = ($driver->freeAcceptLoads > 0 ? $driver->freeAcceptLoads : 0) + DRIVER_FREE_ACCEPT_LOAD;
+
+                    // بررسی اگر فعالیت قبلی منقضی شده
+                    $daysToAdd = 30 * $transaction->monthsOfThePackage;
+
+                    // بررسی اگر فعالیت قبلی منقضی شده یا وجود ندارد
+                    if (!$driver->activeDate || Carbon::parse($driver->activeDate)->lt(Carbon::now())) {
+                        $driver->activeDate = Carbon::now()->addDays($daysToAdd);
+                    } else {
+                        $driver->activeDate = Carbon::parse($driver->activeDate)->addDays($daysToAdd);
+                    }
+
                     $driver->save();
 
                     DB::commit();
