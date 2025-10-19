@@ -105,13 +105,10 @@
                         <div class="form-group row text-right alert alert-light border border-dark" style="color: #000000">
                             <input type="hidden" name="key[]" value="{{ $key }}">
 
-                            @foreach (['origin', 'destination', 'fleet'] as $field)
-                                @if (empty($item[$field]))
-                                    <label class="col-lg-12 mb-2 text-end">
-                                        <span class="text-danger btn-remove-item" style="font-size: 30px; cursor:pointer;" data-key="{{ $key }}">X</span>
-                                    </label>
-                                @endif
-                            @endforeach
+                            <label class="col-lg-12 mb-2 text-end">
+                                <span class="text-danger btn-remove-item" style="font-size: 30px; cursor:pointer;"
+                                    data-key="{{ $key }}">X</span>
+                            </label>
 
 
                             {{-- عنوان --}}
@@ -146,7 +143,8 @@
                                 value="{{ $item['destination'] }}">
 
                             <label class="col-lg-6 mb-2">مقصد :
-                                <select class="form-select" name="destinationState_{{ $key }}" required id="">
+                                <select class="form-select" name="destinationState_{{ $key }}" required
+                                    id="">
                                     @foreach ($item['destinations'] as $province)
                                         <option value="{{ $province->parent_id }}">
                                             {{ $item['destination'] }} - {{ $province->state }}
@@ -230,10 +228,10 @@
         $(document).ready(function() {
             $('.btn-remove-item').click(function() {
                 var key = $(this).data('key');
-                $('input[name="key[]"][value="'+key+'"]').closest('.form-group').remove();
+                $('input[name="key[]"][value="' + key + '"]').closest('.form-group').remove();
             });
         });
-        </script>
+    </script>
 
     <script>
         function separate(freight) {
