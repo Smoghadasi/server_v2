@@ -184,7 +184,7 @@ class DataConvertPlusController extends Controller
 
         // 2) داده‌های پایه
         $citiesById = DB::table('province_cities')->pluck('name', 'id')->toArray(); // id => name
-        $fleetsById = DB::table('fleets')->pluck('title', 'id')->toArray();        // id => title
+        $fleetsById = DB::table('fleets')->where('parent_id', '!=', 0)->pluck('title', 'id')->toArray();        // id => title
 
         // 📌 نقشه parent برای تشخیص سلسله‌مراتب شهر/شهرستان/استان
         $this->cityParentsMap = DB::table('province_cities')->pluck('parent_id', 'id')->toArray(); // id => parent_id
@@ -434,7 +434,7 @@ class DataConvertPlusController extends Controller
 
         // 2) داده‌های پایه
         $citiesById = DB::table('province_cities')->pluck('name', 'id')->toArray(); // id => name
-        $fleetsById = DB::table('fleets')->pluck('title', 'id')->toArray();        // id => title
+        $fleetsById = DB::table('fleets')->where('parent_id', '!=', 0)->pluck('title', 'id')->toArray();        // id => title
 
         // 📌 نقشه parent برای تشخیص سلسله‌مراتب شهر/شهرستان/استان
         $this->cityParentsMap = DB::table('province_cities')->pluck('parent_id', 'id')->toArray(); // id => parent_id
@@ -1603,10 +1603,35 @@ class DataConvertPlusController extends Controller
             $isKW     = preg_match('/\b(?:مبدا|مبدأ|بارگیری|از|به|تا|ب|تخلیه|مقصد|مقصدها)\b/u', $t);
             if ($hasPhone || $hasPrice || $isKW) break;
 
-            if (preg_match('/^(?:(?P<title>' . $cargoAlt . ')\s+)?(?P<city>' . $cityPattern . ')\b/iu', $t, $mm)) {
-                if (!empty($mm['title'])) $titles[] = $this->aliasTitle($mm['title']);
-                $canon = $this->toCanonicalCity($mm['city'], $cityLexicon) ?? trim($mm['city']);
-                if ($canon !== '' && !in_array($canon, $destinations, true)) $destinations[] = $canon;
+            if (preg_match('/\b(' . $cityPattern . ')\b/iu', $t, $mm, PREG_OFFSET_CAPTURE)) {
+                $cityRaw = $mm[1][0];
+                $cityPos = $mm[0][1];
+
+                // متن قبل از شهر را بگیر (برای کشف عنوان بارِ قبل از شهر)
+                $left = trim(mb_substr($t, 0, $cityPos));
+                // تمیزکاری ساده
+                $left = preg_replace('/[^\p{L}\s]/u', ' ', $left);
+                $left = preg_replace('/\s+/u', ' ', $left);
+
+                // اگر آخرِ بخشِ چپ با یکی از cargoWords ختم می‌شود، آن را عنوان کن
+                $maybeTitle = null;
+                foreach ($this->cargoWords as $cw) {
+                    // چک فقط انتهای رشته (بدون ساختن alternation بزرگ)
+                    $re = '/(?<!\p{L})' . preg_quote($cw, '/') . '\s*$/u';
+                    if (preg_match($re, $left)) {
+                        $maybeTitle = $this->aliasTitle($cw);
+                        break;
+                    }
+                }
+                if ($maybeTitle) {
+                    $titles[] = $maybeTitle;
+                }
+
+                // شهر
+                $canon = $this->toCanonicalCity($cityRaw, $cityLexicon) ?? trim($cityRaw);
+                if ($canon !== '' && !in_array($canon, $destinations, true)) {
+                    $destinations[] = $canon;
+                }
                 continue;
             }
 
