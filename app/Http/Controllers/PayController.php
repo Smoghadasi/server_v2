@@ -870,16 +870,31 @@ class PayController extends Controller
 
             $driver = Driver::find($transaction->user_id);
 
-            $numOfDays = 30;
-            try {
-                $numOfDays = getNumOfCurrentMonthDays();
-            } catch (Exception $e) {
-                Log::warning("getNumOfCurrentMonthDays failed: " . $e->getMessage());
-            }
+            // $numOfDays = 30;
+            // try {
+            //     $numOfDays = getNumOfCurrentMonthDays();
+            // } catch (Exception $e) {
+            //     Log::warning("getNumOfCurrentMonthDays failed: " . $e->getMessage());
+            // }
 
-            $activeTimestamp = max(strtotime($driver->activeDate ?? 'now'), time());
-            $extraDays = $transaction->monthsOfThePackage * $numOfDays;
-            $driver->activeDate = date('Y-m-d', $activeTimestamp + $extraDays * 86400);
+            // $activeTimestamp = max(strtotime($driver->activeDate ?? 'now'), time());
+            // $extraDays = $transaction->monthsOfThePackage * $numOfDays;
+            // $driver->activeDate = date('Y-m-d', $activeTimestamp + $extraDays * 86400);
+
+            // if ($driver->freeCalls > 3) {
+            //     $driver->freeCalls = 3;
+            // }
+            // $driver->save();
+
+            // بررسی اگر فعالیت قبلی منقضی شده
+            $daysToAdd = 30 * $transaction->monthsOfThePackage;
+
+            // بررسی اگر فعالیت قبلی منقضی شده یا وجود ندارد
+            if (!$driver->activeDate || Carbon::parse($driver->activeDate)->lt(Carbon::now())) {
+                $driver->activeDate = Carbon::now()->addDays($daysToAdd);
+            } else {
+                $driver->activeDate = Carbon::parse($driver->activeDate)->addDays($daysToAdd);
+            }
             if ($driver->freeCalls > 3) {
                 $driver->freeCalls = 3;
             }
