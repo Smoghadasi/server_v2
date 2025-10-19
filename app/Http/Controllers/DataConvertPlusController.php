@@ -1912,7 +1912,7 @@ class DataConvertPlusController extends Controller
         if ($fleet)        $pieces[] = "بار $fleet";
         if ($origin)       $pieces[] = "از $origin";
         if ($destination)  $pieces[] = "به $destination";
-        if ($title)        $pieces[] = "  $title";
+        // if ($title)        $pieces[] = "  $title";
         if ($price)        $pieces[] = "کرایه: $price";
         return implode(' ', $pieces);
     }
