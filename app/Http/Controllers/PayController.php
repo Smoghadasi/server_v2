@@ -748,6 +748,12 @@ class PayController extends Controller
 
     public function payDriverSina($packageName, Driver $driver)
     {
+        $anotherMerchant = in_array($driver->id, [45050, 95120, 128319, 95120, 1469, 131114, 180206, 24721, 175343, 68704, 46445, 68739, 50140, 59334, 203099, 416219]);
+        $site = SiteOption::first();
+        if (!$anotherMerchant && $site->isSecondPy == 1 && $packageName == 'monthly') {
+            return redirect("/paymentPackage/{$packageName}/{$driver->id}");
+        }
+
         $driverPackagesInfo = getDriverPackagesInfo();
         if (!isset($driverPackagesInfo['data'][$packageName]['price'])) {
             return abort(404);
@@ -1152,6 +1158,21 @@ class PayController extends Controller
                         if ($driver->freeCalls > 3) {
                             $driver->freeCalls = 3;
                         }
+
+                        // بررسی اگر فعالیت قبلی منقضی شده
+                        $daysToAdd = 30 * $transaction->monthsOfThePackage;
+
+                        // بررسی اگر فعالیت قبلی منقضی شده یا وجود ندارد
+                        if (!$driver->activeDate || Carbon::parse($driver->activeDate)->lt(Carbon::now())) {
+                            $driver->activeDate = Carbon::now()->addDays($daysToAdd);
+                        } else {
+                            $driver->activeDate = Carbon::parse($driver->activeDate)->addDays($daysToAdd);
+                        }
+                        if ($driver->freeCalls > 3) {
+                            $driver->freeCalls = 3;
+                        }
+
+
                         // try {
                         //     $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
                         //     $oneMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+30 day', time())), '/');
@@ -1325,6 +1346,166 @@ class PayController extends Controller
         return view('users.customerPayStatus', compact('message', 'status'));
     }
 
+
+    public function paymentPackage($packageName, Driver $driver)
+    {
+        $driverPackagesInfo = getDriverPackagesInfo();
+        if (!isset($driverPackagesInfo['data'][$packageName]['price']))
+            return abort(404);
+
+        $monthsOfThePackage = 0;
+        switch ($packageName) {
+            case 'monthly':
+                $monthsOfThePackage = 1;
+                break;
+            case 'trimester':
+                $monthsOfThePackage = 3;
+                break;
+            case 'sixMonths':
+                $monthsOfThePackage = 6;
+                break;
+        }
+
+
+        $amount = $driverPackagesInfo['data'][$packageName]['price'];
+
+        $CallbackURL = 'http://iran-taraabar.ir/verifyDriverPay';
+
+        $client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']);
+        $anotherMerchant = in_array($driver->id, [45050, 95120, 128319, 95120, 1469, 131114, 180206, 24721, 175343, 68704, 46445, 68739, 50140, 59334, 203099]);
+
+        $result = $client->PaymentRequest(
+            [
+                'MerchantID' => $anotherMerchant ? MERCHANT_ID : '6ea834ac-0327-4513-83c0-ff59bb090255',
+                'Amount' => $amount,
+                'Description' => "فروشگاه",
+                'Email' => "",
+                'Mobile' => "",
+                'CallbackURL' => $CallbackURL,
+            ]
+        );
+        if ($result->Status == 100) {
+
+            try {
+
+                $transaction = new Transaction();
+                $transaction->user_id = $driver->id;
+                $transaction->userType = ROLE_DRIVER;
+                $transaction->authority = $result->Authority;
+                $transaction->bank_name = ZARINPAL;
+                $transaction->status = 2;
+                $transaction->action = 'delete';
+                $transaction->amount = $amount;
+                $transaction->monthsOfThePackage = $monthsOfThePackage;
+                $transaction->save();
+
+                try {
+                    $driver = Driver::find($transaction->user_id);
+
+                    if (
+                        Transaction::where('user_id', $driver->id)
+                        ->where('userType', 'driver')
+                        ->where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
+                        ->count() == 5
+                    ) {
+                        $sms = new Driver();
+                        $sms->unSuccessPayment($driver->mobileNumber);
+                    }
+                } catch (Exception $exception) {
+                    Log::emergency("-------------------------------- unSuccessPayment -----------------------------");
+                    Log::emergency($exception->getMessage());
+                    Log::emergency("------------------------------------------------------------------------------");
+                }
+
+                if (isset($transaction->id))
+                    return redirect('https://www.zarinpal.com/pg/StartPay/' . $result->Authority);
+            } catch (\Exception $exception) {
+            }
+        }
+    }
+
+    public function paymentPackageVerify()
+    {
+        $Authority = $_GET['Authority'];
+
+        $transaction = Transaction::where('authority', $Authority)->first();
+
+        if (isset($transaction->id)) {
+
+            if ($_GET['Status'] == 'OK') {
+
+                $client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']);
+                $anotherMerchant = in_array($transaction->user_id, [45050, 95120, 128319, 95120, 1469, 131114, 180206, 24721, 175343, 68704, 46445, 68739, 50140, 59334, 203099]);
+
+                $result = $client->PaymentVerification(
+                    [
+                        'MerchantID' => $anotherMerchant ? MERCHANT_ID : '6ea834ac-0327-4513-83c0-ff59bb090255',
+                        'Authority' => $Authority,
+                        'Amount' => $transaction->amount,
+                    ]
+                );
+
+                try {
+
+                    DB::beginTransaction();
+
+                    if ($result->Status == 100) {
+                        $transaction->status = '-52';
+                        $transaction->RefId = $result->RefID;
+                        $transaction->save();
+
+                        $numOfDays = 30;
+
+                        try {
+                            $numOfDays = getNumOfCurrentMonthDays();
+                        } catch (\Exception $exception) {
+                        }
+
+
+                        $activeDate = date("Y-m-d H:i:s", time() + $numOfDays * 24 * 60 * 60 * $transaction->monthsOfThePackage);
+                        $driver = Driver::find($transaction->user_id);
+
+                        try {
+                            $date = new \DateTime($driver->activeDate);
+                            $time = $date->getTimestamp();
+                            if ($time < time())
+                                $activeDate = date('Y-m-d', time() + $transaction->monthsOfThePackage * $numOfDays * 24 * 60 * 60);
+                            else
+                                $activeDate = date('Y-m-d', $time + $transaction->monthsOfThePackage * $numOfDays * 24 * 60 * 60);
+                        } catch (\Exception $e) {
+                        }
+                        $driver->activeDate = $activeDate;
+                        // خاور و نیسان
+                        if ($driver->freeCalls > 3) {
+                            $driver->freeCalls = 3;
+                        }
+
+                        // $driver->freeAcceptLoads = ($driver->freeAcceptLoads > 0 ? $driver->freeAcceptLoads : 0) + DRIVER_FREE_ACCEPT_LOAD;
+                        $driver->save();
+                    } else {
+                        $transaction->status = $result->Status;
+                        $transaction->save();
+                    }
+
+                    DB::commit();
+
+                    $status = $result->Status;
+                    $authority = $transaction->authority;
+                    $message = $this->getStatusMessage($status);
+
+                    return view('users.driverPayStatus', compact('message', 'status', 'authority'));
+                } catch (\Exception $exception) {
+                    DB::rollBack();
+                }
+            }
+        }
+        $status = 0;
+        $authority = $transaction->authority;
+        $message = $this->getStatusMessage($status);
+        $transaction->status = 0;
+        $transaction->save();
+        return view('users.driverPayStatus', compact('message', 'status', 'authority'));
+    }
 
     /*****************************************************************************************/
     // پرداخت هزینه کنترل ناوگان
