@@ -1908,7 +1908,7 @@ class DataConvertPlusController extends Controller
         $greeting = Arr::random($randomDescription);
 
         // ✅ به فرمت استاندارد برگردانده شد
-        $pieces = [$greeting, 'درخواست حمل'];
+        $pieces = [$greeting . ': ' . "\n", 'درخواست حمل'];
         if ($fleet)        $pieces[] = "بار $fleet";
         if ($origin)       $pieces[] = "از $origin";
         if ($destination)  $pieces[] = "به $destination";
