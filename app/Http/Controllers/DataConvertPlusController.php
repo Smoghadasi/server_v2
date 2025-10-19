@@ -183,7 +183,7 @@ class DataConvertPlusController extends Controller
         $text = $this->normalizeText($raw);
 
         // 2) داده‌های پایه
-        $citiesById = DB::table('province_cities')->pluck('name', 'id')->toArray(); // id => name
+        $citiesById = DB::table('province_cities')->where('parent_id', '!=', 0)->pluck('name', 'id')->toArray(); // id => name
         $fleetsById = DB::table('fleets')->where('parent_id', '!=', 0)->pluck('title', 'id')->toArray();        // id => title
 
         // 📌 نقشه parent برای تشخیص سلسله‌مراتب شهر/شهرستان/استان
@@ -433,7 +433,7 @@ class DataConvertPlusController extends Controller
         $text = $this->normalizeText($raw);
 
         // 2) داده‌های پایه
-        $citiesById = DB::table('province_cities')->pluck('name', 'id')->toArray(); // id => name
+        $citiesById = DB::table('province_cities')->where('parent_id', '!=', 0)->pluck('name', 'id')->toArray(); // id => name
         $fleetsById = DB::table('fleets')->where('parent_id', '!=', 0)->pluck('title', 'id')->toArray();        // id => title
 
         // 📌 نقشه parent برای تشخیص سلسله‌مراتب شهر/شهرستان/استان
