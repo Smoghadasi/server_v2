@@ -108,10 +108,11 @@
                             @foreach (['origin', 'destination', 'fleet'] as $field)
                                 @if (empty($item[$field]))
                                     <label class="col-lg-12 mb-2 text-end">
-                                        <span class="text-danger" style="font-size: 30px">X</span>
+                                        <span class="text-danger btn-remove-item" style="font-size: 30px; cursor:pointer;" data-key="{{ $key }}">X</span>
                                     </label>
                                 @endif
                             @endforeach
+
 
                             {{-- عنوان --}}
                             <label class="col-lg-12 mb-2">عنوان :
@@ -224,6 +225,15 @@
 @endsection
 @section('script')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mobile-detect/1.4.5/mobile-detect.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('.btn-remove-item').click(function() {
+                var key = $(this).data('key');
+                $('input[name="key[]"][value="'+key+'"]').closest('.form-group').remove();
+            });
+        });
+        </script>
 
     <script>
         function separate(freight) {
