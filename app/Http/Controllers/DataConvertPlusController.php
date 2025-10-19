@@ -1842,9 +1842,9 @@ class DataConvertPlusController extends Controller
         }
 
         // اگر «فوری» هرجا در متن آمد، به عنوان اضافه کن
-        if (preg_match('/\bفوری\b/u', $text)) {
-            $parts[] = 'فوری';
-        }
+        // if (preg_match('/\bفوری\b/u', $text)) {
+        //     $parts[] = 'فوری';
+        // }
 
         $title = $parts ? implode('، ', $parts) : $this->titleFromPayload($this->cleanTitlePayload($text));
         return $this->dedupeAndAliasTitle($title);
