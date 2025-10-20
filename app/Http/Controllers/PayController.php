@@ -1416,34 +1416,19 @@ class PayController extends Controller
                         $transaction->RefId = $result->RefID;
                         $transaction->save();
 
-                        $numOfDays = 30;
-
-                        try {
-                            $numOfDays = getNumOfCurrentMonthDays();
-                        } catch (\Exception $exception) {
-                        }
-
-
-                        $activeDate = date("Y-m-d H:i:s", time() + $numOfDays * 24 * 60 * 60 * $transaction->monthsOfThePackage);
                         $driver = Driver::find($transaction->user_id);
 
-                        try {
-                            $date = new \DateTime($driver->activeDate);
-                            $time = $date->getTimestamp();
-                            if ($time < time())
-                                $activeDate = date('Y-m-d', time() + $transaction->monthsOfThePackage * $numOfDays * 24 * 60 * 60);
-                            else
-                                $activeDate = date('Y-m-d', $time + $transaction->monthsOfThePackage * $numOfDays * 24 * 60 * 60);
-                        } catch (\Exception $e) {
-                        }
-                        $driver->activeDate = $activeDate;
-                        // خاور و نیسان
-                        if ($driver->freeCalls > 3) {
-                            $driver->freeCalls = 3;
-                        }
+                        $daysToAdd = 30 * $transaction->monthsOfThePackage;
 
-                        // $driver->freeAcceptLoads = ($driver->freeAcceptLoads > 0 ? $driver->freeAcceptLoads : 0) + DRIVER_FREE_ACCEPT_LOAD;
+                        // بررسی اگر فعالیت قبلی منقضی شده یا وجود ندارد
+                        if (!$driver->activeDate || Carbon::parse($driver->activeDate)->lt(Carbon::now())) {
+                            $driver->activeDate = Carbon::now()->addDays($daysToAdd);
+                        } else {
+                            $driver->activeDate = Carbon::parse($driver->activeDate)->addDays($daysToAdd);
+                        }
+                        $driver->freeCalls = 3;
                         $driver->save();
+
                     } else {
                         $transaction->status = $result->Status;
                         $transaction->save();
