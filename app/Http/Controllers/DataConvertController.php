@@ -484,12 +484,16 @@ class DataConvertController extends Controller
             $text = str_replace($citiesList[$i], $mergeWords, $text);
             $citiesList[$i] = '[' . $mergeWords . ']';
         }
-
-        // اول ناوگان دو کلمه ای را جستجو و یک کلمه ای شود
-        for ($i = 0; $i < count($equivalentWords); $i++) {
-            if (count(explode(' ', $equivalentWords[$i])) > 1)
-                $text = str_replace($equivalentWords[$i], $originWords[$i], $text);
+        try {
+            // اول ناوگان دو کلمه ای را جستجو و یک کلمه ای شود
+            for ($i = 0; $i < count($equivalentWords); $i++) {
+                if (count(explode(' ', $equivalentWords[$i])) > 1)
+                    $text = str_replace($equivalentWords[$i], $originWords[$i], $text);
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
         }
+
 
         // تمام کلمات بین [] قرار گیرند
         $text = explode(' ', $text);
