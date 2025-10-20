@@ -748,11 +748,6 @@ class PayController extends Controller
 
     public function payDriverSina($packageName, Driver $driver)
     {
-        $anotherMerchant = in_array($driver->id, [45050, 95120, 128319, 95120, 1469, 131114, 180206, 24721, 175343, 68704, 46445, 68739, 50140, 59334, 203099, 416219]);
-        $site = SiteOption::first();
-        if (!$anotherMerchant && $site->isSecondPy == 1 && $packageName == 'monthly') {
-            return redirect("/paymentPackage/{$packageName}/{$driver->id}");
-        }
 
         $driverPackagesInfo = getDriverPackagesInfo();
         if (!isset($driverPackagesInfo['data'][$packageName]['price'])) {
@@ -1428,9 +1423,8 @@ class PayController extends Controller
                         }
                         $driver->freeCalls = 3;
                         $driver->save();
-
                     } else {
-                        $transaction->status = $result->Status;
+                        $transaction->status = in_array($result->Status, [100, 101]) ? -52 : $result->Status;
                         $transaction->save();
                     }
 
