@@ -149,12 +149,14 @@ class TransactionManualController extends Controller
     {
         try {
 
-            $date = new \DateTime($driver->activeDate);
-            $time = $date->getTimestamp();
-            if ($time < time())
-                $driver->activeDate = date('Y-m-d', time() + $month * 30 * 24 * 60 * 60);
-            else
-                $driver->activeDate = date('Y-m-d', $time + $month * 30 * 24 * 60 * 60);
+            $daysToAdd = 30 * $month;
+
+            // بررسی اگر فعالیت قبلی منقضی شده یا وجود ندارد
+            if (!$driver->activeDate || Carbon::parse($driver->activeDate)->lt(Carbon::now())) {
+                $driver->activeDate = Carbon::now()->addDays($daysToAdd);
+            } else {
+                $driver->activeDate = Carbon::parse($driver->activeDate)->addDays($daysToAdd);
+            }
 
             $driver->save();
             $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
