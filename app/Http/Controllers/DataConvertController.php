@@ -112,6 +112,16 @@ class DataConvertController extends Controller
         return back()->with('success', 'ویرایش شد');
     }
 
+    public function updateCargoTime(CargoConvertList $cargo)
+    {
+        $cargo->created_at = now();
+        $cargo->updated_at = now();
+        $cargo->operator_id = 0;
+        $cargo->save();
+        // return $cargo;
+        return back()->with('success', 'ویرایش شد');
+    }
+
     public function finalApprovalAndStoreCargo()
     {
         $userId = auth()->id();

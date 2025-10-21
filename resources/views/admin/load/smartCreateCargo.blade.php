@@ -79,10 +79,10 @@
                 <div class="col-lg-12">
                     <button class="btn btn-primary mb-2 float-right" type="submit">ثبت اطلاعات ویرایش شده</button>
                     <a href="{{ url('admin/removeCargoFromCargoList') }}/{{ $cargo->id }}"
-                        class="btn btn-outline-danger mb-2 float-right">
+                        class="btn btn-danger mb-2 float-right">
                         حذف
                     </a>
-                    <a href="#" class="btn btn-outline-secondary mb-2 float-right">
+                    <a href="{{ route('updateCargoTime', ['cargo' => $cargo]) }}" class="btn btn-outline-secondary mb-2 float-right">
                         ارسال به انتها
                     </a>
 
