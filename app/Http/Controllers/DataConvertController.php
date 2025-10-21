@@ -116,7 +116,7 @@ class DataConvertController extends Controller
     {
         $cargo->created_at = Carbon::now()->subMinutes(10);
         $cargo->updated_at = Carbon::now()->subMinutes(10);
-        $cargo->operator_id = 0;
+        $cargo->operator_id = 29;
         $cargo->save();
         // return $cargo;
         return back()->with('success', 'ویرایش شد');
