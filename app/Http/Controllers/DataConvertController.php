@@ -87,6 +87,7 @@ class DataConvertController extends Controller
     {
         $cargo->status = 1;
         $cargo->rejected = 1;
+        $cargo->processingUnit = 0;
         $cargo->save();
         $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
         $rejectCargo = RejectCargoOperator::where('user_id', auth()->id())

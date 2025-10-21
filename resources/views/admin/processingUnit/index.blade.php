@@ -70,18 +70,20 @@
                 @endif
             </div>
 
-
-
             <form method="post" action="{{ route('processingUnit.update', $cargo) }}" class="col-lg-6"
                 style="height: 100vh;overflow-y: auto;">
                 @csrf
 
                 <div class="col-lg-12">
                     <button class="btn btn-primary mb-2 float-right" type="submit">ذخـــیره</button>
-
+                    <a href="{{ url('admin/removeCargoFromCargoList') }}/{{ $cargo->id }}"
+                        class="btn btn-danger mb-2 float-right">
+                        حذف
+                    </a>
                     <button type="button" class="btn btn-outline-success mb-2 float-right" id="cutBtn">
                        کات (Cut)
                      </button>
+
                 </div>
                 <span class="col-lg-12 text-right">
                     <span class="alert alert-info p-1">
