@@ -34,9 +34,10 @@ class DataConvertPlusController extends Controller
         // ۱. پیدا کردن باری که قبلاً به اپراتور تخصیص داده شده
         $cargo = CargoConvertList::where([
             ['operator_id', $userId],
+            ['processingUnit', 0],
             ['status', 0],
-            // ['isBlocked', 0],
-            // ['isDuplicate', 0],
+            ['isBlocked', 0],
+            ['isDuplicate', 0],
         ])
             ->latest('id')
             ->first();
@@ -65,6 +66,7 @@ class DataConvertPlusController extends Controller
                     ->where([
                         ['operator_id', 0],
                         ['status', 0],
+                        ['processingUnit', 0],
                         ['isBlocked', 0],
                         ['isDuplicate', 0],
                     ])
@@ -77,6 +79,7 @@ class DataConvertPlusController extends Controller
                 $cargo = CargoConvertList::where([
                     ['operator_id', 0],
                     ['status', 0],
+                    ['processingUnit', 0],
                     ['isBlocked', 0],
                     ['isDuplicate', 0],
                 ])
@@ -107,6 +110,7 @@ class DataConvertPlusController extends Controller
                         ['operator_id', 0],
                         ['status', 0],
                         ['isBlocked', 0],
+                        ['processingUnit', 0],
                         ['isDuplicate', 0],
                     ])
                     ->oldest('id')

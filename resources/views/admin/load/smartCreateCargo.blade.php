@@ -87,9 +87,10 @@
                         ارسال به انتها
                     </a>
 
-                    <button type="button" class="btn btn-outline-success mb-2 float-right" id="cutBtn">
-                        کات (Cut)
-                    </button>
+                    <a class="btn btn-outline-success mb-2 float-right" href="{{ route('processingUnit', $cargo) }}">
+                        ارسال به واحد پردازش
+
+                    </a>
                 </div>
                 <span class="col-lg-12 text-right">
                     <span class="alert alert-info p-1">

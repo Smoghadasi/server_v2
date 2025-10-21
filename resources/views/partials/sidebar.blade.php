@@ -53,6 +53,15 @@
 
                 </a>
             </li>
+            <li class="menu-item">
+                <a class="menu-link" href="{{ route('processingUnit.index') }}">
+                    <i class="menu-icon tf-icons bx bx-box"></i>
+                    <div data-i18n="Without menu" >
+                        واحد پردازش
+                    </div>
+
+                </a>
+            </li>
         @endif
 
         <li class="menu-item {{ request()->is('admin/support*') ? 'active open' : '' }}">
