@@ -88,7 +88,7 @@
                     </a>
 
                     <button type="button" class="btn btn-outline-success mb-2 float-right" id="cutBtn">
-                        کپی
+                        کات (Cut)
                     </button>
                 </div>
                 <span class="col-lg-12 text-right">
