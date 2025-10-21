@@ -36,7 +36,20 @@
             <li class="menu-item">
                 <a class="menu-link" href="{{ route('admin.smartStoreCargo') }}">
                     <i class="menu-icon tf-icons bx bx-box"></i>
-                    <div data-i18n="Without menu">ثبت بار (پلاس)</div>
+                    <div data-i18n="Without menu">ثبت بار پلاس
+                        @php
+                            $cargoCount = \App\Http\Controllers\DataConvertPlusController::getCountOfCargos();
+                        @endphp
+
+                        @if ($cargoCount > 40)
+                            <span class="text-danger">({{ $cargoCount }})</span>
+                        @elseif ($cargoCount > 20)
+                            <span class="text-warning">({{ $cargoCount }})</span>
+                        @else
+                            <span>({{ $cargoCount }})</span>
+                        @endif
+
+                    </div>
                 </a>
             </li>
         @endif
