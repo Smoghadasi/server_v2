@@ -79,9 +79,16 @@
                 <div class="col-lg-12">
                     <button class="btn btn-primary mb-2 float-right" type="submit">ثبت اطلاعات ویرایش شده</button>
                     <a href="{{ url('admin/removeCargoFromCargoList') }}/{{ $cargo->id }}"
-                        class="btn btn-danger mb-2 float-right">
-                        نمایش بار بعدی
+                        class="btn btn-outline-danger mb-2 float-right">
+                        حذف
                     </a>
+                    <a href="#" class="btn btn-outline-secondary mb-2 float-right">
+                        ارسال به انتها
+                    </a>
+
+                    <button type="button" class="btn btn-outline-success mb-2 float-right" id="copyBtn">
+                        کپی
+                    </button>
                 </div>
                 <span class="col-lg-12 text-right">
                     <span class="alert alert-info p-1">
@@ -94,7 +101,7 @@
                         @endphp
                     </span>
                 </span>
-                <textarea class="form-control mb-2" placeholder="ورود لیست بارها" name="cargo" rows="20">{{ $cargo->cargo }}</textarea>
+                <textarea id="cargoText" class="form-control mb-2" placeholder="ورود لیست بارها" name="cargo" rows="20">{{ $cargo->cargo }}</textarea>
             </form>
 
             <div class="col-lg-6" style="height: 100vh; overflow-y: auto;">
@@ -223,6 +230,18 @@
 @endsection
 @section('script')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mobile-detect/1.4.5/mobile-detect.min.js"></script>
+
+    <script>
+        $('#copyBtn').on('click', function() {
+            var text = $('#cargoText').val();
+            navigator.clipboard.writeText(text).then(function() {
+                alert('متن کپی شد ✅');
+            }, function(err) {
+                alert('خطا در کپی کردن متن ❌');
+                console.error(err);
+            });
+        });
+    </script>
 
     <script>
         $(document).ready(function() {
