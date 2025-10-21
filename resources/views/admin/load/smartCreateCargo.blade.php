@@ -82,11 +82,12 @@
                         class="btn btn-danger mb-2 float-right">
                         حذف
                     </a>
-                    <a href="{{ route('updateCargoTime', ['cargo' => $cargo]) }}" class="btn btn-outline-secondary mb-2 float-right">
+                    <a href="{{ route('updateCargoTime', ['cargo' => $cargo]) }}"
+                        class="btn btn-outline-secondary mb-2 float-right">
                         ارسال به انتها
                     </a>
 
-                    <button type="button" class="btn btn-outline-success mb-2 float-right" id="copyBtn">
+                    <button type="button" class="btn btn-outline-success mb-2 float-right" id="cutBtn">
                         کپی
                     </button>
                 </div>
@@ -232,12 +233,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mobile-detect/1.4.5/mobile-detect.min.js"></script>
 
     <script>
-        $('#copyBtn').on('click', function() {
-            var text = $('#cargoText').val();
+        $('#cutBtn').on('click', function() {
+            var $textarea = $('#cargoText');
+            var text = $textarea.val();
+
             navigator.clipboard.writeText(text).then(function() {
-                alert('متن کپی شد ✅');
+                $textarea.val(''); // پاک کردن متن بعد از کپی
+                // alert('متن کات شد ✂️');
             }, function(err) {
-                alert('خطا در کپی کردن متن ❌');
                 console.error(err);
             });
         });
