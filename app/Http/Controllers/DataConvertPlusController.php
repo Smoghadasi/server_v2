@@ -691,6 +691,14 @@ class DataConvertPlusController extends Controller
         // ], 200, [], JSON_UNESCAPED_UNICODE);
     }
 
+    public static function getCountOfCargos()
+    {
+        return CargoConvertList::where('operator_id', 0)
+            ->where('isBlocked', 0)
+            ->where('isDuplicate', 0)
+            ->count();
+    }
+
     // ذخیره دسته ای بارها
     public function storeMultiCargoSmart(Request $request, CargoConvertList $cargo)
     {
