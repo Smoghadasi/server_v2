@@ -829,6 +829,89 @@ class PayController extends Controller
         }
     }
 
+    public function payDriverSinaTest($packageName, Driver $driver)
+    {
+
+        $driverPackagesInfo = getDriverPackagesInfo();
+        if (!isset($driverPackagesInfo['data'][$packageName]['price'])) {
+            return abort(404);
+        }
+
+        $monthsOfThePackage = match ($packageName) {
+            'monthly' => 1,
+            'trimester' => 3,
+            'sixMonths' => 6,
+            default => 0
+        };
+
+        $price = $driverPackagesInfo['data'][$packageName]['price'];
+
+        $amount = match ($price) {
+            MONTHLY => '2500000',
+            TRIMESTER => '6500000',
+            SIXMONTHS => '12500000',
+            default => '0'
+        };
+
+        $amountOrginal = $price;
+
+        $url = "https://pec.shaparak.ir/NewIPGServices/Sale/SaleService.asmx?WSDL";
+        $callbackUrl = 'https://dashboard.iran-tarabar.ir/verifyDriverPaySina';
+
+        $orderId = $driver->id . date('mHis') . substr(Carbon::now()->micro, 0, 2) . rand(100, 999);
+
+        $params = [
+            "LoginAccount" => '86166602',
+            "Amount" => $amount,
+            "OrderId" => $orderId,
+            "CallBackUrl" => $callbackUrl,
+            "AdditionalData" => '',
+            "Originator" => ''
+        ];
+
+        try {
+            $client = new SoapClient($url);
+            $result = $client->SalePaymentRequest(['requestData' => $params]);
+
+            if ($result->SalePaymentRequestResult->Token && $result->SalePaymentRequestResult->Status === 0) {
+                $token = $result->SalePaymentRequestResult->Token;
+
+                $transaction = new Transaction();
+                $transaction->user_id = $driver->id;
+                $transaction->userType = ROLE_DRIVER;
+                $transaction->authority = $token;
+                $transaction->status = 2;
+                $transaction->bank_name = SINA;
+                $transaction->amount = $amountOrginal;
+                $transaction->monthsOfThePackage = $monthsOfThePackage;
+                $transaction->save();
+
+                // بررسی دفعات پرداخت در روز
+                try {
+                    if (
+                        Transaction::where('user_id', $driver->id)
+                        ->where('userType', 'driver')
+                        ->where('created_at', '>', now()->startOfDay())
+                        ->count() >= 5
+                    ) {
+                        $driver->unSuccessPayment($driver->mobileNumber);
+                    }
+                } catch (Exception $e) {
+                    Log::emergency("unSuccessPayment failed: " . $e->getMessage());
+                }
+
+                return redirect("https://pec.shaparak.ir/NewIPG/?Token=$token");
+            } else {
+                $err_msg = "(<strong>کد خطا: " . $result->SalePaymentRequestResult->Status . "</strong>) " .
+                    $result->SalePaymentRequestResult->Message;
+                return $err_msg;
+            }
+        } catch (Exception $ex) {
+            Log::error("Soap Error in payDriverSina: " . $ex->getMessage());
+            return "خطا در ارتباط با درگاه بانک. لطفا دوباره تلاش کنید.";
+        }
+    }
+
 
     public function verifyDriverPaySina(Request $request)
     {
