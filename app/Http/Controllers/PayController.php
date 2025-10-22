@@ -931,6 +931,15 @@ class PayController extends Controller
             ]);
         }
 
+        // ✅ جلوگیری از اجرای مجدد در صورت تأیید شدن تراکنش
+        if ($transaction->status == 100) {
+            return view('users.driverPayStatus', [
+                'message' => $this->getStatusMessage(100),
+                'status' => 100,
+                'authority' => $transaction->authority
+            ]);
+        }
+
         try {
             $client = new SoapClient($confirmUrl);
             $result = $client->ConfirmPayment(['requestData' => $params]);
@@ -945,7 +954,7 @@ class PayController extends Controller
                 ]);
             }
 
-            // تایید موفق
+            // ✅ تایید موفق (و فقط برای بار اول اجرا می‌شود)
             DB::beginTransaction();
 
             $transaction->status = 100;
@@ -954,31 +963,14 @@ class PayController extends Controller
 
             $driver = Driver::find($transaction->user_id);
 
-            // $numOfDays = 30;
-            // try {
-            //     $numOfDays = getNumOfCurrentMonthDays();
-            // } catch (Exception $e) {
-            //     Log::warning("getNumOfCurrentMonthDays failed: " . $e->getMessage());
-            // }
-
-            // $activeTimestamp = max(strtotime($driver->activeDate ?? 'now'), time());
-            // $extraDays = $transaction->monthsOfThePackage * $numOfDays;
-            // $driver->activeDate = date('Y-m-d', $activeTimestamp + $extraDays * 86400);
-
-            // if ($driver->freeCalls > 3) {
-            //     $driver->freeCalls = 3;
-            // }
-            // $driver->save();
-
-            // بررسی اگر فعالیت قبلی منقضی شده
             $daysToAdd = 30 * $transaction->monthsOfThePackage;
 
-            // بررسی اگر فعالیت قبلی منقضی شده یا وجود ندارد
             if (!$driver->activeDate || Carbon::parse($driver->activeDate)->lt(Carbon::now())) {
                 $driver->activeDate = Carbon::now()->addDays($daysToAdd);
             } else {
                 $driver->activeDate = Carbon::parse($driver->activeDate)->addDays($daysToAdd);
             }
+
             if ($driver->freeCalls > 3) {
                 $driver->freeCalls = 3;
             }
@@ -987,18 +979,17 @@ class PayController extends Controller
             DB::commit();
 
             try {
+                // ارسال نوتیفیکیشن در صورت نیاز
                 if (!empty($driver->FCM_token) && $driver->version > 68) {
                     $today = date('Y/m/d');
                     $persianDate = gregorianDateToPersian($today, '/');
 
-                    // نگاشت ماه‌ها به تعداد روز
                     $packageMonths = [
                         '1' => '+30 day',
                         '3' => '+90 day',
                         '6' => '+180 day',
                     ];
 
-                    // محاسبه تاریخ انقضا بر اساس پکیج
                     $expireDate = '';
                     if (!empty($packageMonths[$transaction->monthsOfThePackage])) {
                         $expireDate = gregorianDateToPersian(
@@ -1006,7 +997,7 @@ class PayController extends Controller
                             '/'
                         );
                     }
-                    // پیام
+
                     $title = 'راننده عزیز، 🎉';
                     $body  = "خرید شما در تاریخ {$persianDate} با موفقیت انجام شد.\nتاریخ پایان اعتبار: {$expireDate} 📞";
 
@@ -1032,6 +1023,7 @@ class PayController extends Controller
             ]);
         }
     }
+
 
     private function sendNotificationWeb($FCM_token, $title, $body, $loadId = '/')
     {
