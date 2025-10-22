@@ -979,17 +979,18 @@ class PayController extends Controller
             DB::commit();
 
             try {
-                // ارسال نوتیفیکیشن در صورت نیاز
                 if (!empty($driver->FCM_token) && $driver->version > 68) {
                     $today = date('Y/m/d');
                     $persianDate = gregorianDateToPersian($today, '/');
 
+                    // نگاشت ماه‌ها به تعداد روز
                     $packageMonths = [
                         '1' => '+30 day',
                         '3' => '+90 day',
                         '6' => '+180 day',
                     ];
 
+                    // محاسبه تاریخ انقضا بر اساس پکیج
                     $expireDate = '';
                     if (!empty($packageMonths[$transaction->monthsOfThePackage])) {
                         $expireDate = gregorianDateToPersian(
@@ -997,7 +998,7 @@ class PayController extends Controller
                             '/'
                         );
                     }
-
+                    // پیام
                     $title = 'راننده عزیز، 🎉';
                     $body  = "خرید شما در تاریخ {$persianDate} با موفقیت انجام شد.\nتاریخ پایان اعتبار: {$expireDate} 📞";
 
