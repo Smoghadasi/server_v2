@@ -1124,13 +1124,19 @@ class PayController extends Controller
 
                     $driver = Driver::find($transaction->user_id);
 
-                    $monthsToAdd = $transaction->monthsOfThePackage;
+                    $daysToAdd = 30 * $transaction->monthsOfThePackage;
 
-                    // بررسی اگر فعالیت قبلی منقضی شده یا وجود ندارد
-                    if (!$driver->activeDate || Carbon::parse($driver->activeDate)->lt(Carbon::now())) {
-                        $driver->activeDate = Carbon::now()->addMonths($monthsToAdd);
+                    // زمان فعلی بدون ساعت
+                    $now = Carbon::now()->startOfDay();
+
+                    // تاریخ فعال فعلی بدون ساعت
+                    $activeDate = $driver->activeDate ? Carbon::parse($driver->activeDate)->startOfDay() : null;
+
+                    // اگر تاریخ فعال وجود ندارد یا گذشته است
+                    if (!$activeDate || $activeDate->lt($now)) {
+                        $driver->activeDate = $now->addDays($daysToAdd);
                     } else {
-                        $driver->activeDate = Carbon::parse($driver->activeDate)->addMonths($monthsToAdd);
+                        $driver->activeDate = $activeDate->addDays($daysToAdd);
                     }
 
                     $driver->save();
