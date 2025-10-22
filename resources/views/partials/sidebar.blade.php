@@ -61,9 +61,9 @@
                         $textClass = '';
 
                         if ($cargoProcessingUnitsCount > 5) {
-                            $textClass = 'text-danger';
-                        } elseif ($cargoProcessingUnitsCount > 20) {
                             $textClass = 'text-warning';
+                        } elseif ($cargoProcessingUnitsCount > 10) {
+                            $textClass = 'text-danger';
                         }
                     @endphp
 
