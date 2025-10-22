@@ -861,7 +861,7 @@ class PayController extends Controller
         $orderId = $driver->id . date('mHis') . substr(Carbon::now()->micro, 0, 2) . rand(100, 999);
 
         $params = [
-            "LoginAccount" => '86166602',
+            "LoginAccount" => 'PIN_SINA',
             "Amount" => $amount,
             "OrderId" => $orderId,
             "CallBackUrl" => $callbackUrl,
@@ -1107,62 +1107,69 @@ class PayController extends Controller
     {
         $Authority = $request->trackId;
         $success = $request->success;
-        // return $request;
 
         $transaction = Transaction::where('authority', $Authority)->first();
 
-        if (isset($transaction->id)) {
-
-            if ($success == 1) {
-
-                try {
-
-                    DB::beginTransaction();
-                    $transaction->status = 100;
-                    $transaction->RefId = $Authority;
-                    $transaction->save();
-
-                    $driver = Driver::find($transaction->user_id);
-
-                    $daysToAdd = 30 * $transaction->monthsOfThePackage;
-
-                    // زمان فعلی بدون ساعت
-                    $now = Carbon::now()->startOfDay();
-
-                    // تاریخ فعال فعلی بدون ساعت
-                    $activeDate = $driver->activeDate ? Carbon::parse($driver->activeDate)->startOfDay() : null;
-
-                    // اگر تاریخ فعال وجود ندارد یا گذشته است
-                    if (!$activeDate || $activeDate->lt($now)) {
-                        $driver->activeDate = $now->addDays($daysToAdd);
-                    } else {
-                        $driver->activeDate = $activeDate->addDays($daysToAdd);
-                    }
-
-                    $driver->save();
-
-                    DB::commit();
-
-                    $status = $request->status;
-                    $message = $this->getStatusMessage($status);
-                    $authority = $transaction->authority;
-                    return view('users.driverPayStatus', compact('message', 'status', 'authority'));
-                } catch (\Exception $exception) {
-                    DB::rollBack();
-                }
-            } else {
-                $transaction->status = 0;
-                $transaction->save();
-            }
+        if (!$transaction) {
+            $status = 0;
+            $message = $this->getStatusMessage($status);
+            return view('users.driverPayStatus', compact('message', 'status', 'Authority'));
         }
+
+        // ✅ جلوگیری از تکرار اعمال تراکنش
+        if ($transaction->status == 100) {
+            // تراکنش قبلاً تأیید شده، فقط پیام موفقیت را نشان بده
+            $status = 100;
+            $message = $this->getStatusMessage($status);
+            $authority = $transaction->authority;
+            return view('users.driverPayStatus', compact('message', 'status', 'authority'));
+        }
+
+        if ($success == 1) {
+            try {
+                DB::beginTransaction();
+
+                $transaction->status = 100;
+                $transaction->RefId = $Authority;
+                $transaction->save();
+
+                $driver = Driver::find($transaction->user_id);
+
+                $daysToAdd = 30 * $transaction->monthsOfThePackage;
+
+                if (!$driver->activeDate || Carbon::parse($driver->activeDate)->lt(Carbon::now())) {
+                    $driver->activeDate = Carbon::now()->addDays($daysToAdd);
+                } else {
+                    $driver->activeDate = Carbon::parse($driver->activeDate)->addDays($daysToAdd);
+                }
+
+                $driver->save();
+
+                DB::commit();
+
+                $status = 100;
+                $message = $this->getStatusMessage($status);
+                $authority = $transaction->authority;
+
+                return view('users.driverPayStatus', compact('message', 'status', 'authority'));
+            } catch (\Exception $exception) {
+                DB::rollBack();
+                $status = 0;
+                $message = 'خطایی در پردازش پرداخت رخ داده است.';
+                return view('users.driverPayStatus', compact('message', 'status', 'Authority'));
+            }
+        } else {
+            $transaction->status = 0;
+            $transaction->save();
+        }
+
         $status = 0;
         $message = $this->getStatusMessage($status);
         $authority = $transaction->authority;
-        $transaction->status = 0;
-        $transaction->save();
 
         return view('users.driverPayStatus', compact('message', 'status', 'authority'));
     }
+
     public function verifyDriverPay()
     {
 
