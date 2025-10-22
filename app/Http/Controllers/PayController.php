@@ -1144,6 +1144,37 @@ class PayController extends Controller
                 $message = $this->getStatusMessage($status);
                 $authority = $transaction->authority;
 
+                try {
+                    if (!empty($driver->FCM_token) && $driver->version > 68) {
+                        $today = date('Y/m/d');
+                        $persianDate = gregorianDateToPersian($today, '/');
+
+                        // نگاشت ماه‌ها به تعداد روز
+                        $packageMonths = [
+                            '1' => '+30 day',
+                            '3' => '+90 day',
+                            '6' => '+180 day',
+                        ];
+
+                        // محاسبه تاریخ انقضا بر اساس پکیج
+                        $expireDate = '';
+                        if (!empty($packageMonths[$transaction->monthsOfThePackage])) {
+                            $expireDate = gregorianDateToPersian(
+                                date('Y/m/d', strtotime($packageMonths[$transaction->monthsOfThePackage])),
+                                '/'
+                            );
+                        }
+                        // پیام
+                        $title = 'راننده عزیز، 🎉';
+                        $body  = "خرید شما در تاریخ {$persianDate} با موفقیت انجام شد.\nتاریخ پایان اعتبار: {$expireDate} 📞";
+
+                        $this->sendNotificationWeb($driver->FCM_token, $title, $body);
+                    }
+                } catch (\Exception $e) {
+                    Log::warning('نوتیف مربوط به افزایش اعتبار راننده');
+                    Log::warning($e->getMessage());
+                }
+
                 return view('users.driverPayStatus', compact('message', 'status', 'authority'));
             } catch (\Exception $exception) {
                 DB::rollBack();
@@ -1231,17 +1262,18 @@ class PayController extends Controller
 
 
                 try {
-                    // ارسال نوتیفیکیشن در صورت نیاز
                     if (!empty($driver->FCM_token) && $driver->version > 68) {
                         $today = date('Y/m/d');
                         $persianDate = gregorianDateToPersian($today, '/');
 
+                        // نگاشت ماه‌ها به تعداد روز
                         $packageMonths = [
                             '1' => '+30 day',
                             '3' => '+90 day',
                             '6' => '+180 day',
                         ];
 
+                        // محاسبه تاریخ انقضا بر اساس پکیج
                         $expireDate = '';
                         if (!empty($packageMonths[$transaction->monthsOfThePackage])) {
                             $expireDate = gregorianDateToPersian(
@@ -1249,7 +1281,7 @@ class PayController extends Controller
                                 '/'
                             );
                         }
-
+                        // پیام
                         $title = 'راننده عزیز، 🎉';
                         $body  = "خرید شما در تاریخ {$persianDate} با موفقیت انجام شد.\nتاریخ پایان اعتبار: {$expireDate} 📞";
 
@@ -1490,68 +1522,133 @@ class PayController extends Controller
 
     public function paymentPackageVerify()
     {
-        $Authority = $_GET['Authority'];
+        $Authority = $_GET['Authority'] ?? null;
+        $statusParam = $_GET['Status'] ?? null;
 
         $transaction = Transaction::where('authority', $Authority)->first();
 
-        if (isset($transaction->id)) {
+        if (!$transaction) {
+            return view('users.driverPayStatus', [
+                'message' => 'تراکنش یافت نشد',
+                'status' => 0
+            ]);
+        }
 
-            if ($_GET['Status'] == 'OK') {
+        // ✅ جلوگیری از تکرار اعمال تراکنش در صورت تأیید قبلی
+        if (in_array($transaction->status, [100, -52])) {
+            $message = $this->getStatusMessage(100);
+            $authority = $transaction->authority;
+            return view('users.driverPayStatus', compact('message', 'authority') + ['status' => 100]);
+        }
 
-                $client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']);
-                $anotherMerchant = in_array($transaction->user_id, [45050, 95120, 128319, 95120, 1469, 131114, 180206, 24721, 175343, 68704, 46445, 68739, 50140, 59334, 203099]);
+        if ($statusParam == 'OK') {
+            $client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']);
 
-                $result = $client->PaymentVerification(
-                    [
-                        'MerchantID' => $anotherMerchant ? MERCHANT_ID : '6ea834ac-0327-4513-83c0-ff59bb090255',
-                        'Authority' => $Authority,
-                        'Amount' => $transaction->amount,
-                    ]
-                );
+            $anotherMerchant = in_array($transaction->user_id, [
+                45050,
+                95120,
+                128319,
+                95120,
+                1469,
+                131114,
+                180206,
+                24721,
+                175343,
+                68704,
+                46445,
+                68739,
+                50140,
+                59334,
+                203099
+            ]);
 
-                try {
+            $result = $client->PaymentVerification([
+                'MerchantID' => $anotherMerchant ? MERCHANT_ID : '6ea834ac-0327-4513-83c0-ff59bb090255',
+                'Authority' => $Authority,
+                'Amount' => $transaction->amount,
+            ]);
 
-                    DB::beginTransaction();
+            try {
+                DB::beginTransaction();
 
-                    if ($result->Status == 100) {
-                        $transaction->status = '-52';
-                        $transaction->RefId = $result->RefID;
-                        $transaction->save();
+                if ($result->Status == 100) {
+                    $transaction->status = '-52';
+                    $transaction->RefId = $result->RefID;
+                    $transaction->save();
 
-                        $driver = Driver::find($transaction->user_id);
+                    $driver = Driver::find($transaction->user_id);
 
-                        $daysToAdd = 30 * $transaction->monthsOfThePackage;
+                    $daysToAdd = 30 * $transaction->monthsOfThePackage;
 
-                        // بررسی اگر فعالیت قبلی منقضی شده یا وجود ندارد
-                        if (!$driver->activeDate || Carbon::parse($driver->activeDate)->lt(Carbon::now())) {
-                            $driver->activeDate = Carbon::now()->addDays($daysToAdd);
-                        } else {
-                            $driver->activeDate = Carbon::parse($driver->activeDate)->addDays($daysToAdd);
-                        }
-                        $driver->freeCalls = 3;
-                        $driver->save();
+                    // بررسی اگر فعالیت قبلی منقضی شده یا وجود ندارد
+                    if (!$driver->activeDate || Carbon::parse($driver->activeDate)->lt(Carbon::now())) {
+                        $driver->activeDate = Carbon::now()->addDays($daysToAdd);
                     } else {
-                        $transaction->status = in_array($result->Status, [100, 101]) ? -52 : $result->Status;
-                        $transaction->save();
+                        $driver->activeDate = Carbon::parse($driver->activeDate)->addDays($daysToAdd);
                     }
 
-                    DB::commit();
-
-                    $status = $result->Status;
-                    $authority = $transaction->authority;
-                    $message = $this->getStatusMessage($status);
-
-                    return view('users.driverPayStatus', compact('message', 'status', 'authority'));
-                } catch (\Exception $exception) {
-                    DB::rollBack();
+                    $driver->freeCalls = 3;
+                    $driver->save();
+                } else {
+                    $transaction->status = in_array($result->Status, [100, 101]) ? -52 : $result->Status;
+                    $transaction->save();
                 }
+
+                DB::commit();
+
+                $status = $result->Status;
+                $authority = $transaction->authority;
+                $message = $this->getStatusMessage($status);
+
+                try {
+                    if (!empty($driver->FCM_token) && $driver->version > 68) {
+                        $today = date('Y/m/d');
+                        $persianDate = gregorianDateToPersian($today, '/');
+
+                        // نگاشت ماه‌ها به تعداد روز
+                        $packageMonths = [
+                            '1' => '+30 day',
+                            '3' => '+90 day',
+                            '6' => '+180 day',
+                        ];
+
+                        // محاسبه تاریخ انقضا بر اساس پکیج
+                        $expireDate = '';
+                        if (!empty($packageMonths[$transaction->monthsOfThePackage])) {
+                            $expireDate = gregorianDateToPersian(
+                                date('Y/m/d', strtotime($packageMonths[$transaction->monthsOfThePackage])),
+                                '/'
+                            );
+                        }
+                        // پیام
+                        $title = 'راننده عزیز، 🎉';
+                        $body  = "خرید شما در تاریخ {$persianDate} با موفقیت انجام شد.\nتاریخ پایان اعتبار: {$expireDate} 📞";
+
+                        $this->sendNotificationWeb($driver->FCM_token, $title, $body);
+                    }
+                } catch (\Exception $e) {
+                    Log::warning('نوتیف مربوط به افزایش اعتبار راننده');
+                    Log::warning($e->getMessage());
+                }
+
+                return view('users.driverPayStatus', compact('message', 'status', 'authority'));
+            } catch (\Exception $exception) {
+                DB::rollBack();
+                Log::error("paymentPackageVerify error: " . $exception->getMessage());
+                return view('users.driverPayStatus', [
+                    'message' => 'خطا در تایید پرداخت، لطفا با پشتیبانی تماس بگیرید.',
+                    'status' => 0
+                ]);
             }
         }
+
+        // وضعیت ناموفق
         $status = 0;
         $authority = $transaction->authority;
-        $message = $this->getStatusMessage($status);
         $transaction->status = 0;
         $transaction->save();
+        $message = $this->getStatusMessage($status);
+
         return view('users.driverPayStatus', compact('message', 'status', 'authority'));
     }
 

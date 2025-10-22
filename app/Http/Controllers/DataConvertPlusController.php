@@ -877,8 +877,6 @@ class DataConvertPlusController extends Controller
             $destinationCity = ProvinceCity::where('name', 'like', '%' . $destination)
                 ->where('parent_id', $destinationState)
                 ->first();
-            Log::alert($destinationState);
-            Log::alert($destinationState);
 
             $load->origin_city_id = $originCity->id;
             $load->destination_city_id = $destinationCity->id;
