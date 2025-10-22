@@ -115,10 +115,11 @@ class DataConvertController extends Controller
 
     public function updateCargoTime(CargoConvertList $cargo)
     {
-        $cargo->created_at = Carbon::now()->subMinutes(5);
-        $cargo->updated_at = Carbon::now()->subMinutes(5);
-        $cargo->operator_id = 0;
-        $cargo->save();
+        CargoConvertList::create([
+            'cargo_orginal' => $cargo->cargo_orginal,
+            'cargo' => $cargo->cargo,
+        ]);
+        $cargo->delete();
         // return $cargo;
         return back()->with('success', 'ویرایش شد');
     }

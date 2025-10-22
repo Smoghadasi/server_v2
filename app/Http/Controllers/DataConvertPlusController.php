@@ -703,6 +703,13 @@ class DataConvertPlusController extends Controller
             ->count();
     }
 
+    public static function getCountOfCargoProcessingUnits()
+    {
+        return CargoConvertList::where('processingUnit', 1)
+            ->where('status', 0)
+            ->count();
+    }
+
     // ذخیره دسته ای بارها
     public function storeMultiCargoSmart(Request $request, CargoConvertList $cargo)
     {
