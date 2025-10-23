@@ -1628,7 +1628,7 @@ class DataConvertPlusController extends Controller
                     continue;
                 }
             } catch (\Exception $e) {
-                Log::warning($e);
+                // Log::warning($e);
             }
 
 
@@ -1910,7 +1910,7 @@ class DataConvertPlusController extends Controller
             $p = $this->aliasTitle($p);
             if (!in_array($p, $norm, true)) $norm[] = $p;
         }
-        return $norm ? implode('، ', $norm) : null;
+        return $norm ? implode(' ، ', $norm) . ' ' : null;
     }
 
     private function makeDescription($fleet, $origin, $destination, $title, $price, $raw)
