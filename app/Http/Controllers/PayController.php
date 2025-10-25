@@ -861,7 +861,7 @@ class PayController extends Controller
         $orderId = $driver->id . date('mHis') . substr(Carbon::now()->micro, 0, 2) . rand(100, 999);
 
         $params = [
-            "LoginAccount" => 'PIN_SINA',
+            "LoginAccount" => PIN_SINA2,
             "Amount" => $amount,
             "OrderId" => $orderId,
             "CallBackUrl" => $callbackUrl,

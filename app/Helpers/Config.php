@@ -129,6 +129,7 @@ const MELLAT = 'mellat'; // بانک ملت
 // پین کد بانک سینا
 
 const PIN_SINA = "UfcE2rb2i77PipX3ixOC";
+const PIN_SINA2 = "R3XlbdXTo6RR425m7h7t";
 
 const API_ACCESS_KEY_USER = 'AAAApyggZl8:APA91bG3uw8zZLi9XRK16x6o9luTeucXldvSx1yOy9jhpe0lRC__qCfA05jsf8BtsUbK4i9bWI2eIlTSwHbqKHHtPFtu3D1BarFh2l4ETO-klvhSkzdnLsU-pr2fYCfWRhBUzuBUfipI';
 const API_ACCESS_KEY_TRANSPORTATION_COMPANY = 'AAAAYkHeAws:APA91bHTq3VpvOTsnQpjZjYQzGvU1M3OOPuW26Lw9Zg1yUmSdjw9hfTul6fQ2TVL7XexEwzmOv960dsyeajZbs4yJaOdG0qtQj0UMOtYkI_f3ZuY6xZD1SSmt7eczO9rsVVD6v0WpuEq';
