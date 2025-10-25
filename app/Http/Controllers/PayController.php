@@ -856,7 +856,7 @@ class PayController extends Controller
         $amountOrginal = $price;
 
         $url = "https://pec.shaparak.ir/NewIPGServices/Sale/SaleService.asmx?WSDL";
-        $callbackUrl = 'https://dashboard.iran-tarabar.ir/verifyDriverPaySina';
+        $callbackUrl = 'https://dashboard.iran-tarabar.ir/verifyDriverPaySinaTest';
 
         $orderId = $driver->id . date('mHis') . substr(Carbon::now()->micro, 0, 2) . rand(100, 999);
 
