@@ -89,15 +89,18 @@ class ProcessingUnitController extends Controller
         return redirect(url('dashboard'))->with('danger', 'هیچ باری وجود ندارد');
     }
 
-    public function processingUnit(CargoConvertList $cargo)
+    public function processingUnit($cargoId)
     {
-        $cargo->processingUnit = 1;
-        $cargo->operator_id = 0;
-        $cargo->status = 0;
-        $cargo->save();
+        $cargo = CargoConvertList::find($cargoId);
+        if ($cargo) {
+            $cargo->processingUnit = 1;
+            $cargo->operator_id = 0;
+            $cargo->status = 0;
+            $cargo->save();
+            return back()->with('success', 'ارسال شد');
+        }
         return back()->with('success', 'ارسال شد');
     }
-
 
     public function update(Request $request, CargoConvertList $cargo)
     {
