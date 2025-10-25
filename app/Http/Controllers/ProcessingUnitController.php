@@ -120,6 +120,7 @@ class ProcessingUnitController extends Controller
             $item = CargoConvertList::create([
                 'cargo_orginal' => $clean,
                 'cargo' => $clean,
+                'isProcessingControl' => 1,
             ]);
 
             $results[] = $item;

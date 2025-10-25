@@ -436,6 +436,7 @@ class DataConvertPlusController extends Controller
         // 1) نرمال‌سازی
         $text = $this->normalizeText($raw);
 
+
         // 2) داده‌های پایه
         $citiesById = DB::table('province_cities')->where('parent_id', '!=', 0)->pluck('name', 'id')->toArray(); // id => name
         $fleetsById = DB::table('fleets')->where('parent_id', '!=', 0)->pluck('title', 'id')->toArray();        // id => title
@@ -625,6 +626,10 @@ class DataConvertPlusController extends Controller
                             ->where('parent_id', '!=', 0)
                             ->get(['id', 'name', 'parent_id']);
 
+                        if (preg_match('/عنوان بار:\s*(.*?)(?:\s*\d{10,}|$)/u', $raw, $matches) && $cargo->isProcessingControl == 1) {
+                            $titleProccesing = trim($matches[1]);
+                        }
+
                         $record = [
                             'fleet'           => $fleetTitle,
                             'fleet_id'        => $fleetTitle ? ($fleetsByTitle[$fleetTitle] ?? null) : null,
@@ -636,7 +641,7 @@ class DataConvertPlusController extends Controller
                             'destination'     => $destCity,
                             'destination_id'  => $this->pickBestCityIdByName($destCity),
                             'price'           => $price,
-                            'title'           => $title,
+                            'title'           => $titleProccesing ?? $title,
                             'phoneNumber'     => $firstPhone ?? '',
                             'description'     => $this->makeDescription($fleetTitle, $originCity, $destCity, $title, $price, $raw),
                             'raw'             => $raw,
@@ -685,7 +690,7 @@ class DataConvertPlusController extends Controller
             ->where('isDuplicate', 0)
             ->count();
         $users = UserController::getOnlineAndOfflineUsers();
-        // return $uniqueResults;
+        // return $raw;
         return view('admin.load.smartCreateCargo', compact('cargo', 'countOfCargos', 'users', 'uniqueResults'));
 
 
@@ -707,7 +712,7 @@ class DataConvertPlusController extends Controller
     {
         return CargoConvertList::where('processingUnit', 1)
             ->where('status', 0)
-            ->where('operator_id', 0)
+            // ->where('operator_id', 0)
             ->count();
     }
 
