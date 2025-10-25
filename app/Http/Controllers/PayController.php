@@ -912,6 +912,118 @@ class PayController extends Controller
         }
     }
 
+    public function verifyDriverPaySinaTest(Request $request)
+    {
+        $confirmUrl = 'https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL';
+
+        $params = [
+            "LoginAccount" => PIN_SINA2,
+            "Token" => $request->Token
+        ];
+
+        $transaction = Transaction::where('authority', $request->Token)->first();
+
+        if (!$transaction) {
+            return view('users.driverPayStatus', [
+                'message' => 'تراکنش یافت نشد',
+                'status' => 0
+            ]);
+        }
+
+        // ✅ جلوگیری از اجرای مجدد در صورت تأیید شدن تراکنش
+        if ($transaction->status == 100) {
+            return view('users.driverPayStatus', [
+                'message' => $this->getStatusMessage(100),
+                'status' => 100,
+                'authority' => $transaction->authority
+            ]);
+        }
+
+        try {
+            $client = new SoapClient($confirmUrl);
+            $result = $client->ConfirmPayment(['requestData' => $params]);
+
+            if ($result->ConfirmPaymentResult->Status != '0') {
+                $transaction->status = 0;
+                $transaction->save();
+
+                return view('users.driverPayStatus', [
+                    'message' => $this->getStatusMessage(0),
+                    'status' => 0
+                ]);
+            }
+
+            // ✅ تایید موفق (و فقط برای بار اول اجرا می‌شود)
+            DB::beginTransaction();
+
+            $transaction->status = 100;
+            $transaction->RefId = $result->ConfirmPaymentResult->RRN;
+            $transaction->save();
+
+            $driver = Driver::find($transaction->user_id);
+
+            $daysToAdd = 30 * $transaction->monthsOfThePackage;
+
+            if (!$driver->activeDate || Carbon::parse($driver->activeDate)->lt(Carbon::now())) {
+                $driver->activeDate = Carbon::now()->addDays($daysToAdd);
+            } else {
+                $driver->activeDate = Carbon::parse($driver->activeDate)->addDays($daysToAdd);
+            }
+
+            if ($driver->freeCalls > 3) {
+                $driver->freeCalls = 3;
+            }
+            $driver->save();
+
+            DB::commit();
+
+            try {
+                if (!empty($driver->FCM_token) && $driver->version > 68) {
+                    $today = date('Y/m/d');
+                    $persianDate = gregorianDateToPersian($today, '/');
+
+                    // نگاشت ماه‌ها به تعداد روز
+                    $packageMonths = [
+                        '1' => '+30 day',
+                        '3' => '+90 day',
+                        '6' => '+180 day',
+                    ];
+
+                    // محاسبه تاریخ انقضا بر اساس پکیج
+                    $expireDate = '';
+                    if (!empty($packageMonths[$transaction->monthsOfThePackage])) {
+                        $expireDate = gregorianDateToPersian(
+                            date('Y/m/d', strtotime($packageMonths[$transaction->monthsOfThePackage])),
+                            '/'
+                        );
+                    }
+                    // پیام
+                    $title = 'راننده عزیز، 🎉';
+                    $body  = "خرید شما در تاریخ {$persianDate} با موفقیت انجام شد.\nتاریخ پایان اعتبار: {$expireDate} 📞";
+
+                    $this->sendNotificationWeb($driver->FCM_token, $title, $body);
+                }
+            } catch (\Exception $e) {
+                Log::warning('نوتیف مربوط به افزایش اعتبار راننده');
+                Log::warning($e->getMessage());
+            }
+
+            return view('users.driverPayStatus', [
+                'message' => $this->getStatusMessage(100),
+                'status' => 100,
+                'authority' => $transaction->authority
+            ]);
+        } catch (Exception $ex) {
+            DB::rollBack();
+            Log::error("verifyDriverPaySina error: " . $ex->getMessage());
+
+            return view('users.driverPayStatus', [
+                'message' => 'خطا در تایید پرداخت. لطفا با پشتیبانی تماس بگیرید.',
+                'status' => 0
+            ]);
+        }
+    }
+
 
     public function verifyDriverPaySina(Request $request)
     {
