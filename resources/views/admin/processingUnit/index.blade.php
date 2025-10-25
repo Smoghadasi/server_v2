@@ -5,9 +5,7 @@
 
     <div class="card">
         <h5 class="card-header">
-            ثبت بار پلاس
-            -
-            تعداد بار در صف : {{ $countOfCargos }}
+            واحد پردازش
         </h5>
         @if (auth()->user()->id == 25)
             <div class="m-3">
@@ -98,6 +96,9 @@
                 </span>
                 <textarea id="cargoText" class="form-control mb-2" placeholder="ورود لیست بارها" name="cargo" rows="20">{{ $cargo->cargo }}</textarea>
             </form>
+            <div class="col-md-6" style="margin-top: 70px">
+                <textarea class="form-control" name="" id="" cols="30" rows="20">{{ $clear }}</textarea>
+            </div>
         </div>
     </div>
 
