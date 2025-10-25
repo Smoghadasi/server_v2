@@ -1176,6 +1176,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
 
     Route::get('payDriverSinaTest/{packageName}/{driver}', [PayController::class, 'payDriverSinaTest']);
+    Route::post('verifyDriverPaySinaTest', [PayController::class, 'verifyDriverPaySinaTest']);
 
 
     /****************************************************************************************************************/
