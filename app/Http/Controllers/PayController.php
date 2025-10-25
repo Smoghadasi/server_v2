@@ -778,7 +778,7 @@ class PayController extends Controller
         $orderId = $driver->id . date('mHis') . substr(Carbon::now()->micro, 0, 2) . rand(100, 999);
 
         $params = [
-            "LoginAccount" => PIN_SINA,
+            "LoginAccount" => PIN_SINA2,
             "Amount" => $amount,
             "OrderId" => $orderId,
             "CallBackUrl" => $callbackUrl,
@@ -807,9 +807,9 @@ class PayController extends Controller
                 try {
                     if (
                         Transaction::where('user_id', $driver->id)
-                        ->where('userType', 'driver')
-                        ->where('created_at', '>', now()->startOfDay())
-                        ->count() >= 5
+                            ->where('userType', 'driver')
+                            ->where('created_at', '>', now()->startOfDay())
+                            ->count() >= 5
                     ) {
                         $driver->unSuccessPayment($driver->mobileNumber);
                     }
@@ -1030,7 +1030,7 @@ class PayController extends Controller
         $confirmUrl = 'https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL';
 
         $params = [
-            "LoginAccount" => PIN_SINA,
+            "LoginAccount" => PIN_SINA2,
             "Token" => $request->Token
         ];
 
