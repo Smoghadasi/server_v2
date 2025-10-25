@@ -92,6 +92,8 @@ class ProcessingUnitController extends Controller
     public function processingUnit(CargoConvertList $cargo)
     {
         $cargo->processingUnit = 1;
+        $cargo->operator_id = 0;
+        $cargo->status = 0;
         $cargo->save();
         return back()->with('success', 'ارسال شد');
     }
