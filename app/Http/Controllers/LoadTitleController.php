@@ -20,7 +20,6 @@ class LoadTitleController extends Controller
             ->when($title, fn($query) => $query->where('title', 'like', "%{$title}%"))
             ->paginate(25);
 
-
         return view('admin.loadTitle.index', compact('loadTitles'));
     }
 

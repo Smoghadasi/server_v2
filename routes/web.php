@@ -175,9 +175,10 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
             ->middleware('operator')
             ->name('equivalent.index');
 
+        // عنوان بار
         Route::resource('loadTitles', LoadTitleController::class)->middleware("operator");
 
-
+        // کلمات معادل
         Route::post('addWordToEquivalent', [DataConvertController::class, 'addWordToEquivalent'])->middleware('operator');
         Route::delete('removeEquivalentWord/{equivalent}', [DataConvertController::class, 'removeEquivalentWord'])->middleware('operator')->name('removeEquivalentWord');
 
@@ -887,6 +888,14 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         Route::get('processingUnit', [ProcessingUnitController::class, 'index'])
             ->name('processingUnit.index')
+            ->middleware('operator');
+
+        Route::get('documentSmartCargo', [ProcessingUnitController::class, 'documentSmartCargo'])
+            ->name('documentSmartCargo')
+            ->middleware('operator');
+
+        Route::patch('documentSmartCargo/{id}', [ProcessingUnitController::class, 'updateDocumentSmartCargo'])
+            ->name('updateDocumentSmartCargo')
             ->middleware('operator');
 
         Route::get('removeCargoFromCargoList/{cargo}', [DataConvertController::class, 'removeCargoFromCargoList'])->middleware('operator');

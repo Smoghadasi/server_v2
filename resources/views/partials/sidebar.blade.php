@@ -73,6 +73,14 @@
 
                 </a>
             </li>
+            <li class="menu-item">
+                <a class="menu-link" href="{{ route('documentSmartCargo') }}">
+                    <i class="menu-icon tf-icons bx bx-box"></i>
+                    <div data-i18n="Without menu">
+                        دستورات هوش منصوعی
+                    </div>
+                </a>
+            </li>
 
         @endif
 
