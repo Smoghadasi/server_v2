@@ -9,7 +9,11 @@
     <div class="col-md-12">
 
         <div class="card">
-            <h5 class="card-header">مستندات هوش مصنوعی</h5>
+            <h5 class="card-header">مستندات هوش مصنوعی
+                <button type="button" class="btn btn-outline-success mb-2 float-right btn-sm" id="copyBtn">
+                    کپی (Copy)
+                </button>
+            </h5>
             <div class="card-body">
                 <form id="myForm" onsubmit="return false;">
                     <div class="form-group text-right small">
@@ -40,9 +44,27 @@
 
 @section('script')
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
+        $('#copyBtn').on('click', function() {
+            // گرفتن متن از ویرایشگر
+            var text = $('#editor').text(); // اگر HTML می‌خوای، از .html() استفاده کن
+
+            // ایجاد یک عنصر موقت برای کپی
+            var $temp = $('<textarea>');
+            $('body').append($temp);
+            $temp.val(text).select();
+
+            // اجرای دستور کپی
+            document.execCommand('copy');
+
+            // حذف عنصر موقت
+            $temp.remove();
+
+            // نمایش پیام موفقیت (اختیاری)
+            alert('متن با موفقیت کپی شد!');
+        });
+
         const quill = new Quill('#editor', {
             theme: 'snow'
         });

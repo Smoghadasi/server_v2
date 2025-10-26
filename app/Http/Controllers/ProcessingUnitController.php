@@ -104,7 +104,7 @@ class ProcessingUnitController extends Controller
         $setting = Setting::find($settingId);
         $setting->document_smart_cargo = $request->document_smart_cargo;
         $setting->save();
-        return view('admin.processingUnit.document', compact('setting'));
+        return true;
     }
 
     public function convertSmart($cargo)
