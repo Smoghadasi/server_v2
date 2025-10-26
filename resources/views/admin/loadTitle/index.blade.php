@@ -7,7 +7,9 @@
                     عنوان ثبت بار
                 </div>
                 <div class="col-md-6 text-end">
-                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal">افزودن کلمه جدید</button>
+                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                        data-bs-target="#addWordToDictionary">افزودن کلمه جدید
+                    </button>
                 </div>
             </div>
         </h5>
