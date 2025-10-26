@@ -2,12 +2,30 @@
 @section('content')
     <div class="card">
         <h5 class="card-header">
-            عنوان ها
+            <div class="row">
+                <div class="col-md-6">
+                    عنوان ثبت بار
+                </div>
+                <div class="col-md-6 text-end">
+                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal">افزودن کلمه جدید</button>
+                </div>
+            </div>
         </h5>
         <div class="card-body">
-            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                data-bs-target="#addWordToDictionary">افزودن کلمه جدید
-            </button>
+            <div class="text-right">
+                <form method="get" action="{{ route('loadTitles.index') }}" class="mt-3 mb-3">
+                    <div class="form-group">
+                        <div class="col-md-12 row">
+                            <div class="col-md-6">
+                                <input class="form-control" type="text" name="title" placeholder="عنوان"
+                                    autocomplete="off" />
+                            </div>
+
+                        </div>
+                        <button class="btn btn-outline-primary m-2">جستجو</button>
+                    </div>
+                </form>
+            </div>
 
             <div id="addWordToDictionary" class="modal fade" role="dialog">
                 <div class="modal-dialog">
@@ -67,7 +85,8 @@
                                                     </p>
                                                 </div>
                                                 <div class="modal-footer text-left">
-                                                    <form action="{{ route('loadTitles.destroy', $loadTitle) }}" method="POST">
+                                                    <form action="{{ route('loadTitles.destroy', $loadTitle) }}"
+                                                        method="POST">
                                                         @csrf
                                                         @method('delete')
                                                         <button type="submit" class="btn btn-primary">حذف</button>

@@ -175,10 +175,6 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
             ->middleware('operator')
             ->name('equivalent.index');
 
-        // Route::get('loadTitles', [DataConvertController::class, 'loadTitles'])
-        //     ->middleware('operator')
-        //     ->name('loadTitle.index');
-
         Route::resource('loadTitles', LoadTitleController::class)->middleware("operator");
 
 

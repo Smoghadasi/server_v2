@@ -12,9 +12,15 @@ class LoadTitleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $loadTitles = LoadTitle::paginate(15);
+        $title = $request->input('title');
+
+        $loadTitles = LoadTitle::orderBy('title')
+            ->when($title, fn($query) => $query->where('title', 'like', "%{$title}%"))
+            ->paginate(25);
+
+
         return view('admin.loadTitle.index', compact('loadTitles'));
     }
 
@@ -86,6 +92,5 @@ class LoadTitleController extends Controller
     {
         $loadTitle->delete();
         return back()->with('success', 'کلمه مورد نظر حذف شد');
-
     }
 }
