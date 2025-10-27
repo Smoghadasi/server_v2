@@ -719,8 +719,12 @@ class DataConvertPlusController extends Controller
     }
 
     // ذخیره دسته ای بارها
-    public function storeMultiCargoSmart(Request $request, CargoConvertList $cargo)
+    public function storeMultiCargoSmart(Request $request, $cargoId)
     {
+        $cargo = CargoConvertList::whereId($cargoId)->first();
+        if ($cargo === null) {
+            return back()->with('error', 'صفر بار ثبت شد');
+        }
         try {
             $expiresAt = now()->addMinutes(3);
             $userId = Auth::id();

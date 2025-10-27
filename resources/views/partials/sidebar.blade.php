@@ -300,13 +300,6 @@
                     </li>
                 @endif
 
-                @if (in_array('loadBearing', auth()->user()->userAccess))
-                    <li class="menu-item">
-                        <a class="menu-link" href="{{ url('admin/loads') }}">
-                            <div data-i18n="Without menu"> گزارش بار ها</div>
-                        </a>
-                    </li>
-                @endif
                 @if (in_array('loadsReport', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/loads') }}">
