@@ -466,6 +466,7 @@ class DataConvertPlusController extends Controller
 
         // 5) تلفن و حذف از متن
         $firstPhone = $this->extractFirstPhone($text);
+        // return dd($firstPhone);
         if (!empty($firstPhone)) {
             $digits = preg_replace('/\D+/u', '', $firstPhone);
             $variants = [$digits];
@@ -692,7 +693,6 @@ class DataConvertPlusController extends Controller
             ->where('isDuplicate', 0)
             ->count();
         $users = UserController::getOnlineAndOfflineUsers();
-        // return $raw;
         return view('admin.load.smartCreateCargo', compact('cargo', 'countOfCargos', 'users', 'uniqueResults'));
 
 
@@ -811,7 +811,6 @@ class DataConvertPlusController extends Controller
         if (!strlen(trim($origin)) || $origin == null || $origin == 'null' || !strlen(trim($destination)) || $destination == null || $destination == 'null' || !strlen($fleet) || !strlen($mobileNumber))
             return;
 
-        substr($mobileNumber, 0, 1) !== '0' ? $mobileNumber = '0' . $mobileNumber : $mobileNumber;
 
         $cargoPattern = '';
 
@@ -824,6 +823,7 @@ class DataConvertPlusController extends Controller
                 ->where('created_at', '>', now()->subMinutes(180))
                 ->exists()
             ) {
+                // return dd($cargoPattern);
                 return;
             }
         } catch (\Exception $exception) {
@@ -959,24 +959,29 @@ class DataConvertPlusController extends Controller
                 'mobileNumberForCoordination' => $load->mobileNumberForCoordination,
                 'origin_city_id' => $load->origin_city_id,
                 'destination_city_id' => $load->destination_city_id,
-                ['fleets', 'LIKE', '%fleet_id":' . $fleet_id->id . ',%']
             ];
             $loadDuplicate = Load::where($conditions)
+                ->whereHas('fleetLoads', function ($q) use ($fleet_id) {
+                    $q->where('fleet_id', $fleet_id->id);
+                })
                 ->where('userType', 'operator')
                 ->first();
 
-            $loadDuplicateOwner = Load::where($conditions)
+            $loadDuplicateOwnerBot = Load::where($conditions)
+                ->whereHas('fleetLoads', function ($q) use ($fleet_id) {
+                    $q->where('fleet_id', $fleet_id->id);
+                })
                 ->where('userType', 'owner')
-                ->where('isBot', 0)
+                ->where('isBot', 1)
                 ->first();
-
-            if (is_null($loadDuplicate) && is_null($loadDuplicateOwner)) {
-                $load->save();
+            if ($loadDuplicate || $loadDuplicateOwnerBot) {
+                collect([$loadDuplicate, $loadDuplicateOwnerBot])
+                    ->filter()
+                    ->each(fn($duplicate) => $duplicate->delete());
             }
-
+            $load->save();
 
             if (isset($load->id)) {
-
                 $counter++;
 
                 if (isset($fleet_id->id)) {
@@ -1020,9 +1025,7 @@ class DataConvertPlusController extends Controller
                         ->select('fleet_id', 'userType', 'suggestedPrice', 'numOfFleets', 'pic', 'title')
                         ->get();
 
-                    // if ($loadDuplicate === null) {
                     $load->save();
-                    // $this->sendLoadToOtherWeb($load);
 
                     // }
                 } catch (\Exception $exception) {
@@ -1354,6 +1357,7 @@ class DataConvertPlusController extends Controller
         // +98 9xx xxx xxxx  →  09xxxxxxxxx
         if (preg_match('/\+?\s?98(?:[\s\-]?\d){10}/u', $text, $m98)) {
             $digits = preg_replace('/\D+/u', '', $m98[0]); // e.g. 98915xxxxxx
+
             if (strpos($digits, '98') === 0) {
                 $rest = substr($digits, 2);
                 if (strlen($rest) >= 10 && $rest[0] === '9') {
@@ -1361,17 +1365,22 @@ class DataConvertPlusController extends Controller
                 }
             }
         }
-        // موبایل ایران با یا بدون 0
-        if (preg_match('/0?9(?:[\s\-]?\d){9}/u', $text, $m)) {
-            $digits = preg_replace('/\D+/u', '', $m[0]);
-            if (strlen($digits) === 10 && $digits[0] === '9') $digits = '0' . $digits;
-            if (strlen($digits) === 11 && substr($digits, 0, 2) === '09') return $digits;
-        }
+
+
+        // // موبایل ایران با یا بدون 0
+        // if (preg_match('/0?9(?:[\s\-]?\d){9}/u', $text, $m)) {
+        //     return dd($m[0]);
+        //     $digits = preg_replace('/\D+/u', '', $m[0]);
+        //     if (strlen($digits) === 10 && $digits[0] === '9') $digits = '0' . $digits;
+        //     if (strlen($digits) === 11 && substr($digits, 0, 2) === '09') return $digits;
+        // }
+
         // ثابت ایران (نه 09)
         if (preg_match('/0(?!9)(?:[\s\-]?\d){9,11}/u', $text, $m2)) {
             $digits = preg_replace('/\D+/u', '', $m2[0]);
             if (strlen($digits) >= 10 && strlen($digits) <= 12) return $digits;
         }
+
         // بک‌آپ
         if (preg_match('/(?<!\d)0\d{9,11}(?!\d)/u', $text, $m3)) return $m3[0];
         if (preg_match('/(?<!\d)9\d{9}(?!\d)/u', $text, $m4)) return '0' . $m4[0];
