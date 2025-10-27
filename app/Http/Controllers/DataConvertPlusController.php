@@ -964,13 +964,16 @@ class DataConvertPlusController extends Controller
             $loadDuplicate = Load::where($conditions)
                 ->where('userType', 'operator')
                 ->first();
-
-            $loadDuplicateOwner = Load::where($conditions)
+            $loadDuplicateOwnerBot = Load::where($conditions)
                 ->where('userType', 'owner')
-                ->where('isBot', 0)
+                ->where('isBot', 1)
                 ->first();
 
-            if (is_null($loadDuplicate) && is_null($loadDuplicateOwner)) {
+            if ($loadDuplicate || $loadDuplicateOwnerBot) {
+                collect([$loadDuplicate, $loadDuplicateOwnerBot])
+                    ->filter()
+                    ->each(fn($duplicate) => $duplicate->delete());
+
                 $load->save();
             }
 
