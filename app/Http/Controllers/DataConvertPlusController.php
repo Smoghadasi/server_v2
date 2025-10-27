@@ -1367,13 +1367,12 @@ class DataConvertPlusController extends Controller
         }
 
 
-        // // موبایل ایران با یا بدون 0
-        // if (preg_match('/0?9(?:[\s\-]?\d){9}/u', $text, $m)) {
-        //     return dd($m[0]);
-        //     $digits = preg_replace('/\D+/u', '', $m[0]);
-        //     if (strlen($digits) === 10 && $digits[0] === '9') $digits = '0' . $digits;
-        //     if (strlen($digits) === 11 && substr($digits, 0, 2) === '09') return $digits;
-        // }
+        // موبایل ایران با یا بدون 0
+        if (preg_match('/0?9(?:[\s\-]?\d){9}/u', $text, $m)) {
+            $digits = preg_replace('/\D+/u', '', $m[0]);
+            if (strlen($digits) === 10 && $digits[0] === '9') $digits = '0' . $digits;
+            if (strlen($digits) === 11 && substr($digits, 0, 2) === '09') return $digits;
+        }
 
         // ثابت ایران (نه 09)
         if (preg_match('/0(?!9)(?:[\s\-]?\d){9,11}/u', $text, $m2)) {
