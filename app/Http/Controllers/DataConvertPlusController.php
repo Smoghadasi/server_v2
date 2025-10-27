@@ -1354,36 +1354,43 @@ class DataConvertPlusController extends Controller
 
     private function extractFirstPhone(string $text): ?string
     {
-        // +98 9xx xxx xxxx  →  09xxxxxxxxx
-        if (preg_match('/\+?\s?98(?:[\s\-]?\d){10}/u', $text, $m98)) {
-            $digits = preg_replace('/\D+/u', '', $m98[0]); // e.g. 98915xxxxxx
+        $text = $this->normalizeDigits($text);
 
-            if (strpos($digits, '98') === 0) {
-                $rest = substr($digits, 2);
-                if (strlen($rest) >= 10 && $rest[0] === '9') {
-                    return '0' . substr($rest, 0, 10);
-                }
+        // +98 یا 0098 → خروجی نرمال با 09 در ابتدا
+        if (preg_match('/(?<!\d)(?:\+?98|0098)(?:[\s\-]?\d){10}(?!\d)/u', $text, $m98)) {
+            $digits = preg_replace('/\D+/u', '', $m98[0]); // 98 9xxxxxxxxx
+            $rest   = substr($digits, 2);
+            if (strlen($rest) >= 10 && $rest[0] === '9') {
+                return '0' . substr($rest, 0, 10);
             }
         }
 
-
-        // موبایل ایران با یا بدون 0
-        if (preg_match('/0?9(?:[\s\-]?\d){9}/u', $text, $m)) {
-            $digits = preg_replace('/\D+/u', '', $m[0]);
-            if (strlen($digits) === 10 && $digits[0] === '9') $digits = '0' . $digits;
+        // موبایل ایران با یا بدون صفر ابتدایى (مرزبندی دقیق)
+        if (preg_match('/(?<!\d)0?9(?:[\s\-]?\d){9}(?!\d)/u', $text, $m)) {
+            $digits = preg_replace('/\D+/u', '', $m[0]); // 9xxxxxxxxx یا 09xxxxxxxxx
+            if (strlen($digits) === 10 && $digits[0] === '9') return '0' . $digits;
             if (strlen($digits) === 11 && substr($digits, 0, 2) === '09') return $digits;
         }
 
-        // ثابت ایران (نه 09)
-        if (preg_match('/0(?!9)(?:[\s\-]?\d){9,11}/u', $text, $m2)) {
+        // تلفن ثابت ایران (که با 09 شروع نمی‌شود)
+        if (preg_match('/(?<!\d)0(?!9)(?:[\s\-]?\d){9,11}(?!\d)/u', $text, $m2)) {
             $digits = preg_replace('/\D+/u', '', $m2[0]);
             if (strlen($digits) >= 10 && strlen($digits) <= 12) return $digits;
         }
 
-        // بک‌آپ
+        // بک‌آپ‌ها با مرزبندی
         if (preg_match('/(?<!\d)0\d{9,11}(?!\d)/u', $text, $m3)) return $m3[0];
-        if (preg_match('/(?<!\d)9\d{9}(?!\d)/u', $text, $m4)) return '0' . $m4[0];
+        if (preg_match('/(?<!\d)9\d{9}(?!\d)/u', $text, $m4))   return '0' . $m4[0];
+
         return null;
+    }
+
+
+    private function normalizeDigits(string $text): string
+    {
+        $fa = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹', '٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+        $en = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+        return str_replace($fa, $en, $text);
     }
 
     private function extractPrice(string $text): ?string
