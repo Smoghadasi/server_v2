@@ -43,7 +43,6 @@ use App\Http\Controllers\ParameterController;
 use App\Http\Controllers\PayController;
 use App\Http\Controllers\PersonalizedNotificationController;
 use App\Http\Controllers\ProcessingUnitController;
-use App\Http\Controllers\PrompAiController;
 use App\Http\Controllers\ProvinceCityController;
 use App\Http\Controllers\RadioController;
 // use App\Http\Controllers\RegisterController;
@@ -899,10 +898,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
             ->name('updateDocumentSmartCargo')
             ->middleware('operator');
 
-
+        Route::get('removeCargoFromCargoList/{cargo}', [DataConvertController::class, 'removeCargoFromCargoList'])->middleware('operator');
 
         Route::get('prompAi', [PrompAiController::class, 'store'])->middleware('operator');
-
 
         Route::post('updateCargoInfo/{cargo}', [DataConvertController::class, 'updateCargoInfo'])->middleware('operator');
 
