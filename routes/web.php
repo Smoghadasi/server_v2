@@ -43,6 +43,7 @@ use App\Http\Controllers\ParameterController;
 use App\Http\Controllers\PayController;
 use App\Http\Controllers\PersonalizedNotificationController;
 use App\Http\Controllers\ProcessingUnitController;
+use App\Http\Controllers\PrompAiController;
 use App\Http\Controllers\ProvinceCityController;
 use App\Http\Controllers\RadioController;
 // use App\Http\Controllers\RegisterController;
