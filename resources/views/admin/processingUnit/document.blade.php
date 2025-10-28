@@ -82,8 +82,8 @@
                 url: '/admin/prompAi',
                 type: 'get',
                 success: function(response) {
-
                     alert('متن با موفقیت کپی شد!');
+                    location.reload();
                 },
                 error: function(xhr) {
                     let errors = xhr.responseJSON?.errors;
