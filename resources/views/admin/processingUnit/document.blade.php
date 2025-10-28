@@ -15,16 +15,23 @@
                 </button>
             </h5>
             <div class="card-body">
-                <p>لیست افرادی که این متن امروز کپی کرده اند:</p>
-                @if (Auth::user()->role == 'admin')
-                    <div class="m-2">
-                        @foreach ($users as $promp)
-                            <span class="table-bordered border-info rounded bg-white p-1 m-1">
-                                <span class="text-primary">{{ $promp->user->name }} {{ $promp->user->lastName }}</span>
-                            </span>
-                        @endforeach
-                    </div>
+                @if ($users && $users->count() > 0)
+                    @if (Auth::user()->role === 'admin')
+                        <div class="m-2">
+                            @foreach ($users as $promp)
+                                @if ($promp->user)
+                                    <span class="table-bordered border-info rounded bg-white p-1 m-1">
+                                        <span class="text-primary">
+                                            {{ $promp->user->name }} {{ $promp->user->lastName }}
+                                        </span>
+                                    </span>
+                                @endif
+                            @endforeach
+                        </div>
+                    @endif
                 @endif
+
+
 
                 <form id="myForm" onsubmit="return false;">
                     <div class="form-group text-right small">
