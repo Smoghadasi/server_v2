@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\CargoConvertList;
+use App\Models\PrompAi;
 use App\Models\Setting;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ProcessingUnitController extends Controller
@@ -96,7 +98,12 @@ class ProcessingUnitController extends Controller
     public function documentSmartCargo()
     {
         $setting = Setting::first();
-        return view('admin.processingUnit.document', compact('setting'));
+        $today = Carbon::today();
+
+        $users = PrompAi::whereDate('created_at', $today)->get();
+
+
+        return view('admin.processingUnit.document', compact('setting', 'users'));
     }
 
     public function updateDocumentSmartCargo(Request $request, $settingId)

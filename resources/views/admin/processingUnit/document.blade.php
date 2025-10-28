@@ -15,6 +15,17 @@
                 </button>
             </h5>
             <div class="card-body">
+                <p>لیست افرادی که این متن امروز کپی کرده اند:</p>
+                @if (Auth::user()->role == 'admin')
+                    <div class="m-2">
+                        @foreach ($users as $promp)
+                            <span class="table-bordered border-info rounded bg-white p-1 m-1">
+                                <span class="text-primary">{{ $promp->user->name }} {{ $promp->user->lastName }}</span>
+                            </span>
+                        @endforeach
+                    </div>
+                @endif
+
                 <form id="myForm" onsubmit="return false;">
                     <div class="form-group text-right small">
 
@@ -46,6 +57,12 @@
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 
     <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
         $('#copyBtn').on('click', function() {
             // گرفتن متن از ویرایشگر
             var text = $('#editor').text(); // اگر HTML می‌خوای، از .html() استفاده کن
@@ -61,19 +78,33 @@
             // حذف عنصر موقت
             $temp.remove();
 
+            $.ajax({
+                url: '/admin/prompAi',
+                type: 'get',
+                success: function(response) {
+
+                    alert('متن با موفقیت کپی شد!');
+                },
+                error: function(xhr) {
+                    let errors = xhr.responseJSON?.errors;
+                    if (errors) {
+                        let errorText = Object.values(errors).flat().join('\n');
+                        alert('خطا:\n' + errorText);
+                    } else {
+                        alert('خطای نامشخص رخ داد.');
+                    }
+                    console.error(xhr.responseJSON);
+                },
+            });
             // نمایش پیام موفقیت (اختیاری)
-            alert('متن با موفقیت کپی شد!');
+
         });
 
         const quill = new Quill('#editor', {
             theme: 'snow'
         });
 
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
+
 
         $('#myForm').submit(function(e) {
             e.preventDefault();
