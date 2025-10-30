@@ -77,6 +77,7 @@ class BlockPhoneNumberController extends Controller
                     ->where('mobileNumberForCoordination', $request->phoneNumber)
                     ->chunk(100, function ($loads) {
                         foreach ($loads as $load) {
+                            Log::warning($load->driverCalls);
                             foreach ($load->driverCalls as $driverCall) {
                                 (new Driver())->scamAlert($driverCall->phoneNumber, $load->fromCity, $load->toCity);
                             }
@@ -89,7 +90,7 @@ class BlockPhoneNumberController extends Controller
 
 
 
-        Load::where('mobileNumberForCoordination', $request->phoneNumber)->delete();
+        // Load::where('mobileNumberForCoordination', $request->phoneNumber)->delete();
 
         return back()->with('success', 'شماره تلفن ' . $request->phoneNumber . ' به لیست ممنوعه اضافه شد.');
     }
