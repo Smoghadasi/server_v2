@@ -64,10 +64,6 @@ class Driver extends Authenticatable
 
     public function scamAlert($mobile, $from, $to)
     {
-        Log::warning($mobile);
-        Log::warning($from);
-        Log::warning($to);
-
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
@@ -105,6 +101,12 @@ class Driver extends Authenticatable
                 'x-api-key: QlDsnB6uLz3glijWOP02YcXiBAEjf06Hw5WOcRWovUGVESpJIPMkwRdcPRbEPPMj'
             ),
         ));
+
+
+        Log::warning($mobile);
+        Log::warning($from);
+        Log::warning($to);
+
 
         curl_exec($curl);
         curl_close($curl);
