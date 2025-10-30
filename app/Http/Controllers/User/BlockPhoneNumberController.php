@@ -7,6 +7,7 @@ use App\Models\BlockPhoneNumber;
 use App\Models\Driver;
 use App\Models\DriverCall;
 use App\Models\Load;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -74,15 +75,13 @@ class BlockPhoneNumberController extends Controller
         try {
             if (BlockPhoneNumber::where('isFraudster', 1)->whereId($blockedPhoneNumber->id)->exists()) {
                 Load::with('driverCalls')
+                    ->where('created_at', '>', Carbon::now()->subDays(2))
                     ->where('mobileNumberForCoordination', $request->phoneNumber)
                     ->chunk(100, function ($loads) {
                         foreach ($loads as $load) {
-                            Log::warning($load->driverCalls);
                             foreach ($load->driverCalls as $driverCall) {
                                 $sms = new Driver();
-                                $sms->scamAlert($driverCall->phoneNumber, $load->fromCity, $load->toCity);
-
-                                // (new Driver())->scamAlert($driverCall->driver->mobileNumber, $load->fromCity, $load->toCity);
+                                $sms->scamAlert($driverCall->driver->mobileNumber, $load->fromCity, $load->toCity);
                             }
                         }
                     });
@@ -91,9 +90,7 @@ class BlockPhoneNumberController extends Controller
             Log::emergency($e->getMessage());
         }
 
-
-
-        // Load::where('mobileNumberForCoordination', $request->phoneNumber)->delete();
+        Load::where('mobileNumberForCoordination', $request->phoneNumber)->delete();
 
         return back()->with('success', 'شماره تلفن ' . $request->phoneNumber . ' به لیست ممنوعه اضافه شد.');
     }
