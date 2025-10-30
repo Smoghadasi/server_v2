@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Log;
 use SoapClient;
 
 class Driver extends Authenticatable
@@ -63,6 +64,10 @@ class Driver extends Authenticatable
 
     public function scamAlert($mobile, $from, $to)
     {
+        Log::warning($mobile);
+        Log::warning($from);
+        Log::warning($to);
+
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
