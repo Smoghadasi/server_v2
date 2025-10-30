@@ -64,6 +64,12 @@ class Driver extends Authenticatable
 
     public function scamAlert($mobile, $from, $to)
     {
+
+        Log::warning($mobile);
+        Log::warning($from);
+        Log::warning($to);
+
+
         $curl = curl_init();
 
         $data = [
