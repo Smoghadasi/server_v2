@@ -61,6 +61,52 @@ class Driver extends Authenticatable
         return '';
     }
 
+    public function scamAlert($mobile, $from, $to)
+    {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.sms.ir/v1/send/verify',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS =>
+            '{' . '
+                "mobile": ' .
+                '"' . $mobile . '",
+                "templateId": 684568,
+                "parameters": [
+                  {
+                    "name": "FROM",
+                    "value":' . ' " ' . $from . '"' . '
+                  },
+                  {
+                    "name": "TO",
+                    "value":' . ' " ' . $to . '"' . '
+                  },
+                  {
+                    "name": "TEL",
+                    "value":' . ' " ' . TELL . '"' . '
+                  },
+                ]
+              }',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json',
+                'Accept: text/plain',
+                'x-api-key: QlDsnB6uLz3glijWOP02YcXiBAEjf06Hw5WOcRWovUGVESpJIPMkwRdcPRbEPPMj'
+            ),
+        ));
+
+        curl_exec($curl);
+        curl_close($curl);
+
+        return true;
+    }
+
     public function getTransactionCountAttribute()
     {
         try {
