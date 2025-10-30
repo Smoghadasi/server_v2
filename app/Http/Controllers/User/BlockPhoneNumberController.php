@@ -51,6 +51,7 @@ class BlockPhoneNumberController extends Controller
      */
     public function store(Request $request)
     {
+        // return $request;
         if (BlockPhoneNumber::where('phoneNumber', $request->phoneNumber)->count())
             return back()->with('danger', 'شماره تلفن ' . $request->phoneNumber . ' قبلا به لیست ممنوعه اضافه شده است.');
 
@@ -60,6 +61,7 @@ class BlockPhoneNumberController extends Controller
         $blockedPhoneNumber = new BlockPhoneNumber();
         $blockedPhoneNumber->phoneNumber = $request->phoneNumber;
         $blockedPhoneNumber->nationalCode = $request->nationalCode;
+        $blockedPhoneNumber->isFraudster = $request->isFraudster;
         $blockedPhoneNumber->name = $request->name;
         $blockedPhoneNumber->type = $request->type;
         $blockedPhoneNumber->description = $request->description;

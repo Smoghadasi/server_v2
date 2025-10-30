@@ -17,6 +17,7 @@
             <div class="card-body">
                 @if ($users && $users->count() > 0)
                     @if (Auth::user()->role === 'admin')
+                    <p>لیست افرادی که این متن امروز کپی کرده اند:</p>
                         <div class="m-2">
                             @foreach ($users as $promp)
                                 @if ($promp->user)

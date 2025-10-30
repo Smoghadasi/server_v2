@@ -208,8 +208,13 @@ class ProcessingUnitController extends Controller
         return back()->with('success', 'ارسال شد');
     }
 
-    public function update(Request $request, CargoConvertList $cargo)
+    public function update(Request $request, $cargoId)
     {
+        $cargo = CargoConvertList::whereId($cargoId)->first();
+
+        if ($cargo == null) {
+            return back();
+        }
         // متن کامل از درخواست
         $text = $request->input('cargo');
 

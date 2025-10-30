@@ -50,6 +50,10 @@
                                         <option value="both" selected>هر دو</option>
                                     </select>
                                 </div>
+                                <div class="form-group col-lg-12 col-sm-12 my-2">
+                                    <input type="checkbox" class="form-check-input" name="isFraudster" value="1">
+                                    <label class="form-check-label" for="exampleCheck1">کلاهبردار</label>
+                                </div>
                                 <div class="form-group col-lg-12 col-sm-12">
                                     <label class="form-label">توضیحات</label>
                                     <textarea class=" m-1 form-control" rows="5" name="description"></textarea>
@@ -107,6 +111,7 @@
                             <th>توضیحات</th>
                             <th>اپراتور</th>
                             <th>نوع</th>
+                            <th>کلاهبردار</th>
                             <th>تاریخ</th>
                             <th>عملیات</th>
                         </tr>
@@ -133,6 +138,9 @@
                                 </td>
                                 <td>
                                     {{ $blockedPhoneNumber->type ?? '-' }}
+                                </td>
+                                <td>
+                                {{ $blockedPhoneNumber->isFraudster ? 'بله' : 'خیر' }}
                                 </td>
                                 @php
                                     $pieces = explode(' ', $blockedPhoneNumber->created_at);
