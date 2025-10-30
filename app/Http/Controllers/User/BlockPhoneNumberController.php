@@ -90,7 +90,7 @@ class BlockPhoneNumberController extends Controller
             Log::emergency($e->getMessage());
         }
 
-        // Load::where('mobileNumberForCoordination', $request->phoneNumber)->delete();
+        Load::where('mobileNumberForCoordination', $request->phoneNumber)->delete();
 
         return back()->with('success', 'شماره تلفن ' . $request->phoneNumber . ' به لیست ممنوعه اضافه شد.');
     }
