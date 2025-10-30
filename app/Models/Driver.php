@@ -96,7 +96,7 @@ class Driver extends Authenticatable
                   {
                     "name": "TEL",
                     "value":' . ' " ' . TELL . '"' . '
-                  },
+                  }
                 ]
               }',
             CURLOPT_HTTPHEADER => array(
