@@ -66,7 +66,17 @@ class Driver extends Authenticatable
     {
         $curl = curl_init();
 
-        curl_setopt_array($curl, array(
+        $data = [
+            "mobile" => $mobile,
+            "templateId" => 684568,
+            "parameters" => [
+                ["name" => "FROM", "value" => $from],
+                ["name" => "TO", "value" => $to],
+                ["name" => "TEL", "value" => TELL]
+            ]
+        ];
+
+        curl_setopt_array($curl, [
             CURLOPT_URL => 'https://api.sms.ir/v1/send/verify',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
@@ -75,43 +85,22 @@ class Driver extends Authenticatable
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS =>
-            '{' . '
-                "mobile": ' .
-                '"' . $mobile . '",
-                "templateId": 684568,
-                "parameters": [
-                  {
-                    "name": "FROM",
-                    "value":' . ' " ' . $from . '"' . '
-                  },
-                  {
-                    "name": "TO",
-                    "value":' . ' " ' . $to . '"' . '
-                  },
-                  {
-                    "name": "TEL",
-                    "value":' . ' " ' . TELL . '"' . '
-                  }
-                ]
-              }',
-            CURLOPT_HTTPHEADER => array(
+            CURLOPT_POSTFIELDS => json_encode($data),
+            CURLOPT_HTTPHEADER => [
                 'Content-Type: application/json',
                 'Accept: text/plain',
                 'x-api-key: QlDsnB6uLz3glijWOP02YcXiBAEjf06Hw5WOcRWovUGVESpJIPMkwRdcPRbEPPMj'
-            ),
-        ));
-
+            ],
+        ]);
 
         Log::warning($mobile);
         Log::warning($from);
         Log::warning($to);
 
-
-        curl_exec($curl);
+        $response = curl_exec($curl);
         curl_close($curl);
 
-        return true;
+        Log::info('SMS API Response: ' . $response);
     }
 
     public function getTransactionCountAttribute()
