@@ -61,7 +61,7 @@ class BlockPhoneNumberController extends Controller
         $blockedPhoneNumber = new BlockPhoneNumber();
         $blockedPhoneNumber->phoneNumber = $request->phoneNumber;
         $blockedPhoneNumber->nationalCode = $request->nationalCode;
-        $blockedPhoneNumber->isFraudster = $request->isFraudster;
+        $blockedPhoneNumber->isFraudster = $request->isFraudster ?? 0;
         $blockedPhoneNumber->name = $request->name;
         $blockedPhoneNumber->type = $request->type;
         $blockedPhoneNumber->description = $request->description;
