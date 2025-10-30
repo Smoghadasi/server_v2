@@ -9,6 +9,7 @@ use App\Models\DriverCall;
 use App\Models\Load;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class BlockPhoneNumberController extends Controller
 {
@@ -70,15 +71,23 @@ class BlockPhoneNumberController extends Controller
         $blockedPhoneNumber->operator_id = Auth::id();
         $blockedPhoneNumber->save();
 
-        Load::with('driverCalls')
-            ->where('mobileNumberForCoordination', $request->phoneNumber)
-            ->chunk(100, function ($loads) {
-                foreach ($loads as $load) {
-                    foreach ($load->driverCalls as $driverCall) {
-                        (new Driver())->scamAlert($driverCall->phoneNumber, $load->fromCity, $load->toCity);
-                    }
-                }
-            });
+        try {
+            if (BlockPhoneNumber::where('isFraudster', 1)->whereId($blockedPhoneNumber->id)->exists()) {
+                Load::with('driverCalls')
+                    ->where('mobileNumberForCoordination', $request->phoneNumber)
+                    ->chunk(100, function ($loads) {
+                        foreach ($loads as $load) {
+                            foreach ($load->driverCalls as $driverCall) {
+                                (new Driver())->scamAlert($driverCall->phoneNumber, $load->fromCity, $load->toCity);
+                            }
+                        }
+                    });
+            }
+        } catch (\Exception $e) {
+            Log::emergency($e->getMessage());
+        }
+
+
 
         Load::where('mobileNumberForCoordination', $request->phoneNumber)->delete();
 
