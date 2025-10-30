@@ -79,7 +79,10 @@ class BlockPhoneNumberController extends Controller
                         foreach ($loads as $load) {
                             Log::warning($load->driverCalls);
                             foreach ($load->driverCalls as $driverCall) {
-                                (new Driver())->scamAlert($driverCall->phoneNumber, $load->fromCity, $load->toCity);
+                                $sms = new Driver();
+                                $sms->scamAlert($driverCall->phoneNumber, $load->fromCity, $load->toCity);
+
+                                // (new Driver())->scamAlert($driverCall->driver->mobileNumber, $load->fromCity, $load->toCity);
                             }
                         }
                     });
