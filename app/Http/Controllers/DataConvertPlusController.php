@@ -9,6 +9,7 @@ use App\Models\Equivalent;
 use App\Models\Fleet;
 use App\Models\FleetLoad;
 use App\Models\Load;
+use App\Models\LoadOwnerCount;
 use App\Models\OperatorCargoListAccess;
 use App\Models\Owner;
 use App\Models\ProvinceCity;
@@ -992,8 +993,8 @@ class DataConvertPlusController extends Controller
                     $fleetLoad->userType = $load->userType;
                     $fleetLoad->save();
 
+                    $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
                     try {
-                        $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
                         // Log::emergency("Error cargo report by 1371: ");
 
                         $cargoReport = CargoReportByFleet::where('fleet_id', $fleetLoad->fleet_id)
@@ -1033,6 +1034,21 @@ class DataConvertPlusController extends Controller
                     Log::emergency($exception->getMessage());
                     Log::emergency("---------------------------------------------------------");
                 }
+
+                try {
+                    // گزارش بار ها بر اساس اپراتور
+                    $loadOwnerCount = LoadOwnerCount::firstOrNew([
+                        'mobileNumber' => $mobileNumber,
+                        'persian_date' => $persian_date,
+                    ]);
+
+                    $loadOwnerCount->count = ($loadOwnerCount->count ?? 0) + 1;
+                    $loadOwnerCount->save();
+                } catch (\Exception $e) {
+                    Log::emergency($exception->getMessage());
+                }
+
+
                 try {
                     $ownerLoadCount = Owner::where('mobileNumber', $load->mobileNumberForCoordination)->first();
                     if ($ownerLoadCount) {
