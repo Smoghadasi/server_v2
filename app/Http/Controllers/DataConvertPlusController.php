@@ -836,10 +836,14 @@ class DataConvertPlusController extends Controller
             return;
         }
 
+
         try {
+
             DB::beginTransaction();
             $load = new Load();
-            $load->title = strlen($title) == 0 ? 'بدون عنوان' : $title;
+
+            $load->title = (strlen($title) === 0 ? 'بدون عنوان' : $title);
+
             $load->cargo_convert_list_id = $cargoId;
             $load->senderMobileNumber = $mobileNumber;
             $load->emergencyPhone = $mobileNumber;
@@ -1055,38 +1059,6 @@ class DataConvertPlusController extends Controller
                     }
                 } catch (\Exception $th) {
                     //throw $th;
-                }
-
-                try {
-                    if ($load->operator_id > 0 && $load->isBot == 0) {
-                        $toDay = gregorianDateToPersian(date('Y/m/d'), '/');
-                        $isFirstLoad = DB::table('load_owner_counts as loc1')
-                            ->select('loc1.mobileNumber')
-                            ->where('loc1.mobileNumber', $mobileNumber)
-                            ->where('loc1.persian_date', $toDay)
-                            ->whereNotExists(function ($query) use ($toDay, $mobileNumber) {
-                                $query->select(DB::raw(1))
-                                    ->from('load_owner_counts as loc2')
-                                    ->whereColumn('loc2.mobileNumber', 'loc1.mobileNumber')
-                                    ->where('loc2.mobileNumber', $mobileNumber)
-                                    ->where('loc2.persian_date', '<>', $toDay); // فقط روزهای دیگر
-                            })
-                            ->first();
-                        if ($isFirstLoad) {
-                            $load->title = 'در صورت درخواست کمیسیون از سمت صاحب بار، پس از تأیید پشتیبانی ایران‌ترابر پرداخت را انجام دهید';
-                            $load->save();
-
-                            $checkLoadDeleted = Load::onlyTrashed()
-                                ->where('mobileNumberForCoordination', $mobileNumber)
-                                ->first();
-
-                            if (Carbon::parse($checkLoadDeleted->deleted_at)->diffInHours(now()) < 6) {
-                                $load->forceDelete(); // حذف کامل
-                            }
-                        }
-                    }
-                } catch (\Exception $e) {
-                    Log::warning($e->getMessage());
                 }
             }
             DB::commit();
