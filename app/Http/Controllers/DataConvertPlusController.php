@@ -836,9 +836,7 @@ class DataConvertPlusController extends Controller
             return;
         }
 
-
         try {
-
             DB::beginTransaction();
             $load = new Load();
             $load->title = strlen($title) == 0 ? 'بدون عنوان' : $title;
