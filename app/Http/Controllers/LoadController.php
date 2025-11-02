@@ -108,8 +108,7 @@ class LoadController extends Controller
         //     ->paginate(20);
         // return $driverCalls;
 
-        $loads = Load::withCount('driverCalls')
-            ->where(function ($query) {
+        $loads = Load::where(function ($query) {
                 $query->where('userType', 'operator')
                     ->orWhere(function ($q) {
                         $q->where('userType', 'owner')
@@ -117,7 +116,8 @@ class LoadController extends Controller
                     });
             })
             ->whereIn('mobileNumberForCoordination', $mobileNumbers)
-            ->having('driver_calls_count', '>', 2)
+            ->withCount('driverCalls')
+            // ->having('driver_calls_count', '>', 2)
             ->orderByDesc('created_at')
             ->withTrashed()
             ->paginate(20);
