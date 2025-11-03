@@ -1058,7 +1058,7 @@ class DataConvertPlusController extends Controller
                 }
 
                 try {
-                    if ($load->operator_id > 0 && $load->isBot == 0) {
+                    if ($load->operator_id > 0) {
                         $toDay = gregorianDateToPersian(date('Y/m/d'), '/');
                         $isFirstLoad = DB::table('load_owner_counts as loc1')
                             ->select('loc1.mobileNumber')
@@ -1076,13 +1076,13 @@ class DataConvertPlusController extends Controller
                             $load->title = 'در صورت درخواست کمیسیون از سمت صاحب بار، پس از تأیید پشتیبانی ایران‌ترابر پرداخت را انجام دهید.';
                             $load->save();
 
-                            $checkLoadDeleted = Load::onlyTrashed()
-                                ->where('mobileNumberForCoordination', $mobileNumber)
-                                ->first();
+                            // $checkLoadDeleted = Load::onlyTrashed()
+                            //     ->where('mobileNumberForCoordination', $mobileNumber)
+                            //     ->first();
 
-                            if (Carbon::parse($checkLoadDeleted->deleted_at)->diffInHours(now()) < 6) {
-                                $load->forceDelete(); // حذف کامل
-                            }
+                            // if (Carbon::parse($checkLoadDeleted->deleted_at)->diffInHours(now()) < 6) {
+                            //     $load->forceDelete(); // حذف کامل
+                            // }
                         }
                     }
                 } catch (\Exception $e) {
