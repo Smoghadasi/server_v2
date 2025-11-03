@@ -1073,7 +1073,7 @@ class DataConvertPlusController extends Controller
                             })
                             ->first();
                         if ($isFirstLoad) {
-                            $load->title .= "\n⚠ توجه: در صورت درخواست کمیسیون، با پشتیبانی ایران ترابر هماهنگ باشید.";
+                            $load->title = "⚠ توجه: در صورت درخواست کمیسیون، با پشتیبانی ایران ترابر هماهنگ باشید.";
                             $load->save();
 
                             // $checkLoadDeleted = Load::onlyTrashed()
