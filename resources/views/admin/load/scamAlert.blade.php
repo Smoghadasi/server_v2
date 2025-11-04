@@ -100,8 +100,7 @@
             </div>
         </div>
         <div class="mt-2 mb-2">
-            {{ $loads }}
-
+            {{ $loads->appends($_GET)->links() }}
         </div>
     </div>
 @endsection
