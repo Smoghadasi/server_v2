@@ -81,7 +81,7 @@ class LoadController extends Controller
         return view('admin.load.searchByFleetCity', compact('loads'));
     }
 
-    public function scamAlert()
+    public function scamAlert(Request $request)
     {
         $toDay = gregorianDateToPersian(date('Y/m/d'), '/');
 
@@ -92,7 +92,7 @@ class LoadController extends Controller
                 $query->select(DB::raw(1))
                     ->from('load_owner_counts as loc2')
                     ->whereColumn('loc2.mobileNumber', 'loc1.mobileNumber')
-                    ->where('loc2.persian_date', '<', $toDay);
+                    ->where('loc2.persian_date', '<>', $toDay); // فقط روزهای دیگر
             })
             ->pluck('loc1.mobileNumber');
 
@@ -108,21 +108,35 @@ class LoadController extends Controller
         //     ->paginate(20);
         // return $driverCalls;
 
-        $loads = Load::where(function ($query) {
-                $query->where('userType', 'operator')
-                    ->orWhere(function ($q) {
-                        $q->where('userType', 'owner')
-                            ->where('isBot', 1);
-                    });
-            })
+        $mobileNumberCount = $mobileNumbers->count();
+        $fleets = Fleet::where('parent_id', '>', 0)->orderBy('parent_id', 'asc')->get()->makeHidden(['numOfDrivers']);
+        // return $fleets;
+        $loads = Load::query()
+            ->when(
+                $request->fleet_id,
+                fn($q) =>
+                $q->whereHas(
+                    'fleetLoads',
+                    fn($fl) =>
+                    $fl->where('fleet_id', $request->fleet_id)
+                )
+            )
+            ->where(
+                fn($q) =>
+                $q->where('userType', 'operator')
+                    ->orWhere(
+                        fn($o) =>
+                        $o->where('userType', 'owner')->where('isBot', 1)
+                    )
+            )
             ->whereIn('mobileNumberForCoordination', $mobileNumbers)
             ->withCount('driverCalls')
-            // ->having('driver_calls_count', '>', 2)
-            ->orderByDesc('created_at')
             ->withTrashed()
+            ->latest() // shorthand for orderByDesc('created_at')
             ->paginate(20);
 
-        return view('admin.load.scamAlert', compact('loads'));
+
+        return view('admin.load.scamAlert', compact('loads', 'mobileNumberCount', 'fleets'));
     }
 
     public function copyLoad($type = null)
@@ -141,24 +155,24 @@ class LoadController extends Controller
         $query = Load::whereHas('fleetLoads', function ($query) use ($fleets) {
             $query->whereIn('fleet_id', $fleets);
         })
-        ->select([
-            'id',
-            'title',
-            'isBot',
-            'user_id',
-            'userType',
-            'senderMobileNumber',
-            'fleets',
-            'fromCity',
-            'toCity',
-            'driverVisitCount',
-            'date',
-            'dateTime',
-            'latitude',
-            'longitude',
-            'description',
-            'deleted_at'
-        ])
+            ->select([
+                'id',
+                'title',
+                'isBot',
+                'user_id',
+                'userType',
+                'senderMobileNumber',
+                'fleets',
+                'fromCity',
+                'toCity',
+                'driverVisitCount',
+                'date',
+                'dateTime',
+                'latitude',
+                'longitude',
+                'description',
+                'deleted_at'
+            ])
             ->where('userType', 'owner')
             ->where('isCopy', 0)
             ->orderByDesc('created_at')
@@ -179,7 +193,6 @@ class LoadController extends Controller
         $load->isCopy = 1;
         $load->save();
         return back()->with('danger', "بار مورد نظر حذف شد");
-
     }
 
 

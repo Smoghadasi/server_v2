@@ -7,14 +7,37 @@
                 <div class="col-4">
                     هشدار تخلف!
                 </div>
+                <div class="col-4">
+                    <p class="text-primary text-end">تعداد بار های ثبت شده امروز:
+                        {{ $mobileNumberCount }}
+                    </p>
+                </div>
             </div>
 
         </h5>
         <div class="card-body">
-            <div class="col-lg-12 m-2 mb-3 text-right">
-                {{-- <a href="{{ route('loadToday.owner') }}" class="alert p-1 alert-success">تعداد بار های ثبت شده امروز:
-                    {{ $loadsToday }}</a> --}}
-            </div>
+
+            <form method="get" action="{{ route('admin.scamAlert') }}" class="mt-3 mb-3">
+
+                <div class="form-group">
+                    <div class="col-md-12 row">
+
+                        <div class="col-md-3">
+                            <select class="form-control col-md-4" name="fleet_id" id="fleet_id">
+                                <option disabled selected>نوع ناوگان</option>
+                                @foreach ($fleets as $fleet)
+                                    <option value="{{ $fleet->id }}">
+                                        {{ \App\Http\Controllers\FleetController::getFleetName($fleet->parent_id) }}
+                                        -
+                                        {{ $fleet->title }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary m-2">جستجو</button>
+                </div>
+            </form>
 
             <div class="table-responsive">
                 <table class="table">
@@ -64,10 +87,12 @@
                                 <td>{{ $load->fromCity }}</td>
                                 <td>{{ $load->toCity }}</td>
                                 <td>
-                                    <a href="{{ route('load.searchLoadDriverCall', $load) }}">{{ $load->driver_calls_count }}</a>
+                                    <a
+                                        href="{{ route('load.searchLoadDriverCall', $load) }}">{{ $load->driver_calls_count }}</a>
                                 </td>
                                 <td>{{ $load->date }} {{ $load->dateTime }}</td>
-                                <td><a class="btn btn-info btn-sm" href="{{ route('loadInfo', $load->id) }}">جزئیات</a></td>
+                                <td><a class="btn btn-info btn-sm" href="{{ route('loadInfo', $load->id) }}">جزئیات</a>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

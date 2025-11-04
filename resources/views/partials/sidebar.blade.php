@@ -121,7 +121,7 @@
                 @endif
                 <li class="menu-item">
                     <a class="menu-link" href="{{ route('admin.scamAlert') }}">
-                        <span>تخلف</span>
+                        <span>هشدار تخلف</span>
                     </a>
                 </li>
                 @if (in_array('listOfOwners', auth()->user()->userAccess))
