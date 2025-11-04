@@ -673,8 +673,13 @@ class DataConvertPlusController extends Controller
                 }
 
                 $title = $this->extractTitle($text);
-                if (preg_match('/عنوان بار:\s*(.*?)(?:\s*\d{10,}|$)/u', $raw, $matches) && $cargo->isProcessingControl == 1) {
-                    $titleProccesing = trim($matches[1]);
+                if ($cargo->isProcessingControl == 1) {
+                    if (
+                        preg_match('/عنوان بار:\s*(.*?)(?:\s*\d{10,}|$)/u', $raw, $matches) ||
+                        preg_match('/عنوان بار:\s*(.*?)\s*(?:Tell:|$)/u', $raw, $matches)
+                    ) {
+                        $titleProccesing = trim($matches[1]);
+                    }
                 }
                 foreach ($fleetTitles as $fleetTitle) {
                     $this->pushUniqueLoad($allLoads, [
