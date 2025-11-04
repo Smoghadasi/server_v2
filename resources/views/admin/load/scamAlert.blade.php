@@ -5,7 +5,7 @@
         <h5 class="card-header">
             <div class="row justify-content-between">
                 <div class="col-4">
-                    هشدار کلاه برداری!
+                    هشدار تخلف!
                 </div>
             </div>
 
