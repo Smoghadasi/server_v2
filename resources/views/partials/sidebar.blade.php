@@ -68,11 +68,34 @@
                     @endphp
 
                     <div data-i18n="Without menu" class="{{ $textClass }}">
-                        واحد پردازش ({{ $cargoProcessingUnitsCount }})
+                        پردازش ({{ $cargoProcessingUnitsCount }})
                     </div>
 
                 </a>
             </li>
+            @if (Auth::user()->role == 'admin')
+                <li class="menu-item">
+                    <a class="menu-link" href="{{ route('processingUnitVIP.index') }}">
+                        <i class="menu-icon tf-icons bx bx-box"></i>
+                        @php
+                            $cargoCount = \App\Http\Controllers\DataConvertPlusController::getCountOfCargos();
+                            $textClass = '';
+
+                            if ($cargoCount > 40) {
+                                $textClass = 'text-danger';
+                            } elseif ($cargoCount > 20) {
+                                $textClass = 'text-warning';
+                            }
+                        @endphp
+
+                        <div data-i18n="Without menu" class="{{ $textClass }}">
+                            پردازش ویژه ({{ $cargoCount }})
+                        </div>
+
+                    </a>
+                </li>
+            @endif
+
             <li class="menu-item">
                 <a class="menu-link" href="{{ route('documentSmartCargo') }}">
                     <i class="menu-icon tf-icons bx bx-box"></i>

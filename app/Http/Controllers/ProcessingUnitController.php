@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\CargoConvertList;
+use App\Models\Equivalent;
+use App\Models\OperatorCargoListAccess;
 use App\Models\PrompAi;
 use App\Models\Setting;
 use Carbon\Carbon;
@@ -33,16 +35,35 @@ class ProcessingUnitController extends Controller
         // ۲. اگر باری برای اپراتور نبود → دنبال بار آزاد مناسب بگرد
         if (!$cargo) {
 
+            $operatorCargoListAccess = OperatorCargoListAccess::where('user_id', $userId)
+                ->pluck('fleet_id')
+                ->toArray();
+
+            $dictionary = [];
+            if ($operatorCargoListAccess) {
+                $dictionary = Equivalent::where('type', 'fleet')
+                    ->whereIn('original_word_id', $operatorCargoListAccess)
+                    ->pluck('equivalentWord')
+                    ->toArray();
+            }
+
             // اگر دیکشنری داریم → دنبال اولین باری بگرد که یکی از کلماتش داخل بار هست
-            $cargo = CargoConvertList::where([
-                ['operator_id', 0],
-                ['status', 0],
-                ['processingUnit', 1],
-                ['isBlocked', 0],
-                ['isDuplicate', 0],
-            ])
-                ->oldest('id')
-                ->first();
+            if ($dictionary) {
+                $cargo = CargoConvertList::where(function ($q) use ($dictionary) {
+                    foreach ($dictionary as $word) {
+                        $q->orWhere('cargo', 'LIKE', "%{$word}%");
+                    }
+                })
+                    ->where([
+                        ['operator_id', 0],
+                        ['status', 0],
+                        ['processingUnit', 1],
+                        ['isBlocked', 0],
+                        ['isDuplicate', 0],
+                    ])
+                    ->oldest('id')
+                    ->first();
+            }
 
             // اگر باز هم بار پیدا نشد → اولین بار آزاد عمومی
             if (!$cargo) {
@@ -61,34 +82,158 @@ class ProcessingUnitController extends Controller
         // ۳. اگر بار پیدا شد → مالکیت بده به اپراتور
         if ($cargo) {
             // بررسی اگر بار واقعاً جزو دیکشنری اپراتور هست
-            $cargo->operator_id = $userId;
-            $cargo->save();
-            // return $this->convertSmart($cargo);
-            return view('admin.processingUnit.index', compact('cargo', 'countOfCargos', 'users'));
+            if (!empty($dictionary)) {
+                foreach ($dictionary as $word) {
+                    if (str_contains($cargo->cargo, $word)) {
+                        $cargo->operator_id = $userId;
+                        $cargo->save();
+                        return view('admin.processingUnit.index', compact('cargo', 'countOfCargos', 'users'));
+                    }
+                }
 
-            // اگر بار فعلی نبود، دنبال بار جدیدی که match کنه
-            $cargo = CargoConvertList::where([
-                ['operator_id', 0],
-                ['status', 0],
-                ['isBlocked', 0],
-                ['processingUnit', 1],
-                ['isDuplicate', 0],
-            ])
-                ->oldest('id')
-                ->first();
+                // اگر بار فعلی نبود، دنبال بار جدیدی که match کنه
+                $newCargo = CargoConvertList::where(function ($q) use ($dictionary) {
+                    foreach ($dictionary as $word) {
+                        $q->orWhere('cargo', 'LIKE', "%{$word}%");
+                    }
+                })
+                    ->where([
+                        ['operator_id', 0],
+                        ['status', 0],
+                        ['processingUnit', 1],
+                        ['isBlocked', 0],
+                        ['isDuplicate', 0],
+                    ])
+                    ->oldest('id')
+                    ->first();
 
-            if ($cargo) {
-                $cargo->operator_id = $userId;
-                $cargo->save();
-                // return $this->convertSmart($cargo);
-                return view('admin.processingUnit.index', compact('cargo', 'countOfCargos', 'users'));
+                if ($newCargo) {
+                    $newCargo->operator_id = $userId;
+                    $newCargo->save();
+                    $cargo = $newCargo;
+                    return view('admin.processingUnit.index', compact('cargo', 'countOfCargos', 'users'));
+                }
             }
 
             // در نهایت بار فعلی رو بده به اپراتور
             $cargo->operator_id = $userId;
             $cargo->save();
-            // return $this->convertSmart($cargo->cargo);
             return view('admin.processingUnit.index', compact('cargo', 'countOfCargos', 'users'));
+        }
+
+        // ۴. اگر هیج باری نبود → برگرد به داشبورد
+        return redirect(url('dashboard'))->with('danger', 'هیچ باری وجود ندارد');
+    }
+    public function indexVIP()
+    {
+        $userId = auth()->id();
+        $countOfCargos = CargoConvertList::where('operator_id', 0)
+            ->where('isBlocked', 0)
+            ->where('isDuplicate', 0)
+            ->count();
+        // ۱. پیدا کردن باری که قبلاً به اپراتور تخصیص داده شده
+        $cargo = CargoConvertList::where([
+            ['operator_id', $userId],
+            ['processingUnit', 0],
+            ['status', 0],
+            ['isBlocked', 0],
+            ['isDuplicate', 0],
+        ])
+            ->latest('id')
+            ->first();
+        $users = UserController::getOnlineAndOfflineUsers();
+
+        // ۲. اگر باری برای اپراتور نبود → دنبال بار آزاد مناسب بگرد
+        if (!$cargo) {
+            $operatorCargoListAccess = OperatorCargoListAccess::where('user_id', $userId)
+                ->pluck('fleet_id')
+                ->toArray();
+
+            $dictionary = [];
+            if ($operatorCargoListAccess) {
+                $dictionary = Equivalent::where('type', 'fleet')
+                    ->whereIn('original_word_id', $operatorCargoListAccess)
+                    ->pluck('equivalentWord')
+                    ->toArray();
+            }
+
+            // اگر دیکشنری داریم → دنبال اولین باری بگرد که یکی از کلماتش داخل بار هست
+            if ($dictionary) {
+                $cargo = CargoConvertList::where(function ($q) use ($dictionary) {
+                    foreach ($dictionary as $word) {
+                        $q->orWhere('cargo', 'LIKE', "%{$word}%");
+                    }
+                })
+                    ->where([
+                        ['operator_id', 0],
+                        ['status', 0],
+                        ['processingUnit', 0],
+                        ['isBlocked', 0],
+                        ['isDuplicate', 0],
+                    ])
+                    ->oldest('id')
+                    ->first();
+            }
+
+            // اگر باز هم بار پیدا نشد → اولین بار آزاد عمومی
+            if (!$cargo) {
+                $cargo = CargoConvertList::where([
+                    ['operator_id', 0],
+                    ['status', 0],
+                    ['processingUnit', 0],
+                    ['isBlocked', 0],
+                    ['isDuplicate', 0],
+                ])
+                    ->oldest('id')
+                    ->first();
+            }
+        }
+
+        // ۳. اگر بار پیدا شد → مالکیت بده به اپراتور
+        if ($cargo) {
+            // بررسی اگر بار واقعاً جزو دیکشنری اپراتور هست
+            if (!empty($dictionary)) {
+                foreach ($dictionary as $word) {
+                    if (str_contains($cargo->cargo, $word)) {
+                        $cargo->operator_id = $userId;
+                        $cargo->save();
+                        return view('admin.processingUnit.indexVIP', compact('cargo', 'countOfCargos', 'users'));
+
+                        // return $this->getLoadFromTel($cargo);
+                    }
+                }
+
+                // اگر بار فعلی نبود، دنبال بار جدیدی که match کنه
+                $newCargo = CargoConvertList::where(function ($q) use ($dictionary) {
+                    foreach ($dictionary as $word) {
+                        $q->orWhere('cargo', 'LIKE', "%{$word}%");
+                    }
+                })
+                    ->where([
+                        ['operator_id', 0],
+                        ['status', 0],
+                        ['isBlocked', 0],
+                        ['processingUnit', 0],
+                        ['isDuplicate', 0],
+                    ])
+                    ->oldest('id')
+                    ->first();
+
+                if ($newCargo) {
+                    $newCargo->operator_id = $userId;
+                    $newCargo->save();
+                    return view('admin.processingUnit.indexVIP', compact('cargo', 'countOfCargos', 'users'));
+
+                    // return $this->getLoadFromTel($newCargo);
+                }
+            }
+
+            // در نهایت بار فعلی رو بده به اپراتور
+            $cargo->operator_id = $userId;
+            $cargo->save();
+            return view('admin.processingUnit.indexVIP', compact('cargo', 'countOfCargos', 'users'));
+
+            // return $this->getLoadFromTel($cargo);
         }
 
         // ۴. اگر هیج باری نبود → برگرد به داشبورد
@@ -217,6 +362,11 @@ class ProcessingUnitController extends Controller
         }
         // متن کامل از درخواست
         $text = $request->input('cargo');
+
+        if ($request->automatic == 1) {
+            $dataConvertPlus = new DataConvertPlusController();
+            return $dataConvertPlus->getLoadFromTel($text, 1, $cargo->id);
+        }
 
         // با regex، متن‌های بین START و END را پیدا می‌کنیم
         preg_match_all('/START\s*(.*?)\s*END/su', $text, $matches);

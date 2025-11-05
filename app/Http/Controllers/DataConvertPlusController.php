@@ -427,11 +427,15 @@ class DataConvertPlusController extends Controller
         ], 200, [], JSON_UNESCAPED_UNICODE);
     }
 
-    public function getLoadFromTel($cargo)
+    public function getLoadFromTel($cargo, $isAutomatic = 0, $cargoId = null)
     {
-        // return $request;
-        $raw = $cargo->cargo;
-        if ($raw === '') {
+        if ($isAutomatic == 1) {
+            $raw = $cargo;
+        } else {
+            $raw = $cargo->cargo;
+        }
+
+        if ($raw === '' || $raw == null) {
             return response()->json(['success' => false, 'message' => 'متن ورودی خالی است.']);
         }
 
@@ -629,7 +633,7 @@ class DataConvertPlusController extends Controller
                             ->where('parent_id', '!=', 0)
                             ->get(['id', 'name', 'parent_id']);
 
-                        if ($cargo->isProcessingControl == 1) {
+                        if ($isAutomatic == 0 && $cargo->isProcessingControl == 1) {
                             if (
                                 preg_match('/عنوان بار:\s*(.*?)(?:\s*\d{10,}|$)/u', $raw, $matches) ||
                                 preg_match('/عنوان بار:\s*(.*?)\s*(?:Tell:|$)/u', $raw, $matches)
@@ -673,7 +677,7 @@ class DataConvertPlusController extends Controller
                 }
 
                 $title = $this->extractTitle($text);
-                if ($cargo->isProcessingControl == 1) {
+                if ($isAutomatic == 0 && $cargo->isProcessingControl == 1) {
                     if (
                         preg_match('/عنوان بار:\s*(.*?)(?:\s*\d{10,}|$)/u', $raw, $matches) ||
                         preg_match('/عنوان بار:\s*(.*?)\s*(?:Tell:|$)/u', $raw, $matches)
@@ -705,13 +709,29 @@ class DataConvertPlusController extends Controller
             ->where('isDuplicate', 0)
             ->count();
         $users = UserController::getOnlineAndOfflineUsers();
+        if ($isAutomatic == 1) {
+            foreach ($uniqueResults as $index => $item) {
+                $result['key'][] = (string) $index;
+
+                $result["title_{$index}"] = trim($item['title']);
+                $result["origin_{$index}"] = $item['origin'];
+                $result["originState_{$index}"] = $item['origins'][0]['parent_id'];
+                $result["destination_{$index}"] = $item['destination'];
+                $result["destinationState_{$index}"] = $item['destinations'][0]['parent_id'];
+                $result["mobileNumber_{$index}"] = $item['phoneNumber'];
+                $result["freight_{$index}"] = $item['price'];
+                $result["priceType_{$index}"] = "توافقی";
+                $result["fleetId_{$index}"] = (string) $item['fleet_id'];
+                $result["fleets_{$index}"] = $item['fleet'];
+                $result["description_{$index}"] = $item['description'];
+            }
+            $request = new Request($result);
+            return $this->storeMultiCargoSmart($request, $cargoId);
+        }
         return view('admin.load.smartCreateCargo', compact('cargo', 'countOfCargos', 'users', 'uniqueResults'));
 
 
-        // return response()->json([
-        //     'success' => true,
-        //     'data'    => array_values($allLoads),
-        // ], 200, [], JSON_UNESCAPED_UNICODE);
+        return response()->json($uniqueResults);
     }
 
     public static function getCountOfCargos()

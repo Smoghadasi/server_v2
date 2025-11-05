@@ -872,7 +872,11 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         Route::get('finalApprovalAndStoreCargo', [DataConvertController::class, 'finalApprovalAndStoreCargo'])->middleware('operator');
 
+        // ثبت بار پلاس
         Route::get('smartStoreCargo', [DataConvertPlusController::class, 'smartStoreCargo'])->name('admin.smartStoreCargo')->middleware('operator');
+
+
+        // Route::get('smartStoreCargoVIP', [DataConvertPlusController::class, 'smartStoreCargoVIP'])->name('admin.smartStoreCargoVIP')->middleware('operator');
 
         Route::get('updateCargoTime/{cargo}', [DataConvertController::class, 'updateCargoTime'])
             ->name('updateCargoTime')
@@ -889,6 +893,10 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
         Route::get('processingUnit', [ProcessingUnitController::class, 'index'])
             ->name('processingUnit.index')
+            ->middleware('operator');
+
+        Route::get('processingUnitVIP', [ProcessingUnitController::class, 'indexVIP'])
+            ->name('processingUnitVIP.index')
             ->middleware('operator');
 
         Route::get('documentSmartCargo', [ProcessingUnitController::class, 'documentSmartCargo'])
