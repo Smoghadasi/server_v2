@@ -633,14 +633,14 @@ class DataConvertPlusController extends Controller
                             ->where('parent_id', '!=', 0)
                             ->get(['id', 'name', 'parent_id']);
 
-                        if ($isAutomatic == 0 && $cargo->isProcessingControl == 1) {
+                        // if ($isAutomatic == 0 && $cargo->isProcessingControl == 1) {
                             if (
                                 preg_match('/عنوان بار:\s*(.*?)(?:\s*\d{10,}|$)/u', $raw, $matches) ||
                                 preg_match('/عنوان بار:\s*(.*?)\s*(?:Tell:|$)/u', $raw, $matches)
                             ) {
                                 $titleProccesing = trim($matches[1]);
                             }
-                        }
+                        // }
 
                         $record = [
                             'fleet'           => $fleetTitle,
@@ -677,14 +677,14 @@ class DataConvertPlusController extends Controller
                 }
 
                 $title = $this->extractTitle($text);
-                if ($isAutomatic == 0 && $cargo->isProcessingControl == 1) {
+                // if ($isAutomatic == 0 && $cargo->isProcessingControl == 1) {
                     if (
                         preg_match('/عنوان بار:\s*(.*?)(?:\s*\d{10,}|$)/u', $raw, $matches) ||
                         preg_match('/عنوان بار:\s*(.*?)\s*(?:Tell:|$)/u', $raw, $matches)
                     ) {
                         $titleProccesing = trim($matches[1]);
                     }
-                }
+                // }
                 foreach ($fleetTitles as $fleetTitle) {
                     $this->pushUniqueLoad($allLoads, [
                         'fleet'           => $fleetTitle,
@@ -694,7 +694,7 @@ class DataConvertPlusController extends Controller
                         'destination'     => $destCity,
                         'destination_id'  => $this->pickBestCityIdByName($destCity),
                         'price'           => $price,
-                        'title'           => $title,
+                        'title'           => $titleProccesing ?? $title,
                         'phoneNumber'     => $firstPhone ?? '',
                         'description'     => $this->makeDescription($fleetTitle, $originCity, $destCity, $title, $price, $raw),
                         'raw'             => $raw,
