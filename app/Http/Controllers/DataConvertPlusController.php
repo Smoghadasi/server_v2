@@ -13,6 +13,7 @@ use App\Models\LoadOwnerCount;
 use App\Models\OperatorCargoListAccess;
 use App\Models\Owner;
 use App\Models\ProvinceCity;
+use App\Models\RejectCargoOperator;
 use App\Models\User;
 use App\Models\UserActivityReport;
 use Carbon\Carbon;
@@ -634,12 +635,12 @@ class DataConvertPlusController extends Controller
                             ->get(['id', 'name', 'parent_id']);
 
                         // if ($isAutomatic == 0 && $cargo->isProcessingControl == 1) {
-                            if (
-                                preg_match('/عنوان بار:\s*(.*?)(?:\s*\d{10,}|$)/u', $raw, $matches) ||
-                                preg_match('/عنوان بار:\s*(.*?)\s*(?:Tell:|$)/u', $raw, $matches)
-                            ) {
-                                $titleProccesing = trim($matches[1]);
-                            }
+                        if (
+                            preg_match('/عنوان بار:\s*(.*?)(?:\s*\d{10,}|$)/u', $raw, $matches) ||
+                            preg_match('/عنوان بار:\s*(.*?)\s*(?:Tell:|$)/u', $raw, $matches)
+                        ) {
+                            $titleProccesing = trim($matches[1]);
+                        }
                         // }
 
                         $record = [
@@ -678,12 +679,12 @@ class DataConvertPlusController extends Controller
 
                 $title = $this->extractTitle($text);
                 // if ($isAutomatic == 0 && $cargo->isProcessingControl == 1) {
-                    if (
-                        preg_match('/عنوان بار:\s*(.*?)(?:\s*\d{10,}|$)/u', $raw, $matches) ||
-                        preg_match('/عنوان بار:\s*(.*?)\s*(?:Tell:|$)/u', $raw, $matches)
-                    ) {
-                        $titleProccesing = trim($matches[1]);
-                    }
+                if (
+                    preg_match('/عنوان بار:\s*(.*?)(?:\s*\d{10,}|$)/u', $raw, $matches) ||
+                    preg_match('/عنوان بار:\s*(.*?)\s*(?:Tell:|$)/u', $raw, $matches)
+                ) {
+                    $titleProccesing = trim($matches[1]);
+                }
                 // }
                 foreach ($fleetTitles as $fleetTitle) {
                     $this->pushUniqueLoad($allLoads, [
@@ -710,23 +711,33 @@ class DataConvertPlusController extends Controller
             ->count();
         $users = UserController::getOnlineAndOfflineUsers();
         if ($isAutomatic == 1) {
-            foreach ($uniqueResults as $index => $item) {
-                $result['key'][] = (string) $index;
+            try {
+                foreach ($uniqueResults as $index => $item) {
+                    $result['key'][] = (string) $index;
 
-                $result["title_{$index}"] = trim($item['title']);
-                $result["origin_{$index}"] = $item['origin'];
-                $result["originState_{$index}"] = $item['origins'][0]['parent_id'];
-                $result["destination_{$index}"] = $item['destination'];
-                $result["destinationState_{$index}"] = $item['destinations'][0]['parent_id'];
-                $result["mobileNumber_{$index}"] = $item['phoneNumber'];
-                $result["freight_{$index}"] = $item['price'];
-                $result["priceType_{$index}"] = "توافقی";
-                $result["fleetId_{$index}"] = (string) $item['fleet_id'];
-                $result["fleets_{$index}"] = $item['fleet'];
-                $result["description_{$index}"] = $item['description'];
+                    $result["title_{$index}"] = trim($item['title']);
+                    $result["origin_{$index}"] = $item['origin'];
+                    $result["originState_{$index}"] = $item['origins'][0]['parent_id'];
+                    $result["destination_{$index}"] = $item['destination'];
+                    $result["destinationState_{$index}"] = $item['destinations'][0]['parent_id'];
+                    $result["mobileNumber_{$index}"] = $item['phoneNumber'];
+                    $result["freight_{$index}"] = $item['price'];
+                    $result["priceType_{$index}"] = "توافقی";
+                    $result["fleetId_{$index}"] = (string) $item['fleet_id'];
+                    $result["fleets_{$index}"] = $item['fleet'];
+                    $result["description_{$index}"] = $item['description'];
+                }
+                $request = new Request($result);
+                return $this->storeMultiCargoSmart($request, $cargoId);
+            } catch (\Exception $e) {
+                $cargo = CargoConvertList::find($cargoId);
+                $cargo->status = 1;
+                $cargo->rejected = 1;
+                $cargo->processingUnit = 0;
+                $cargo->save();
+                return back();
+                //throw $th;
             }
-            $request = new Request($result);
-            return $this->storeMultiCargoSmart($request, $cargoId);
         }
         return view('admin.load.smartCreateCargo', compact('cargo', 'countOfCargos', 'users', 'uniqueResults'));
 
