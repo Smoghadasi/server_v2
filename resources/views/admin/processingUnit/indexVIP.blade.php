@@ -109,7 +109,7 @@
                         </div>
                         <div class="col-md-6 text-end">
                             {{-- <button class="btn btn-primary mb-2 float-right" type="submit">ارسال به ثبت بار</button> --}}
-                            <button class="btn btn-primary mb-2 float-right submitBtn" type="submit">ذخیره
+                            <button class="btn btn-primary mb-2 float-right submitBtn btn-lg" type="submit">ذخیره
                                 نهایی</button>
                         </div>
                     </div>
@@ -147,7 +147,7 @@
                     rows="20"></textarea>
                 <div class="col-md-12 text-end">
                     {{-- <button class="btn btn-primary mb-2 float-right" type="submit">ارسال به ثبت بار</button> --}}
-                    <button class="btn btn-primary mb-2 float-right submitBtn" type="submit">ذخیره نهایی</button>
+                    <button class="btn btn-primary mb-2 float-right submitBtn btn-lg" type="submit">ذخیره نهایی</button>
                 </div>
             </form>
         </div>

@@ -53,7 +53,7 @@
 
                 </a>
             </li>
-            <li class="menu-item">
+            {{-- <li class="menu-item">
                 <a class="menu-link" href="{{ route('processingUnit.index') }}">
                     <i class="menu-icon tf-icons bx bx-box"></i>
                     @php
@@ -72,8 +72,7 @@
                     </div>
 
                 </a>
-            </li>
-            @if (Auth::user()->role == 'admin')
+            </li> --}}
                 <li class="menu-item">
                     <a class="menu-link" href="{{ route('processingUnitVIP.index') }}">
                         <i class="menu-icon tf-icons bx bx-box"></i>
@@ -94,7 +93,6 @@
 
                     </a>
                 </li>
-            @endif
 
             <li class="menu-item">
                 <a class="menu-link" href="{{ route('documentSmartCargo') }}">
