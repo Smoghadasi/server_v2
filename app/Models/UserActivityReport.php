@@ -16,8 +16,7 @@ class UserActivityReport extends Model
 
     public function firstLoad()
     {
-        return Load::where('userType', 'operator')
-            ->where('user_id', $this->user_id)
+        return Load::where('operator_id', $this->user_id)
             ->where('created_at', '>=', Carbon::today())
             ->withTrashed()
             ->first();
@@ -25,8 +24,7 @@ class UserActivityReport extends Model
 
     public function lastLoad()
     {
-        return Load::where('userType', 'operator')
-            ->where('user_id', $this->user_id)
+        return Load::where('operator_id', $this->user_id)
             ->where('created_at', '>=', Carbon::today())
             ->orderByDesc('created_at')
             ->withTrashed()
@@ -35,8 +33,7 @@ class UserActivityReport extends Model
 
     public function numOfLoads()
     {
-        return Load::where('userType', 'operator')
-            ->where('user_id', $this->user_id)
+        return Load::where('operator_id', $this->user_id)
             ->where('created_at', '>=', Carbon::today())
             ->withTrashed()
             ->count();
