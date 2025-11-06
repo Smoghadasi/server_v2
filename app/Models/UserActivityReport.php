@@ -17,7 +17,7 @@ class UserActivityReport extends Model
     public function firstLoad()
     {
         return Load::where('operator_id', $this->user_id)
-            ->where('created_at', '>=', Carbon::today())
+            ->where('created_at', '>', date('Y-m-d') . ' 00:00:00')
             ->withTrashed()
             ->first();
     }
@@ -34,7 +34,7 @@ class UserActivityReport extends Model
     public function numOfLoads()
     {
         return Load::where('operator_id', $this->user_id)
-            ->where('created_at', '>=', Carbon::today())
+            ->where('created_at', '>', date('Y-m-d') . ' 00:00:00')
             ->withTrashed()
             ->count();
     }
