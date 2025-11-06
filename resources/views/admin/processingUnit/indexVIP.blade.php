@@ -100,19 +100,18 @@
 
                 <div class="col-lg-12">
                     <div class="row">
-                        <div class="col-md-4 text-center">
 
-                            {{-- <button class="btn btn-primary mb-2 float-right" type="submit">ارسال به ثبت بار</button> --}}
-                            <button class="btn btn-primary mb-2 float-right" type="submit" id="submitBtn">ارسال به ثبت
-                                بار</button>
-                        </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <a href="{{ url('admin/removeCargoFromCargoList') }}/{{ $cargo->id }}"
                                 class="btn btn-danger mb-2 float-right">
                                 حذف
                             </a>
                         </div>
-
+                        <div class="col-md-6 text-end">
+                            {{-- <button class="btn btn-primary mb-2 float-right" type="submit">ارسال به ثبت بار</button> --}}
+                            <button class="btn btn-primary mb-2 float-right submitBtn" type="submit">ذخیره
+                                نهایی</button>
+                        </div>
                     </div>
 
                 </div>
@@ -133,10 +132,10 @@
                                 @endphp
                             </span>
                         </div> --}}
-                        <div class="col-md-6">
+                        <div class="col-md-6" style="justify-items: left">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" value="1" name="automatic"
-                                    id="automatic">
+                                    id="automatic" checked>
                                 <label class="form-check-label" for="automatic">
                                     ذخیره اتوماتیک
                                 </label>
@@ -146,6 +145,10 @@
                 </span>
                 <textarea id="cargoText" class="form-control mb-2" placeholder="نتیجه پردازش توسط هوش منصوعی" name="cargo"
                     rows="20"></textarea>
+                <div class="col-md-12 text-end">
+                    {{-- <button class="btn btn-primary mb-2 float-right" type="submit">ارسال به ثبت بار</button> --}}
+                    <button class="btn btn-primary mb-2 float-right submitBtn" type="submit">ذخیره نهایی</button>
+                </div>
             </form>
         </div>
     </div>
@@ -158,9 +161,9 @@
         $(document).ready(function() {
             $('#automatic').on('change', function() {
                 if ($(this).is(':checked')) {
-                    $('#submitBtn').text('ذخیره نهایی');
+                    $('.submitBtn').text('ذخیره نهایی');
                 } else {
-                    $('#submitBtn').text('ارسال به ثبت بار');
+                    $('.submitBtn').text('ارسال به ثبت بار');
                 }
             });
         });
