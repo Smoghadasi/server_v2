@@ -87,10 +87,10 @@
                         ارسال به انتها
                     </a>
 
-                    {{-- <a class="btn btn-outline-success mb-2 float-right" href="{{ route('processingUnit', $cargo) }}">
+                    <a class="btn btn-outline-success mb-2 float-right" href="{{ route('processingUnit', $cargo) }}">
                         ارسال به واحد پردازش
 
-                    </a> --}}
+                    </a>
                 </div>
                 <span class="col-lg-12 text-right">
                     <span class="alert alert-info p-1">
