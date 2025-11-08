@@ -355,43 +355,43 @@ class ProcessingUnitController extends Controller
 
     public function update(Request $request, $cargoId)
     {
-        $cargo = CargoConvertList::whereId($cargoId)->first();
+        $cargo = CargoConvertList::find($cargoId);
 
-        if ($cargo == null) {
+        if (!$cargo) {
             return back();
         }
-        // متن کامل از درخواست
+
         $text = $request->input('cargo');
-
-        if ($request->automatic == 1) {
-            $dataConvertPlus = new DataConvertPlusController();
-            return $dataConvertPlus->getLoadFromTel($text, 1, $cargo->id);
-        }
-
-        // با regex، متن‌های بین START و END را پیدا می‌کنیم
         preg_match_all('/START\s*(.*?)\s*END/su', $text, $matches);
 
-        // اگر هیچ متنی پیدا نشد
         if (empty($matches[1])) {
             return response()->json(['message' => 'هیچ داده‌ای یافت نشد.'], 400);
         }
 
-        foreach ($matches[1] as $content) {
-            // تمیز کردن خطوط اضافی
-            $clean = trim($content);
+        $contents = array_map('trim', $matches[1]);
 
-            // ساخت رکورد جدید در جدول cargo_convert_list
-            $item = CargoConvertList::create([
+        if ($request->automatic == 1) {
+            $dataConvertPlus = new DataConvertPlusController();
+
+            foreach ($contents as $clean) {
+                $dataConvertPlus->getLoadFromTel($clean, 1, $cargo->id);
+            }
+
+            return back()->with('success', 'ثبت شد');
+        }
+
+        foreach ($contents as $clean) {
+            CargoConvertList::create([
                 'cargo_orginal' => $clean,
                 'cargo' => $clean,
                 'isProcessingControl' => 1,
             ]);
-
-            $results[] = $item;
         }
-        $cargo->processingUnit = 0;
-        $cargo->status = 1;
-        $cargo->save();
+
+        $cargo->update([
+            'processingUnit' => 0,
+            'status' => 1,
+        ]);
 
         return back()->with('success', 'ثبت شد');
     }
