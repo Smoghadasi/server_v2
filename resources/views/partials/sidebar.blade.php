@@ -48,7 +48,7 @@
                     @endphp
 
                     <div data-i18n="Without menu" class="{{ $textClass }}">
-                        ثبت بار پلاس ({{ $cargoCount }})
+                        ثبت بار پلاس
                     </div>
 
                 </a>
@@ -68,7 +68,7 @@
                     @endphp
 
                     <div data-i18n="Without menu" class="{{ $textClass }}">
-                        پردازش ({{ $cargoProcessingUnitsCount }})
+                        پردازش
                     </div>
 
                 </a>
@@ -88,7 +88,7 @@
                         @endphp
 
                         <div data-i18n="Without menu" class="{{ $textClass }}">
-                          ثبت بار اتوماتیک ({{ $cargoCount }})
+                          ثبت بار اتوماتیک
                         </div>
 
                     </a>
