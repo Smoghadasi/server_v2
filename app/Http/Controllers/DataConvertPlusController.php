@@ -458,6 +458,7 @@ class DataConvertPlusController extends Controller
             $this->citiesByNameIndex[$name] = $id;
             $this->citiesByNameMulti[$name][] = $id;
         }
+
         // 3) معادل‌ها (با پشتیبانی از چند ناوگان برای یک کلمه)
         [$cityLexicon, $fleetLexicon] = $this->buildLexicons($citiesById, $fleetsById);
 
@@ -727,14 +728,14 @@ class DataConvertPlusController extends Controller
                     $result["description_{$index}"] = $item['description'];
                 }
                 $request = new Request($result);
-                return $this->storeMultiCargoSmart($request, $cargoId, 1);
+                return $this->storeMultiCargoSmart($request, $cargoId);
             } catch (\Exception $e) {
-                // $cargo = CargoConvertList::find($cargoId);
-                // $cargo->status = 1;
-                // $cargo->rejected = 1;
-                // $cargo->processingUnit = 0;
-                // $cargo->save();
-                // return back();
+                $cargo = CargoConvertList::find($cargoId);
+                $cargo->status = 1;
+                $cargo->rejected = 1;
+                $cargo->processingUnit = 0;
+                $cargo->save();
+                return back();
                 //throw $th;
             }
         }
@@ -761,7 +762,7 @@ class DataConvertPlusController extends Controller
     }
 
     // ذخیره دسته ای بارها
-    public function storeMultiCargoSmart(Request $request, $cargoId, $multiTask = 0)
+    public function storeMultiCargoSmart(Request $request, $cargoId)
     {
         $cargo = CargoConvertList::whereId($cargoId)->first();
         if ($cargo === null) {
@@ -841,11 +842,10 @@ class DataConvertPlusController extends Controller
                 Log::emergency("storeMultiCargo : " . $exception->getMessage());
             }
         }
+
         $cargo->status = true;
         $cargo->save();
-        if ($multiTask == 0) {
-            return back()->with('success', $counter . 'بار ثبت شد');
-        }
+        return back()->with('success', $counter . 'بار ثبت شد');
     }
 
     public function storeCargoSmart($origin, $originState, $destination, $destinationState, $mobileNumber, $description, $fleet, $title, &$counter, $cargoId)
