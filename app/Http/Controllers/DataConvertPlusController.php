@@ -708,6 +708,7 @@ class DataConvertPlusController extends Controller
             ->where('isBlocked', 0)
             ->where('processingUnit', 0)
             ->where('isDuplicate', 0)
+            ->where('status', 0)
             ->count();
         $users = UserController::getOnlineAndOfflineUsers();
         if ($isAutomatic == 1) {
