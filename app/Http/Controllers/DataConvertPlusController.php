@@ -458,7 +458,6 @@ class DataConvertPlusController extends Controller
             $this->citiesByNameIndex[$name] = $id;
             $this->citiesByNameMulti[$name][] = $id;
         }
-
         // 3) معادل‌ها (با پشتیبانی از چند ناوگان برای یک کلمه)
         [$cityLexicon, $fleetLexicon] = $this->buildLexicons($citiesById, $fleetsById);
 
@@ -728,27 +727,27 @@ class DataConvertPlusController extends Controller
                     $result["description_{$index}"] = $item['description'];
                 }
                 $request = new Request($result);
-                return $this->storeMultiCargoSmart($request, $cargoId);
+                return $this->storeMultiCargoSmartAuto($request, $cargoId);
             } catch (\Exception $e) {
-                $cargo = CargoConvertList::find($cargoId);
-                $cargo->status = 1;
-                $cargo->rejected = 1;
-                $cargo->processingUnit = 0;
-                $cargo->save();
-                return back();
+                // $cargo = CargoConvertList::find($cargoId);
+                // $cargo->status = 1;
+                // $cargo->rejected = 1;
+                // $cargo->processingUnit = 0;
+                // $cargo->save();
+                // return back();
                 //throw $th;
             }
         }
         return view('admin.load.smartCreateCargo', compact('cargo', 'countOfCargos', 'users', 'uniqueResults'));
 
-
-        return response()->json($uniqueResults);
+        // return response()->json($uniqueResults);
     }
 
     public static function getCountOfCargos()
     {
         return CargoConvertList::where('operator_id', 0)
             ->where('isBlocked', 0)
+            ->where('processingUnit', 0)
             ->where('isDuplicate', 0)
             ->count();
     }
@@ -842,10 +841,92 @@ class DataConvertPlusController extends Controller
                 Log::emergency("storeMultiCargo : " . $exception->getMessage());
             }
         }
-
         $cargo->status = true;
         $cargo->save();
         return back()->with('success', $counter . 'بار ثبت شد');
+    }
+    public function storeMultiCargoSmartAuto(Request $request, $cargoId)
+    {
+        $cargo = CargoConvertList::whereId($cargoId)->first();
+        if ($cargo === null) {
+            return back()->with('error', 'صفر بار ثبت شد');
+        }
+        try {
+            $expiresAt = now()->addMinutes(3);
+            $userId = Auth::id();
+
+            Cache::put("user-is-active-$userId", true, $expiresAt);
+            User::whereId($userId)->update(['last_active' => now()]);
+        } catch (Exception $e) {
+            Log::emergency("UserActivityActiveOnlineReport - Error: " . $e->getMessage());
+        }
+
+
+
+        $keys = $request->input('key'); // لیست کلیدهای موجود در درخواست
+        $rules = [];
+        $messages = [];
+        foreach ($keys as $key) {
+            $rules["mobileNumber_{$key}"] = 'required|digits:11';
+            $messages["mobileNumber_{$key}.required"] = "شماره تلفن {$key} الزامی است.";
+            $messages["mobileNumber_{$key}.digits"] = "شماره تلفن {$key} باید دقیقا ۱۱ رقم باشد.";
+        }
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return back()->with('danger', 'شماره موبایل کمتر از 11 رقم است')->withErrors($validator)->withInput();
+        }
+        try {
+
+            if (UserActivityReport::where([
+                ['created_at', '>', date('Y-m-d H:i:s', strtotime('-5 minute', time()))],
+                ['user_id', \auth()->id()]
+            ])->count() == 0)
+                UserActivityReport::create(['user_id' => \auth()->id()]);
+        } catch (Exception $e) {
+            Log::emergency("-------------------------- UserActivityReport ----------------------------------------");
+            Log::emergency($e->getMessage());
+            Log::emergency("------------------------------------------------------------------");
+        }
+        // return $request;
+        $counter = 0;
+        foreach ($request->key as $key) {
+            $origin = "origin_" . $key;
+            $originState = "originState_" . $key;
+            $destination = "destination_" . $key;
+            $destinationState = "destinationState_" . $key;
+            $mobileNumber = "mobileNumber_" . $key;
+            $description = "description_" . $key;
+            $fleet = "fleets_" . $key;
+            $title = "title_" . $key;
+            // $freight = "freight_" . $key;
+            // $priceType = "priceType_" . $key;
+            // $pattern = "pattern_" . $key;
+            try {
+                $this->storeCargoSmart(
+                    $request->$origin,
+                    $request->$originState,
+                    $request->$destination,
+                    $request->$destinationState,
+                    $request->$mobileNumber,
+                    $request->$description,
+                    $request->$fleet,
+                    $request->$title,
+                    // $request->$freight,
+                    // $request->$priceType,
+
+                    // $request->$pattern,
+                    $counter,
+                    $cargo->id
+                );
+            } catch (\Exception $exception) {
+                return $exception;
+                Log::emergency("storeMultiCargo : " . $exception->getMessage());
+            }
+        }
+        $cargo->status = true;
+        $cargo->save();
     }
 
     public function storeCargoSmart($origin, $originState, $destination, $destinationState, $mobileNumber, $description, $fleet, $title, &$counter, $cargoId)

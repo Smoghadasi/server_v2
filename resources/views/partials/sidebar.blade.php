@@ -53,7 +53,7 @@
 
                 </a>
             </li>
-             <li class="menu-item">
+            <li class="menu-item">
                 <a class="menu-link" href="{{ route('processingUnit.index') }}">
                     <i class="menu-icon tf-icons bx bx-box"></i>
                     @php
@@ -70,9 +70,9 @@
                     <div data-i18n="Without menu" class="{{ $textClass }}">
                         پردازش ({{ $cargoProcessingUnitsCount }})
                     </div>
-
                 </a>
             </li>
+            @if (Auth::user()->role == 'admin')
                 <li class="menu-item">
                     <a class="menu-link" href="{{ route('processingUnitVIP.index') }}">
                         <i class="menu-icon tf-icons bx bx-box"></i>
@@ -88,11 +88,12 @@
                         @endphp
 
                         <div data-i18n="Without menu" class="{{ $textClass }}">
-                          ثبت بار اتوماتیک ({{ $cargoCount }})
+                            ثبت بار نیمه اتوماتیک ({{ $cargoCount }})
                         </div>
 
                     </a>
                 </li>
+            @endif
 
             <li class="menu-item">
                 <a class="menu-link" href="{{ route('documentSmartCargo') }}">
@@ -102,7 +103,6 @@
                     </div>
                 </a>
             </li>
-
         @endif
 
         <li class="menu-item {{ request()->is('admin/support*') ? 'active open' : '' }}">
