@@ -747,7 +747,7 @@ class DataConvertPlusController extends Controller
     {
         return CargoConvertList::where('operator_id', 0)
             ->where('isBlocked', 0)
-            // ->where('processingUnit', 0)
+            ->where('processingUnit', 0)
             ->where('isDuplicate', 0)
             ->count();
     }
