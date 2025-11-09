@@ -706,6 +706,7 @@ class DataConvertPlusController extends Controller
         $uniqueResults = array_values($allLoads);
         $countOfCargos = CargoConvertList::where('operator_id', 0)
             ->where('isBlocked', 0)
+            ->where('processingUnit', 0)
             ->where('isDuplicate', 0)
             ->count();
         $users = UserController::getOnlineAndOfflineUsers();
