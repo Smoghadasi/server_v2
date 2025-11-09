@@ -750,6 +750,7 @@ class DataConvertPlusController extends Controller
             ->where('processingUnit', 0)
             ->where('isDuplicate', 0)
             ->count();
+
     }
 
     public static function getCountOfCargoProcessingUnits()
