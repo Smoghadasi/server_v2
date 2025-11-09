@@ -5,7 +5,7 @@
 
     <div class="card">
         <h5 class="card-header">
-            واحد پردازش
+            ثبت بار نیمه اتوماتیک
         </h5>
 
         <div class="card-body row">
