@@ -385,7 +385,7 @@ class CargoJsonSaver
                 // 4) ضرب دکارتی و ذخیره
                 $storedAny = false;
                 foreach ($fleetIds as $fid) {
-                // return dd($fid);
+                    // return dd($fid);
 
                     foreach ($originIds as $oid) {
                         foreach ($destIds as $did) {
@@ -405,12 +405,27 @@ class CargoJsonSaver
                                 continue;
                             }
 
+                            // بررسی فیلدهای الزامی
+                            if (empty($mobile) || empty($oid) || empty($did)) {
+                                $results['details'][] = [
+                                    'index' => $idx,
+                                    'status' => 'failed',
+                                    'reason' => 'مبدا، مقصد یا شماره موبایل خالی است',
+                                    'fleet_id' => $fid,
+                                    'origin_id' => $oid,
+                                    'destination_id' => $did
+                                ];
+                                $results['failed']++;
+                                continue; // رد شدن از این آیتم و رفتن به بعدی
+                            }
+
+                            // اگر همه چیز اوکی بود
                             $payload = [
                                 'title'       => $title ?? 'بدون عنوان',
                                 'description' => $item['description'] ?? '',
                                 'phoneNumber' => $mobile,
-                                'origin'      => is_array($item['origin'] ?? null) ? implode('، ', $item['origin']) : ($item['origin'] ?? ''),
-                                'destination' => is_array($item['destination'] ?? null) ? implode('، ', $item['destination']) : ($item['destination'] ?? ''),
+                                'origin'      => is_array($item['origin']) ? implode('، ', $item['origin']) : $item['origin'],
+                                'destination' => is_array($item['destination']) ? implode('، ', $item['destination']) : $item['destination'],
                             ];
 
                             $newId = $this->persistLoad($payload, $oid ?? 0, $did ?? 0, $fid ? [$fid] : []);
