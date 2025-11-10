@@ -7,6 +7,7 @@ use App\Models\Equivalent;
 use App\Models\OperatorCargoListAccess;
 use App\Models\PrompAi;
 use App\Models\Setting;
+use App\Services\CargoJsonSaver;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -371,12 +372,15 @@ class ProcessingUnitController extends Controller
         $contents = array_map('trim', $matches[1]);
 
         if ($request->automatic == 1) {
-            $dataConvertPlus = new DataConvertPlusController();
+            // $dataConvertPlus = new DataConvertPlusController();
 
             foreach ($contents as $clean) {
-                $dataConvertPlus->getLoadFromTel($clean, 1, $cargo->id);
+                $this->analyzeCode($clean);
+                // $dataConvertPlus->getLoadFromTel($clean, 1, $cargo->id);
             }
-
+            $cargo = CargoConvertList::find($cargo->id);
+            $cargo->status = true;
+            $cargo->save();
             return back()->with('success', 'ثبت شد');
         }
 
@@ -394,5 +398,203 @@ class ProcessingUnitController extends Controller
         ]);
 
         return back()->with('success', 'ثبت شد');
+    }
+
+    public function analyzeCode($text)
+    {
+        $result = [];
+        // Define regex patterns
+        $patterns = [
+            'fleet'        => "/ناوگان:\\s*([^\n]+)/u",
+            'origin'       => "/از:\\s*([^\n]+)/u",
+            'destination'  => "/به:\\s*([^\n]+)/u",
+            'cargo_title'  => "/عنوان بار:\\s*([^\n]+)/u",
+            'phone'        => "/Tell:\\s*([^\n]+)/u"
+        ];
+
+        foreach ($patterns as $key => $pattern) {
+            if (preg_match($pattern, $text, $matches)) {
+                $value = trim($matches[1]);
+
+                // Special handling for phone numbers
+                if ($key === 'phone') {
+                    $phones = preg_split("/[-,]/", $value);
+                    $phones = array_map('trim', $phones);
+                    // Pick one randomly
+                    $value = $phones[array_rand($phones)];
+                }
+
+                $result[$key] = $value;
+            } else {
+                $result[$key] = null; // fallback if not found
+            }
+        }
+        $request = new Request($result);
+        $this->storeFromJson($request);
+
+        // return dd(($result));
+        // return dd(($result['fleet']));
+    }
+
+    public function storeFromJson(Request $request)
+    {
+        // 1) خواندن payload (JSON واقعی یا فرم)
+        $payload = $request->json()->all();
+        if (empty($payload)) {
+            $payload = $request->all();
+        }
+
+        // 2) استخراج items:
+        // - اگر data آرایه بود → همون
+        // - اگر کل payload آرایه از آبجکت‌ها بود → همون
+        // - اگر payload یک آبجکت منفرد بود → تبدیل به آرایهٔ یک‌عضوی
+        $items = [];
+        if (isset($payload['data']) && is_array($payload['data'])) {
+            $items = $payload['data'];
+        } elseif (is_array($payload) && $this->isListOfAssoc($payload)) {
+            $items = $payload;
+        } elseif (is_array($payload)) {
+            $items = [$payload];
+        }
+
+        // اگر باز هم خالی است، به کاربر بگو
+        if (empty($items)) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'No items found. Send either {"data":[...]} or a single JSON object.',
+                'hint' => 'Raw body should be a JSON object or data:[objects].',
+            ], 422, [], JSON_UNESCAPED_UNICODE);
+        }
+
+        // 3) نگاشت کلیدها و نرمال‌سازی متن‌های فارسی
+        // $normalized = array_map([$this, 'normalizeIncomingItem'], $items);
+
+        // 4) ذخیره
+        $saver = new CargoJsonSaver();
+        // return dd($items);
+        $result = $saver->saveFromJson($items);
+
+        return response()->json(['ok' => true] + $result, 200, [], JSON_UNESCAPED_UNICODE);
+    }
+
+    private function isListOfAssoc(array $arr): bool
+    {
+        // true اگر آرایه‌ای از آبجکت‌های انجمنی باشد
+        $i = 0;
+        foreach ($arr as $k => $v) {
+            if ($k !== $i) return false; // اندیس‌ها 0..n
+            if (!is_array($v)) return false;
+            $i++;
+        }
+        return $i > 0;
+    }
+
+    private function normalizeIncomingItem(array $item): array
+    {
+        // مپ کلیدها: phone -> phoneNumber ، cargo_title -> title
+        $map = [
+            'phone'        => 'phoneNumber',
+            'mobile'       => 'phoneNumber',
+            'mobileNumber' => 'phoneNumber',
+            'cargo_title'  => 'title',
+            'cargoTitle'   => 'title',
+            'fleets'       => 'fleet',
+            'origins'      => 'origin',
+            'destinations' => 'destination',
+        ];
+        foreach ($map as $from => $to) {
+            if (array_key_exists($from, $item) && !array_key_exists($to, $item)) {
+                $item[$to] = $item[$from];
+            }
+        }
+
+        // اسپلیت فارسی برای سه فیلد اصلی در صورت string بودن
+        foreach (['fleet', 'origin', 'destination'] as $k) {
+            if (isset($item[$k]) && !is_array($item[$k])) {
+                $item[$k] = $this->splitPersianList((string)$item[$k], $k);
+            }
+        }
+
+        // تمیز کردن title/description
+        if (isset($item['title']) && is_string($item['title'])) {
+            $item['title'] = $this->stripNoise($item['title']);
+        }
+        if (isset($item['description']) && is_string($item['description'])) {
+            $item['description'] = $this->stripNoise($item['description']);
+        }
+
+        return $item;
+    }
+
+
+    private function splitPersianList(string $s, string $field): array
+    {
+        $orig = $s;
+        $s = $this->normalizeFa($s);
+
+        // پاک کردن پیشوندهای توضیحی در destination
+        if ($field === 'destination') {
+            $s = preg_replace('/^(?:مقاصد\s*مختلف\s*شامل|مقاصد\s*شامل|مقاصد|شامل)\s*/u', '', $s);
+        }
+
+        // حذف کلمات عمومی
+        $s = preg_replace('/\b(?:و\s*حومه|حومه|اطراف|شهرستان)\b/u', ' ', $s);
+
+        // جداکننده‌ها: «،» «,» «/» «|» « و »
+        $parts = preg_split('/\s*(?:،|,|\/|\||و)\s*/u', $s) ?: [];
+
+        // فیلتر خالی‌ها
+        $parts = array_values(array_filter(array_map('trim', $parts), fn($x) => $x !== ''));
+
+        // پسا-پردازش برای fleet: «تریلی کفی» → «کفی»، «لبه» → «لبه‌دار»
+        if ($field === 'fleet') {
+            $parts = array_map(function ($t) {
+                $t = preg_replace('/^تریلی\s+/u', '', $t);
+                if ($t === 'لبه') $t = 'لبه‌دار';
+                return $t;
+            }, $parts);
+        }
+
+        return $parts ?: [$this->normalizeFa($orig)];
+    }
+
+    private function stripNoise(string $s): string
+    {
+        $s = $this->normalizeFa($s);
+        // حذف تگ‌های توضیحی رایج
+        $s = preg_replace('/\b(?:ظرفیت(?:‌|\s)های\s*مختلف|برای\s*مقاصد\s*متعدد|بارهای\s*جفت\s*و\s*تک)\b/u', '', $s);
+        return trim(preg_replace('/\s{2,}/u', ' ', $s));
+    }
+
+    private function normalizeFa(string $s): string
+    {
+        $map = [
+            'ي' => 'ی',
+            'ك' => 'ک',
+            'ۀ' => 'ه',
+            "\x{200c}" => ' ',
+            '٠' => '0',
+            '١' => '1',
+            '٢' => '2',
+            '٣' => '3',
+            '٤' => '4',
+            '٥' => '5',
+            '٦' => '6',
+            '٧' => '7',
+            '٨' => '8',
+            '٩' => '9',
+            '۰' => '0',
+            '۱' => '1',
+            '۲' => '2',
+            '۳' => '3',
+            '۴' => '4',
+            '۵' => '5',
+            '۶' => '6',
+            '۷' => '7',
+            '۸' => '8',
+            '۹' => '9',
+        ];
+        $s = strtr($s, $map);
+        return trim(preg_replace('/[ \t\x{00A0}]+/u', ' ', $s));
     }
 }
