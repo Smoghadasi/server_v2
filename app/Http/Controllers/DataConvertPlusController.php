@@ -431,7 +431,9 @@ class DataConvertPlusController extends Controller
     public function getLoadFromTel($cargo, $isAutomatic = 0, $cargoId = null)
     {
         if ($isAutomatic == 1) {
-            $raw = $cargo;
+            $rawOrginal = $cargo;
+            $raw = $this->cleanCargoText($rawOrginal);
+            // return dd($raw);
         } else {
             $raw = $cargo->cargo;
         }
@@ -635,8 +637,8 @@ class DataConvertPlusController extends Controller
 
                         // if ($isAutomatic == 0 && $cargo->isProcessingControl == 1) {
                         if (
-                            preg_match('/عنوان بار:\s*(.*?)(?:\s*\d{10,}|$)/u', $raw, $matches) ||
-                            preg_match('/عنوان بار:\s*(.*?)\s*(?:Tell:|$)/u', $raw, $matches)
+                            preg_match('/عنوان بار:\s*(.*?)(?:\s*\d{10,}|$)/u', $rawOrginal ?? $raw, $matches) ||
+                            preg_match('/عنوان بار:\s*(.*?)\s*(?:Tell:|$)/u', $rawOrginal ?? $raw, $matches)
                         ) {
                             $titleProccesing = trim($matches[1]);
                         }
@@ -679,8 +681,8 @@ class DataConvertPlusController extends Controller
                 $title = $this->extractTitle($text);
                 // if ($isAutomatic == 0 && $cargo->isProcessingControl == 1) {
                 if (
-                    preg_match('/عنوان بار:\s*(.*?)(?:\s*\d{10,}|$)/u', $raw, $matches) ||
-                    preg_match('/عنوان بار:\s*(.*?)\s*(?:Tell:|$)/u', $raw, $matches)
+                    preg_match('/عنوان بار:\s*(.*?)(?:\s*\d{10,}|$)/u', $rawOrginal ?? $raw, $matches) ||
+                    preg_match('/عنوان بار:\s*(.*?)\s*(?:Tell:|$)/u', $rawOrginal ?? $raw, $matches)
                 ) {
                     $titleProccesing = trim($matches[1]);
                 }
@@ -710,6 +712,7 @@ class DataConvertPlusController extends Controller
             ->where('isDuplicate', 0)
             ->count();
         $users = UserController::getOnlineAndOfflineUsers();
+
         if ($isAutomatic == 1) {
             try {
                 foreach ($uniqueResults as $index => $item) {
@@ -740,9 +743,16 @@ class DataConvertPlusController extends Controller
             }
         }
         return view('admin.load.smartCreateCargo', compact('cargo', 'countOfCargos', 'users', 'uniqueResults'));
-
-        // return response()->json($uniqueResults);
+        // return response()->json();
     }
+
+    public function cleanCargoText($text)
+    {
+        // حذف کل خطی که با "عنوان بار:" شروع می‌شود
+        $result = preg_replace('/عنوان بار:[^\n]*\n?/u', '', $text);
+        return $result;
+    }
+
 
     public static function getCountOfCargos()
     {
@@ -752,7 +762,6 @@ class DataConvertPlusController extends Controller
             ->where('isDuplicate', 0)
             ->where('status', 0)
             ->count();
-
     }
 
     public static function getCountOfCargoProcessingUnits()
