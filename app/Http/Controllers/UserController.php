@@ -16,6 +16,7 @@ use App\Models\User;
 use Composer\Util\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -168,11 +169,20 @@ class UserController extends Controller
 
     public static function getOnlineAndOfflineUsers()
     {
-        return User::select("*")
+        // همه کاربرهایی که last_seen دارند
+        $users = User::select("*")
             ->whereNotNull('last_seen')
             ->orderBy('last_seen', 'DESC')
+            ->where('status', 1)
             ->get();
+
+        // فقط کاربرهایی که در cache وضعیت دارند
+        return $users->filter(function ($user) {
+            return Cache::has('user-is-online-' . $user->id)
+                || Cache::has('user-is-active-' . $user->id);
+        });
     }
+
 
     /*************************************************************************************************
      * ************************************************************************************************* */

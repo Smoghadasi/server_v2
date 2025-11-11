@@ -11,34 +11,41 @@
         {{-- <li class="breadcrumb-item active">Overview</li> --}}
     </ol>
 
-    @if (in_array('onlineUsers', auth()->user()->userAccess))
-        <div class="card card-body  mb-3">
-            <div class="col-lg-12">
-                <div class="col-lg-12">کاربران :</div>
-                @foreach ($users as $user)
-                    <span class="table-bordered border-info rounded bg-white p-1 m-1">
-                        @if (Cache::has('user-is-online-' . $user->id))
+    @if (in_array('onlineUsers', auth()->user()->userAccess) && $users->count() > 0)
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between">
+                <div>کاربران :</div>
+                <!-- دکمه دسترسی کاربران -->
+                <a href="#" class="btn btn-sm btn-primary">
+                    کنترل دستگاه ها
+                </a>
+
+            </div>
+            <div class="card-body">
+                <div class="col-lg-12">
+                    @foreach ($users as $user)
+                        <span class="table-bordered border-info rounded bg-white p-1 m-1">
+                            {{-- @if (Cache::has('user-is-online-' . $user->id)) --}}
                             @if (Cache::has('user-is-active-' . $user->id))
                                 <span class="text-primary">{{ $user->name }} {{ $user->lastName }}</span>
                             @else
                                 <span class="text-success">{{ $user->name }} {{ $user->lastName }}</span>
                             @endif
-                        @else
-                            <span class="text-secondary">{{ $user->name }} {{ $user->lastName }}</span>
-                        @endif
+                            {{-- <i class="bx bx-desktop text-info fs-5"></i> --}}
+                        </span>
+                    @endforeach
+                    @if (auth()->user()->id == 21 || auth()->user()->id == 40)
+                        <div class="mt-3">
+                            <a class="btn btn-danger btn-sm" href="{{ route('driver.zeroData') }}">
+                                <i class="fas fa-angle-right"></i>
+                                صفر کردن بار ها
+                            </a>
+                        </div>
+                    @endif
 
-                    </span>
-                @endforeach
-                @if (auth()->user()->id == 21 || auth()->user()->id == 40)
-                    <div class="mt-3">
-                        <a class="btn btn-danger btn-sm" href="{{ route('driver.zeroData') }}">
-                            <i class="fas fa-angle-right"></i>
-                            صفر کردن بار ها
-                        </a>
-                    </div>
-                @endif
-
+                </div>
             </div>
+
         </div>
     @endif
 
@@ -168,7 +175,8 @@
                             <h1 class="text-center text-white">{{ $countOfDrivers }} </h1>
                             <h2 class="text-center text-white">رانندگان</h2>
                         </div>
-                        <a class="card-footer text-white clearfix small z-1 btn btn-light" href="{{ route('adminDrivers') }}">
+                        <a class="card-footer text-white clearfix small z-1 btn btn-light"
+                            href="{{ route('adminDrivers') }}">
                             <span class="float-left">لیست رانندگان</span>
                             <span class="float-right">
                                 <i class="fas fa-angle-right"></i>
