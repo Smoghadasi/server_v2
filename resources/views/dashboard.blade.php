@@ -32,7 +32,14 @@
                             @else
                                 <span class="text-success">{{ $user->name }} {{ $user->lastName }}</span>
                             @endif
-                            {{-- <i class="bx bx-desktop text-info fs-5"></i> --}}
+                            @switch($user->device)
+                                @case('Mobile')
+                                    <i class="bx bx-mobile text-black fs-5"></i>
+                                    @break
+                                @case('Desktop')
+                                    <i class="bx bx-desktop text-black fs-5"></i>
+                                    @break
+                            @endswitch
                         </span>
                     @endforeach
                     @if (auth()->user()->id == 21 || auth()->user()->id == 40)
