@@ -26,8 +26,8 @@
             <table class="table">
                 <tr>
                     <th>بار</th>
-                    <th>اپراتور</th>
                     <th>کانال</th>
+                    <th>اپراتور</th>
                     <th>تاریخ</th>
                 </tr>
                 @foreach ($cargoList as $cargo)
