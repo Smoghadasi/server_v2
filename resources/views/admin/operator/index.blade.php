@@ -54,6 +54,8 @@
                 <a class="btn btn-primary" href="{{ route('vacations.index') }}"> + مرخصی روزانه</a>
                 <a class="btn btn-primary" href="{{ route('vacationHour.index') }}"> + مرخصی ساعتی</a>
             </p>
+            <div class="table-responsive">
+
 
             <table class="table">
                 <thead>
@@ -62,6 +64,7 @@
                         <th>تصویر</th>
                         <th>نام و نام خانوادگی</th>
                         <th>کد ملی</th>
+                        <th>مجوز دسترسی</th>
                         <th>موبایل</th>
                         <th>ایمیل</th>
                         {{-- <th>جنسیت</th> --}}
@@ -86,6 +89,56 @@
                                 @endif
                             </td>
                             <td>{{ $user->nationalCode }}</td>
+                            <td>
+                                <a href="#"  data-bs-toggle="modal" data-bs-target="#modalCenter_{{ $user->id }}">
+                                    @switch($user->accessDevice)
+                                        @case('Both')
+                                            تمام دستگاه ها
+                                            @break
+                                        @case('Mobile')
+                                            موبایل
+                                            @break
+                                        @case('Desktop')
+                                            کامپیوتر
+                                            @break
+                                    @endswitch
+                                </a>
+                                <div class="modal fade" id="modalCenter_{{ $user->id }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                      <form class="modal-content" method="post" action="{{ route('admin.changeAccessDevice', $user->id) }}">
+                                        @csrf
+                                        @method('patch')
+                                        <div class="modal-header">
+                                          <h5 class="modal-title" id="modalCenterTitle">دسترسی دستگاه</h5>
+                                          <button
+                                            type="button"
+                                            class="btn-close"
+                                            data-bs-dismiss="modal"
+                                            aria-label="Close"
+                                          ></button>
+                                        </div>
+                                        <div class="modal-body">
+                                          <div class="row">
+                                            <div class="col mb-3">
+                                              <label for="nameWithTitle" class="form-label">دسترسی</label>
+                                                <select name="accessDevice" class="form-control form-select">
+                                                    <option @if($user->accessDevice == 'Both') selected @endif value="Both">همه</option>
+                                                    <option @if($user->accessDevice == 'Mobile') selected @endif value="Mobile">موبایل</option>
+                                                    <option @if($user->accessDevice == 'Desktop') selected @endif value="Desktop">کامپیوتر</option>
+                                                </select>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                            بستن
+                                          </button>
+                                          <button type="submit" class="btn btn-primary">ذخیره</button>
+                                        </div>
+                                      </div>
+                                    </form>
+                                </div>
+                            </td>
                             <td>{{ $user->mobileNumber }}</td>
                             <td>{{ $user->email }}</td>
                             {{-- <td>
@@ -1034,7 +1087,7 @@
                     @endforeach
                 </tbody>
             </table>
-
+        </div>
         </div>
     </div>
 
@@ -1049,4 +1102,29 @@
             });
         }
     </script>
-@stop
+@endsection
+@section('script')
+    <script>
+        $('#category-select').on('change', function() {
+        var selectedCategory = $(this).val();
+            console.log(selectedCategory);
+            // $.ajax({
+            //     url: '/api/filter',
+            //     method: 'POST',
+            //     data: {
+            //         category: selectedCategory
+            //     },
+            //     headers: {
+            //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            //     },
+            //     success: function(response) {
+            //         console.log('Server response:', response);
+            //         // اینجا می‌تونی داده‌ها رو در صفحه نمایش بدی
+            //     },
+            //     error: function(xhr) {
+            //         console.error('Error:', xhr.responseText);
+            //     }
+            // });
+        });
+    </script>
+@endsection

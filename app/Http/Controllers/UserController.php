@@ -49,6 +49,13 @@ class UserController extends Controller
         return false;
     }
 
+    public function changeAccessDevice(Request $request, User $user)
+    {
+        $user->accessDevice = $request->accessDevice;
+        $user->save();
+        return back()->with('success', 'با موفقیت ثبت شد');
+    }
+
     // نمایش داشبورد کاربران
     public function displayUsersDashboard()
     {

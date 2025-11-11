@@ -82,6 +82,22 @@ class User extends Authenticatable
         return [];
     }
 
+    // public function getAccessDeviceAttribute($device)
+    // {
+    //     switch ($device) {
+    //         case 'Both':
+    //             $status = 'همه دستگاه';
+    //             break;
+    //         case 'Mobile':
+    //             $status = 'موبایل';
+    //             break;
+    //         case 'Desktop':
+    //             $status = 'کامپیوتر';
+    //             break;
+    //     }
+    //     return $status;
+    // }
+
     public function storeCargoOperators(): HasMany
     {
         return $this->hasMany(StoreCargoOperator::class);

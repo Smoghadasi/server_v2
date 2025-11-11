@@ -34,6 +34,18 @@ class DataConvertPlusController extends Controller
     {
         $userId = auth()->id();
 
+        $agent = new \Jenssegers\Agent\Agent();
+        $device = $agent->isMobile() ? "Mobile" : ($agent->isTablet() ? "Tablet" : "Desktop");
+        User::whereId($userId)->update([
+            'last_active' => now(),
+            'device' => $device
+        ]);
+        $accessDevice = Auth::user()->accessDevice;
+
+        if ($accessDevice !== 'Both' && $accessDevice !== $device) {
+            return back()->with('danger', "شما فقط اجازه دسترسی با $accessDevice دارید");
+        }
+
         // ۱. پیدا کردن باری که قبلاً به اپراتور تخصیص داده شده
         $cargo = CargoConvertList::where([
             ['operator_id', $userId],
@@ -752,7 +764,6 @@ class DataConvertPlusController extends Controller
             ->where('isDuplicate', 0)
             ->where('status', 0)
             ->count();
-
     }
 
     public static function getCountOfCargoProcessingUnits()
@@ -775,7 +786,6 @@ class DataConvertPlusController extends Controller
             $userId = Auth::id();
 
             Cache::put("user-is-active-$userId", true, $expiresAt);
-            User::whereId($userId)->update(['last_active' => now()]);
         } catch (Exception $e) {
             Log::emergency("UserActivityActiveOnlineReport - Error: " . $e->getMessage());
         }

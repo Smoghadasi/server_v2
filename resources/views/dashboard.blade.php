@@ -12,11 +12,11 @@
     </ol>
 
     @if (in_array('onlineUsers', auth()->user()->userAccess) && $users->count() > 0)
-        <div class="card mb-3">
-            <div class="card-header d-flex justify-content-between">
+        <div class="card mb-2">
+            <div class="card-header d-flex justify-content-between pb-0">
                 <div>کاربران :</div>
                 <!-- دکمه دسترسی کاربران -->
-                <a href="#" class="btn btn-sm btn-primary">
+                <a href="{{ route('operators.index') }}" class="btn btn-sm btn-primary">
                     کنترل دستگاه ها
                 </a>
 
@@ -24,7 +24,8 @@
             <div class="card-body">
                 <div class="col-lg-12">
                     @foreach ($users as $user)
-                        <span class="table-bordered border-info rounded bg-white p-1 m-1">
+                        <span class="table-bordered border-info rounded bg-white p-1 m-1" data-bs-toggle="tooltip"
+                            data-bs-placement="top" data-bs-title="{{ $user->mobileNumber }}">
                             {{-- @if (Cache::has('user-is-online-' . $user->id)) --}}
                             @if (Cache::has('user-is-active-' . $user->id))
                                 <span class="text-primary">{{ $user->name }} {{ $user->lastName }}</span>

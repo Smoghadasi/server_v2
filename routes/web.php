@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountingController;
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\ApiAIController;
 use App\Http\Controllers\SalaryController;
 // use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\AuthController;
@@ -1190,8 +1191,13 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
     Route::post('verifyDriverPaySina', [PayController::class, 'verifyDriverPaySina']);
 
 
-    Route::get('payDriverSinaTest/{packageName}/{driver}', [PayController::class, 'payDriverSinaTest']);
-    Route::post('verifyDriverPaySinaTest', [PayController::class, 'verifyDriverPaySinaTest']);
+    // Route::get('payDriverSinaTest/{packageName}/{driver}', [PayController::class, 'payDriverSinaTest']);
+    // Route::post('verifyDriverPaySinaTest', [PayController::class, 'verifyDriverPaySinaTest']);
+
+
+
+    // تغییر دسترسی کاربر در پنل کاربران
+    Route::patch('changeAccessDevice/{user}', [UserController::class, 'changeAccessDevice'])->name('admin.changeAccessDevice');
 
 
     /****************************************************************************************************************/
