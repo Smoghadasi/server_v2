@@ -19,42 +19,27 @@
         @endif
 
         <div class="card-body row">
-
-            @php
-                /**
-                 * بررسی وضعیت کاربر و برگرداندن کلاس CSS و متن وضعیت متناسب.
-                 *
-                 * اگر کاربر آنلاین باشد:
-                 *   - اگر اکتیو باشد: متن "اکتیو" با کلاس text-primary
-                 *   - در غیر این صورت: متن "آنلاین" با کلاس text-success
-                 * در غیر این صورت (آفلاین): متن "آفلاین" با کلاس text-secondary
-                 *
-                 * @param  \App\Models\User  $user
-                 * @return array
-                 */
-                function getUserStatusHint($user)
-                {
-                    if (Cache::has('user-is-online-' . $user->id)) {
-                        if (Cache::has('user-is-active-' . $user->id)) {
-                            return ['class' => 'text-primary', 'text' => 'اکتیو'];
-                        }
-                        return ['class' => 'text-success', 'text' => 'آنلاین'];
-                    }
-                    return ['class' => 'text-secondary', 'text' => 'آفلاین'];
-                }
-            @endphp
-
             <div class="col-lg-12 m-2 p-2 text-right bg-light">
                 <div class="col-lg-12 mb-1">وضعیت :</div>
                 @if (in_array('onlineUsers', auth()->user()->userAccess))
                     @foreach ($users as $user)
-                        <span class="table-bordered border-info rounded bg-white p-1 m-1">
-                            @php
-                                $status = getUserStatusHint($user);
-                            @endphp
-                            <span class="{{ $status['class'] }}">
-                                {{ $user->name }} {{ $user->lastName }}
-                            </span>
+                        <span class="table-bordered border-info rounded bg-white p-1 m-1" data-bs-toggle="tooltip"
+                            data-bs-placement="top" data-bs-title="{{ $user->mobileNumber }}">
+                            {{-- @if (Cache::has('user-is-online-' . $user->id)) --}}
+                            @if (Cache::has('user-is-active-' . $user->id))
+                                <span class="text-primary">{{ $user->name }} {{ $user->lastName }}</span>
+                            @else
+                                <span class="text-success">{{ $user->name }} {{ $user->lastName }}</span>
+                            @endif
+                            @switch($user->device)
+                                @case('Mobile')
+                                    <i class="bx bx-mobile text-black fs-5"></i>
+                                @break
+
+                                @case('Desktop')
+                                    <i class="bx bx-desktop text-black fs-5"></i>
+                                @break
+                            @endswitch
                         </span>
                     @endforeach
                 @else
