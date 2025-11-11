@@ -18,6 +18,30 @@
             </div>
         @endif
 
+        @php
+                /**
+                 * بررسی وضعیت کاربر و برگرداندن کلاس CSS و متن وضعیت متناسب.
+                 *
+                 * اگر کاربر آنلاین باشد:
+                 *   - اگر اکتیو باشد: متن "اکتیو" با کلاس text-primary
+                 *   - در غیر این صورت: متن "آنلاین" با کلاس text-success
+                 * در غیر این صورت (آفلاین): متن "آفلاین" با کلاس text-secondary
+                 *
+                 * @param  \App\Models\User  $user
+                 * @return array
+                 */
+                function getUserStatusHint($user)
+                {
+                    if (Cache::has('user-is-online-' . $user->id)) {
+                        if (Cache::has('user-is-active-' . $user->id)) {
+                            return ['class' => 'text-primary', 'text' => 'اکتیو'];
+                        }
+                        return ['class' => 'text-success', 'text' => 'آنلاین'];
+                    }
+                    return ['class' => 'text-secondary', 'text' => 'آفلاین'];
+                }
+            @endphp
+
         <div class="card-body row">
             <div class="col-lg-12 m-2 p-2 text-right bg-light">
                 <div class="col-lg-12 mb-1">وضعیت :</div>
