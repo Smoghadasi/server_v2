@@ -27,6 +27,7 @@
                 <tr>
                     <th>بار</th>
                     <th>اپراتور</th>
+                    <th>کانال</th>
                     <th>تاریخ</th>
                 </tr>
                 @foreach ($cargoList as $cargo)
@@ -34,6 +35,7 @@
                         <td @class(['text-primary' => $cargo->checkExists() == 0])>
                             {{ $cargo->cargo }}
                         </td>
+                        <td>{{ $cargo->channel ?? '-' }}</td>
                         <td class="text-nowrap">
                             <span class="badge bg-label-primary">
                                 {{ $cargo->operator->name }} {{ $cargo->operator->lastName }}
