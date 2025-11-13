@@ -51,11 +51,11 @@ class DriverController extends Controller
         return view('admin.drivers', compact('drivers', 'showSearchResult', 'fleets'));
     }
 
+
     public function driverSummery($type)
     {
         $today = date('Y-m-d') . ' 00:00:00';
 
-        // Map type to payment_type if applicable
         $paymentTypes = [
             'todayOnline'     => 'online',
             'todayCartToCart' => 'cardToCard',
@@ -64,7 +64,6 @@ class DriverController extends Controller
 
         $paymentType = $paymentTypes[$type] ?? null;
 
-        // Common query builder with optional payment_type
         $transactionFilter = function ($q) use ($today, $paymentType) {
             $q->where('created_at', '>', $today)
                 ->where('status', '>', 2);
@@ -74,12 +73,16 @@ class DriverController extends Controller
             }
         };
 
-        // Fetch all drivers with today’s transactions
+        // مرتب‌سازی بر اساس جدیدترین تراکنش (تاریخ اشتراک)
         $drivers = Driver::with(['transactions' => $transactionFilter])
             ->whereHas('transactions', $transactionFilter)
+            ->withCount(['transactions as latest_transaction_date' => function ($q) {
+                $q->select(DB::raw('MAX(created_at)'));
+            }])
+            ->orderByDesc('latest_transaction_date')
             ->get();
 
-        // Helper function for package-specific drivers
+        // برای پکیج‌های خاص
         $getDriversByPackage = function ($months) use ($today, $paymentType) {
             return Driver::with('transactions')
                 ->whereHas('transactions', function ($q) use ($months, $today, $paymentType) {
@@ -91,6 +94,10 @@ class DriverController extends Controller
                         $q->where('payment_type', $paymentType);
                     }
                 })
+                ->withCount(['transactions as latest_transaction_date' => function ($q) {
+                    $q->select(DB::raw('MAX(created_at)'));
+                }])
+                ->orderByDesc('latest_transaction_date')
                 ->get();
         };
 
@@ -105,6 +112,7 @@ class DriverController extends Controller
             'sixMonthDrivers'
         ));
     }
+
 
 
     // لیست رانندگان برای ادمین
