@@ -61,12 +61,20 @@ class ReportingController extends Controller
             $today = now()->toDateString();
             $yesterday = now()->subDay()->toDateString();
 
+            $startOfYesterday = now()->subDay()->startOfDay(); // دیروز ساعت 00:00:00
+            $endOfYesterday   = now()->subDay()->endOfDay();   // دیروز ساعت 23:59:59
+
+
             // -----------------------------
             // 1. نسبت فعالیت رانندگان نسبت به روز گذشته
             // -----------------------------
 
             $driverIds = Transaction::where('status', '>', 0)
                 ->where('created_at', '>', $date)
+                ->pluck('user_id');
+
+            $driverYesterdayIds = Transaction::where('status', '>', 0)
+                ->whereBetween('created_at', [$startOfYesterday, $endOfYesterday])
                 ->pluck('user_id');
 
 
@@ -100,7 +108,8 @@ class ReportingController extends Controller
             $callStats = DB::table('fleets')
                 ->join('drivers', 'drivers.fleet_id', '=', 'fleets.id')
                 ->join('driver_calls', 'driver_calls.driver_id', '=', 'drivers.id')
-                ->whereDate('driver_calls.callingDate', '=', $yesterday)
+                ->whereBetween('driver_calls.callingDate', [$startOfYesterday, $endOfYesterday]) // فقط تماس‌های دیروز
+                ->whereIn('driver_calls.driver_id', $driverIds) // فقط رانندگان دارای تراکنش دیروز
                 ->groupBy('fleets.id', 'fleets.title')
                 ->select(
                     'fleets.id as fleet_id',
@@ -110,6 +119,8 @@ class ReportingController extends Controller
                 )
                 ->get()
                 ->keyBy('fleet_id');
+
+
 
             // -----------------------------
             // 3. رانندگان جدید دیروز
