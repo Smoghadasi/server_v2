@@ -52,27 +52,20 @@
                                 </td> --}}
                             </tr>
                         @endforeach
-                        <tr>
-                            <td colspan="2" class="fw-bold">مجموع</td>
-                            <td>کل:
-                                {{ $fleets->sum('drivers_count') }}
-                                <br />
-                                روز گذشته:
-                                {{ $fleets->sum('new_drivers_yesterday') }}
-                            </td>
-                            <td>کل : {{ $fleets->sum('activityAll_total') }}
-                                <br />
-                                <span data-bs-toggle="tooltip" data-bs-html="true" title="<br>آنلاین: </br> <b>{{ $transactionCount['online'] }}</b> </br><br>کارت به کارت: </br> <b>{{ $transactionCount['cardToCard'] }}</b> </br> <br>گیفت: </br> <b>{{ $transactionCount['gift'] }}</b>">
+                        <td>کل : {{ $fleets->sum('activityAll_total') }}
+                            <br />
+                            <span data-bs-toggle="tooltip" data-bs-html="true"
+                                title="
+                                    آنلاین: <b>{{ $transactionCount['online'] }}</b><br>
+                                    کارت به کارت: <b>{{ $transactionCount['cardToCard'] }}</b><br>
+                                    گیفت: <b>{{ $transactionCount['gift'] }}</b>
+                                ">
                                 اشتراک دارند : {{ $fleets->sum('activity_active') }}
+                            </span>
+                            <br />
+                            اشتراک ندارند : {{ $fleets->sum('activityAll_total') - $fleets->sum('activity_active') }}
+                        </td>
 
-                                </span>
-                                <br />
-                                اشتراک ندارند : {{ $fleets->sum('activityAll_total') - $fleets->sum('activity_active') }}
-                            </td>
-
-                            <td>{{ $fleets->sum('activity_yesterday') }}</td>
-                            <td></td>
-                        </tr>
                     </tbody>
                 </table>
             </div>
