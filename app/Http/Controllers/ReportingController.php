@@ -80,7 +80,6 @@ class ReportingController extends Controller
                     'fleets.id as fleet_id',
                     // تعداد راننده‌های منحصربه‌فرد در 30 روز
                     DB::raw('COUNT(DISTINCT driver_activities.driver_id) as total'),
-
                 )
                 ->get()
                 ->keyBy('fleet_id');
@@ -90,7 +89,7 @@ class ReportingController extends Controller
                 ->join('drivers', 'drivers.fleet_id', '=', 'fleets.id')
                 ->join('driver_activities', 'driver_activities.driver_id', '=', 'drivers.id')
                 ->where('driver_activities.created_at', '>', $date)
-                ->whereIn('driver_activities.driver_id', $driverIds) // 🔹 فقط رانندگان دارای تراکنش
+                ->whereIn('driver_activities.driver_id', $driverIds) // 🔹 فقط رانندگانی که تراکنش دارند یا در لیست خاص هستند
                 ->groupBy('fleets.id', 'fleets.title')
                 ->select(
                     'fleets.id as fleet_id',
@@ -98,17 +97,26 @@ class ReportingController extends Controller
                     // تعداد راننده‌های منحصربه‌فرد در 30 روز
                     DB::raw('COUNT(DISTINCT driver_activities.driver_id) as total'),
 
-                    // تعداد راننده‌های بدون اشتراک
-                    DB::raw("COUNT(DISTINCT CASE WHEN drivers.activeDate IS NULL OR drivers.activeDate < '{$now}' THEN driver_activities.driver_id END) as notActive"),
-
-                    // تعداد راننده‌های دارای اشتراک
+                    // تعداد راننده‌های دارای اشتراک فعال (activeDate >= now)
                     DB::raw("COUNT(DISTINCT CASE WHEN drivers.activeDate >= '{$now}' THEN driver_activities.driver_id END) as active"),
+
+                    // ✅ رانندگانی که در 30 روز گذشته فعالیت داشته‌اند ولی هیچ خریدی نداشته‌اند
+                    DB::raw("COUNT(DISTINCT CASE
+                        WHEN drivers.id NOT IN (
+                            SELECT DISTINCT transactions.user_id
+                            FROM transactions
+                            WHERE transactions.created_at > DATE_SUB('{$now}', INTERVAL 30 DAY)
+                        )
+                        THEN driver_activities.driver_id
+                    END) as notActive"),
 
                     // تعداد راننده‌هایی که دیروز فعالیت داشتند
                     DB::raw("COUNT(DISTINCT CASE WHEN DATE(driver_activities.created_at) = '{$yesterday}' THEN driver_activities.driver_id END) as yesterday_active")
                 )
                 ->get()
                 ->keyBy('fleet_id');
+
+
 
             // -----------------------------
             // 2. آمار تماس‌های روز گذشته
