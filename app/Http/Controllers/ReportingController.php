@@ -87,22 +87,20 @@ class ReportingController extends Controller
                 ->get()
                 ->keyBy('fleet_id');
 
-            // -----------------------------
-            // 2. آمار تماس‌های روز گذشته
-            // -----------------------------
             $callStats = DB::table('fleets')
                 ->join('drivers', 'drivers.fleet_id', '=', 'fleets.id')
-                ->join('driver_calls', 'driver_calls.driver_id', '=', 'drivers.id')
-                ->whereDate('driver_calls.callingDate', '=', $yesterday)
+                ->join('transactions', 'transactions.user_id', '=', 'drivers.id')
+                ->where('transactions.status', '>', 0)
                 ->groupBy('fleets.id', 'fleets.title')
                 ->select(
                     'fleets.id as fleet_id',
-                    DB::raw('COUNT(*) as total_calls'),
-                    DB::raw("SUM(CASE WHEN drivers.activeDate IS NULL OR drivers.activeDate < '{$now}' THEN 1 ELSE 0 END) as notActive_calls"),
-                    DB::raw("SUM(CASE WHEN drivers.activeDate >= '{$now}' THEN 1 ELSE 0 END) as active_calls")
+                    DB::raw('COUNT(*) as total_transactions'),
+                    DB::raw("SUM(CASE WHEN drivers.activeDate IS NULL OR drivers.activeDate < '{$now}' THEN 1 ELSE 0 END) as notActive_transactions"),
+                    DB::raw("SUM(CASE WHEN drivers.activeDate >= '{$now}' THEN 1 ELSE 0 END) as active_transactions")
                 )
                 ->get()
                 ->keyBy('fleet_id');
+
 
             // -----------------------------
             // 3. رانندگان جدید دیروز
@@ -198,9 +196,9 @@ class ReportingController extends Controller
         $drivers = [
             'total' => Driver::count(),
             'todayPayment' => Transaction::where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
-            ->where('status', '>', 2)
-            ->where('payment_type', '!=' , 'gift')
-            ->count(),
+                ->where('status', '>', 2)
+                ->where('payment_type', '!=', 'gift')
+                ->count(),
             'todayCartToCart' => Transaction::where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
                 ->where('status', '>', 2)
                 ->where('payment_type', 'cardToCard')
