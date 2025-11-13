@@ -62,7 +62,10 @@
                             </td>
                             <td>کل : {{ $fleets->sum('activityAll_total') }}
                                 <br />
+                                <span data-bs-toggle="tooltip" data-bs-html="true" title="<br>آنلاین: </br> <b>{{ $transactionCount['online'] }}</b> </br><br>کارت به کارت: </br> <b>{{ $transactionCount['cardToCard'] }}</b> </br> <br>گیفت: </br> <b>{{ $transactionCount['gift'] }}</b>">
                                 اشتراک دارند : {{ $fleets->sum('activity_active') }}
+
+                                </span>
                                 <br />
                                 اشتراک ندارند : {{ $fleets->sum('activityAll_total') - $fleets->sum('activity_active') }}
                             </td>

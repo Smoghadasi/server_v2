@@ -54,6 +54,18 @@ class ReportingController extends Controller
 
     public function fleetReportSummary()
     {
+
+        $date = now()->subDays(30)->startOfDay();
+
+        $online = Transaction::where('status', '>', 0)->where('payment_type', 'online')->where('created_at', '>', $date)->count();
+        $gift = Transaction::where('status', '>', 0)->where('payment_type', 'gift')->where('created_at', '>', $date)->count();
+        $cardToCard = Transaction::where('status', '>', 0)->where('payment_type', 'payment_type')->where('created_at', '>', $date)->count();
+
+        $transactionCount = [
+            'online' => $online,
+            'gift' => $gift,
+            'cardToCard' => $cardToCard,
+        ];
         $fleets = Cache::remember('fleet_report_summary', now()->addHour(), function () {
 
             $date = now()->subDays(30)->startOfDay();
@@ -158,6 +170,8 @@ class ReportingController extends Controller
                 ->get()
                 ->keyBy('fleet_id');
 
+
+
             // -----------------------------
             // 5. ترکیب با ناوگان‌ها
             // -----------------------------
@@ -201,8 +215,7 @@ class ReportingController extends Controller
                     return $fleet;
                 });
         });
-
-        return view('admin.reporting.fleetReportSummary', compact('fleets'));
+        return view('admin.reporting.fleetReportSummary', compact('fleets', 'transactionCount'));
     }
 
 
