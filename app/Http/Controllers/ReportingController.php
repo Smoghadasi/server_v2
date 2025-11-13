@@ -163,23 +163,6 @@ class ReportingController extends Controller
                 ->get()
                 ->keyBy('fleet_id');
 
-
-            // -----------------------------
-            // 7. آمار کل تراکنش‌ها در ۳۰ روز گذشته (به تفکیک نوع پرداخت)
-            // -----------------------------
-            $transactionCountRaw = Transaction::where('status', '>', 0)
-                ->where('created_at', '>', $date)
-                ->select('payment_type', DB::raw('COUNT(*) as count'))
-                ->groupBy('payment_type')
-                ->pluck('count', 'payment_type');
-
-            $transactionCount = [
-                'online' => $transactionCountRaw['online'] ?? 0,
-                'gift' => $transactionCountRaw['gift'] ?? 0,
-                'cardToCard' => $transactionCountRaw['cardToCard'] ?? 0,
-            ];
-
-
             // -----------------------------
             // 8. ترکیب نهایی با ناوگان‌ها
             // -----------------------------
