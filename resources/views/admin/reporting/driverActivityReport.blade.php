@@ -73,8 +73,6 @@
                         </td>
                     </tr>
                 @endif
-
-
             </table>
 
         </div>
