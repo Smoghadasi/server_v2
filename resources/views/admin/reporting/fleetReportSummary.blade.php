@@ -52,20 +52,31 @@
                                 </td> --}}
                             </tr>
                         @endforeach
-                        <td>کل : {{ $fleets->sum('activityAll_total') }}
-                            <br />
-                            <span data-bs-toggle="tooltip" data-bs-html="true"
-                                title="
-                                    آنلاین: <b>{{ $transactionCount['online'] }}</b><br>
-                                    کارت به کارت: <b>{{ $transactionCount['cardToCard'] }}</b><br>
-                                    گیفت: <b>{{ $transactionCount['gift'] }}</b>
-                                ">
-                                اشتراک دارند : {{ $fleets->sum('activity_active') }}
-                            </span>
-                            <br />
-                            اشتراک ندارند : {{ $fleets->sum('activityAll_total') - $fleets->sum('activity_active') }}
-                        </td>
+                        <tr>
+                            <td colspan="2" class="fw-bold">مجموع</td>
+                            <td>کل:
+                                {{ $fleets->sum('drivers_count') }}
+                                <br />
+                                روز گذشته:
+                                {{ $fleets->sum('new_drivers_yesterday') }}
+                            </td>
+                            <td>کل : {{ $fleets->sum('activityAll_total') }}
+                                <br />
+                                <span data-bs-toggle="tooltip" data-bs-html="true"
+                                    title="
+                                        آنلاین: <b>{{ $transactionCount['online'] }}</b><br>
+                                        کارت به کارت: <b>{{ $transactionCount['cardToCard'] }}</b><br>
+                                        گیفت: <b>{{ $transactionCount['gift'] }}</b>
+                                    ">
+                                    اشتراک دارند : {{ $fleets->sum('activity_active') }}
+                                </span>
+                                <br />
+                                اشتراک ندارند : {{ $fleets->sum('activityAll_total') - $fleets->sum('activity_active') }}
+                            </td>
 
+                            <td>{{ $fleets->sum('activity_yesterday') }}</td>
+                            <td></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

@@ -222,6 +222,19 @@ class ReportingController extends Controller
                     return $fleet;
                 });
         });
+        // transactionCount را بیرون محاسبه کن
+        $date = now()->subDays(30)->startOfDay();
+        $transactionCountRaw = Transaction::where('status', '>', 0)
+            ->where('created_at', '>', $date)
+            ->select('payment_type', DB::raw('COUNT(*) as count'))
+            ->groupBy('payment_type')
+            ->pluck('count', 'payment_type');
+
+        $transactionCount = [
+            'online' => $transactionCountRaw['online'] ?? 0,
+            'gift' => $transactionCountRaw['gift'] ?? 0,
+            'cardToCard' => $transactionCountRaw['cardToCard'] ?? 0,
+        ];
 
         return view('admin.reporting.fleetReportSummary', compact('fleets', 'transactionCount'));
     }
