@@ -165,7 +165,7 @@ class ReportingController extends Controller
                     $fleet->activity_yesterday = $activity->yesterday_active ?? 0;
 
                     $fleet->call_total = $calls->total_calls ?? 0;
-                    $fleet->call_active = $calls->active_calls ?? 0;
+                    $fleet->call_active = $calls->active_calls || $calls->freeCalls > 0 ?? 0;
                     $fleet->call_notActive = $calls->notActive_calls ?? 0;
 
                     $fleet->new_drivers_yesterday = $newDrivers->new_drivers_yesterday ?? 0;
