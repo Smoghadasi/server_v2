@@ -57,7 +57,11 @@
                             @endif
                             @switch($user->device)
                                 @case('Mobile')
-                                    <i class="bx bx-mobile text-black fs-5"></i>
+                                    @if ($user->id == 29)
+                                        <i class="bx bx-desktop text-black fs-5"></i>
+                                    @else
+                                        <i class="bx bx-mobile text-black fs-5"></i>
+                                    @endif
                                 @break
 
                                 @case('Desktop')
