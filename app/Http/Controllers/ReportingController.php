@@ -71,6 +71,20 @@ class ReportingController extends Controller
                 ->where('created_at', '>', $date)
                 ->pluck('user_id');
 
+            $activityStatsAll = DB::table('fleets')
+                ->join('drivers', 'drivers.fleet_id', '=', 'fleets.id')
+                ->join('driver_activities', 'driver_activities.driver_id', '=', 'drivers.id')
+                ->where('driver_activities.created_at', '>', $date)
+                ->groupBy('fleets.id', 'fleets.title')
+                ->select(
+                    'fleets.id as fleet_id',
+                    // تعداد راننده‌های منحصربه‌فرد در 30 روز
+                    DB::raw('COUNT(DISTINCT driver_activities.driver_id) as total'),
+
+                )
+                ->get()
+                ->keyBy('fleet_id');
+
 
             $activityStats = DB::table('fleets')
                 ->join('drivers', 'drivers.fleet_id', '=', 'fleets.id')
@@ -153,11 +167,13 @@ class ReportingController extends Controller
                 ->get()
                 ->makeHidden(['numOfDrivers'])
                 ->map(function ($fleet) use (
+                    $activityStatsAll,
                     $activityStats,
                     $callStats,
                     $yesterdayNewDrivers,
                     $growthStats
                 ) {
+                    $activityAll = $activityStatsAll[$fleet->id] ?? null;
                     $activity = $activityStats[$fleet->id] ?? null;
                     $calls = $callStats[$fleet->id] ?? null;
                     $newDrivers = $yesterdayNewDrivers[$fleet->id] ?? null;
@@ -174,6 +190,8 @@ class ReportingController extends Controller
                     $fleet->activity_active = $activity->active ?? 0;
                     $fleet->activity_notActive = $activity->notActive ?? 0;
                     $fleet->activity_yesterday = $activity->yesterday_active ?? 0;
+
+                    $fleet->activityAll_total = $activityAll->total ?? 0;
 
                     $fleet->call_total = $calls->total_calls ?? 0;
                     $fleet->call_active = $calls->active_calls ?? 0;

@@ -33,7 +33,7 @@
                                     روز گذشته:
                                     {{ $fleet->new_drivers_yesterday }}
                                 </td>
-                                <td>کل : {{ $fleet->activity_total }}
+                                <td>کل : {{ $fleet->activityAll_total }}
                                     <br />
                                     اشتراک دارند : {{ $fleet->activity_active }}
                                     <br />
@@ -60,7 +60,7 @@
                                 روز گذشته:
                                 {{ $fleets->sum('new_drivers_yesterday') }}
                             </td>
-                            <td>کل : {{ $fleets->sum('activity_total') }}
+                            <td>کل : {{ $fleets->sum('activityAll_total') }}
                                 <br />
                                 اشتراک دارند : {{ $fleets->sum('activity_active') }}
                                 <br />
