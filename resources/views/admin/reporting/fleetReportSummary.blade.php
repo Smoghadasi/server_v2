@@ -68,7 +68,7 @@
                             </td>
 
                             <td>{{ $fleets->sum('activity_yesterday') }}</td>
-                            {{-- <td></td> --}}
+                            <td></td>
                         </tr>
                     </tbody>
                 </table>
