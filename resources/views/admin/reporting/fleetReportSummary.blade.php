@@ -44,12 +44,12 @@
                                     'text-danger' => $fleet->activity_growth_percent < 0,
                                     'text-success' => $fleet->activity_growth_percent > 0,
                                 ])>{{ $fleet->activity_growth_percent }} %</td>
-                                <td>کل : {{ $fleet->call_total }}
+                                {{-- <td>کل : {{ $fleet->call_total }}
                                     <br />
                                     اشتراک دارند : {{ $fleet->call_active }}
                                     <br />
                                     اشتراک ندارند : {{ $fleet->call_notActive }}
-                                </td>
+                                </td> --}}
                             </tr>
                         @endforeach
                         <tr>
@@ -68,7 +68,7 @@
                             </td>
 
                             <td>{{ $fleets->sum('activity_yesterday') }}</td>
-                            <td></td>
+                            {{-- <td></td> --}}
                         </tr>
                     </tbody>
                 </table>
