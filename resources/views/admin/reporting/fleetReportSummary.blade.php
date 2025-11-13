@@ -37,7 +37,7 @@
                                     <br />
                                     اشتراک دارند : {{ $fleet->activity_active }}
                                     <br />
-                                    اشتراک ندارند : {{ $fleet->activity_notActive }}
+                                    اشتراک ندارند : {{ $fleet->activityAll_total - $fleet->activity_active }}
                                 </td>
                                 <td>{{ $fleet->activity_yesterday }}</td>
                                 <td @class([
