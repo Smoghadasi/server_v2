@@ -64,7 +64,7 @@
                                 <br />
                                 اشتراک دارند : {{ $fleets->sum('activity_active') }}
                                 <br />
-                                اشتراک ندارند : {{ $fleets->sum('activity_notActive') }}
+                                اشتراک ندارند : {{ $fleets->sum('activityAll_total') - $fleets->sum('activity_active') }}
                             </td>
 
                             <td>{{ $fleets->sum('activity_yesterday') }}</td>
