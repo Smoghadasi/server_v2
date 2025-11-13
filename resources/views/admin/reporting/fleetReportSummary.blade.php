@@ -60,7 +60,13 @@
                                 روز گذشته:
                                 {{ $fleets->sum('new_drivers_yesterday') }}
                             </td>
-                            <td></td>
+                            <td>کل : {{ $fleets->sum('activity_total') }}
+                                <br />
+                                اشتراک دارند : {{ $fleets->sum('activity_active') }}
+                                <br />
+                                اشتراک ندارند : {{ $fleets->sum('activity_notActive') }}
+                            </td>
+
                             <td>{{ $fleets->sum('activity_yesterday') }}</td>
                             <td></td>
                         </tr>
