@@ -64,10 +64,17 @@ class ReportingController extends Controller
             // -----------------------------
             // 1. نسبت فعالیت رانندگان نسبت به روز گذشته
             // -----------------------------
+
+            $driverIds = Transaction::where('status', '>', 0)
+                ->where('created_at', '>', $date)
+                ->pluck('user_id');
+
+
             $activityStats = DB::table('fleets')
                 ->join('drivers', 'drivers.fleet_id', '=', 'fleets.id')
                 ->join('driver_activities', 'driver_activities.driver_id', '=', 'drivers.id')
                 ->where('driver_activities.created_at', '>', $date)
+                ->whereIn('driver_activities.driver_id', $driverIds) // 🔹 فقط رانندگان دارای تراکنش
                 ->groupBy('fleets.id', 'fleets.title')
                 ->select(
                     'fleets.id as fleet_id',
@@ -75,13 +82,13 @@ class ReportingController extends Controller
                     // تعداد راننده‌های منحصربه‌فرد در 30 روز
                     DB::raw('COUNT(DISTINCT driver_activities.driver_id) as total'),
 
-                    // تعداد یکتای راننده‌های بدون اشتراک
+                    // تعداد راننده‌های بدون اشتراک
                     DB::raw("COUNT(DISTINCT CASE WHEN drivers.activeDate IS NULL OR drivers.activeDate < '{$now}' THEN driver_activities.driver_id END) as notActive"),
 
-                    // تعداد یکتای راننده‌های دارای اشتراک
+                    // تعداد راننده‌های دارای اشتراک
                     DB::raw("COUNT(DISTINCT CASE WHEN drivers.activeDate >= '{$now}' THEN driver_activities.driver_id END) as active"),
 
-                    // تعداد یکتای راننده‌هایی که دیروز فعالیت داشتند
+                    // تعداد راننده‌هایی که دیروز فعالیت داشتند
                     DB::raw("COUNT(DISTINCT CASE WHEN DATE(driver_activities.created_at) = '{$yesterday}' THEN driver_activities.driver_id END) as yesterday_active")
                 )
                 ->get()
@@ -198,9 +205,9 @@ class ReportingController extends Controller
         $drivers = [
             'total' => Driver::count(),
             'todayPayment' => Transaction::where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
-            ->where('status', '>', 2)
-            ->where('payment_type', '!=' , 'gift')
-            ->count(),
+                ->where('status', '>', 2)
+                ->where('payment_type', '!=', 'gift')
+                ->count(),
             'todayCartToCart' => Transaction::where('created_at', '>', date('Y-m-d', time()) . ' 00:00:00')
                 ->where('status', '>', 2)
                 ->where('payment_type', 'cardToCard')
