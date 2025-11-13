@@ -54,32 +54,23 @@ class ReportingController extends Controller
 
     public function fleetReportSummary()
     {
-
         $fleets = Cache::remember('fleet_report_summary', now()->addHour(), function () {
 
-            // -----------------------------
-            // تاریخ‌های مرجع
-            // -----------------------------
-            $date = now()->subDays(30)->startOfDay(); // ۳۰ روز گذشته
-            $now = now()->toDateTimeString(); // رشته کامل برای SQL
+            $date = now()->subDays(30)->startOfDay();
+            $now = now();
             $today = now()->toDateString();
             $yesterday = now()->subDay()->toDateString();
 
-            // بازه دقیق دیروز
-            $startOfYesterday = now()->subDay()->startOfDay();
-            $endOfYesterday   = now()->subDay()->endOfDay();
 
 
             // -----------------------------
-            // 1. لیست رانندگانی که در ۳۰ روز گذشته تراکنش موفق داشتن
+            // 1. نسبت فعالیت رانندگان نسبت به روز گذشته
             // -----------------------------
+
             $driverIds = Transaction::where('status', '>', 0)
                 ->where('created_at', '>', $date)
                 ->pluck('user_id');
 
-            // -----------------------------
-            // 2. آمار کلی فعالیت همه رانندگان در ۳۰ روز گذشته
-            // -----------------------------
             $activityStatsAll = DB::table('fleets')
                 ->join('drivers', 'drivers.fleet_id', '=', 'fleets.id')
                 ->join('driver_activities', 'driver_activities.driver_id', '=', 'drivers.id')
@@ -87,40 +78,45 @@ class ReportingController extends Controller
                 ->groupBy('fleets.id', 'fleets.title')
                 ->select(
                     'fleets.id as fleet_id',
-                    DB::raw('COUNT(DISTINCT driver_activities.driver_id) as total')
+                    // تعداد راننده‌های منحصربه‌فرد در 30 روز
+                    DB::raw('COUNT(DISTINCT driver_activities.driver_id) as total'),
                 )
                 ->get()
                 ->keyBy('fleet_id');
 
 
-            // -----------------------------
-            // 3. آمار فعالیت رانندگانی که تراکنش داشتن
-            // -----------------------------
             $activityStats = DB::table('fleets')
                 ->join('drivers', 'drivers.fleet_id', '=', 'fleets.id')
                 ->join('driver_activities', 'driver_activities.driver_id', '=', 'drivers.id')
                 ->where('driver_activities.created_at', '>', $date)
-                ->whereIn('driver_activities.driver_id', $driverIds)
+                ->whereIn('driver_activities.driver_id', $driverIds) // 🔹 فقط رانندگان دارای تراکنش
                 ->groupBy('fleets.id', 'fleets.title')
                 ->select(
                     'fleets.id as fleet_id',
+
+                    // تعداد راننده‌های منحصربه‌فرد در 30 روز
                     DB::raw('COUNT(DISTINCT driver_activities.driver_id) as total'),
+
+                    // تعداد راننده‌های بدون اشتراک
                     DB::raw("COUNT(DISTINCT CASE WHEN drivers.activeDate IS NULL OR drivers.activeDate < '{$now}' THEN driver_activities.driver_id END) as notActive"),
+
+                    // تعداد راننده‌های دارای اشتراک
                     DB::raw("COUNT(DISTINCT CASE WHEN drivers.activeDate >= '{$now}' THEN driver_activities.driver_id END) as active"),
+
+                    // تعداد راننده‌هایی که دیروز فعالیت داشتند
                     DB::raw("COUNT(DISTINCT CASE WHEN DATE(driver_activities.created_at) = '{$yesterday}' THEN driver_activities.driver_id END) as yesterday_active")
                 )
                 ->get()
                 ->keyBy('fleet_id');
 
-
             // -----------------------------
-            // 4. آمار تماس‌های روز گذشته (رانندگان دارای تراکنش)
+            // 2. آمار تماس‌های روز گذشته
             // -----------------------------
             $callStats = DB::table('fleets')
                 ->join('drivers', 'drivers.fleet_id', '=', 'fleets.id')
                 ->join('driver_calls', 'driver_calls.driver_id', '=', 'drivers.id')
-                ->whereBetween('driver_calls.callingDate', [$startOfYesterday, $endOfYesterday])
-                ->whereIn('driver_calls.driver_id', $driverIds)
+                ->whereDate('driver_calls.callingDate', '=', $yesterday)
+                ->whereIn('driver_calls.driver_id', $driverIds) // 🔹 فقط رانندگانی که تراکنش داشتن
                 ->groupBy('fleets.id', 'fleets.title')
                 ->select(
                     'fleets.id as fleet_id',
@@ -133,11 +129,11 @@ class ReportingController extends Controller
 
 
             // -----------------------------
-            // 5. رانندگان جدید دیروز
+            // 3. رانندگان جدید دیروز
             // -----------------------------
-            $yesterdayNewDrivers = DB::table('fleets')
+            $yesterdayNewDrivers  = DB::table('fleets')
                 ->join('drivers', 'drivers.fleet_id', '=', 'fleets.id')
-                ->whereBetween('drivers.created_at', [$startOfYesterday, $endOfYesterday])
+                ->whereDate('drivers.created_at', '=', $yesterday)
                 ->groupBy('fleets.id', 'fleets.title')
                 ->select(
                     'fleets.id as fleet_id',
@@ -146,9 +142,8 @@ class ReportingController extends Controller
                 ->get()
                 ->keyBy('fleet_id');
 
-
             // -----------------------------
-            // 6. نسبت رشد فعالیت امروز/دیروز
+            // 4. نسبت رشد فعالیت امروز/دیروز
             // -----------------------------
             $growthStats = DB::table('fleets')
                 ->join('drivers', 'drivers.fleet_id', '=', 'fleets.id')
@@ -163,10 +158,11 @@ class ReportingController extends Controller
                 ->get()
                 ->keyBy('fleet_id');
 
+
             // -----------------------------
-            // 8. ترکیب نهایی با ناوگان‌ها
+            // 5. ترکیب با ناوگان‌ها
             // -----------------------------
-            $fleets = Fleet::where('parent_id', '>', 0)
+            return Fleet::where('parent_id', '>', 0)
                 ->withCount('drivers')
                 ->get()
                 ->makeHidden(['numOfDrivers'])
@@ -194,6 +190,7 @@ class ReportingController extends Controller
                     $fleet->activity_active = $activity->active ?? 0;
                     $fleet->activity_notActive = $activity->notActive ?? 0;
                     $fleet->activity_yesterday = $activity->yesterday_active ?? 0;
+
                     $fleet->activityAll_total = $activityAll->total ?? 0;
 
                     $fleet->call_total = $calls->total_calls ?? 0;
@@ -205,21 +202,8 @@ class ReportingController extends Controller
                     return $fleet;
                 });
         });
-        // transactionCount را بیرون محاسبه کن
-        $date = now()->subDays(30)->startOfDay();
-        $transactionCountRaw = Transaction::where('status', '>', 0)
-            ->where('created_at', '>', $date)
-            ->select('payment_type', DB::raw('COUNT(*) as count'))
-            ->groupBy('payment_type')
-            ->pluck('count', 'payment_type');
 
-        $transactionCount = [
-            'online' => $transactionCountRaw['online'] ?? 0,
-            'gift' => $transactionCountRaw['gift'] ?? 0,
-            'cardToCard' => $transactionCountRaw['cardToCard'] ?? 0,
-        ];
-
-        return view('admin.reporting.fleetReportSummary', compact('fleets', 'transactionCount'));
+        return view('admin.reporting.fleetReportSummary', compact('fleets'));
     }
 
 
