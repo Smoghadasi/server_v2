@@ -57,33 +57,23 @@ class ReportingController extends Controller
         $date = now()->subDays(30)->startOfDay();
         $now = now();
 
-        $query = Driver::where('fleet_id', $fleetId)
+        $driverTIds = Transaction::where('status', -52)
+            ->where('created_at', '>', $date)
+            ->pluck('user_id');
+
+        return $drivers = DB::table('drivers')
             ->join('driver_activities', 'driver_activities.driver_id', '=', 'drivers.id')
             ->where('driver_activities.created_at', '>', $date)
-            ->select('drivers.*')
-            ->distinct();
-
-        // 🎯 فیلتر نوع درخواست
-        switch ($type) {
-            case 'active': // اشتراک‌دار
-                $query->where('drivers.activeDate', '>=', $now);
-                break;
-
-            case 'notActive': // بدون اشتراک
-                $query->where(function ($q) use ($now) {
-                    $q->whereNull('drivers.activeDate')
-                        ->orWhere('drivers.activeDate', '<', $now);
-                });
-                break;
-
-            case 'all': // همه
-            default:
-                break;
-        }
-
-        $drivers = $query->get();
-        return $drivers->count();
-        return view('admin.reporting.fleetDriversList', compact('drivers', 'type'));
+            ->where('drivers.fleet_id', 82)   // فقط ناوگان 82
+            ->whereNotIn('drivers.id', $driverTIds)
+            ->select(
+                'drivers.id',
+                'drivers.name',
+                'drivers.mobile',
+                'drivers.fleet_id'
+            )
+            ->distinct()
+            ->count();
     }
 
 
