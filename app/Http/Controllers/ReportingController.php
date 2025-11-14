@@ -54,21 +54,22 @@ class ReportingController extends Controller
 
     public function fleetDrivers($fleetId, $type)
     {
-        $date = now()->subDays(30)->startOfDay();
-        $now = now();
+        if ($type == 'all') {
+            $date = now()->subDays(30)->startOfDay();
+            $now = now();
 
-        $driverTIds = Transaction::where('status', -52)
-            ->where('created_at', '>', $date)
-            ->pluck('user_id');
+            $driverTIds = Transaction::where('status', -52)
+                ->where('created_at', '>', $date)
+                ->pluck('user_id');
 
-        return DB::table('drivers')
-            ->join('driver_activities', 'driver_activities.driver_id', '=', 'drivers.id')
-            ->where('driver_activities.created_at', '>', $date)
-            ->where('drivers.fleet_id', $fleetId)
-            ->whereNotIn('driver_activities.driver_id', $driverTIds)
-            ->distinct('drivers.id')   // 🔥 بسیار مهم
-            ->count('drivers.id');     // 🔥 فقط رانندگان یونیک
-
+            return DB::table('drivers')
+                ->join('driver_activities', 'driver_activities.driver_id', '=', 'drivers.id')
+                ->where('driver_activities.created_at', '>', $date)
+                ->where('drivers.fleet_id', $fleetId)
+                ->whereNotIn('driver_activities.driver_id', $driverTIds)
+                ->distinct('drivers.id')   // 🔥 بسیار مهم
+                ->paginate(10);     // 🔥 فقط رانندگان یونیک
+        }
     }
 
 
