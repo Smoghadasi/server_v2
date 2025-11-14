@@ -71,14 +71,19 @@ class ReportingController extends Controller
                 ->where('created_at', '>', $date)
                 ->pluck('user_id');
 
+
+            $driverTIds = Transaction::where('status', -52)
+                ->where('created_at', '>', $date)
+                ->pluck('user_id');
+
             $activityStatsAll = DB::table('fleets')
                 ->join('drivers', 'drivers.fleet_id', '=', 'fleets.id')
                 ->join('driver_activities', 'driver_activities.driver_id', '=', 'drivers.id')
                 ->where('driver_activities.created_at', '>', $date)
+                ->whereNotIn('driver_activities.driver_id', $driverTIds)
                 ->groupBy('fleets.id', 'fleets.title')
                 ->select(
                     'fleets.id as fleet_id',
-                    // تعداد راننده‌های منحصربه‌فرد در 30 روز
                     DB::raw('COUNT(DISTINCT driver_activities.driver_id) as total'),
                 )
                 ->get()
@@ -200,7 +205,9 @@ class ReportingController extends Controller
                     $fleet->new_drivers_yesterday = $newDrivers->new_drivers_yesterday ?? 0;
 
                     return $fleet;
-                });
+                })
+                ->sortByDesc('activity_yesterday')
+                ->values();
         });
 
         return view('admin.reporting.fleetReportSummary', compact('fleets'));
