@@ -82,7 +82,7 @@ class ReportingController extends Controller
                 ->where('created_at', '>', $date)
                 ->pluck('user_id');
 
-            $drivers = DB::table('drivers')
+            return $drivers = DB::table('drivers')
                 ->join('driver_activities', 'driver_activities.driver_id', '=', 'drivers.id')
                 ->where('driver_activities.created_at', '>', $date)
                 ->where('drivers.fleet_id', $fleetId)
