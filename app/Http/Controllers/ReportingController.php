@@ -107,13 +107,8 @@ class ReportingController extends Controller
                 ->where('driver_activities.created_at', '>', $date)
                 ->where('drivers.fleet_id', $fleetId)
 
-                // 🔹 فقط رانندگان دارای تراکنش مثبت – مثل آمار
-                ->whereIn('drivers.id', $driverIds)
-
-                // 🔹 حذف رانندگان دارای تراکنش -52 – مثل آمار
                 ->whereNotIn('drivers.id', $driverTIds)
 
-                // 🔹 رانندگانی که اشتراک ندارند
                 ->where(function ($q) use ($now) {
                     $q->whereNull('drivers.activeDate')
                         ->orWhere('drivers.activeDate', '<', $now);
@@ -126,7 +121,6 @@ class ReportingController extends Controller
                     'drivers.fleet_id',
                     'drivers.activeDate'
                 )
-
                 ->distinct('drivers.id')
                 ->count('drivers.id');
         }
