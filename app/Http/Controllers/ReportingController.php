@@ -94,6 +94,10 @@ class ReportingController extends Controller
                 // فقط رانندگان دارای اشتراک فعال
                 ->where('drivers.activeDate', '>=', $now)
 
+                ->select(
+                    'drivers.*',
+                )
+
                 ->distinct('drivers.id')
                 ->paginate(15);
             return view('admin.driver.reportByFleetType', compact('drivers'));
