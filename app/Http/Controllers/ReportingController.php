@@ -52,6 +52,41 @@ class ReportingController extends Controller
         ]);
     }
 
+    public function fleetDrivers($fleetId, $type)
+    {
+        $date = now()->subDays(30)->startOfDay();
+        $now = now();
+
+        $query = Driver::where('fleet_id', $fleetId)
+            ->join('driver_activities', 'driver_activities.driver_id', '=', 'drivers.id')
+            ->where('driver_activities.created_at', '>', $date)
+            ->select('drivers.*')
+            ->distinct();
+
+        // 🎯 فیلتر نوع درخواست
+        switch ($type) {
+            case 'active': // اشتراک‌دار
+                $query->where('drivers.activeDate', '>=', $now);
+                break;
+
+            case 'notActive': // بدون اشتراک
+                $query->where(function ($q) use ($now) {
+                    $q->whereNull('drivers.activeDate')
+                        ->orWhere('drivers.activeDate', '<', $now);
+                });
+                break;
+
+            case 'all': // همه
+            default:
+                break;
+        }
+
+        $drivers = $query->get();
+        return $drivers->count();
+        return view('admin.reporting.fleetDriversList', compact('drivers', 'type'));
+    }
+
+
     public function fleetReportSummary()
     {
         $fleets = Cache::remember('fleet_report_summary', now()->addHour(), function () {

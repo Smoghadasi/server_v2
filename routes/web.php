@@ -792,6 +792,10 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // خلاصه گزارش ناوگان ها
         Route::get('fleetReportSummary', [ReportingController::class, 'fleetReportSummary'])->name('admin.report.fleetReportSummary')->middleware('operator');
 
+
+        Route::get('/fleets/{fleet}/drivers/{type}', [ReportingController::class, 'fleetDrivers'])
+            ->name('fleet.drivers.list');
+
         Route::get('getDriverActivityData', [ReportingController::class, 'getDriverActivityData'])
             ->name('admin.reporting.nonRepeate.data')
             ->middleware('operator');
