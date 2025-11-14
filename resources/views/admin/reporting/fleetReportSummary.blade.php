@@ -41,13 +41,13 @@
                                     <br />
 
                                     اشتراک دارند :
-                                    <a href="{{ route('fleet.drivers.list', ['fleet' => $fleet->id, 'type' => 'active']) }}">
+                                    <a href="#">
                                         {{ $fleet->activity_active }}
                                     </a>
                                     <br />
 
                                     اشتراک ندارند :
-                                    <a href="{{ route('fleet.drivers.list', ['fleet' => $fleet->id, 'type' => 'notActive']) }}">
+                                    <a href="#">
                                         {{ $fleet->activity_notActive }}
                                     </a>
                                 </td>
