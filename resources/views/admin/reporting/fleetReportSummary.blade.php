@@ -48,7 +48,7 @@
 
                                     اشتراک ندارند :
                                     <a href="#">
-                                        {{ $fleet->activity_notActive }}
+                                        {{ $fleet->activityAll_total - $fleet->activity_active }}
                                     </a>
                                 </td>
 
