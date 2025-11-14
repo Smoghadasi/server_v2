@@ -72,7 +72,7 @@ class ReportingController extends Controller
                 'drivers.mobile',
                 'drivers.fleet_id'
             )
-            ->distinct()
+            // ->distinct()
             ->count();
     }
 
