@@ -62,13 +62,15 @@ class ReportingController extends Controller
                 ->where('created_at', '>', $date)
                 ->pluck('user_id');
 
-            return DB::table('drivers')
+            $drivers =  DB::table('drivers')
                 ->join('driver_activities', 'driver_activities.driver_id', '=', 'drivers.id')
                 ->where('driver_activities.created_at', '>', $date)
                 ->where('drivers.fleet_id', $fleetId)
                 ->whereNotIn('driver_activities.driver_id', $driverTIds)
                 ->distinct('drivers.id')   // 🔥 بسیار مهم
                 ->paginate(10);     // 🔥 فقط رانندگان یونیک
+
+            return view('admin.driver.reportByFleetType', compact('drivers'));
         }
     }
 
