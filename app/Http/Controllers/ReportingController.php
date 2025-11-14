@@ -111,7 +111,7 @@ class ReportingController extends Controller
 
                 ->where(function ($q) use ($now) {
                     $q->whereNull('drivers.activeDate')
-                        ->orWhere('drivers.activeDate', '=<', $now);
+                        ->orWhere('drivers.activeDate', '<', $now);
                 })
 
                 ->select(
