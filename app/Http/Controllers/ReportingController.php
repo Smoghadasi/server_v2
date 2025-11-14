@@ -118,7 +118,7 @@ class ReportingController extends Controller
                     'drivers.*',
                 )
                 ->distinct('drivers.id')
-                ->count('drivers.id');
+                ->paginate(15);
             return view('admin.driver.reportByFleetType', compact('drivers'));
         }
     }
