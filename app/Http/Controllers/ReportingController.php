@@ -109,10 +109,10 @@ class ReportingController extends Controller
 
                 ->whereNotIn('drivers.id', $driverTIds)
 
-                ->where(function ($q) use ($now) {
-                    $q->whereNull('drivers.activeDate')
-                        ->orWhere('drivers.activeDate', '<', $now);
-                })
+                // ->where(function ($q) use ($now) {
+                //     $q->whereNull('drivers.activeDate')
+                //         ->orWhere('drivers.activeDate', '<', $now);
+                // })
 
                 ->select(
                     'drivers.id',
