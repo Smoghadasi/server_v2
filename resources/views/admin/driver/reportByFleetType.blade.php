@@ -73,7 +73,7 @@
                                 <td>{{ $driver->mobileNumber }}</td>
                                 <td>
                                     <a class="btn btn-primary"
-                                        href="{{ url('admin/driverInfo') }}/{{ $driver->id }}">جزئیات</a>
+                                        href="{{ url('admin/driverInfo') }}/{{ $driver->driver_id }}">جزئیات</a>
                                 </td>
                             </tr>
                         @endforeach
