@@ -55,73 +55,62 @@ class ReportingController extends Controller
     public function fleetDrivers($fleetId, $type)
     {
         $date = now()->subDays(30)->startOfDay();
-        $now = now();
-        $driverIds = Transaction::where('status', '>', 0)
+        $now  = now();
+
+        // رانندگانی که تراکنش مثبت داشته‌اند
+        $driverIds  = Transaction::where('status', '>', 0)
             ->where('created_at', '>', $date)
             ->pluck('user_id');
 
+        // رانندگانی که ترمینیت شده‌اند
         $driverTIds = Transaction::where('status', -52)
             ->where('created_at', '>', $date)
             ->pluck('user_id');
 
+        // بیس کوئری مشترک همه
+        $baseQuery = DB::table('drivers')
+            ->join('driver_activities', 'driver_activities.driver_id', '=', 'drivers.id')
+            ->where('drivers.fleet_id', $fleetId)
+            ->where('driver_activities.created_at', '>', $date)
+            ->whereNotIn('drivers.id', $driverTIds)
+            ->select('drivers.*')
+            ->distinct('drivers.id');
+
+        // ----------------------------------
+        // نوع all
+        // ----------------------------------
         if ($type == 'all') {
-            $drivers =  DB::table('drivers')
-                ->join('driver_activities', 'driver_activities.driver_id', '=', 'drivers.id')
-                ->where('driver_activities.created_at', '>', $date)
-                ->where('drivers.fleet_id', $fleetId)
-                ->whereNotIn('driver_activities.driver_id', $driverTIds)
-                ->distinct('drivers.id')   // 🔥 بسیار مهم
-                ->paginate(15);     // 🔥 فقط رانندگان یونیک
-
+            $drivers = $baseQuery->paginate(15);
             return view('admin.driver.reportByFleetType', compact('drivers'));
         }
+
+        // ----------------------------------
+        // اشتراک فعال
+        // ----------------------------------
         if ($type == 'activeSubscription') {
-
-            $drivers = DB::table('drivers')
-                ->join('driver_activities', 'driver_activities.driver_id', '=', 'drivers.id')
-                ->where('driver_activities.created_at', '>', $date)
-                ->where('drivers.fleet_id', $fleetId)
-
-                // فقط رانندگان دارای تراکنش مثبت (مثل آمار)
-                ->whereIn('drivers.id', $driverIds)
-                ->whereNotIn('drivers.id', $driverTIds)
-
-                // فقط رانندگان دارای اشتراک فعال
-                ->where('drivers.activeDate', '>=', $now)
-
-                ->select(
-                    'drivers.*',
-                )
-
-                ->distinct('drivers.id')
+            $drivers = $baseQuery
+                ->whereIn('drivers.id', $driverIds)       // فقط رانندگان دارای تراکنش مثبت
+                ->where('drivers.activeDate', '>=', $now) // اشتراک فعال
                 ->paginate(15);
+
             return view('admin.driver.reportByFleetType', compact('drivers'));
         }
 
+        // ----------------------------------
+        // اشتراک غیر فعال
+        // ----------------------------------
         if ($type == 'notActiveSubscription') {
-            // رانندگانی که تراکنش مثبت داشته‌اند (مطابق آمار active/notActive)
-
-
-            $drivers = DB::table('drivers')
-                ->join('driver_activities', 'driver_activities.driver_id', '=', 'drivers.id')
-                ->where('driver_activities.created_at', '>', $date)
-                ->where('drivers.fleet_id', $fleetId)
-
-                ->whereNotIn('drivers.id', $driverTIds)
-
+            $drivers = $baseQuery
                 ->where(function ($q) use ($now) {
                     $q->whereNull('drivers.activeDate')
                         ->orWhere('drivers.activeDate', '<', $now);
                 })
-
-                ->select(
-                    'drivers.*',
-                )
-                ->distinct('drivers.id')
                 ->paginate(15);
+
             return view('admin.driver.reportByFleetType', compact('drivers'));
         }
     }
+
 
 
     public function fleetReportSummary()
