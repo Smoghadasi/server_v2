@@ -68,7 +68,7 @@ class ReportingController extends Controller
                 ->where('drivers.fleet_id', $fleetId)
                 ->whereNotIn('driver_activities.driver_id', $driverTIds)
                 ->distinct('drivers.id')   // 🔥 بسیار مهم
-                ->paginate(5);     // 🔥 فقط رانندگان یونیک
+                ->paginate(15);     // 🔥 فقط رانندگان یونیک
 
             return view('admin.driver.reportByFleetType', compact('drivers'));
         }
