@@ -62,7 +62,6 @@ class ReportingController extends Controller
             ->where('created_at', '>', $date)
             ->pluck('user_id');
 
-        // رانندگانی که ترمینیت شده‌اند
         $driverTIds = Transaction::where('status', -52)
             ->where('created_at', '>', $date)
             ->pluck('user_id');
