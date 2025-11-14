@@ -41,7 +41,7 @@
                                     <br />
 
                                     اشتراک دارند :
-                                    <a href="#">
+                                    <a href="{{ route('fleet.drivers.list', ['fleet' => $fleet->id, 'type' => 'activeSubscription']) }}">
                                         {{ $fleet->activity_active }}
                                     </a>
                                     <br />

@@ -54,10 +54,9 @@ class ReportingController extends Controller
 
     public function fleetDrivers($fleetId, $type)
     {
+        $date = now()->subDays(30)->startOfDay();
+        $now = now();
         if ($type == 'all') {
-            $date = now()->subDays(30)->startOfDay();
-            $now = now();
-
             $driverTIds = Transaction::where('status', -52)
                 ->where('created_at', '>', $date)
                 ->pluck('user_id');
@@ -72,6 +71,40 @@ class ReportingController extends Controller
 
             return view('admin.driver.reportByFleetType', compact('drivers'));
         }
+        if ($type == 'activeSubscription') {
+            // رانندگانی که تراکنش مثبت داشته‌اند (همان چیزی که در آمار استفاده شده)
+            $driverIds = Transaction::where('status', '>', 0)
+                ->where('created_at', '>', $date)
+                ->pluck('user_id');
+
+            // رانندگانی که تراکنش -52 داشته‌اند (همان فیلتر آمار all)
+            $driverTIds = Transaction::where('status', -52)
+                ->where('created_at', '>', $date)
+                ->pluck('user_id');
+
+            $drivers = DB::table('drivers')
+                ->join('driver_activities', 'driver_activities.driver_id', '=', 'drivers.id')
+                ->where('driver_activities.created_at', '>', $date)
+                ->where('drivers.fleet_id', $fleetId)
+
+                // فقط رانندگان دارای تراکنش مثبت (مثل آمار)
+                ->whereIn('drivers.id', $driverIds)
+                ->whereNotIn('drivers.id', $driverTIds)
+
+                // فقط رانندگان دارای اشتراک فعال
+                ->where('drivers.activeDate', '>=', $now)
+
+                ->select(
+                    'drivers.id',
+                    'drivers.name',
+                    'drivers.mobile',
+                    'drivers.fleet_id',
+                    'drivers.activeDate'
+                )
+
+                ->distinct('drivers.id')
+                ->count('drivers.id');
+        }
     }
 
 
@@ -83,8 +116,6 @@ class ReportingController extends Controller
             $now = now();
             $today = now()->toDateString();
             $yesterday = now()->subDay()->toDateString();
-
-
 
             // -----------------------------
             // 1. نسبت فعالیت رانندگان نسبت به روز گذشته
