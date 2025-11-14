@@ -56,11 +56,15 @@ class ReportingController extends Controller
     {
         $date = now()->subDays(30)->startOfDay();
         $now = now();
-        if ($type == 'all') {
-            $driverTIds = Transaction::where('status', -52)
-                ->where('created_at', '>', $date)
-                ->pluck('user_id');
+        $driverIds = Transaction::where('status', '>', 0)
+            ->where('created_at', '>', $date)
+            ->pluck('user_id');
 
+        $driverTIds = Transaction::where('status', -52)
+            ->where('created_at', '>', $date)
+            ->pluck('user_id');
+
+        if ($type == 'all') {
             $drivers =  DB::table('drivers')
                 ->join('driver_activities', 'driver_activities.driver_id', '=', 'drivers.id')
                 ->where('driver_activities.created_at', '>', $date)
@@ -72,15 +76,6 @@ class ReportingController extends Controller
             return view('admin.driver.reportByFleetType', compact('drivers'));
         }
         if ($type == 'activeSubscription') {
-            // رانندگانی که تراکنش مثبت داشته‌اند (همان چیزی که در آمار استفاده شده)
-            $driverIds = Transaction::where('status', '>', 0)
-                ->where('created_at', '>', $date)
-                ->pluck('user_id');
-
-            // رانندگانی که تراکنش -52 داشته‌اند (همان فیلتر آمار all)
-            $driverTIds = Transaction::where('status', -52)
-                ->where('created_at', '>', $date)
-                ->pluck('user_id');
 
             $drivers = DB::table('drivers')
                 ->join('driver_activities', 'driver_activities.driver_id', '=', 'drivers.id')
@@ -101,6 +96,39 @@ class ReportingController extends Controller
                 ->distinct('drivers.id')
                 ->paginate(15);
             return view('admin.driver.reportByFleetType', compact('drivers'));
+        }
+
+        if ($type == 'notActiveSubscription') {
+            // رانندگانی که تراکنش مثبت داشته‌اند (مطابق آمار active/notActive)
+
+
+            return $drivers = DB::table('drivers')
+                ->join('driver_activities', 'driver_activities.driver_id', '=', 'drivers.id')
+                ->where('driver_activities.created_at', '>', $date)
+                ->where('drivers.fleet_id', $fleetId)
+
+                // 🔹 فقط رانندگان دارای تراکنش مثبت – مثل آمار
+                ->whereIn('drivers.id', $driverIds)
+
+                // 🔹 حذف رانندگان دارای تراکنش -52 – مثل آمار
+                ->whereNotIn('drivers.id', $driverTIds)
+
+                // 🔹 رانندگانی که اشتراک ندارند
+                ->where(function ($q) use ($now) {
+                    $q->whereNull('drivers.activeDate')
+                        ->orWhere('drivers.activeDate', '<', $now);
+                })
+
+                ->select(
+                    'drivers.id',
+                    'drivers.name',
+                    'drivers.mobile',
+                    'drivers.fleet_id',
+                    'drivers.activeDate'
+                )
+
+                ->distinct('drivers.id')
+                ->count('drivers.id');
         }
     }
 

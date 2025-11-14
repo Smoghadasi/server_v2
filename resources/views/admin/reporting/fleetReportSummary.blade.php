@@ -47,7 +47,7 @@
                                     <br />
 
                                     اشتراک ندارند :
-                                    <a href="#">
+                                    <a href="{{ route('fleet.drivers.list', ['fleet' => $fleet->id, 'type' => 'notActiveSubscription']) }}">
                                         {{ $fleet->activityAll_total - $fleet->activity_active }}
                                     </a>
                                 </td>
