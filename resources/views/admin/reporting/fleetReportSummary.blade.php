@@ -33,26 +33,12 @@
                                     روز گذشته:
                                     {{ $fleet->new_drivers_yesterday }}
                                 </td>
-                                <td>
-                                    کل :
-                                    <a href="{{ route('fleet.drivers.list', ['fleet' => $fleet->id, 'type' => 'all']) }}">
-                                        {{ $fleet->activityAll_total }}
-                                    </a>
+                                <td>کل : {{ $fleet->activityAll_total }}
                                     <br />
-
-                                    اشتراک دارند :
-                                    <a href="{{ route('fleet.drivers.list', ['fleet' => $fleet->id, 'type' => 'active']) }}">
-                                        {{ $fleet->activity_active }}
-                                    </a>
+                                    اشتراک دارند : {{ $fleet->activity_active }}
                                     <br />
-
-                                    اشتراک ندارند :
-                                    <a
-                                        href="{{ route('fleet.drivers.list', ['fleet' => $fleet->id, 'type' => 'notActive']) }}">
-                                        {{ $fleet->activity_notActive }}
-                                    </a>
+                                    اشتراک ندارند : {{ $fleet->activityAll_total - $fleet->activity_active }}
                                 </td>
-
                                 <td>{{ $fleet->activity_yesterday }}</td>
                                 <td @class([
                                     'text-danger' => $fleet->activity_growth_percent < 0,
