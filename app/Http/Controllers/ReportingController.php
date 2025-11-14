@@ -102,7 +102,7 @@ class ReportingController extends Controller
             // رانندگانی که تراکنش مثبت داشته‌اند (مطابق آمار active/notActive)
 
 
-            return $drivers = DB::table('drivers')
+            $drivers = DB::table('drivers')
                 ->join('driver_activities', 'driver_activities.driver_id', '=', 'drivers.id')
                 ->where('driver_activities.created_at', '>', $date)
                 ->where('drivers.fleet_id', $fleetId)
@@ -119,6 +119,7 @@ class ReportingController extends Controller
                 )
                 ->distinct('drivers.id')
                 ->count('drivers.id');
+            return view('admin.driver.reportByFleetType', compact('drivers'));
         }
     }
 

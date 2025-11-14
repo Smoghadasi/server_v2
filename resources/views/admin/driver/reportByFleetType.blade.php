@@ -9,11 +9,7 @@
         </h5>
         <div class="card-body">
 
-            <div class="col-lg-12 alert alert-info">
-                تعداد یافته ها :
-                {{ $drivers->total() }}
-                راننده
-            </div>
+
 
             <div class="table-responsive">
                 <table class="table">
