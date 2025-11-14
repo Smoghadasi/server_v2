@@ -11,7 +11,7 @@
 
             <div class="col-lg-12 alert alert-info">
                 تعداد یافته ها :
-                {{ count($drivers) }}
+                {{ $drivers->total() }}
                 راننده
             </div>
 
