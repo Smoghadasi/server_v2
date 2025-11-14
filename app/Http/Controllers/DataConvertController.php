@@ -1059,36 +1059,36 @@ class DataConvertController extends Controller
         return back()->with('danger', 'خطا در ذخیره');
     }
 
-    public function addWordToDictionary(Request $request)
+    // public function addWordToDictionary(Request $request)
+    // {
+    //     try {
+    //         $original_word_id = $request->type == 'city' ? $request->city_id : $request->fleet_id;
+    //         if (Dictionary::where([
+    //             ['equivalentWord', $request->equivalentWord],
+    //             ['type', $request->type],
+    //             ['original_word_id', $original_word_id],
+    //         ])->count() > 0)
+    //             return back()->with('danger', 'کلمه اصلی، کلمه معادل و دسته تکراری است');
+
+    //         if (strlen($request->equivalentWord)) {
+    //             $dictionary = new Dictionary();
+    //             $dictionary->type = $request->type;
+    //             $dictionary->original_word_id = $original_word_id;
+    //             $dictionary->equivalentWord = $request->equivalentWord;
+    //             $dictionary->save();
+
+    //             return back()->with('success', 'کلمه مورد نظر ثبت شد');
+    //         }
+    //     } catch (\Exception $exception) {
+    //     }
+
+    //     return back()->with('danger', 'خطا در ذخیره');
+    // }
+
+    public function removeDictionaryWord(Equivalent $equivalent)
     {
-        try {
-            $original_word_id = $request->type == 'city' ? $request->city_id : $request->fleet_id;
-            if (Dictionary::where([
-                ['equivalentWord', $request->equivalentWord],
-                ['type', $request->type],
-                ['original_word_id', $original_word_id],
-            ])->count() > 0)
-                return back()->with('danger', 'کلمه اصلی، کلمه معادل و دسته تکراری است');
-
-            if (strlen($request->equivalentWord)) {
-                $dictionary = new Dictionary();
-                $dictionary->type = $request->type;
-                $dictionary->original_word_id = $original_word_id;
-                $dictionary->equivalentWord = $request->equivalentWord;
-                $dictionary->save();
-
-                return back()->with('success', 'کلمه مورد نظر ثبت شد');
-            }
-        } catch (\Exception $exception) {
-        }
-
-        return back()->with('danger', 'خطا در ذخیره');
-    }
-
-    public function removeDictionaryWord(Dictionary $dictionary)
-    {
-        $dictionary->delete();
-        return back()->with('success', ' کلمه ' . $dictionary->equivalentWord . ' حذف شد ');
+        $equivalent->delete();
+        return back()->with('success', ' کلمه ' . $equivalent->equivalentWord . ' حذف شد ');
     }
 
     public function removeEquivalentWord(Equivalent $equivalent)

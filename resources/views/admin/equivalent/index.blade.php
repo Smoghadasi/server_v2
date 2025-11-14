@@ -121,7 +121,7 @@
                                                     </p>
                                                 </div>
                                                 <div class="modal-footer text-left">
-                                                    <form action="{{ route('removeDictionaryWord', $item) }}"
+                                                    <form action="{{ route('removeDictionaryWord', ['equivalent' => $item]) }}"
                                                         method="POST">
                                                         @csrf
                                                         @method('delete')

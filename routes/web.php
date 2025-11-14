@@ -931,7 +931,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('dictionary', [DataConvertController::class, 'dictionary'])->middleware('operator');
         Route::post('addWordToDictionary', [DataConvertController::class, 'addWordToDictionary'])->middleware('operator');
 
-        Route::delete('removeDictionaryWord/{dictionary}', [DataConvertController::class, 'removeDictionaryWord'])->middleware('operator')->name('removeDictionaryWord');
+        Route::delete('removeDictionaryWord/{equivalent}', [DataConvertController::class, 'removeDictionaryWord'])->middleware('operator')->name('removeDictionaryWord');
 
         // مدیریت کانال ها
         Route::get('channels', [DataConvertController::class, 'channels'])->middleware('operator');
