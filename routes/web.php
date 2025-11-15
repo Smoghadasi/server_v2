@@ -10,6 +10,7 @@ use App\Http\Controllers\AuthorizeController;
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\BearingController;
 use App\Http\Controllers\BookmarkController;
+use App\Http\Controllers\ChannelController;
 use App\Http\Controllers\CityDistanceController;
 use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\CustomerController;
@@ -986,6 +987,11 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('freeCallDriver', [FreeCallDriverController::class, 'index'])->name('admin.freeCallDriver.index')->middleware('operator');
 
         Route::resource('freeSubscription', FreeSubscriptionController::class)->middleware('operator');
+
+
+        // channel
+        Route::resource('channel', ChannelController::class)->middleware('operator');
+
 
         // گزارش بر اساس ثبت بار دستی اپراتور
         Route::resource('storeCargoOperator', StoreCargoOperatorController::class)->middleware('operator');

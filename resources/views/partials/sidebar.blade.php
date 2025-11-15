@@ -261,6 +261,14 @@
                         </a>
                     </li>
                 @endif
+                @if (Auth::user()->role == 'admin')
+                    <li class="menu-item">
+                        <a class="menu-link" href="{{ route('channel.index') }}">
+                            <div data-i18n="Without menu">کانال ها</div>
+                        </a>
+                    </li>
+                @endif
+
                 @if (in_array('rejectedCargoFromCargoList', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/rejectedCargoFromCargoList') }}">
