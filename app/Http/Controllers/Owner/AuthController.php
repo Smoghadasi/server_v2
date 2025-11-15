@@ -166,6 +166,14 @@ class AuthController extends Controller
         if ($ownerAuth->isAccepted == 0 && $request->isAccepted == 1) {
             $ownerAuth->sku = $this->generateSKU();
             $ownerAuth->save();
+
+            try {
+                // ارسال پیامک برای صاحب بار تایید شده
+                $sms = new Owner();
+                $sms->acceptOwnerSmsIr($ownerAuth->mobileNumber, $ownerAuth->name, $ownerAuth->lastName);
+            } catch (\Throwable $th) {
+                //throw $th;
+            }
         }
 
         // فیلدهای اصلی OwnerAuth
