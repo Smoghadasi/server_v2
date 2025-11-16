@@ -226,7 +226,7 @@ class User extends Authenticatable
 
     public function avgLoadSubmit()
     {
-        CargoConvertList::where('operator_id', $this->id)
+        return CargoConvertList::where('operator_id', $this->id)
             ->where('operator_assigned_at', '!=', null)
             ->where('final_submission_at', '!=', null)
             ->selectRaw('AVG(TIMESTAMPDIFF(SECOND, operator_assigned_at, final_submission_at)) / 60 AS avg_minutes')
