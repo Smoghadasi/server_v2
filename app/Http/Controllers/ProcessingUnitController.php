@@ -200,7 +200,7 @@ class ProcessingUnitController extends Controller
                         $cargo->save();
                         return view('admin.processingUnit.indexVIP', compact('cargo', 'countOfCargos', 'users'));
 
-                        // return $this->getLoadFromTel($cargo);
+                        // return $this->dataConvert($cargo);
                     }
                 }
 
@@ -225,7 +225,7 @@ class ProcessingUnitController extends Controller
                     $newCargo->save();
                     return view('admin.processingUnit.indexVIP', compact('cargo', 'countOfCargos', 'users'));
 
-                    // return $this->getLoadFromTel($newCargo);
+                    // return $this->dataConvert($newCargo);
                 }
             }
 
@@ -234,7 +234,7 @@ class ProcessingUnitController extends Controller
             $cargo->save();
             return view('admin.processingUnit.indexVIP', compact('cargo', 'countOfCargos', 'users'));
 
-            // return $this->getLoadFromTel($cargo);
+            // return $this->dataConvert($cargo);
         }
 
         // ۴. اگر هیج باری نبود → برگرد به داشبورد
@@ -376,7 +376,7 @@ class ProcessingUnitController extends Controller
 
             foreach ($contents as $clean) {
                 $this->analyzeCode($clean);
-                // $dataConvertPlus->getLoadFromTel($clean, 1, $cargo->id);
+                // $dataConvertPlus->dataConvert($clean, 1, $cargo->id);
             }
             $cargo = CargoConvertList::find($cargo->id);
             $cargo->status = true;
@@ -388,6 +388,8 @@ class ProcessingUnitController extends Controller
             CargoConvertList::create([
                 'cargo_orginal' => $clean,
                 'cargo' => $clean,
+                'channel' => $cargo->channel,
+                'bot_number' => $cargo->bot_number,
                 'isProcessingControl' => 1,
             ]);
         }

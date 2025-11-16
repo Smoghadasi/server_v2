@@ -19,28 +19,28 @@
         @endif
 
         @php
-                /**
-                 * بررسی وضعیت کاربر و برگرداندن کلاس CSS و متن وضعیت متناسب.
-                 *
-                 * اگر کاربر آنلاین باشد:
-                 *   - اگر اکتیو باشد: متن "اکتیو" با کلاس text-primary
-                 *   - در غیر این صورت: متن "آنلاین" با کلاس text-success
-                 * در غیر این صورت (آفلاین): متن "آفلاین" با کلاس text-secondary
-                 *
-                 * @param  \App\Models\User  $user
-                 * @return array
-                 */
-                function getUserStatusHint($user)
-                {
-                    if (Cache::has('user-is-online-' . $user->id)) {
-                        if (Cache::has('user-is-active-' . $user->id)) {
-                            return ['class' => 'text-primary', 'text' => 'اکتیو'];
-                        }
-                        return ['class' => 'text-success', 'text' => 'آنلاین'];
+            /**
+             * بررسی وضعیت کاربر و برگرداندن کلاس CSS و متن وضعیت متناسب.
+             *
+             * اگر کاربر آنلاین باشد:
+             *   - اگر اکتیو باشد: متن "اکتیو" با کلاس text-primary
+             *   - در غیر این صورت: متن "آنلاین" با کلاس text-success
+             * در غیر این صورت (آفلاین): متن "آفلاین" با کلاس text-secondary
+             *
+             * @param  \App\Models\User  $user
+             * @return array
+             */
+            function getUserStatusHint($user)
+            {
+                if (Cache::has('user-is-online-' . $user->id)) {
+                    if (Cache::has('user-is-active-' . $user->id)) {
+                        return ['class' => 'text-primary', 'text' => 'اکتیو'];
                     }
-                    return ['class' => 'text-secondary', 'text' => 'آفلاین'];
+                    return ['class' => 'text-success', 'text' => 'آنلاین'];
                 }
-            @endphp
+                return ['class' => 'text-secondary', 'text' => 'آفلاین'];
+            }
+        @endphp
 
         <div class="card-body row">
             <div class="col-lg-12 m-2 p-2 text-right bg-light">
@@ -57,11 +57,7 @@
                             @endif
                             @switch($user->device)
                                 @case('Mobile')
-                                    @if ($user->id == 29)
-                                        <i class="bx bx-desktop text-black fs-5"></i>
-                                    @else
-                                        <i class="bx bx-mobile text-black fs-5"></i>
-                                    @endif
+                                    <i class="bx bx-mobile text-black fs-5"></i>
                                 @break
 
                                 @case('Desktop')
@@ -105,7 +101,26 @@
 
                     </a>
                 </div>
-                <span class="col-lg-12 text-right">
+                <div class="row">
+                    <div class="col-md-6 text-start">
+                        <span class="alert alert-info p-1">
+                            زمان ثبت : {{ str_replace('-', '/', gregorianDateToPersian($cargo->created_at, '-', true)) }}
+                            @php
+                                $date = explode(' ', $cargo->created_at);
+                                if (isset($date[1])) {
+                                    echo 'زمان : ' . $date[1];
+                                }
+                            @endphp
+                        </span>
+                    </div>
+                    @if (Auth::user()->role == 'Admin')
+                        <div class="col-md-6 text-end">
+                            {{ Str::limit($cargo->channel, 40, '...') }}
+                        </div>
+                    @endif
+                </div>
+
+                {{-- <span class="col-lg-12 ">
                     <span class="alert alert-info p-1">
                         زمان ثبت : {{ str_replace('-', '/', gregorianDateToPersian($cargo->created_at, '-', true)) }}
                         @php
@@ -115,7 +130,7 @@
                             }
                         @endphp
                     </span>
-                </span>
+                </span> --}}
                 <textarea id="cargoText" class="form-control mb-2" placeholder="ورود لیست بارها" name="cargo" rows="20">{{ $cargo->cargo }}</textarea>
             </form>
 
