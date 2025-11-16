@@ -113,7 +113,7 @@
                             @endphp
                         </span>
                     </div>
-                    @if (Auth::user()->role == 'Admin')
+                    @if (Auth::user()->role == 'admin' && $cargo->channel != null)
                         <div class="col-md-6 text-end">
                             {{ Str::limit($cargo->channel, 40, '...') }}
                         </div>
