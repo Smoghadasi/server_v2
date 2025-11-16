@@ -31,6 +31,7 @@
                         <th>ساعت پایان</th>
                         <th>میزان فعالیت به دقیقه / ساعت</th>
                         <th>تعداد بار های ثبت شده</th>
+                        <th>میانگین ثبت بار امروز</th>
                         <th>
                             وضعیت فعلی ( <span class="text-success">آنلاین</span> / <span class="text-danger">آفلاین</span>
                             )
@@ -60,6 +61,9 @@
                                     $totalLoads += $user->numOfLoads(); // جمع کردن تعداد بارها
                                 @endphp
 
+                            </td>
+                            <td>
+                                {{ $user->avgLoadSubmit() ?? - }}
                             </td>
                             <td>
                                 @if (Cache::has('user-is-online-' . $user->user_id))

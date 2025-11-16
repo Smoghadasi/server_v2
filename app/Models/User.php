@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
@@ -123,7 +124,6 @@ class User extends Authenticatable
             ['operator_id', $this->id],
             ['created_at', '>', getCurrentWeekSaturdayDate()]
         ])->count();
-
     }
 
     public function getCountOfFleetsInThisWeekAttribute()
@@ -161,11 +161,10 @@ class User extends Authenticatable
     public function getCargoAccessAttribute()
     {
         try {
-             $operatorCargoListAccess= OperatorCargoListAccess::where('user_id', $this->id)->select('fleet_id')->pluck('fleet_id')->toArray();
-             if (count($operatorCargoListAccess))
-                 return  $operatorCargoListAccess;
+            $operatorCargoListAccess = OperatorCargoListAccess::where('user_id', $this->id)->select('fleet_id')->pluck('fleet_id')->toArray();
+            if (count($operatorCargoListAccess))
+                return  $operatorCargoListAccess;
         } catch (\Exception $exception) {
-
         }
 
         return [];
@@ -223,6 +222,15 @@ class User extends Authenticatable
         curl_close($curl);
 
         return $rand;
+    }
+
+    public function avgLoadSubmit()
+    {
+        CargoConvertList::where('operator_id', $this->id)
+            ->where('operator_assigned_at', '!=', null)
+            ->where('final_submission_at', '!=', null)
+            ->selectRaw('AVG(TIMESTAMPDIFF(SECOND, operator_assigned_at, final_submission_at)) / 60 AS avg_minutes')
+            ->value('avg_minutes');
     }
 
     public function loginHistory()
