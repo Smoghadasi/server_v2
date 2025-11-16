@@ -63,7 +63,7 @@
 
                             </td>
                             <td>
-                                {{ $user->user->avgLoadSubmit() . ' دقیقه ' ?? '-' }}
+                                {{ $user->user->avgLoadSubmit() ?? '-' }} دقیقه
                             </td>
                             <td>
                                 @if (Cache::has('user-is-online-' . $user->user_id))
