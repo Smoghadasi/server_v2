@@ -110,8 +110,9 @@ class DataConvertPlusController extends Controller
                 foreach ($dictionary as $word) {
                     if (str_contains($cargo->cargo, $word)) {
                         $cargo->operator_id = $userId;
+                        $cargo->operator_assigned_at = now();
                         $cargo->save();
-                        return $this->getLoadFromTel($cargo);
+                        return $this->dataConvert($cargo);
                     }
                 }
 
@@ -133,15 +134,17 @@ class DataConvertPlusController extends Controller
 
                 if ($newCargo) {
                     $newCargo->operator_id = $userId;
+                    $cargo->operator_assigned_at = now();
                     $newCargo->save();
-                    return $this->getLoadFromTel($newCargo);
+                    return $this->dataConvert($newCargo);
                 }
             }
 
             // در نهایت بار فعلی رو بده به اپراتور
             $cargo->operator_id = $userId;
+            $cargo->operator_assigned_at = now();
             $cargo->save();
-            return $this->getLoadFromTel($cargo);
+            return $this->dataConvert($cargo);
         }
 
         // ۴. اگر هیج باری نبود → برگرد به داشبورد
@@ -440,7 +443,7 @@ class DataConvertPlusController extends Controller
         ], 200, [], JSON_UNESCAPED_UNICODE);
     }
 
-    public function getLoadFromTel($cargo, $isAutomatic = 0, $cargoId = null)
+    public function dataConvert($cargo, $isAutomatic = 0, $cargoId = null)
     {
         if ($isAutomatic == 1) {
             $raw = $cargo;
@@ -720,6 +723,7 @@ class DataConvertPlusController extends Controller
             ->where('isBlocked', 0)
             ->where('processingUnit', 0)
             ->where('isDuplicate', 0)
+            ->where('status', 0)
             ->count();
         $users = UserController::getOnlineAndOfflineUsers();
         if ($isAutomatic == 1) {
@@ -855,6 +859,7 @@ class DataConvertPlusController extends Controller
             }
         }
         $cargo->status = true;
+        $cargo->final_submission_at = now();
         $cargo->save();
         return back()->with('success', $counter . 'بار ثبت شد');
     }
