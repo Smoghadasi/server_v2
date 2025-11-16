@@ -787,7 +787,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
 
 
         // گزارش فعالیت رانندگان
-        // Route::get('driverActivityReport', [ReportingController::class, 'driverActivityReport'])->middleware('operator');
+        Route::get('driverActivityReport', [ReportingController::class, 'driverActivityReport'])->middleware('operator');
 
 
         // خلاصه گزارش ناوگان ها
