@@ -1684,6 +1684,7 @@ class ReportingController extends Controller
             )
             ->groupBy('user_activity_reports.user_id')
             ->get();
+        return $users;
 
 
 
