@@ -226,11 +226,13 @@ class User extends Authenticatable
 
     public function avgLoadSubmit()
     {
-        return CargoConvertList::where('operator_id', $this->id)
-            ->where('operator_assigned_at', '!=', null)
-            ->where('final_submission_at', '!=', null)
+        $value = CargoConvertList::where('operator_id', $this->id)
+            ->whereNotNull('operator_assigned_at')
+            ->whereNotNull('final_submission_at')
             ->selectRaw('AVG(TIMESTAMPDIFF(SECOND, operator_assigned_at, final_submission_at)) / 60 AS avg_minutes')
             ->value('avg_minutes');
+
+        return $value ? round($value, 1) : null; // مثلا یک رقم اعشار
     }
 
     public function loginHistory()
