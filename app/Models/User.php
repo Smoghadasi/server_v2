@@ -226,14 +226,25 @@ class User extends Authenticatable
 
     public function avgLoadSubmit()
     {
-        $value = CargoConvertList::where('operator_id', $this->id)
+        // گرفتن میانگین به دقیقه
+        $avgMinutes = CargoConvertList::where('operator_id', $this->id)
             ->whereNotNull('operator_assigned_at')
             ->whereNotNull('final_submission_at')
-            ->selectRaw('AVG(TIMESTAMPDIFF(SECOND, operator_assigned_at, final_submission_at)) / 60 AS avg_minutes')
-            ->value('avg_minutes');
+            ->selectRaw('AVG(TIMESTAMPDIFF(SECOND, operator_assigned_at, final_submission_at)) AS avg_seconds')
+            ->value('avg_seconds');
 
-        return $value ? round($value, 1) : null; // مثلا یک رقم اعشار
+        if (!$avgMinutes) {
+            return null;
+        }
+
+        // تبدیل به HH:MM:SS
+        $hours   = floor($avgMinutes / 3600);
+        $minutes = floor(($avgMinutes % 3600) / 60);
+        $seconds = $avgMinutes % 60;
+
+        return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
     }
+
 
     public function loginHistory()
     {
