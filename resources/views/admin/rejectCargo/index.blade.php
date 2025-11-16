@@ -26,7 +26,9 @@
             <table class="table">
                 <tr>
                     <th>بار</th>
-                    <th>کانال</th>
+                    @if (Auth::user()->role == 'admin')
+                        <th>منبع</th>
+                    @endif
                     <th>اپراتور</th>
                     <th>تاریخ</th>
                 </tr>
@@ -35,7 +37,9 @@
                         <td @class(['text-primary' => $cargo->checkExists() == 0])>
                             {{ $cargo->cargo }}
                         </td>
-                        <td>{{ $cargo->channel ?? '-' }}</td>
+                        @if (Auth::user()->role == 'admin')
+                            <td>{{ $cargo->channel ?? '-' }}</td>
+                        @endif
                         <td class="text-nowrap">
                             <span class="badge bg-label-primary">
                                 {{ $cargo->operator->name }} {{ $cargo->operator->lastName }}
