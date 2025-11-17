@@ -1598,25 +1598,21 @@ class DataConvertPlusController extends Controller
 
     private function splitByFleets(string $text, string $fleetPattern): array
     {
-        try {
-            if (trim($fleetPattern) === '') return [$text];
+        if (trim($fleetPattern) === '') return [$text];
 
-            preg_match_all(
-                "/(?:$fleetPattern)(?:\s*(?:و|،|\/|or|>>)?\s*(?:$fleetPattern))*[\s\S]*?(?=(?:$fleetPattern)|$)/u",
-                $text,
-                $m,
-                PREG_SET_ORDER
-            );
+        preg_match_all(
+            "/(?:$fleetPattern)(?:\s*(?:و|،|\/|or|>>)?\s*(?:$fleetPattern))*[\s\S]*?(?=(?:$fleetPattern)|$)/u",
+            $text,
+            $m,
+            PREG_SET_ORDER
+        );
 
-            $segments = [];
-            foreach ($m as $row) {
-                $seg = trim($row[0]);
-                if ($seg !== '') $segments[] = $seg;
-            }
-            return empty($segments) ? [$text] : $segments;
-        } catch (\Exception $th) {
-            return dd($text);
+        $segments = [];
+        foreach ($m as $row) {
+            $seg = trim($row[0]);
+            if ($seg !== '') $segments[] = $seg;
         }
+        return empty($segments) ? [$text] : $segments;
     }
 
     private function findFleetsInSegment(string $segment, string $fleetPattern, array $fleetLexicon, array $cargoWords): array
