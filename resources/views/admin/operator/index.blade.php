@@ -1018,6 +1018,13 @@
                                                         ثبت بار پلاس
                                                     </label>
                                                 </div>
+                                                <div class="form-group">
+                                                    <label>
+                                                        <input type="checkbox" name="processingUnitVIP"
+                                                            @if (in_array('processingUnitVIP', $user->userAccess)) checked @endif>
+                                                        ثبت بار نیمه اتوماتیک
+                                                    </label>
+                                                </div>
 
                                                 <div class="form-group">
                                                     <label>

@@ -72,28 +72,6 @@
                     </div>
                 </a>
             </li>
-            @if (Auth::user()->role == 'admin')
-                <li class="menu-item">
-                    <a class="menu-link" href="{{ route('processingUnitVIP.index') }}">
-                        <i class="menu-icon tf-icons bx bx-box"></i>
-                        @php
-                            $cargoCount = \App\Http\Controllers\DataConvertPlusController::getCountOfCargos();
-                            $textClass = '';
-
-                            if ($cargoCount > 40) {
-                                $textClass = 'text-danger';
-                            } elseif ($cargoCount > 20) {
-                                $textClass = 'text-warning';
-                            }
-                        @endphp
-
-                        <div data-i18n="Without menu" class="{{ $textClass }}">
-                            ثبت بار نیمه اتوماتیک ({{ $cargoCount }})
-                        </div>
-
-                    </a>
-                </li>
-            @endif
 
             <li class="menu-item">
                 <a class="menu-link" href="{{ route('documentSmartCargo') }}">
@@ -101,6 +79,28 @@
                     <div data-i18n="Without menu">
                         دستورات هوش منصوعی
                     </div>
+                </a>
+            </li>
+        @endif
+        @if (in_array('processingUnitVIP', auth()->user()->userAccess))
+            <li class="menu-item">
+                <a class="menu-link" href="{{ route('processingUnitVIP.index') }}">
+                    <i class="menu-icon tf-icons bx bx-box"></i>
+                    @php
+                        $cargoCount = \App\Http\Controllers\DataConvertPlusController::getCountOfCargos();
+                        $textClass = '';
+
+                        if ($cargoCount > 40) {
+                            $textClass = 'text-danger';
+                        } elseif ($cargoCount > 20) {
+                            $textClass = 'text-warning';
+                        }
+                    @endphp
+
+                    <div data-i18n="Without menu" class="{{ $textClass }}">
+                        ثبت بار نیمه اتوماتیک ({{ $cargoCount }})
+                    </div>
+
                 </a>
             </li>
         @endif
@@ -464,11 +464,11 @@
                             <div data-i18n="Without menu">فعالیت رانندگان</div>
                         </a>
                     </li>
-                    <li class="menu-item">
+                    {{-- <li class="menu-item">
                         <a class="menu-link" href="{{ route('admin.driverActivityNonRepeate') }}">
                             <div data-i18n="Without menu">فعالیت رانندگان غیر تکراری</div>
                         </a>
-                    </li>
+                    </li> --}}
                 @endif
                 @if (in_array('paymentOfDrivers', auth()->user()->userAccess))
                     <li class="menu-item">
@@ -521,13 +521,13 @@
                         </a>
                     </li>
                 @endif
-                @if (in_array('activityOfOperators', auth()->user()->userAccess))
+                {{-- @if (in_array('activityOfOperators', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/operatorsActivityReport') }}">
                             <div data-i18n="Without menu"> فعالیت اپراتورها</div>
                         </a>
                     </li>
-                @endif
+                @endif --}}
                 @if (in_array('operatorsWorkingHoursActivityReport', auth()->user()->userAccess))
                     <li class="menu-item">
                         <a class="menu-link" href="{{ url('admin/operatorsWorkingHoursActivityReport') }}">
