@@ -445,6 +445,7 @@ class DataConvertPlusController extends Controller
 
     public function dataConvert($cargo, $isAutomatic = 0, $cargoId = null)
     {
+        return dd($cargo);
         if ($isAutomatic == 1) {
             $raw = $cargo;
         } else {
