@@ -1598,6 +1598,7 @@ class DataConvertPlusController extends Controller
 
     private function splitByFleets(string $text, string $fleetPattern): array
     {
+        return dd($fleetPattern);
         if (trim($fleetPattern) === '') {
             return [$text];
         }
