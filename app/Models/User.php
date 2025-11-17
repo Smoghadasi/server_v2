@@ -223,7 +223,7 @@ class User extends Authenticatable
 
         return $rand;
     }
-
+    // میانگین ثبت بار(تختیص تا ثبت)
     public function avgLoadSubmit()
     {
         // گرفتن میانگین به دقیقه
@@ -231,6 +231,26 @@ class User extends Authenticatable
             ->whereNotNull('operator_assigned_at')
             ->whereNotNull('final_submission_at')
             ->selectRaw('AVG(TIMESTAMPDIFF(SECOND, operator_assigned_at, final_submission_at)) AS avg_seconds')
+            ->value('avg_seconds');
+
+        if (!$avgMinutes) {
+            return null;
+        }
+
+        // تبدیل به HH:MM:SS
+        $hours   = floor($avgMinutes / 3600);
+        $minutes = floor(($avgMinutes % 3600) / 60);
+        $seconds = $avgMinutes % 60;
+
+        return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+    }
+    // میانگین ثبت بار(تختیص تا ثبت)
+    public function avgLoadStartToEndSubmit()
+    {
+        // گرفتن میانگین به دقیقه
+        $avgMinutes = CargoConvertList::where('operator_id', $this->id)
+            ->whereNotNull('final_submission_at')
+            ->selectRaw('AVG(TIMESTAMPDIFF(SECOND, created_at, final_submission_at)) AS avg_seconds')
             ->value('avg_seconds');
 
         if (!$avgMinutes) {

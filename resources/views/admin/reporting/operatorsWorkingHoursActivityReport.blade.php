@@ -31,7 +31,8 @@
                         <th>ساعت پایان</th>
                         <th>میزان فعالیت به دقیقه / ساعت</th>
                         <th>تعداد بار های ثبت شده</th>
-                        <th>میانگین ثبت بار</th>
+                        <th>میانگین ثبت بار(تختیص تا ثبت)</th>
+                        <th>میانگین زمان ثبت بار (ورود تا ثبت)</th>
                         <th>
                             وضعیت فعلی ( <span class="text-success">آنلاین</span> / <span class="text-danger">آفلاین</span>
                             )
@@ -66,6 +67,9 @@
                                 {{ $user->user->avgLoadSubmit() ?? '-' }}
                             </td>
                             <td>
+                                {{ $user->user->avgLoadStartToEndSubmit() ?? '-' }}
+                            </td>
+                            <td>
                                 @if (Cache::has('user-is-online-' . $user->user_id))
                                     <span class="text-success">آنلاین</span>
                                 @else
@@ -86,6 +90,8 @@
                         <td></td>
                         <td></td>
                         <td>{{ $totalLoads }}</td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                     </tr>
