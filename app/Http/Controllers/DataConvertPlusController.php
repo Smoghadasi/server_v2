@@ -1615,7 +1615,7 @@ class DataConvertPlusController extends Controller
             }
             return empty($segments) ? [$text] : $segments;
         } catch (\Exception $th) {
-            return dd($th);
+            return dd($text);
         }
     }
 
