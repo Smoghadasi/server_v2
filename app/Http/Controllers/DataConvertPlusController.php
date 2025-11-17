@@ -445,7 +445,6 @@ class DataConvertPlusController extends Controller
 
     public function dataConvert($cargo, $isAutomatic = 0, $cargoId = null)
     {
-        return dd($cargo);
         if ($isAutomatic == 1) {
             $raw = $cargo;
         } else {
@@ -1599,51 +1598,17 @@ class DataConvertPlusController extends Controller
 
     private function splitByFleets(string $text, string $fleetPattern): array
     {
-        return dd($text);
-        if (trim($fleetPattern) === '') {
-            return [$text];
-        }
+        if (trim($fleetPattern) === '') return [$text];
 
-        // اگر احتمالی برای بایت‌های خراب هست، تلاش کن تا آن‌ها را تصحیح کنی
-        if (!mb_check_encoding($fleetPattern, 'UTF-8')) {
-            $fleetPattern = mb_convert_encoding($fleetPattern, 'UTF-8', 'UTF-8');
-        }
+        preg_match_all(
+            "/(?:$fleetPattern)(?:\s*(?:و|،|\/|or|>>)?\s*(?:$fleetPattern))*[\s\S]*?(?=(?:$fleetPattern)|$)/u",
+            $text,
+            $m,
+            PREG_SET_ORDER
+        );
 
-        if (!mb_check_encoding($text, 'UTF-8')) {
-            $text = mb_convert_encoding($text, 'UTF-8', 'UTF-8');
-        }
-
-        $matches = [];
         $segments = [];
-
-        // اول با یک دلِمیتِر امن امتحان کن (مثلاً #). از s و u استفاده شده تا . شامل newline بشه و یونیکد فعال باشه.
-        $delim = '#';
-        $modifiers = 'u'; // نیازی به s نیست چون از [\s\S] استفاده شده، اما اگر خواستی می‌تونی اضافه کنی
-        $pattern = $delim
-            . '(?:' . $fleetPattern . ')(?:\s*(?:و|،|/|or|>>)?\s*(?:' . $fleetPattern . '))*[\s\S]*?(?=(?:' . $fleetPattern . ')|$)'
-            . $delim
-            . $modifiers;
-
-        // اگر الگو به‌دلیل دلِمیتِر یا سایر خطاها شکست خورد، دوباره با preg_quote امتحان کن
-        $result = @preg_match_all($pattern, $text, $matches, PREG_SET_ORDER);
-
-        if ($result === false) {
-            // امن‌ترین اقدام: escape کردنِ الگوی دریافتی (وقتی الگو در واقع متن ساده است)
-            $fleetPatternQuoted = preg_quote($fleetPattern, $delim);
-            $pattern2 = $delim
-                . '(?:' . $fleetPatternQuoted . ')(?:\s*(?:و|،|/|or|>>)?\s*(?:' . $fleetPatternQuoted . '))*[\s\S]*?(?=(?:' . $fleetPatternQuoted . ')|$)'
-                . $delim
-                . $modifiers;
-
-            $result2 = @preg_match_all($pattern2, $text, $matches, PREG_SET_ORDER);
-
-            // اگر باز هم false شد، به عنوان آخرین راه fallback کن و متن کامل را برگردان
-            if ($result2 === false) {
-                return [$text];
-            }
-        }
-
-        foreach ($matches as $row) {
+        foreach ($m as $row) {
             $seg = trim($row[0]);
             if ($seg !== '') $segments[] = $seg;
         }
