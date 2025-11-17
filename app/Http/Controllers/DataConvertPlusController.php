@@ -445,6 +445,7 @@ class DataConvertPlusController extends Controller
 
     public function dataConvert($cargo, $isAutomatic = 0, $cargoId = null)
     {
+        return dd($cargo);
         if ($isAutomatic == 1) {
             $raw = $cargo;
         } else {
@@ -1598,7 +1599,7 @@ class DataConvertPlusController extends Controller
 
     private function splitByFleets(string $text, string $fleetPattern): array
     {
-        return dd($fleetPattern);
+        return dd($text);
         if (trim($fleetPattern) === '') {
             return [$text];
         }
