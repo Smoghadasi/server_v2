@@ -18,7 +18,7 @@ class ChannelController extends Controller
             $query->where('name', 'LIKE', "%{$request->word}%");
             $query->orWhere('bot_number', $request->word);
         })
-            ->orderByDesc('created_at')
+            ->orderByDesc('updated_at')
             ->paginate(20);
         return view('admin.channel.index', compact('channels'));
     }

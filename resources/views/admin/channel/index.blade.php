@@ -24,7 +24,7 @@
                         <th>بار</th>
                         <th>کانال</th>
                         <th>شماره</th>
-                        {{-- <th>تاریخ ثبت</th> --}}
+                        <th>اخرین زمان ثبت</th>
                     </tr>
                     <?php $i = 0; ?>
 
@@ -37,10 +37,10 @@
                             </td>
                             <td>{{ $channel->bot_number }}</td>
 
-                            {{-- @php
-                                $pieces = explode(' ', $channel->created_at);
+                            @php
+                                $pieces = explode(' ', $channel->updated_at);
                             @endphp
-                            <td>{{ gregorianDateToPersian($channel->created_at, '-', true) . ' ' . $pieces[1] }}</td> --}}
+                            <td>{{ gregorianDateToPersian($channel->updated_at, '-', true) . ' | ' . $pieces[1] }}</td>
                         </tr>
                     @endforeach
                 </table>
