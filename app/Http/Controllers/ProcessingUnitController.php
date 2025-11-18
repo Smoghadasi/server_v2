@@ -489,17 +489,18 @@ class ProcessingUnitController extends Controller
 
         if ($request->automatic == 1) {
             // $dataConvertPlus = new DataConvertPlusController();
-
+            $storedCount = 0;
             foreach ($contents as $clean) {
                 $this->analyzeCode($clean);
+                $storedCount++;
                 // $dataConvertPlus->dataConvert($clean, 1, $cargo->id);
             }
             $cargo = CargoConvertList::find($cargo->id);
             $cargo->status = true;
             $cargo->save();
-            return back()->with('success', 'ثبت شد');
+            return back()->with('success', $storedCount . ' تا ثبت شد');
         }
-
+        $storedCount = 0;
         foreach ($contents as $clean) {
             CargoConvertList::create([
                 'cargo_orginal' => $clean,
@@ -508,6 +509,7 @@ class ProcessingUnitController extends Controller
                 'bot_number' => $cargo->bot_number,
                 'isProcessingControl' => 1,
             ]);
+            $storedCount++;
         }
 
         $cargo->update([
@@ -515,7 +517,7 @@ class ProcessingUnitController extends Controller
             'status' => 1,
         ]);
 
-        return back()->with('success', 'ثبت شد');
+        return back()->with('success', $storedCount . ' تا ثبت شد');
     }
 
     public function analyzeCode($text)
