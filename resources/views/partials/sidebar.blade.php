@@ -54,7 +54,7 @@
                 </a>
             </li>
             <li class="menu-item">
-                <a class="menu-link" href="{{ route('admin.smartStoreCargo') }}">
+                <a class="menu-link" href="{{ route('processingUnitVIPV2.index') }}">
                     <i class="menu-icon tf-icons bx bx-box"></i>
                     @php
                         $cargoProcessingUnitsCount = \App\Http\Controllers\DataConvertPlusController::getCountOfCargoProcessingUnits();
