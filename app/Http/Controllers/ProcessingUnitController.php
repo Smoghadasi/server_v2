@@ -240,6 +240,122 @@ class ProcessingUnitController extends Controller
         // ۴. اگر هیج باری نبود → برگرد به داشبورد
         return redirect(url('dashboard'))->with('danger', 'هیچ باری وجود ندارد');
     }
+    public function indexVIP2()
+    {
+        $userId = auth()->id();
+        $countOfCargos = CargoConvertList::where('operator_id', 0)
+            ->where('isBlocked', 0)
+            ->where('isDuplicate', 0)
+            ->where('processingUnit', 1)
+            ->count();
+        // ۱. پیدا کردن باری که قبلاً به اپراتور تخصیص داده شده
+        $cargo = CargoConvertList::where([
+            ['operator_id', $userId],
+            ['processingUnit', 1],
+            ['status', 0],
+            ['isBlocked', 0],
+            ['isDuplicate', 0],
+        ])
+            ->latest('id')
+            ->first();
+        $users = UserController::getOnlineAndOfflineUsers();
+
+        // ۲. اگر باری برای اپراتور نبود → دنبال بار آزاد مناسب بگرد
+        if (!$cargo) {
+            $operatorCargoListAccess = OperatorCargoListAccess::where('user_id', $userId)
+                ->pluck('fleet_id')
+                ->toArray();
+
+            $dictionary = [];
+            if ($operatorCargoListAccess) {
+                $dictionary = Equivalent::where('type', 'fleet')
+                    ->whereIn('original_word_id', $operatorCargoListAccess)
+                    ->pluck('equivalentWord')
+                    ->toArray();
+            }
+
+            // اگر دیکشنری داریم → دنبال اولین باری بگرد که یکی از کلماتش داخل بار هست
+            if ($dictionary) {
+                $cargo = CargoConvertList::where(function ($q) use ($dictionary) {
+                    foreach ($dictionary as $word) {
+                        $q->orWhere('cargo', 'LIKE', "%{$word}%");
+                    }
+                })
+                    ->where([
+                        ['operator_id', 0],
+                        ['status', 0],
+                        ['processingUnit', 1],
+                        ['isBlocked', 0],
+                        ['isDuplicate', 0],
+                    ])
+                    ->oldest('id')
+                    ->first();
+            }
+
+            // اگر باز هم بار پیدا نشد → اولین بار آزاد عمومی
+            if (!$cargo) {
+                $cargo = CargoConvertList::where([
+                    ['operator_id', 0],
+                    ['status', 0],
+                    ['processingUnit', 1],
+                    ['isBlocked', 0],
+                    ['isDuplicate', 0],
+                ])
+                    ->oldest('id')
+                    ->first();
+            }
+        }
+
+        // ۳. اگر بار پیدا شد → مالکیت بده به اپراتور
+        if ($cargo) {
+            // بررسی اگر بار واقعاً جزو دیکشنری اپراتور هست
+            if (!empty($dictionary)) {
+                foreach ($dictionary as $word) {
+                    if (str_contains($cargo->cargo, $word)) {
+                        $cargo->operator_id = $userId;
+                        $cargo->save();
+                        return view('admin.processingUnit.indexVIP', compact('cargo', 'countOfCargos', 'users'));
+
+                        // return $this->dataConvert($cargo);
+                    }
+                }
+
+                // اگر بار فعلی نبود، دنبال بار جدیدی که match کنه
+                $newCargo = CargoConvertList::where(function ($q) use ($dictionary) {
+                    foreach ($dictionary as $word) {
+                        $q->orWhere('cargo', 'LIKE', "%{$word}%");
+                    }
+                })
+                    ->where([
+                        ['operator_id', 0],
+                        ['status', 0],
+                        ['isBlocked', 0],
+                        ['processingUnit', 1],
+                        ['isDuplicate', 0],
+                    ])
+                    ->oldest('id')
+                    ->first();
+
+                if ($newCargo) {
+                    $newCargo->operator_id = $userId;
+                    $newCargo->save();
+                    return view('admin.processingUnit.indexVIP', compact('cargo', 'countOfCargos', 'users'));
+
+                    // return $this->dataConvert($newCargo);
+                }
+            }
+
+            // در نهایت بار فعلی رو بده به اپراتور
+            $cargo->operator_id = $userId;
+            $cargo->save();
+            return view('admin.processingUnit.indexVIP', compact('cargo', 'countOfCargos', 'users'));
+
+            // return $this->dataConvert($cargo);
+        }
+
+        // ۴. اگر هیج باری نبود → برگرد به داشبورد
+        return redirect(url('dashboard'))->with('danger', 'هیچ باری وجود ندارد');
+    }
 
     public function documentSmartCargo()
     {

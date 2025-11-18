@@ -905,6 +905,10 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
             ->name('processingUnitVIP.index')
             ->middleware('operator');
 
+        Route::get('processingUnitVIPV2', [ProcessingUnitController::class, 'indexVIP2'])
+            ->name('processingUnitVIPV2.index')
+            ->middleware('operator');
+
         Route::get('documentSmartCargo', [ProcessingUnitController::class, 'documentSmartCargo'])
             ->name('documentSmartCargo')
             ->middleware('operator');
