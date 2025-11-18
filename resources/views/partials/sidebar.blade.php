@@ -69,13 +69,13 @@
                     <div class="{{ $textClass }}" data-i18n="pais">پردازش ({{ $cargoProcessingUnitsCount }})</div>
                 </a>
                 <ul class="menu-sub">
-                    <li class="menu-item">
+                    {{-- <li class="menu-item">
                         <a class="menu-link" href="{{ route('processingUnit.index') }}">
                             <div data-i18n="Without menu">
                                 واحد پردازش
                             </div>
                         </a>
-                    </li>
+                    </li> --}}
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('processingUnitVIPV2.index') }}">
                             <div data-i18n="Without menu">
