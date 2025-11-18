@@ -54,7 +54,7 @@
                 </a>
             </li>
             <li class="menu-item">
-                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <a class="menu-link" href="{{ route('admin.smartStoreCargo') }}">
                     <i class="menu-icon tf-icons bx bx-box"></i>
                     @php
                         $cargoProcessingUnitsCount = \App\Http\Controllers\DataConvertPlusController::getCountOfCargoProcessingUnits();
@@ -66,26 +66,13 @@
                             $textClass = 'text-danger';
                         }
                     @endphp
-                    <div class="{{ $textClass }}" data-i18n="pais">پردازش ({{ $cargoProcessingUnitsCount }})</div>
-                </a>
-                <ul class="menu-sub">
-                    {{-- <li class="menu-item">
-                        <a class="menu-link" href="{{ route('processingUnit.index') }}">
-                            <div data-i18n="Without menu">
-                                واحد پردازش
-                            </div>
-                        </a>
-                    </li> --}}
-                    <li class="menu-item">
-                        <a class="menu-link" href="{{ route('processingUnitVIPV2.index') }}">
-                            <div data-i18n="Without menu">
-                                پردازش ویژه
-                            </div>
-                        </a>
-                    </li>
-                </ul>
-            </li>
 
+                    <div data-i18n="Without menu" class="{{ $textClass }}">
+                        پردازش ویژه ({{ $cargoProcessingUnitsCount }})
+                    </div>
+
+                </a>
+            </li>
 
             <li class="menu-item">
                 <a class="menu-link" href="{{ route('documentSmartCargo') }}">
