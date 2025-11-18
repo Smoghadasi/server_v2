@@ -118,6 +118,8 @@ class DataConvertController extends Controller
         CargoConvertList::create([
             'cargo_orginal' => $cargo->cargo_orginal,
             'cargo' => $cargo->cargo,
+            'channel' => $cargo->channel,
+            'bot_number' => $cargo->bot_number,
         ]);
         $cargo->delete();
         // return $cargo;

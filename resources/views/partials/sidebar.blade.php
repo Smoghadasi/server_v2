@@ -54,7 +54,7 @@
                 </a>
             </li>
             <li class="menu-item">
-                <a class="menu-link" href="{{ route('processingUnit.index') }}">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons bx bx-box"></i>
                     @php
                         $cargoProcessingUnitsCount = \App\Http\Controllers\DataConvertPlusController::getCountOfCargoProcessingUnits();
@@ -66,12 +66,26 @@
                             $textClass = 'text-danger';
                         }
                     @endphp
-
-                    <div data-i18n="Without menu" class="{{ $textClass }}">
-                        پردازش ({{ $cargoProcessingUnitsCount }})
-                    </div>
+                    <div class="{{ $textClass }}" data-i18n="pais">پردازش ({{ $cargoProcessingUnitsCount }})</div>
                 </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a class="menu-link" href="{{ route('processingUnit.index') }}">
+                            <div data-i18n="Without menu">
+                                ساده
+                            </div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a class="menu-link" href="#">
+                            <div data-i18n="Without menu">
+                                ویژه
+                            </div>
+                        </a>
+                    </li>
+                </ul>
             </li>
+
 
             <li class="menu-item">
                 <a class="menu-link" href="{{ route('documentSmartCargo') }}">
@@ -103,6 +117,7 @@
 
                 </a>
             </li>
+
         @endif
 
         <li class="menu-item {{ request()->is('admin/support*') ? 'active open' : '' }}">
