@@ -541,7 +541,7 @@ class ProcessingUnitController extends Controller
                     $phones = preg_split("/[-,]/", $value);
                     $phones = array_map('trim', $phones);
                     // Pick one randomly
-                    $value = $phones[array_rand($phones)];
+                    $value = $phones[0];
                 }
 
                 $result[$key] = $value;
@@ -593,8 +593,9 @@ class ProcessingUnitController extends Controller
         $saver = new CargoJsonSaver();
         // return dd($items);
         $result = $saver->saveFromJson($items);
+        $storedCount = $result['stored'] ?? 0;
 
-        return response()->json(['ok' => true] + $result, 200, [], JSON_UNESCAPED_UNICODE);
+        return $storedCount;
     }
 
     private function isListOfAssoc(array $arr): bool
