@@ -72,14 +72,14 @@
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('processingUnit.index') }}">
                             <div data-i18n="Without menu">
-                                ساده
+                                واحد پردازش
                             </div>
                         </a>
                     </li>
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('processingUnitVIPV2.index') }}">
                             <div data-i18n="Without menu">
-                                ویژه
+                                پردازش ویژه
                             </div>
                         </a>
                     </li>
