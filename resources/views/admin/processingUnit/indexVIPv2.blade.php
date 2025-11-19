@@ -5,7 +5,7 @@
 
     <div class="card">
         <h5 class="card-header">
-            ثبت بار نیمه اتوماتیک
+            پردازش ویژه
         </h5>
 
         <div class="card-body row">
@@ -109,8 +109,7 @@
                         </div>
                         <div class="col-md-6 text-end">
                             {{-- <button class="btn btn-primary mb-2 float-right" type="submit">ارسال به ثبت بار</button> --}}
-                            <button class="btn btn-primary mb-2 float-right submitBtn btn-lg" type="submit">ذخیره
-                                نهایی</button>
+                            <button class="btn btn-primary mb-2 float-right submitBtn btn-lg" type="submit">ارسال به ثبت بار</button>
                         </div>
                     </div>
 
@@ -135,7 +134,7 @@
                         <div class="col-md-6" style="justify-items: left">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" value="1" name="automatic"
-                                    id="automatic" checked>
+                                    id="automatic">
                                 <label class="form-check-label" for="automatic">
                                     ذخیره اتوماتیک
                                 </label>
@@ -147,7 +146,7 @@
                     rows="20"></textarea>
                 <div class="col-md-12 text-end">
                     {{-- <button class="btn btn-primary mb-2 float-right" type="submit">ارسال به ثبت بار</button> --}}
-                    <button class="btn btn-primary mb-2 float-right submitBtn btn-lg" type="submit">ذخیره نهایی</button>
+                    <button class="btn btn-primary mb-2 float-right submitBtn btn-lg" type="submit">ارسال به ثبت بار</button>
                 </div>
             </form>
         </div>

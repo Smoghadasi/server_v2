@@ -314,7 +314,7 @@ class ProcessingUnitController extends Controller
                     if (str_contains($cargo->cargo, $word)) {
                         $cargo->operator_id = $userId;
                         $cargo->save();
-                        return view('admin.processingUnit.indexVIP', compact('cargo', 'countOfCargos', 'users'));
+                        return view('admin.processingUnit.indexVIPv2', compact('cargo', 'countOfCargos', 'users'));
 
                         // return $this->dataConvert($cargo);
                     }
@@ -339,7 +339,7 @@ class ProcessingUnitController extends Controller
                 if ($newCargo) {
                     $newCargo->operator_id = $userId;
                     $newCargo->save();
-                    return view('admin.processingUnit.indexVIP', compact('cargo', 'countOfCargos', 'users'));
+                    return view('admin.processingUnit.indexVIPv2', compact('cargo', 'countOfCargos', 'users'));
 
                     // return $this->dataConvert($newCargo);
                 }
@@ -348,7 +348,7 @@ class ProcessingUnitController extends Controller
             // در نهایت بار فعلی رو بده به اپراتور
             $cargo->operator_id = $userId;
             $cargo->save();
-            return view('admin.processingUnit.indexVIP', compact('cargo', 'countOfCargos', 'users'));
+            return view('admin.processingUnit.indexVIPv2', compact('cargo', 'countOfCargos', 'users'));
 
             // return $this->dataConvert($cargo);
         }
