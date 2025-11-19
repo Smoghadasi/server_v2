@@ -11,6 +11,7 @@ use App\Models\Load;
 use App\Models\Owner;
 use App\Models\ProvinceCity;
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 class CargoJsonSaver
@@ -93,9 +94,8 @@ class CargoJsonSaver
             ->where('equivalentWord', $token)
             ->pluck('original_word_id')
             ->toArray();
-
         if (!empty($eq)) {
-            return $eq; // آرایه‌ای از IDها
+            return $eq;
         }
 
         // 2) fleets.title
@@ -107,13 +107,22 @@ class CargoJsonSaver
             return $f;
         }
 
-        // 3) fallback: جستجوی like
-        $f2 = Fleet::where('title', 'like', "%{$token}%")
-            ->pluck('id')
-            ->toArray();
+        // 3) fallback: اگر هیچ نتیجه نبود، حالا می‌تونیم کلمات رو جدا کنیم
+        $parts = explode(' ', $token);
+        $ids = [];
+        foreach ($parts as $part) {
+            $ids = array_merge(
+                $ids,
+                Fleet::where('title', 'like', "%{$part}%")
+                    ->pluck('id')
+                    ->toArray()
+            );
+        }
 
-        return $f2; // ممکنه خالی یا چندتایی باشه
+        return !empty($ids) ? $ids : null;
     }
+
+
 
 
     /** والد/فرزند: انتخاب بهترین شهر از چند ID هم‌نام (ترجیحاً leaf) */
@@ -315,12 +324,10 @@ class CargoJsonSaver
             'failed'        => 0,
             'details'       => [], // برای گزارش هر آیتم
         ];
-
         foreach ($items as $idx => $item) {
             try {
                 // 1) آماده‌سازی ورودی
                 $fleets   = $this->asArrayOfStrings($item['fleet']);
-                // return dd($fleets);
 
                 $origins  = $this->asArrayOfStrings($item['origin'] ?? $item['origins'] ?? []);
                 $dests    = $this->asArrayOfStrings($item['destination'] ?? $item['destinations'] ?? []);
@@ -349,25 +356,28 @@ class CargoJsonSaver
                 $fleetIds = [];
 
                 foreach ($fleets as $ft) {
-                    if ($ft === null) continue;
+                    if ($ft === null) {
+                        continue;
+                    }
+
                     $fid = $this->resolveFleetId($ft);
 
-                    if (is_array($fid)) {
-                        $fleetIds = array_merge($fleetIds, $fid);
-                    } elseif ($fid !== null) {
-                        $fleetIds[] = $fid;
+                    if ($fid === null) {
+                        continue;
                     }
+
+                    // اگر آرایه بود، ادغام کن؛ اگر مقدار تکی بود، اضافه کن
+                    $fleetIds = array_merge($fleetIds, (array) $fid);
                 }
 
                 if (empty($fleetIds)) {
-                    $fleetIds = [null];
+                    $fleetIds = [];
                 }
 
-
+                $onlyIds = Arr::flatten($fleetIds);
 
                 // 3) نگاشت شهرها به ID
                 $originIds = [];
-                // return dd($fleetIds[0]);
                 foreach ($origins as $o) {
                     if ($o === null) {
                         $originIds[] = null;
@@ -387,12 +397,10 @@ class CargoJsonSaver
                     $did = $this->resolveCityId($d);
                     $destIds[] = $did;
                 }
-                // return dd($fleetIds);
 
                 // 4) ضرب دکارتی و ذخیره
                 $storedAny = false;
-                foreach ($fleetIds as $fid) {
-                    // return dd($fid);
+                foreach ($onlyIds as $fid) {
 
                     foreach ($originIds as $oid) {
                         foreach ($destIds as $did) {
