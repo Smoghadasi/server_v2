@@ -326,6 +326,13 @@ class CargoJsonSaver
                 $dests    = $this->asArrayOfStrings($item['destination'] ?? $item['destinations'] ?? []);
                 $mobile   = $this->normalizeMobile($item['phone'] ?? '');
                 $title   = $item['cargo_title'] ?? '';
+
+                // بررسی طول شماره موبایل (باید 11 رقم باشد)
+                if (!preg_match('/^\d{11}$/', $mobile)) {
+                    $results['failed']++;
+                    $results['details'][] = ['index' => $idx, 'status' => 'failed', 'reason' => 'failed_phone'];
+                    continue;
+                }
                 // بلاکی؟
                 if ($mobile && BlockPhoneNumber::where('phoneNumber', $mobile)->exists()) {
                     $results['blocked']++;
