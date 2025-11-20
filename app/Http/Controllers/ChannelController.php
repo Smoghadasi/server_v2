@@ -14,14 +14,28 @@ class ChannelController extends Controller
      */
     public function index(Request $request)
     {
-        $channels = Channel::when($request->word !== null, function ($query) use ($request) {
-            $query->where('name', 'LIKE', "%{$request->word}%");
-            $query->orWhere('bot_number', $request->word);
-        })
-            ->orderByDesc('updated_at')
-            ->paginate(20);
-        return view('admin.channel.index', compact('channels'));
+        // گرفتن همه bot_number های یکتا
+        $botNumbers = Channel::select('bot_number')->distinct()->pluck('bot_number');
+
+        // فیلتر بر اساس تب انتخاب شده
+        $query = Channel::query();
+
+        if ($request->tab && $request->tab !== 'all') {
+            $query->where('bot_number', $request->tab);
+        }
+
+        if ($request->word !== null) {
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'LIKE', "%{$request->word}%")
+                    ->orWhere('bot_number', $request->word);
+            });
+        }
+
+        $channels = $query->orderByDesc('updated_at')->paginate(20);
+
+        return view('admin.channel.index', compact('channels', 'botNumbers'));
     }
+
 
     /**
      * Show the form for creating a new resource.

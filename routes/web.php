@@ -939,10 +939,10 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::delete('removeDictionaryWord/{equivalent}', [DataConvertController::class, 'removeDictionaryWord'])->middleware('operator')->name('removeDictionaryWord');
 
         // مدیریت کانال ها
-        Route::get('channels', [DataConvertController::class, 'channels'])->middleware('operator');
-        Route::get('removeChannel/{channel}', [DataConvertController::class, 'removeChannel'])->middleware('operator');
-        Route::post('newChannel', [DataConvertController::class, 'newChannel'])->middleware('operator');
-        Route::get('channelsData', [DataConvertController::class, 'channelsData'])->middleware('operator');
+        // Route::get('channels', [DataConvertController::class, 'channels'])->middleware('operator');
+        // Route::get('removeChannel/{channel}', [DataConvertController::class, 'removeChannel'])->middleware('operator');
+        // Route::post('newChannel', [DataConvertController::class, 'newChannel'])->middleware('operator');
+        // Route::get('channelsData', [DataConvertController::class, 'channelsData'])->middleware('operator');
 
         // لیست بارهای رد شده
         Route::get('rejectedCargoFromCargoList', [DataConvertController::class, 'rejectedCargoFromCargoList']);
