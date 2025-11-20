@@ -50,7 +50,7 @@
                 <?php $i = 0; ?>
                 @foreach ($channels as $channel)
                     <tr>
-                        <td>{{ $channels->id }}</td>
+                        <td>{{ $channel->id }}</td>
                         <td>{{ $channel->name }}</td>
                         <td>{{ $channel->bot_number }}</td>
                         @php $pieces = explode(' ', $channel->updated_at); @endphp
