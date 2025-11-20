@@ -16,7 +16,7 @@ class ChannelController extends Controller
     {
         // گرفتن همه bot_number های یکتا
         $botNumbers = Channel::select('bot_number')->distinct()
-            ->where('bot_number', null)
+            ->whereNotNull('bot_number')
             ->pluck('bot_number');
         return $botNumbers;
 
