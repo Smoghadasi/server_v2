@@ -54,7 +54,8 @@
                         <td>{{ $channel->name }}</td>
                         <td>{{ $channel->bot_number }}</td>
                         {{-- @php $pieces = explode(' ', $channel->updated_at); @endphp --}}
-                        <td>{{ $channel->updated_at }}</td>
+                        <td>{{ $channel->created_at }}</td>
+
                     </tr>
                 @endforeach
             </table>
