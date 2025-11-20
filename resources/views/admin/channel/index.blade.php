@@ -50,7 +50,7 @@
                 <?php $i = 0; ?>
                 @foreach ($channels as $channel)
                     <tr>
-                        <td>{{ ($channels->currentPage() - 1) * $channels->perPage() + ++$i }}</td>
+                        <td>{{ $channels->id }}</td>
                         <td>{{ $channel->name }}</td>
                         <td>{{ $channel->bot_number }}</td>
                         @php $pieces = explode(' ', $channel->updated_at); @endphp
