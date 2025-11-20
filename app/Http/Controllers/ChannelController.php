@@ -15,7 +15,9 @@ class ChannelController extends Controller
     public function index(Request $request)
     {
         // گرفتن همه bot_number های یکتا
-        $botNumbers = Channel::select('bot_number')->distinct()->pluck('bot_number');
+        $botNumbers = Channel::select('bot_number')->distinct()
+            ->where('bot_number', null)
+            ->pluck('bot_number');
         return $botNumbers;
 
         // فیلتر بر اساس تب انتخاب شده
