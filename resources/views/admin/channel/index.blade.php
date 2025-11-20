@@ -53,8 +53,8 @@
                         <td>{{ $channel->id }}</td>
                         <td>{{ $channel->name }}</td>
                         <td>{{ $channel->bot_number }}</td>
-                        @php $pieces = explode(' ', $channel->updated_at); @endphp
-                        <td>{{ gregorianDateToPersian($channel->updated_at, '-', true) . ' | ' . $pieces[1] }}</td>
+                        {{-- @php $pieces = explode(' ', $channel->updated_at); @endphp --}}
+                        <td>{{ $channel->updated_at }}</td>
                     </tr>
                 @endforeach
             </table>
