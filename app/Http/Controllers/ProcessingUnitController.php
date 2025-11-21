@@ -529,7 +529,7 @@ class ProcessingUnitController extends Controller
             'origin'       => "/از:\\s*([^\n]+)/u",
             'destination'  => "/به:\\s*([^\n]+)/u",
             'cargo_title'  => "/عنوان بار:\\s*([^\n]+)/u",
-            'phone'        => "/Tell:\\s*([^\n]+)/u"
+            'phone'        => "/Tell:\\s*(\\d{11})/u"
         ];
 
         foreach ($patterns as $key => $pattern) {
@@ -538,10 +538,10 @@ class ProcessingUnitController extends Controller
 
                 // Special handling for phone numbers
                 if ($key === 'phone') {
-                    $phones = preg_split("/[-,]/", $value);
-                    $phones = array_map('trim', $phones);
-                    // Pick one randomly
-                    $value = $phones[0];
+                    // فقط اولین شماره ۱۱ رقمی را استخراج کن
+                    if (preg_match('/\d{11}/', $value, $m)) {
+                        $value = $m[0];
+                    }
                 }
 
                 $result[$key] = $value;
@@ -552,7 +552,6 @@ class ProcessingUnitController extends Controller
         $request = new Request($result);
         $this->storeFromJson($request);
 
-        // return dd(($result));
         // return dd(($result['fleet']));
     }
 
