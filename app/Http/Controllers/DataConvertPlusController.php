@@ -961,15 +961,22 @@ class DataConvertPlusController extends Controller
 
             if (
                 BlockPhoneNumber::where('phoneNumber', $mobileNumber)
-                ->where(function ($query) {
-                    $query->where('type', 'operator')
-                        ->orWhere('type', 'both');
-                })
-                ->exists() ||
-                Load::where('cargoPattern', $cargoPattern)
-                ->where('created_at', '>', now()->subMinutes(180))
-                ->exists()
+                    ->where(function ($query) {
+                        $query->where('type', 'operator')
+                            ->orWhere('type', 'both');
+                    })->exists()
             ) {
+                return;
+            }
+            $loadDpl = Load::where('cargoPattern', $cargoPattern)->where('created_at', '>', now()->subMinutes(180))->first();
+            if ($loadDpl) {
+                $loadDpl->created_at = now();
+                $loadDpl->updated_at = now();
+                $loadDpl->loadingDate = gregorianDateToPersian(date('Y-m-d', time()), '-');
+                $loadDpl->time = time();
+                $loadDpl->date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+                $loadDpl->dateTime = now()->format('H:i:s');
+                $loadDpl->save();
                 return;
             }
         } catch (\Exception $exception) {
@@ -1108,7 +1115,7 @@ class DataConvertPlusController extends Controller
                 ->whereHas('fleetLoads', function ($q) use ($fleet_id) {
                     $q->where('fleet_id', $fleet_id->id);
                 })
-                ->where('userType', 'operator')
+                ->where('operator_id', '>', 0)
                 ->first();
 
             $loadDuplicateOwnerBot = Load::where($conditions)
@@ -1116,7 +1123,7 @@ class DataConvertPlusController extends Controller
                     $q->where('fleet_id', $fleet_id->id);
                 })
                 ->where('userType', 'owner')
-                ->where('isBot', 1)
+                // ->where('isBot', 1)
                 ->first();
             if ($loadDuplicate || $loadDuplicateOwnerBot) {
                 collect([$loadDuplicate, $loadDuplicateOwnerBot])
