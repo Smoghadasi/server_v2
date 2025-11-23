@@ -968,18 +968,21 @@ class DataConvertPlusController extends Controller
             ) {
                 return;
             }
-            $loadDpl = Load::where('cargoPattern', $cargoPattern)->where('created_at', '>', now()->subMinutes(180))->first();
-            if ($loadDpl) {
-                $loadDpl->delete();
-                // $loadDpl->created_at = now();
-                // $loadDpl->updated_at = now();
-                // $loadDpl->loadingDate = gregorianDateToPersian(date('Y-m-d', time()), '-');
-                // $loadDpl->time = time();
-                // $loadDpl->date = gregorianDateToPersian(date('Y/m/d', time()), '/');
-                // $loadDpl->dateTime = now()->format('H:i:s');
-                // $loadDpl->save();
-                // return;
-            }
+            Load::where('cargoPattern', $cargoPattern)
+                ->where('created_at', '>', now()->subMinutes(180))
+                ->delete();
+            // $loadDpl = Load::where('cargoPattern', $cargoPattern)->where('created_at', '>', now()->subMinutes(180))->first();
+            // if ($loadDpl) {
+            //     $loadDpl->delete();
+            //     // $loadDpl->created_at = now();
+            //     // $loadDpl->updated_at = now();
+            //     // $loadDpl->loadingDate = gregorianDateToPersian(date('Y-m-d', time()), '-');
+            //     // $loadDpl->time = time();
+            //     // $loadDpl->date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+            //     // $loadDpl->dateTime = now()->format('H:i:s');
+            //     // $loadDpl->save();
+            //     // return;
+            // }
         } catch (\Exception $exception) {
             Log::emergency(str_repeat("-", 75));
             Log::emergency("خطای جستجوی تکراری");
