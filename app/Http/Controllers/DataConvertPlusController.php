@@ -961,25 +961,26 @@ class DataConvertPlusController extends Controller
 
             if (
                 BlockPhoneNumber::where('phoneNumber', $mobileNumber)
-                    ->where(function ($query) {
-                        $query->where('type', 'operator')
-                            ->orWhere('type', 'both');
-                    })->exists()
+                ->where(function ($query) {
+                    $query->where('type', 'operator')
+                        ->orWhere('type', 'both');
+                })->exists()
             ) {
                 return;
             }
-            $loadDpl = Load::where('cargoPattern', $cargoPattern)->where('created_at', '>', now()->subMinutes(180))->first();
-            if ($loadDpl) {
-                $loadDpl->delete();
-                // $loadDpl->created_at = now();
-                // $loadDpl->updated_at = now();
-                // $loadDpl->loadingDate = gregorianDateToPersian(date('Y-m-d', time()), '-');
-                // $loadDpl->time = time();
-                // $loadDpl->date = gregorianDateToPersian(date('Y/m/d', time()), '/');
-                // $loadDpl->dateTime = now()->format('H:i:s');
-                // $loadDpl->save();
-                // return;
+            $recentLoad = Load::where('cargoPattern', $cargoPattern)
+                ->where('created_at', '>', now()->subMinutes(30))
+                ->first();
+
+            if ($recentLoad) {
+                return;
             }
+
+            $oldLoad = Load::where('cargoPattern', $cargoPattern)
+                ->where('created_at', '>', now()->subMinutes(180))
+                ->first();
+
+            $oldLoad?->delete();
         } catch (\Exception $exception) {
             Log::emergency(str_repeat("-", 75));
             Log::emergency("خطای جستجوی تکراری");
