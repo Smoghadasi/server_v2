@@ -17,6 +17,7 @@ use App\Models\DriverFleet;
 use App\Models\Fleet;
 use App\Models\FleetLoad;
 use App\Models\FreeSubscription;
+use App\Models\HistoryStatusUser;
 use App\Models\Load;
 use App\Models\NotificationUser;
 use App\Models\OperatorDriverAuthMessage;
@@ -30,6 +31,7 @@ use App\Models\Support;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Exception;
+use Google\Service\CloudSearch\History;
 use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -727,8 +729,14 @@ class DriverController extends Controller
             ->where('driver_id', $driver->id)
             ->orderByDesc('created_at')
             ->paginate(15);
+
+        $histories = HistoryStatusUser::where('user_id', $driver->id)
+            ->where('type', 'Driver')
+            ->orderByDesc('created_at')
+            ->get();
+
         // return $freeSubscriptions;
-        return view('admin.driverInfo', compact('driver', 'freeSubscriptions', 'supports', 'freeCallTotal'));
+        return view('admin.driverInfo', compact('driver', 'freeSubscriptions', 'supports', 'freeCallTotal', 'histories'));
     }
 
     // ریپورت کردن راننده توسط باربری
@@ -783,37 +791,22 @@ class DriverController extends Controller
         return view('admin.alert', compact('message', 'alert'));
     }
 
-    // تغییر راننده به فعال یا غیر فعال
-    public function changeDriverStatus($driver_id)
+    // تغییر وضعیت راننده
+    public function changeDriverStatus(Request $request, Driver $driver)
     {
-        $driver = Driver::where('id', $driver_id)
-            ->select('status', 'FCM_token')
-            ->first();
+        $driver->status = !$driver->status;
+        $driver->save();
 
-        $message = '';
-
+        // ثبت تاریخچه
         if ($driver->status == 0) {
-            Driver::where('id', $driver_id)
-                ->update(['status' => 1]);
-            $message = 'وضعیت به فعال تغییر یافت';
-        } else {
-            Driver::where('id', $driver_id)
-                ->update(['status' => 0]);
-            $message = 'وضعیت به غیر فعال تغییر یافت';
+            HistoryStatusUser::create([
+                'user_id' => $driver->id,
+                'type' => 'Driver',
+                'description' => $request->description
+            ]);
         }
 
-        $data = [
-            'title' => 'وضعیت',
-            'body' => $message,
-            'notificationType' => 'authorize',
-        ];
-
-
-        $this->sendNotification($driver->FCM_token, $data, API_ACCESS_KEY_DRIVER);
-
-        $buttonUrl = 'admin/drivers';
-
-        return back()->with('success', $message);
+        return back()->with('success', 'با موفقیت تغییر کرد');
     }
 
     public function driverTokens()

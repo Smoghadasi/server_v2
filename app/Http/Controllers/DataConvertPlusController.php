@@ -977,7 +977,7 @@ class DataConvertPlusController extends Controller
             }
 
             $oldLoad = Load::where('cargoPattern', $cargoPattern)
-                ->where('created_at', '>', now()->subMinutes(180))
+                ->where('created_at', '>', now()->subMinutes(120))
                 ->first();
 
             $oldLoad?->delete();

@@ -550,7 +550,7 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         Route::get('driverInfo/{driver}', [DriverController::class, 'driverInfo'])->middleware('operator')->name('driver.detail');
 
         // تغییر راننده به فعال یا غیر فعال
-        Route::get('changeDriverStatus/{driver_id}', [DriverController::class, 'changeDriverStatus'])->middleware('operator');
+        Route::patch('changeDriverStatus/{driver}', [DriverController::class, 'changeDriverStatus'])->name('admin.changeDriverStatus')->middleware('operator');
 
         // ویرایش راننده
         Route::get('editDriver/{driver}', [DriverController::class, 'editDriverForm'])->middleware('operator');

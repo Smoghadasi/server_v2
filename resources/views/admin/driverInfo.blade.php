@@ -28,6 +28,17 @@
                                         </form>
                                         {{-- <a class="dropdown-item" href="javascript:void(0);">علامت گذاری</a> --}}
                                     </li>
+                                    @if (auth()->user()->role == ROLE_ADMIN)
+                                        <li>
+                                            <button class="dropdown-item" data-bs-toggle="modal"
+                                                data-bs-target="#changeStatusDriver_{{ $driver->id }}">تغییر
+                                                وضعیت</button>
+                                        </li>
+                                        <li>
+                                            <button class="dropdown-item" data-bs-toggle="modal"
+                                                data-bs-target="#removeActiveDate_{{ $driver->id }}">حذف اشتراک</button>
+                                        </li>
+                                    @endif
                                 </ul>
                             </div>
                         </div>
@@ -54,7 +65,15 @@
                             <div id="status">
                                 <label for="state" class="form-label">وضعیت</label>
                                 @if ($driver->status == 0)
-                                    <div class="badge rounded-pill bg-secondary d-inline-block">غیر فعال</div>
+                                    <a href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasEnd"
+                                        aria-controls="offcanvasEnd">
+                                        @if ($histories->count() > 0)
+                                            <div class="badge rounded-pill bg-danger d-inline-block">غیر فعال
+                                                <span class="badge bg-white text-primary">{{ $histories->count() }}
+                                                </span>
+                                            </div>
+                                        @endif
+                                    </a>
                                 @elseif($driver->status == 1)
                                     <div class="badge rounded-pill bg-success d-inline-block">فعال</div>
                                 @elseif($driver->status == 2)
@@ -84,6 +103,22 @@
                                 @endif
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasEnd" aria-labelledby="offcanvasEndLabel">
+                <div class="offcanvas-header">
+                    <h5 id="offcanvasEndLabel" class="offcanvas-title">تاریخچه غیر فعال کردن کاربر</h5>
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+                        aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body my-auto mx-0 flex-grow-0">
+                    <div class="demo-inline-spacing mt-3">
+                        <ol class="list-group list-group-numbered">
+                            @foreach ($histories as $history)
+                                <li class="list-group-item">{{ $history->description }}</li>
+                            @endforeach
+                        </ol>
                     </div>
                 </div>
             </div>
@@ -134,8 +169,13 @@
                             @endif
                         </label>
                         <input type="text" class="form-control" disabled value="{{ $driver->ratingDriver }}" />
-
                     </div>
+                    {{-- @if ($driver->status == 0)
+                        <div class="mb-3 col-md-12">
+                                <textarea name="" id="" cols="30" rows="10" disabled></textarea>
+                        </div>
+                    @endif --}}
+
                 </div>
             </form>
             <div class="card">
@@ -399,23 +439,17 @@
                 </a>
             @endif
 
-            @if (auth()->user()->role == ROLE_ADMIN)
-                @if ($driver->status == 0)
-                    <a class="btn btn-primary" href="{{ url('admin/changeDriverStatus') }}/{{ $driver->id }}">فعال
-                        شود</a>
-                @else
-                    <a class="btn btn-primary" href="{{ url('admin/changeDriverStatus') }}/{{ $driver->id }}">غیر
-                        فعال شود</a>
-                @endif
-            @endif
-            @if (auth()->user()->role == ROLE_ADMIN || Auth::id() == 29)
+            {{-- @if (auth()->user()->role == ROLE_ADMIN)
+                <button type="submit" class="btn btn-primary" data-bs-toggle="modal"
+                    data-bs-target="#changeStatusDriver_{{ $driver->id }}">
+                    {{ $driver->status == 0 ? 'فعال شود' : 'غیر فعال شود' }}
+                </button>
+            @endif --}}
+            {{-- @if (auth()->user()->role == ROLE_ADMIN)
                 <button type="button" class="btn btn-danger" data-bs-toggle="modal"
                     data-bs-target="#removeDriver_{{ $driver->id }}">حذف
                 </button>
-                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                    data-bs-target="#removeActiveDate_{{ $driver->id }}">حذف اشتراک
-                </button>
-            @endif
+            @endif --}}
             @if (in_array('driversPaymentReport', auth()->user()->userAccess))
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                     data-bs-target="#creditDriverExtending_{{ $driver->id }}">
@@ -469,12 +503,12 @@
                             <div class="h6"> مدت اعتبار، تعداد تماس و تعداد بار را وارد
                                 نمایید:
                             </div>
-                            <p class="text-danger">تعداد بار رایگان
-                                : {{ $driver->freeAcceptLoads }}</p>
+                            {{-- <p class="text-danger">تعداد بار رایگان
+                                : {{ $driver->freeAcceptLoads }}</p> --}}
                             <p class="text-warning">کل تعداد تماس رایگان داده شده
                                 : {{ $driver->freeCallTotal }}</p>
 
-                            <p class="text-danger">مدت اعتبار</p>
+                            <p class="text-danger">مدت اعتبار: </p>
                             {{ gregorianDateToPersian($driver->activeDate, '-', true) }}
                             <div class="form-group">
                                 <lable> مدت اعتبار به ماه :</lable>
@@ -488,11 +522,11 @@
                                     placeholder="تعداد تماس رایگان">
                             </div>
 
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <lable> تعداد بار رایگان :</lable>
                                 <input type="number" class="form-control" name="freeAcceptLoads" value="0"
                                     placeholder="تعداد بار رایگان">
-                            </div>
+                            </div> --}}
 
 
                         </div>
@@ -534,6 +568,37 @@
                                 </button>
                             </div>
                         </div>
+
+                    </div>
+                </div>
+                <div id="changeStatusDriver_{{ $driver->id }}" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+
+                        <!-- Modal content-->
+                        <form method="post" action="{{ route('admin.changeDriverStatus', $driver) }}"
+                            class="modal-content">
+                            @csrf
+                            @method('patch')
+                            <div class="modal-header">
+                                <h4 class="modal-title">تغییر وضعیت</h4>
+                            </div>
+                            <div class="modal-body">
+                                <p>آیا مایل به تغییر وضعیت راننده به
+                                    <span class="text-primary">
+                                        {{ !$driver->status ? 'فعال' : 'غیر فعال' }}</span>
+                                    هستید؟
+                                </p>
+                                <textarea class="form-control" name="description" id="" cols="30" rows="10"
+                                    placeholder="دلیل..."></textarea>
+                            </div>
+                            <div class="modal-footer text-left">
+                                <button type="submit" class="btn btn-primary">ثبت</button>
+
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                                    انصراف
+                                </button>
+                            </div>
+                        </form>
 
                     </div>
                 </div>
