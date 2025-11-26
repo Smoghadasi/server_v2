@@ -59,15 +59,16 @@
                             <td>{{ $user->userActivityReport * 5 }} دقیقه | {{ ($user->userActivityReport * 5) % 60 }}
                                 : {{ intdiv($user->userActivityReport * 5, 60) }} ساعت
                             </td>
-                            <td>{{ $user->numOfLoads() }}
+                            <td>
+                                <span data-bs-toggle="tooltip" data-bs-placement="top" title="بار حذف شده توسط کاربر: {{ $user->numOfDeletedLoads() }}">
+                                    {{ $user->numOfLoads() }}
+                                </span>
                                 @php
                                     $totalLoads += $user->numOfLoads(); // جمع کردن تعداد بارها
                                 @endphp
                             </td>
                             <td>
-                                <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $user->numOfDeletedLoads() }}">
-                                    {{ $user->numOfLoadsReject() }}
-                                </span>
+                                {{ $user->numOfLoadsReject() }}
 
                                 @php
                                     $totalLoadsReject += $user->numOfLoadsReject(); // جمع کردن تعداد بارها
