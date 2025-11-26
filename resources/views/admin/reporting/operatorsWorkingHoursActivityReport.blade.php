@@ -96,7 +96,7 @@
                         <td></td>
                         <td></td>
                         <td>{{ $totalLoads }}</td>
-                        <td></td>
+                        <td>{{ $totalLoadsReject }}</td>
                         <td></td>
                         <td></td>
                         <td></td>
