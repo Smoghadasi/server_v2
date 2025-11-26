@@ -64,7 +64,11 @@
                                     $totalLoads += $user->numOfLoads(); // جمع کردن تعداد بارها
                                 @endphp
                             </td>
-                            <td>{{ $user->numOfLoadsReject() }}
+                            <td>
+                                <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $user->numOfDeletedLoads() }}">
+                                    {{ $user->numOfLoadsReject() }}
+                                </span>
+
                                 @php
                                     $totalLoadsReject += $user->numOfLoadsReject(); // جمع کردن تعداد بارها
                                 @endphp
