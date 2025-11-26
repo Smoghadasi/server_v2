@@ -922,6 +922,14 @@ class PayController extends Controller
 
                     $this->sendNotificationWeb($driver->FCM_token, $title, $body);
                 }
+                // ارسال پیامک فعال سازی اشتراک
+                try {
+                    $sms = new Driver();
+                    $sms->freeSubscriptionSmsIr($driver->mobileNumber, $persianDate, $expireDate);
+                } catch (\Exception $th) {
+                    //throw $th;
+                }
+
             } catch (\Exception $e) {
                 Log::warning('نوتیف مربوط به افزایش اعتبار راننده');
                 Log::warning($e->getMessage());
