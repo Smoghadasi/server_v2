@@ -38,6 +38,13 @@ class UserActivityReport extends Model
             ->withTrashed()
             ->count();
     }
+    public function numOfDeletedLoads()
+    {
+        return Load::where('operator_id', $this->user_id)
+            ->where('created_at', '>', date('Y-m-d') . ' 00:00:00')
+            ->onlyTrashed()
+            ->count();
+    }
     public function numOfLoadsReject()
     {
         return CargoConvertList::where('operator_id', $this->user_id)
