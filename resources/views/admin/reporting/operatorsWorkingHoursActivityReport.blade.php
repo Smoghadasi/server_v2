@@ -65,9 +65,9 @@
                                 @endphp
                             </td>
                             <td>{{ $user->numOfLoadsReject() }}
-                                @php
+                                {{-- @php
                                     $totalLoadsReject += $user->numOfLoadsReject(); // جمع کردن تعداد بارها
-                                @endphp
+                                @endphp --}}
                             </td>
                             <td>
                                 {{ $user->user->avgLoadSubmit() ?? '-' }}
