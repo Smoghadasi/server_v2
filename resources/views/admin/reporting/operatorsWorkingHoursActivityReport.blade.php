@@ -31,6 +31,7 @@
                         <th>ساعت پایان</th>
                         <th>میزان فعالیت به دقیقه / ساعت</th>
                         <th>تعداد بار های ثبت شده</th>
+                        <th>تعداد بار های رد شده</th>
                         <th>میانگین ثبت بار(تختیص تا ثبت)</th>
                         <th>میانگین زمان ثبت بار (ورود تا ثبت)</th>
                         <th>
@@ -44,6 +45,7 @@
                     @php
                         $i = 1;
                         $totalLoads = 0; // متغیر برای جمع کل بارها
+                        $totalLoadsReject = 0; // متغیر برای جمع کل بارها
 
                     @endphp
 
@@ -61,7 +63,11 @@
                                 @php
                                     $totalLoads += $user->numOfLoads(); // جمع کردن تعداد بارها
                                 @endphp
-
+                            </td>
+                            <td>{{ $user->numOfLoadsReject() }}
+                                @php
+                                    $totalLoadsReject += $user->numOfLoadsReject(); // جمع کردن تعداد بارها
+                                @endphp
                             </td>
                             <td>
                                 {{ $user->user->avgLoadSubmit() ?? '-' }}
