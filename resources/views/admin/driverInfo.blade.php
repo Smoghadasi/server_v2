@@ -159,7 +159,11 @@
                             value="{{ \App\Http\Controllers\FleetController::getFleetName($driver->fleet_id) }}" />
                     </div>
                     <div class="mb-3 col-md-6">
-                        <label for="freeCalls" class="form-label">تماس رایگان</label>
+                        <label for="freeCalls" class="form-label">تماس رایگان
+                            @if (Auth::user()->role == 'admin')
+                                <a href="{{ route('driver.destroyFreeCall', $driver) }}" class="text-danger">(حذف)</a>
+                            @endif
+                        </label>
                         <input type="text" class="form-control" disabled value="{{ $driver->freeCalls }}" />
                     </div>
                     <div class="mb-3 col-md-6">
@@ -519,8 +523,13 @@
                             @endif
                             <div class="form-group">
                                 <lable> تعداد تماس رایگان :</lable>
-                                <input type="number" class="form-control" name="freeCalls" value="0"
-                                    placeholder="تعداد تماس رایگان">
+                                @if (Auth::user()->role == 'admin')
+                                    <input type="number" class="form-control" name="freeCalls"
+                                        placeholder="تعداد تماس رایگان" value="0">
+                                @else
+                                    <input type="text" class="form-control" name="freeCalls" id="freeCalls"
+                                        placeholder="تعداد تماس رایگان">
+                                @endif
                             </div>
 
                             {{-- <div class="form-group">
@@ -702,6 +711,13 @@
     <script src="{{ asset('js/persianDatepicker.min.js') }}"></script>
 
     <script type="text/javascript">
+        $("#freeCalls").on("input", function() {
+            let val = $(this).val();
+            if (!/^[1-8]$/.test(val)) {
+                $(this).val(1);
+            }
+        });
+
         $("#fromDate, #toDate").persianDatepicker({
             formatDate: "YYYY/MM/DD",
             selectedBefore: !0

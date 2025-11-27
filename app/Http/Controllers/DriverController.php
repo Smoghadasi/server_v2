@@ -53,6 +53,14 @@ class DriverController extends Controller
         return view('admin.drivers', compact('drivers', 'showSearchResult', 'fleets'));
     }
 
+    public function destroyFreeCall(Driver $driver)
+    {
+        $driver->freeCalls = 0;
+        $driver->save();
+        return back()->with('danger', 'با موفقیت حذف شد');
+
+    }
+
 
     public function driverSummery($type)
     {

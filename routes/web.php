@@ -549,6 +549,9 @@ Route::group(['middleware' => 'throttle:60,1'], function () {
         // نمایش اطلاعات راننده
         Route::get('driverInfo/{driver}', [DriverController::class, 'driverInfo'])->middleware('operator')->name('driver.detail');
 
+        // حذف تماس رایگان راننده
+        Route::get('destroyFreeCall/{driver}', [DriverController::class, 'destroyFreeCall'])->middleware('operator')->name('driver.destroyFreeCall');
+
         // تغییر راننده به فعال یا غیر فعال
         Route::patch('changeDriverStatus/{driver}', [DriverController::class, 'changeDriverStatus'])->name('admin.changeDriverStatus')->middleware('operator');
 
