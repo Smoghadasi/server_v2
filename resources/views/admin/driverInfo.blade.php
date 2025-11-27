@@ -510,12 +510,13 @@
 
                             <p class="text-danger">مدت اعتبار: </p>
                             {{ gregorianDateToPersian($driver->activeDate, '-', true) }}
-                            <div class="form-group">
-                                <lable> مدت اعتبار به ماه :</lable>
-                                <input type="number" class="form-control" name="month" value="0"
-                                    placeholder="مدت اعتبار">
-                            </div>
-
+                            @if (Auth::user()->role == 'admin')
+                                <div class="form-group">
+                                    <lable> مدت اعتبار به ماه :</lable>
+                                    <input type="number" class="form-control" name="month" value="0"
+                                        placeholder="مدت اعتبار">
+                                </div>
+                            @endif
                             <div class="form-group">
                                 <lable> تعداد تماس رایگان :</lable>
                                 <input type="number" class="form-control" name="freeCalls" value="0"
