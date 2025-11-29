@@ -33,9 +33,11 @@ class UserActivityReport extends Model
 
     public function numOfLoads()
     {
-        return Load::where('operator_id', $this->user_id)
-            ->where('created_at', '>', date('Y-m-d') . ' 00:00:00')
-            ->withTrashed()
+        return CargoConvertList::where('operator_id', $this->user_id)
+            // ->where('created_at', '>', date('Y-m-d') . ' 00:00:00')
+            ->where('rejected', 0)
+            ->where('status', 1)
+            // ->withTrashed()
             ->count();
     }
     public function numOfDeletedLoads()
@@ -48,7 +50,7 @@ class UserActivityReport extends Model
     public function numOfLoadsReject()
     {
         return CargoConvertList::where('operator_id', $this->user_id)
-            ->where('created_at', '>', date('Y-m-d') . ' 00:00:00')
+            // ->where('created_at', '>', date('Y-m-d') . ' 00:00:00')
             ->where('rejected', '=', 1)
             ->count();
     }
