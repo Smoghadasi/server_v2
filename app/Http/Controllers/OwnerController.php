@@ -202,7 +202,7 @@ class OwnerController extends Controller
 
 
         if ($request->has('fleet_id') || $request->has('isAccepted')) {
-            if (auth()->user()->role == 'admin' || Auth::id() == 29) {
+            if (auth()->user()->role == 'admin' || Auth::id() == 69) {
                 $owners = Owner::whereHas('loads', function ($q) use ($request) {
                     $q->when($request->fleet_id !== null, function ($query) use ($request) {
                         return $query->where('fleets', 'Like', '%fleet_id":' . $request->fleet_id . ',%');
