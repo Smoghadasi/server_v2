@@ -20,7 +20,9 @@ class PersonalizedNotificationController extends Controller
     public function index()
     {
         $personalizedNotifications = PersonalizedNotification::orderByDesc('created_at')->paginate(30);
-        return view('admin.personalizeNotification.index', compact('personalizedNotifications'));
+        $ownerVersions = Owner::distinct()->whereNotNull('version')->pluck('version')->toArray();
+        $driverVersions = Driver::distinct()->whereNotNull('version')->pluck('version')->toArray();
+        return view('admin.personalizeNotification.index', compact('personalizedNotifications', 'driverVersions', 'ownerVersions'));
     }
 
     /**
@@ -43,9 +45,14 @@ class PersonalizedNotificationController extends Controller
     {
         $personalizedNotification = new PersonalizedNotification();
         $personalizedNotification->type = $request->type;
-        $personalizedNotification->version = $request->version;
+        if ($request->type == 'owner') {
+            $personalizedNotification->version = $request->versionOwner;
+        } else {
+            $personalizedNotification->version = $request->versionDriver;
+        }
         $personalizedNotification->title = $request->title;
         $personalizedNotification->body = $request->body;
+        $personalizedNotification->userType = $request->userType;
         $personalizedNotification->user_id = Auth::id();
         $personalizedNotification->status = 2;
         $personalizedNotification->save();
@@ -129,11 +136,15 @@ class PersonalizedNotificationController extends Controller
             return back()->with('success', 'اعلان مورد نظر ارسال شد.');
         }
         if ($personalizedNotification->type == 'owner') {
-            $tokens = Owner::whereNotNull('FCM_token')
-                ->where('version', $personalizedNotification->version)
-                // ->whereIn('id', ['81'])
-                ->pluck('FCM_token')
-                ->toArray();
+            // Start the base query
+            $query = Owner::whereNotNull('FCM_token')
+                ->where('version', $personalizedNotification->version);
+
+            if ($personalizedNotification->userType === 'accepted') {
+                $query->where('isAccepted', 1);
+            }
+            $tokens = $query->pluck('FCM_token')->toArray();
+
 
             $chunks = array_chunk($tokens, 250); // چون FCM حداکثر 250 تا پشتیبانی می‌کنه
             foreach ($chunks as $chunk) {

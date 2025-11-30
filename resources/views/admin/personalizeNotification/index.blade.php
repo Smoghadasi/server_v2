@@ -42,10 +42,28 @@
                                                     <option value="owner">صاحب بار</option>
                                                 </select>
                                             </div>
-                                            <div class="col-6 mb-3">
-                                                <input type="number" id="version" name="version" class="form-control"
-                                                    required placeholder="ورژن..." />
+                                            <div class="col-6 mb-3" id="versionDriver">
+                                                <select name="versionDriver" id="" class="form-control form-select">
+                                                    @foreach ($driverVersions as $driverVersion)
+                                                        <option value="{{ $driverVersion }}">{{ $driverVersion }}</option>
+                                                    @endforeach
+                                                </select>
                                             </div>
+                                            <div class="col-6 mb-3" id="versionOwner" style="display: none">
+                                                <select name="versionOwner" id="" class="form-control form-select">
+                                                    @foreach ($ownerVersions as $ownerVersion)
+                                                        <option value="{{ $ownerVersion }}">{{ $ownerVersion }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-12 mb-3" style="display: none;" id="ownerStatus">
+                                                <select name="userType" id="" class="form-control form-select">
+                                                    <option value="all">همه</option>
+                                                    <option value="accepted">تایید شده</option>
+                                                    <option value="notAccepted">تایید نشده</option>
+                                                </select>
+                                            </div>
+
                                             <div class="col-12 mb-3">
                                                 <input type="text" id="title" name="title" class="form-control"
                                                     placeholder="عنوان..." />
@@ -103,7 +121,18 @@
                                 <td>
                                     {{ ($personalizedNotifications->currentPage() - 1) * $personalizedNotifications->perPage() + ($key + 1) }}
                                 </td>
-                                <td>{{ $personalizedNotification->type == 'driver' ? 'راننده' : 'صاحب بار' }}</td>
+                                <td>{{ $personalizedNotification->type == 'driver' ? 'راننده' : 'صاحب بار' }}
+                                    @switch($personalizedNotification->userType)
+                                        @case('accepted')
+                                            (تایید شده)
+                                            @break
+                                        @case('notAccepted')
+                                            تایید نشده
+                                            @break
+                                        @default
+                                            (همه)
+                                    @endswitch
+                                </td>
                                 <td>{{ $personalizedNotification->version }}</td>
                                 <td>{{ $personalizedNotification->title ?? '-' }}</td>
                                 <td>{{ $personalizedNotification->body }}</td>
@@ -257,6 +286,22 @@
     @endsection
     @section('script')
         <script>
+            $(document).ready(function() {
+                $('select[name="type"]').on('change', function() {
+                    if ($(this).val() === 'owner') {
+                        $('#ownerStatus').show();
+                        $('#versionOwner').show();
+                        $('#versionDriver').hide();
+
+                    } else {
+                        $('#ownerStatus').hide();
+                        $('#versionOwner').hide();
+                        $('#versionDriver').show();
+
+                    }
+                });
+            });
+
             const emojiBtn = document.getElementById("emoji-btn");
             const emojiContainer = document.getElementById("emoji-picker-container");
             const textarea = document.getElementById("desc-textarea");
