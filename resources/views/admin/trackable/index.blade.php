@@ -272,7 +272,7 @@
 
             <!-- Pagination -->
             <div class="mt-3">
-                {{ $tracks->links() }}
+                {{ $tracks->appends($_GET)->links() }}
             </div>
 
         </div>
