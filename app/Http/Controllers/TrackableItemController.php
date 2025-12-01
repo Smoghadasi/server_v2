@@ -18,57 +18,40 @@ class TrackableItemController extends Controller
         // تاریخ امروز به فرمت دیتابیس شما
         $today = gregorianDateToPersian(date('Y/m/d', time()), '/');
         // فیلتر تب‌ها (گذشته، امروز، آینده)
-        if ($request->status == 'past') {
-            $tracks = TrackableItems::with('user')
-                ->where('parent_id', 0)
-                ->where('date', '<', $today)
-                ->orderBy('date', 'desc')
-                ->paginate(20);
-        } elseif ($request->status == 'today') {
-            $tracks = TrackableItems::with('user')
-                ->where('parent_id', 0)
-                ->where('date', $today)
-                ->orderByDesc('created_at')
-                ->paginate(20);
+        $query = TrackableItems::with('user')->where('parent_id', 0);
+
+        switch ($request->status) {
+            case 'past':
+                $query->where('date', '<', $today)
+                    ->orderBy('date', 'desc');
+                break;
+
+            case 'today':
+                $query->where('date', $today)
+                    ->orderByDesc('created_at');
+                break;
+
+            case 'all':
+                $query->orderByDesc('created_at');
+                break;
+
+            case 'future':
+                $query->where('date', '>', $today)
+                    ->orderBy('date', 'asc');
+                break;
+
+            default:
+                $query = TrackableItems::with('user')
+                    ->where('parent_id', 0)
+                    // ->where('status', 1)
+                    ->orderByDesc('created_at');
+                break;
         }
-        elseif ($request->status == 'all') {
-            $tracks = TrackableItems::with('user')
-                ->where('parent_id', 0)
-                ->orderByDesc('created_at')
-                ->paginate(20);
-        }
-        elseif ($request->status == 'future') {
-            $tracks = TrackableItems::with('user')
-                ->where('parent_id', 0)
-                ->where('date', '>', $today)
-                ->orderBy('date', 'asc')
-                ->paginate(20);
 
-            // فیلتر نمایش زیرمجموعه‌ها
-        } elseif ($request->has('parentId')) {
+        $tracks = $query->when($request->mobileNumber !== null, function ($query) use ($request) {
+            return $query->where('mobileNumber', $request->mobileNumber);
+        })->paginate(20);
 
-            $tracks = TrackableItems::where('parent_id', $request->parentId)
-                ->with('user')
-                ->paginate(20);
-
-            // فیلتر فعال/بایگانی
-        } elseif ($request->has('status')) {
-
-            $tracks = TrackableItems::with('user')
-                ->where('status', $request->status)
-                ->where('date', $today)
-                ->where('parent_id', 0)
-                ->paginate(20);
-
-            // حالت پیش‌فرض
-        } else {
-
-            $tracks = TrackableItems::with('childrenRecursive', 'user')
-                ->where('parent_id', 0)
-                ->where('status', 1)
-                ->orderByDesc('created_at')
-                ->paginate(20);
-        }
 
         return view('admin.trackable.index', compact('tracks'));
     }

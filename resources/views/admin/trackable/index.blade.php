@@ -44,7 +44,8 @@
                                             </div>
                                             <div class="col-12 text-start">
                                                 <label for="description" class="form-label">توضیحات</label>
-                                                <textarea class="form-control" name="description" id="description" cols="15" rows="5" placeholder="متن توضیحات"></textarea>
+                                                <textarea class="form-control" name="description" id="description" cols="15" rows="5"
+                                                    placeholder="متن توضیحات"></textarea>
                                             </div>
                                         </div>
 
@@ -144,16 +145,14 @@
                         @forelse ($tracks as $key => $track)
                             <tr>
                                 <td>
-                                    @if (isset($track->childrenRecursive))
-                                        <a href="{{ route('trackableItems.index', ['parentId' => $track->id]) }}">
-                                            {{ ($tracks->currentPage() - 1) * $tracks->perPage() + ($key + 1) }}
-                                        </a>
-                                    @else
-                                        {{ ($tracks->currentPage() - 1) * $tracks->perPage() + ($key + 1) }}
-                                    @endif
+                                    {{ ($tracks->currentPage() - 1) * $tracks->perPage() + ($key + 1) }}
                                 </td>
 
-                                <td>{{ $track->mobileNumber }}</td>
+                                <td>
+                                    <a href="{{ route('trackableItems.index', ['mobileNumber' => $track->mobileNumber]) }}">
+                                        {{ $track->mobileNumber }}
+                                    </a>
+                                </td>
                                 <td>{{ $track->user->name ?? '-' }} {{ $track->user->lastName ?? '' }}</td>
                                 {{-- <td>{{ $track->tracking_code }}</td> --}}
                                 <td>{{ $track->description }}</td>
