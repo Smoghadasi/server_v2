@@ -15,18 +15,53 @@ class TrackableItemController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->has('parentId')) {
-            $tracks = TrackableItems::where('parent_id', $request->parentId)->with('user')->paginate(40);
+        // تاریخ امروز به فرمت دیتابیس شما
+        $today = gregorianDateToPersian(date('Y/m/d', time()), '/');
+        // فیلتر تب‌ها (گذشته، امروز، آینده)
+        if ($request->status == 'past') {
+            $tracks = TrackableItems::with('user')
+                ->where('parent_id', 0)
+                ->where('date', '<', $today)
+                ->orderBy('date', 'desc')
+                ->paginate(40);
+        } elseif ($request->status == 'today') {
+            $tracks = TrackableItems::with('user')
+                ->where('parent_id', 0)
+                ->where('date', $today)
+                ->orderByDesc('created_at')
+                ->paginate(40);
+        } elseif ($request->status == 'future') {
+            $tracks = TrackableItems::with('user')
+                ->where('parent_id', 0)
+                ->where('date', '>', $today)
+                ->orderBy('date', 'asc')
+                ->paginate(40);
+
+            // فیلتر نمایش زیرمجموعه‌ها
+        } elseif ($request->has('parentId')) {
+
+            $tracks = TrackableItems::where('parent_id', $request->parentId)
+                ->with('user')
+                ->paginate(40);
+
+            // فیلتر فعال/بایگانی
         } elseif ($request->has('status')) {
-            $tracks = TrackableItems::with('user')->where('status', $request->status)->where('parent_id', 0)->paginate(40);
+
+            $tracks = TrackableItems::with('user')
+                ->where('status', $request->status)
+                ->where('parent_id', 0)
+                ->paginate(40);
+
+            // حالت پیش‌فرض
         } else {
+
             $tracks = TrackableItems::with('childrenRecursive', 'user')
                 ->where('parent_id', 0)
                 ->where('status', 1)
                 ->orderByDesc('created_at')
-                ->orderByDesc('status')
                 ->paginate(40);
         }
+
         return view('admin.trackable.index', compact('tracks'));
     }
 
@@ -64,7 +99,8 @@ class TrackableItemController extends Controller
         }
 
         $track->user_id = Auth::id();
-        $track->date = $request->date . " " . $request->time;
+        $track->date = $request->date;
+        $track->dateTime = $request->dateTime;
         $track->save();
 
         return back()->with('success', 'آیتم مورد نظر ثبت شد.');
@@ -114,7 +150,9 @@ class TrackableItemController extends Controller
     {
         $trackableItem->status = 0;
         $trackableItem->result = $request->result;
+        $trackableItem->confirm_user_id = Auth::id();
         $trackableItem->save();
+
         TrackableItems::where('parent_id', $trackableItem->id)->update(['status' => 0]);
         return back()->with('danger', 'تیکت مورد نظر بسته شد.');
     }

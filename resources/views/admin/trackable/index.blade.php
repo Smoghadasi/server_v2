@@ -11,7 +11,8 @@
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCenter">
                         جدید
                     </button>
-                    <!-- Modal -->
+
+                    <!-- Modal Create -->
                     <div class="modal fade" id="modalCenter" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
@@ -20,30 +21,32 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
+
                                 <form method="POST" action="{{ route('trackableItems.store') }}">
                                     @csrf
-
                                     <div class="modal-body">
                                         <div class="row">
-                                            <div class="col-4 mb-3">
+                                            <div class="col-4 mb-3 text-start">
+                                                <label for="mobileNumber" class="form-label">شماره موبایل</label>
                                                 <input type="text" id="mobileNumber" name="mobileNumber"
-                                                    class="form-control" placeholder="شماره موبایل..." />
+                                                    class="form-control" />
                                             </div>
-                                            <div class="col-md-4 col-sm-12">
+                                            <div class="col-md-4 col-sm-12 text-start">
+                                                <label for="new" class="form-label">تاریخ پیگیری</label>
                                                 <input class="form-control" type="text" id="new" name="date"
                                                     required placeholder="تاریخ" autocomplete="off" />
                                             </div>
-                                            <div class="col-md-4 col-sm-12">
+                                            <div class="col-md-4 col-sm-12 text-start">
+                                                <label for="time" class="form-label">ساعت پیگیری</label>
                                                 <input value="{{ now() }}" class="form-control" type="time"
                                                     id="time" name="time" required placeholder="ساعت"
                                                     autocomplete="off" />
                                             </div>
-                                            <div class="col-12">
-                                                <textarea class="form-control" name="description" id="" cols="15" rows="5"
-                                                    placeholder="متن توضیحات"></textarea>
+                                            <div class="col-12 text-start">
+                                                <label for="description" class="form-label">توضیحات</label>
+                                                <textarea class="form-control" name="description" id="description" cols="15" rows="5" placeholder="متن توضیحات"></textarea>
                                             </div>
                                         </div>
-
 
                                     </div>
                                     <div class="modal-footer">
@@ -57,10 +60,15 @@
                             </div>
                         </div>
                     </div>
+                    <!-- End Modal -->
                 </div>
             </div>
         </div>
+
         <div class="card-body">
+
+
+            <!-- فیلتر وضعیت -->
             <form class="mb-3" method="get" action="{{ route('trackableItems.index') }}">
                 <div class="form-group row">
                     <div class="col-md-2 mt-3">
@@ -75,6 +83,39 @@
                     </div>
                 </div>
             </form>
+            <div class="nav-align-top mb-4">
+                <ul class="nav nav-tabs" role="tablist">
+
+                    <!-- تب روزهای گذشته -->
+                    <li class="nav-item">
+                        <a href="{{ route('trackableItems.index', ['status' => 'past']) }}">
+                            <button type="button" class="nav-link {{ request('status') == 'past' ? 'active' : '' }}">
+                                روزهای گذشته
+                            </button>
+                        </a>
+                    </li>
+
+                    <!-- تب امروز -->
+                    <li class="nav-item">
+                        <a href="{{ route('trackableItems.index', ['status' => 'today']) }}">
+                            <button type="button" class="nav-link {{ request('status') == 'today' ? 'active' : '' }}">
+                                امروز
+                            </button>
+                        </a>
+                    </li>
+
+                    <!-- تب روزهای آینده -->
+                    <li class="nav-item">
+                        <a href="{{ route('trackableItems.index', ['status' => 'future']) }}">
+                            <button type="button" class="nav-link {{ request('status') == 'future' ? 'active' : '' }}">
+                                روزهای آینده
+                            </button>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- جدول نمایش -->
             <div class="table-responsive">
                 <table class="table table-bordered">
                     <thead>
@@ -89,42 +130,43 @@
                             <th>عملیات</th>
                         </tr>
                     </thead>
+
                     <tbody class="small">
                         <?php $i = 1; ?>
                         @forelse ($tracks as $key => $track)
                             <tr>
                                 <td>
                                     @if (isset($track->childrenRecursive))
-                                        <a
-                                            href="{{ route('trackableItems.index', ['parentId' => $track->id]) }}">{{ ($tracks->currentPage() - 1) * $tracks->perPage() + ($key + 1) }}</a>
+                                        <a href="{{ route('trackableItems.index', ['parentId' => $track->id]) }}">
+                                            {{ ($tracks->currentPage() - 1) * $tracks->perPage() + ($key + 1) }}
+                                        </a>
                                     @else
                                         {{ ($tracks->currentPage() - 1) * $tracks->perPage() + ($key + 1) }}
                                     @endif
                                 </td>
-                                <td>{{ $track->mobileNumber }}({{$track->childrenRecursive->count()}})</td>
+
+                                <td>{{ $track->mobileNumber }} ({{ $track->childrenRecursive->count() }})</td>
                                 <td>{{ $track->user->name ?? '-' }} {{ $track->user->lastName ?? '' }}</td>
                                 <td>{{ $track->tracking_code }}</td>
                                 <td>{{ $track->description }}</td>
                                 <td>{{ $track->status ? 'فعال' : 'بایگانی شد' }}</td>
-                                {{-- @php
-                                $pieces = explode(' ', $track->created_at);
-                            @endphp --}}
-                                <td>
-                                    {{ $track->date }}
-                                </td>
+                                <td>{{ $track->date }}</td>
 
                                 <td>
+                                    {{-- اگر بایگانی شده --}}
                                     @if ($track->status == 0)
                                         <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
-                                        data-bs-target="#followUp">پیگیری مجدد</button>
+                                            data-bs-target="#followUp">پیگیری مجدد</button>
                                     @endif
 
+                                    <!-- Modal پیگیری مجدد -->
                                     <div class="modal fade" id="followUp" tabindex="-1" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered" role="document">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="followUpTitle">پیگیری مجدد :
-                                                        {{ $track->tracking_code }} </h5>
+                                                    <h5 class="modal-title">
+                                                        پیگیری مجدد : {{ $track->tracking_code }}
+                                                    </h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                         aria-label="Close"></button>
                                                 </div>
@@ -140,19 +182,16 @@
                                                             </div>
                                                             <div class="col-md-4 col-sm-12">
                                                                 <input value="{{ now() }}" class="form-control"
-                                                                    type="time" id="time_2" name="time" required
-                                                                    placeholder="ساعت" autocomplete="off" />
+                                                                    type="time" id="time_2" name="time"
+                                                                    required />
                                                             </div>
                                                         </div>
 
                                                         <input type="hidden" name="parent_id"
                                                             value="{{ $track->id }}">
                                                     </div>
+
                                                     <div class="modal-footer">
-                                                        <button type="button" class="btn btn-outline-secondary"
-                                                            data-bs-dismiss="modal">
-                                                            ثبت
-                                                        </button>
                                                         <button type="submit" class="btn btn-primary">ثبت</button>
                                                     </div>
                                                 </form>
@@ -160,38 +199,35 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    {{-- اگر فعال --}}
                                     @if ($track->status == 1)
                                         <button data-bs-toggle="modal" data-bs-target="#submitClose_{{ $track->id }}"
                                             class="btn btn-sm btn-outline-danger">بستن</button>
 
-                                        <div class="modal fade" id="submitClose_{{ $track->id }}" tabindex="-1" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                        <!-- Modal بستن -->
+                                        <div class="modal fade" id="submitClose_{{ $track->id }}" tabindex="-1"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title" id="submitCloseTitle">بستن تیکت شماره
-                                                            :
-                                                            {{ $track->tracking_code }} </h5>
+                                                        <h5 class="modal-title">
+                                                            بستن تیکت شماره : {{ $track->tracking_code }}
+                                                        </h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
                                                     </div>
+
                                                     <form method="POST"
                                                         action="{{ route('trackableItems.destroy', $track) }}">
                                                         @csrf
                                                         @method('delete')
 
                                                         <div class="modal-body">
-                                                            <div class="row">
-                                                                <div class="col-12">
-                                                                    <textarea class="form-control" name="result" id="" cols="15" rows="5"
-                                                                        placeholder="متن توضیحات"></textarea>
-                                                                </div>
-                                                            </div>
+                                                            <textarea class="form-control" name="result" cols="15" rows="5" placeholder="متن توضیحات"></textarea>
                                                         </div>
+
                                                         <div class="modal-footer">
-                                                            <button type="button" class="btn btn-outline-secondary"
-                                                                data-bs-dismiss="modal">
-                                                                بستن
-                                                            </button>
                                                             <button type="submit" class="btn btn-primary">ثبت</button>
                                                         </div>
                                                     </form>
@@ -199,111 +235,69 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        @else
+                                    @else
                                         <button data-bs-toggle="modal" data-bs-target="#watchResult"
                                             class="btn btn-sm btn-outline-success">مشاهده نتیجه</button>
+
+                                        <!-- Modal مشاهده نتیجه -->
                                         <div class="modal fade" id="watchResult" tabindex="-1" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-dialog modal-dialog-centered">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title" id="watchResultTitle">نتیجه تیکت شماره
-                                                            :
-                                                            {{ $track->tracking_code }} </h5>
+                                                        <h5 class="modal-title">
+                                                            نتیجه تیکت : {{ $track->tracking_code }}
+                                                        </h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
                                                     </div>
-
-
                                                     <div class="modal-body">
-                                                        <div class="row">
-                                                            <div class="col-12">
-                                                                <textarea class="form-control" disabled name="description" id="" cols="15" rows="5"
-                                                                    placeholder="متن نتیجه">{{ $track->result }}</textarea>
-                                                            </div>
-                                                        </div>
+                                                        <textarea class="form-control" disabled cols="15" rows="5">{{ $track->result }}</textarea>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     @endif
 
-
                                 </td>
                             </tr>
                         @empty
                             <tr class="text-center">
-                                <td colspan="10">
-                                    دیتا مورد نظر یافت نشد
-                                </td>
+                                <td colspan="10">دیتا مورد نظر یافت نشد</td>
                             </tr>
                         @endforelse
                     </tbody>
+
                 </table>
             </div>
 
+            <!-- Pagination -->
             <div class="mt-3">
-                @if ($tracks->hasPages())
-                <nav aria-label="Page navigation">
-                    <ul class="pagination">
-                        {{-- Previous Page Link --}}
-                        @if ($tracks->onFirstPage())
-                            <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
-                        @else
-                            <li class="page-item"><a class="page-link"
-                                    href="{{ $tracks->previousPageUrl() }}&status={{ request('status') }}&parent_id={{ request('parent_id') }}"
-                                    rel="prev">&laquo;</a></li>
-                        @endif
-
-                        {{-- Pagination Elements --}}
-                        @foreach ($tracks->getUrlRange(1, $tracks->lastPage()) as $page => $url)
-                            @if (
-                                $page == 1 ||
-                                    $page == $tracks->lastPage() ||
-                                    ($page >= $tracks->currentPage() - 2 && $page <= $tracks->currentPage() + 2))
-                                @if ($page == $tracks->currentPage())
-                                    <li class="page-item active"><span class="page-link">{{ $page }}</span></li>
-                                @else
-                                    <li class="page-item"><a class="page-link"
-                                            href="{{ $url }}&parent_id={{ request('parent_id') }}&status={{ request('status') }}">{{ $page }}</a>
-                                    </li>
-                                @endif
-                            @elseif ($page == $tracks->currentPage() - 3 || $page == $tracks->currentPage() + 3)
-                                <li class="page-item disabled"><span class="page-link">...</span></li>
-                            @endif
-                        @endforeach
-
-                        {{-- Next Page Link --}}
-                        @if ($tracks->hasMorePages())
-                            <li class="page-item"><a class="page-link"
-                                    href="{{ $tracks->nextPageUrl() }}&status={{ request('status') }}&parent_id={{ request('parent_id') }}"
-                                    rel="next">&raquo;</a></li>
-                        @else
-                            <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
-                        @endif
-                    </ul>
-                </nav>
-            @endif
+                {{ $tracks->links() }}
             </div>
 
         </div>
     </div>
 @endsection
+
 @section('script')
     <script src="{{ asset('js/persianDatepicker.min.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var now = new Date();
-            var hours = now.getHours().toString().padStart(2, '0');
-            var minutes = now.getMinutes().toString().padStart(2, '0');
-            var currentTime = hours + ':' + minutes;
+            var h = String(now.getHours()).padStart(2, '0');
+            var m = String(now.getMinutes()).padStart(2, '0');
+            var currentTime = h + ':' + m;
+
 
             document.getElementById('time').value = currentTime;
             document.getElementById('time_2').value = currentTime;
         });
+
         $("#new").persianDatepicker({
-            formatDate: "YYYY/MM/DD",
+            formatDate: "YYYY/0M/0D",
             selectedBefore: !0
         });
+
         $("#new_again").persianDatepicker({
             formatDate: "YYYY/MM/DD",
             selectedBefore: !0

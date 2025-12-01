@@ -577,7 +577,9 @@
                                                 </td>
                                                 <td>{{ $track->mobileNumber  }}({{$track->childrenRecursive->count()}})</td>
                                                 <td>{{ $track->tracking_code }}</td>
-                                                <td>{{ Str::limit($track->description, 30) }}</td>
+                                                <td onclick="this.innerText='{{ $track->description }}'">
+                                                    {{ Str::limit($track->description, 30) }}
+                                                </td>
                                                 <td>{{ $track->status ? 'فعال' : 'بایگانی شد' }}</td>
                                                 {{-- @php
                                                 $pieces = explode(' ', $track->created_at);
