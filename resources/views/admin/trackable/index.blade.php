@@ -168,7 +168,7 @@
                                             <div class="modal-content">
                                                 <div class="modal-header">
                                                     <h5 class="modal-title">
-                                                        پیگیری مجدد : {{ $track->tracking_code }}
+                                                        پیگیری مجدد : {{ $track->mobileNumber }}
                                                     </h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                         aria-label="Close"></button>
@@ -178,15 +178,26 @@
                                                     @csrf
                                                     <div class="modal-body">
                                                         <div class="row">
+
+                                                            <div class="col-md-4 col-sm-12">
+                                                                <input class="form-control" type="tel"
+                                                                    name="mobileNumber"
+                                                                    value="{{ $track->mobileNumber }}"
+                                                                    placeholder="شماره موبایل"
+                                                                    autocomplete="off" />
+                                                            </div>
                                                             <div class="col-md-4 col-sm-12">
                                                                 <input class="form-control" type="text" id="new_again"
                                                                     name="date" required placeholder="تاریخ"
                                                                     autocomplete="off" />
                                                             </div>
-                                                            <div class="col-md-4 col-sm-12">
+                                                            <div class="col-md-4 col-sm-12 mb-2">
                                                                 <input value="{{ now() }}" class="form-control"
                                                                     type="time" id="time_2" name="time"
                                                                     required />
+                                                            </div>
+                                                            <div class="col-12">
+                                                                <textarea class="form-control" name="description" id="" cols="30" rows="10">{{ $track->description }}</textarea>
                                                             </div>
                                                         </div>
 

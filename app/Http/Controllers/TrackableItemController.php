@@ -86,22 +86,14 @@ class TrackableItemController extends Controller
     {
         $track = new TrackableItems();
 
-        if ($request->has('parent_id')) {
-            $parentTrack = TrackableItems::findOrFail($request->parent_id);
-            $track->parent_id = $request->parent_id;
-            $track->mobileNumber = $parentTrack->mobileNumber;
-            $track->tracking_code = $parentTrack->tracking_code;
-            $track->description = $parentTrack->description;
-        } else {
-            $track->parent_id = 0;
-            $track->mobileNumber = $request->mobileNumber;
-            $track->tracking_code = rand(10000, 99999);
-            $track->description = $request->description;
-        }
-
-        $track->user_id = Auth::id();
+        $track->mobileNumber = $request->mobileNumber;
+        $track->description = $request->description;
         $track->date = $request->date;
         $track->dateTime = $request->dateTime;
+        $track->tracking_code = rand(10000, 99999);
+        $track->parent_id = 0;
+        $track->user_id = Auth::id();
+        $track->status = 1;
         $track->save();
 
         return back()->with('success', 'آیتم مورد نظر ثبت شد.');
