@@ -155,7 +155,7 @@
                                 <td>{{ $track->status ? 'فعال' : 'بایگانی شد' }}</td>
                                 <td>{{ $track->date }}</td>
 
-                                <td style="display: ruby-text">
+                                <td>
                                     {{-- اگر بایگانی شده --}}
                                     @if ($track->status == 0)
                                         <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
