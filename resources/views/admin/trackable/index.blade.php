@@ -67,16 +67,14 @@
         </div>
 
         <div class="card-body">
-
-
             <!-- فیلتر وضعیت -->
             <form class="mb-3" method="get" action="{{ route('trackableItems.index') }}">
                 <div class="form-group row">
                     <div class="col-md-2 mt-3">
                         <select class="form-select" name="status">
-                            <option>انتخاب کنید...</option>
-                            <option value="0">بایگانی</option>
-                            <option value="1">فعال</option>
+                            {{-- <option>انتخاب کنید...</option> --}}
+                            <option value="active">فعال</option>
+                            <option {{ request('status') == 'archive' ? 'selected' : '' }} value="archive">بایگانی</option>
                         </select>
                     </div>
                     <div class="col-md-4 mt-3">
@@ -149,9 +147,7 @@
                                 </td>
 
                                 <td>
-                                    <a href="{{ route('trackableItems.index', ['mobileNumber' => $track->mobileNumber]) }}">
-                                        {{ $track->mobileNumber }}
-                                    </a>
+                                    {{ $track->mobileNumber }}
                                 </td>
                                 <td>{{ $track->user->name ?? '-' }} {{ $track->user->lastName ?? '' }}</td>
                                 {{-- <td>{{ $track->tracking_code }}</td> --}}
@@ -159,7 +155,7 @@
                                 <td>{{ $track->status ? 'فعال' : 'بایگانی شد' }}</td>
                                 <td>{{ $track->date }}</td>
 
-                                <td>
+                                <td style="display: ruby-text">
                                     {{-- اگر بایگانی شده --}}
                                     @if ($track->status == 0)
                                         <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
@@ -264,7 +260,9 @@
                                             </div>
                                         </div>
                                     @endif
-
+                                    <a class="btn btn-primary btn-sm" href="{{ route('trackableItems.index', ['mobileNumber' => $track->mobileNumber]) }}">
+                                        تاریخچه
+                                    </a>
                                 </td>
                             </tr>
                         @empty

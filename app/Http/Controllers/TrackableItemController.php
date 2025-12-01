@@ -23,20 +23,30 @@ class TrackableItemController extends Controller
         switch ($request->status) {
             case 'past':
                 $query->where('date', '<', $today)
+                    ->where('status', 1)
                     ->orderBy('date', 'desc');
                 break;
-
+            case 'archive':
+                $query->where('status', 0)
+                    ->orderBy('date', 'desc');
+                break;
+            case 'active':
+                $query->where('status', 1)
+                    ->orderBy('date', 'desc');
+                break;
             case 'today':
                 $query->where('date', $today)
+                    ->where('status', 1)
                     ->orderByDesc('created_at');
                 break;
-
             case 'all':
-                $query->orderByDesc('created_at');
+                $query->where('status', 1)
+                    ->orderByDesc('created_at');
                 break;
 
             case 'future':
                 $query->where('date', '>', $today)
+                    ->where('status', 1)
                     ->orderBy('date', 'asc');
                 break;
 
