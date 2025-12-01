@@ -28,7 +28,7 @@ class TrackableItemController extends Controller
                 break;
             case 'archive':
                 $query->where('status', 0)
-                    ->orderBy('date', 'desc');
+                    ->orderBy('updated_at', 'desc');
                 break;
             case 'active':
                 $query->where('status', 1)
