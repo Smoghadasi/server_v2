@@ -86,6 +86,14 @@
             <div class="nav-align-top mb-4">
                 <ul class="nav nav-tabs" role="tablist">
 
+                    <!-- تب همه -->
+                    <li class="nav-item">
+                        <a href="{{ route('trackableItems.index', ['status' => 'all']) }}">
+                            <button type="button" class="nav-link {{ request('status') == 'all' ? 'active' : '' }}">
+                                همه
+                            </button>
+                        </a>
+                    </li>
                     <!-- تب روزهای گذشته -->
                     <li class="nav-item">
                         <a href="{{ route('trackableItems.index', ['status' => 'past']) }}">

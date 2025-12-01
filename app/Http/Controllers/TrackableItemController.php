@@ -30,7 +30,14 @@ class TrackableItemController extends Controller
                 ->where('date', $today)
                 ->orderByDesc('created_at')
                 ->paginate(20);
-        } elseif ($request->status == 'future') {
+        }
+        elseif ($request->status == 'all') {
+            $tracks = TrackableItems::with('user')
+                ->where('parent_id', 0)
+                ->orderByDesc('created_at')
+                ->paginate(20);
+        }
+        elseif ($request->status == 'future') {
             $tracks = TrackableItems::with('user')
                 ->where('parent_id', 0)
                 ->where('date', '>', $today)
@@ -49,6 +56,7 @@ class TrackableItemController extends Controller
 
             $tracks = TrackableItems::with('user')
                 ->where('status', $request->status)
+                ->where('date', $today)
                 ->where('parent_id', 0)
                 ->paginate(20);
 
