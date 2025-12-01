@@ -123,7 +123,7 @@
                             <th>ردیف</th>
                             <th>شماره موبایل</th>
                             <th>اپراتور</th>
-                            <th>کد رهگیری</th>
+                            {{-- <th>کد رهگیری</th> --}}
                             <th>توضیحات</th>
                             <th>وضعیت</th>
                             <th>تاریخ</th>
@@ -145,9 +145,9 @@
                                     @endif
                                 </td>
 
-                                <td>{{ $track->mobileNumber }} ({{ $track->childrenRecursive->count() }})</td>
+                                <td>{{ $track->mobileNumber }}</td>
                                 <td>{{ $track->user->name ?? '-' }} {{ $track->user->lastName ?? '' }}</td>
-                                <td>{{ $track->tracking_code }}</td>
+                                {{-- <td>{{ $track->tracking_code }}</td> --}}
                                 <td>{{ $track->description }}</td>
                                 <td>{{ $track->status ? 'فعال' : 'بایگانی شد' }}</td>
                                 <td>{{ $track->date }}</td>
