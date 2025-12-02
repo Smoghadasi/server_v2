@@ -277,7 +277,10 @@
                                                         @break
 
                                                         @case(AUTH_VALIDITY)
-                                                            <span class="badge bg-label-warning"> اعتبار رایگان</span>
+                                                            <span class="badge bg-label-warning"> اعتبار رایگان (ماه)</span>
+                                                        @break
+                                                        @case(AUTH_VALIDITY_DAILY)
+                                                            <span class="badge bg-label-warning"> اعتبار رایگان (روزانه)</span>
                                                         @break
 
                                                         @case(AUTH_CARGO)
@@ -504,42 +507,62 @@
                         </div>
                         <div class="modal-body text-right">
 
-                            <div class="h6"> مدت اعتبار، تعداد تماس و تعداد بار را وارد
-                                نمایید:
+                            <!-- نمایش اطلاعات -->
+                            <div class="alert alert-warning mb-2">
+                                کل تعداد تماس رایگان داده شده: <strong
+                                    style="float: left">{{ $driver->freeCallTotal }}</strong>
                             </div>
-                            {{-- <p class="text-danger">تعداد بار رایگان
-                                : {{ $driver->freeAcceptLoads }}</p> --}}
-                            <p class="text-warning">کل تعداد تماس رایگان داده شده
-                                : {{ $driver->freeCallTotal }}</p>
 
-                            <p class="text-danger">مدت اعتبار: </p>
-                            {{ gregorianDateToPersian($driver->activeDate, '-', true) }}
+                            <div class="alert alert-danger mb-2">
+                                مدت اعتبار: <strong
+                                    style="float: left">{{ $driver->activeDate ? gregorianDateToPersian($driver->activeDate, '-', true) : '-' }}</strong>
+                            </div>
+
+                            <!-- بخش مخصوص ادمین -->
                             @if (Auth::user()->role == 'admin')
-                                <div class="form-group">
-                                    <lable> مدت اعتبار به ماه :</lable>
-                                    <input type="number" class="form-control" name="month" value="0"
-                                        placeholder="مدت اعتبار">
+                                <div class="form-group mb-3">
+                                    <label class="fw-bold d-block mb-2">مدت اعتبار:</label>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="validityType"
+                                            id="monthlyValidity" value="monthly" checked>
+                                        <label class="form-check-label" for="monthlyValidity">ماهانه</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="validityType"
+                                            id="dailyValidity" value="daily">
+                                        <label class="form-check-label" for="dailyValidity">روزانه</label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label class="fw-bold">مدت اعتبار:</label>
+                                    <input type="number" class="form-control" id="validityInput" name="month"
+                                        placeholder="مدت اعتبار (ماه)">
                                 </div>
                             @endif
-                            <div class="form-group">
-                                <lable> تعداد تماس رایگان :</lable>
+
+
+                            <!-- تعداد تماس رایگان -->
+                            <div class="form-group mb-3">
+                                <label class="fw-bold">تعداد تماس رایگان:</label>
                                 @if (Auth::user()->role == 'admin')
-                                    <input type="number" class="form-control" name="freeCalls"
-                                        placeholder="تعداد تماس رایگان" value="0">
+                                    <input type="number" class="form-control" name="freeCalls" value="0"
+                                        placeholder="تعداد تماس رایگان">
                                 @else
                                     <input type="text" class="form-control" name="freeCalls" id="freeCalls"
                                         placeholder="تعداد تماس رایگان">
                                 @endif
                             </div>
 
-                            {{-- <div class="form-group">
-                                <lable> تعداد بار رایگان :</lable>
-                                <input type="number" class="form-control" name="freeAcceptLoads" value="0"
-                                    placeholder="تعداد بار رایگان">
-                            </div> --}}
-
-
+                            <!-- در صورت نیاز بخش بار رایگان -->
+                            {{--
+                            <div class="form-group mb-3">
+                                <label class="fw-bold">تعداد بار رایگان:</label>
+                                <input type="number" class="form-control" name="freeAcceptLoads" value="0" placeholder="تعداد بار رایگان">
+                            </div>
+                            --}}
                         </div>
+
                         <div class="modal-footer text-left">
                             <button type="submit" class="btn btn-primary">
                                 تمدید شود
@@ -553,7 +576,7 @@
                 </div>
             </div>
 
-            @if (auth()->user()->role == ROLE_ADMIN || Auth::id() == 29)
+            @if (auth()->user()->role == ROLE_ADMIN)
                 <div id="removeDriver_{{ $driver->id }}" class="modal fade" role="dialog">
                     <div class="modal-dialog">
 
@@ -711,6 +734,21 @@
     <script src="{{ asset('js/persianDatepicker.min.js') }}"></script>
 
     <script type="text/javascript">
+        $(function() {
+            $("#dailyValidity").on("change", function() {
+                if ($(this).is(":checked")) {
+                    $("#validityInput").attr("name", "daily")
+                        .attr("placeholder", "مدت اعتبار (روز)");
+                }
+            });
+
+            $("#monthlyValidity").on("change", function() {
+                if ($(this).is(":checked")) {
+                    $("#validityInput").attr("name", "month")
+                        .attr("placeholder", "مدت اعتبار (ماه)");
+                }
+            });
+        });
         $("#freeCalls").on("input", function() {
             let val = $(this).val();
             if (!/^[1-8]$/.test(val)) {

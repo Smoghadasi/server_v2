@@ -58,7 +58,6 @@ class DriverController extends Controller
         $driver->freeCalls = 0;
         $driver->save();
         return back()->with('danger', 'با موفقیت حذف شد');
-
     }
 
 
@@ -717,7 +716,7 @@ class DriverController extends Controller
             ->orderByDesc('created_at')
             ->where('value', '!=', 0)
             ->where('driver_id', $driver->id)
-            ->whereIn('type', ['AuthCalls', 'AuthValidity', 'AuthValidityDeleted', 'AuthCallsOwner'])
+            ->whereIn('type', ['AuthCalls', 'AuthValidity', 'AuthValidityDeleted', 'AuthCallsOwner', 'AuthValidityDaily'])
             ->when($request->toDate !== null, function ($query) use ($request) {
                 return $query->whereBetween('created_at', [persianDateToGregorian(str_replace('/', '-', $request->fromDate), '-') . ' 00:00:00', persianDateToGregorian(str_replace('/', '-', $request->toDate), '-') . ' 23:59:59']);
             })
@@ -1416,7 +1415,7 @@ class DriverController extends Controller
         $setting = Setting::first();
         if ($request->month == 0) {
             if (Auth::user()->role === 'admin' || in_array(Auth::id(), [53, 29, 69, 75, 54, 77])) {
-                if ($this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, $request->month, $request->freeCalls, $driver->freeAcceptLoads)) {
+                if ($this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, $request->month, $request->freeCalls, $driver->freeAcceptLoads, $request->daily)) {
                     $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
 
                     $oneMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+30 day', time())), '/');
@@ -1449,20 +1448,28 @@ class DriverController extends Controller
                             $this->sendNotificationWeb($driver->FCM_token, $title, $body);
                         }
                     }
-                    if ($request->freeAcceptLoads > 0) {
+                    if ($request->daily > 0) {
                         $free_subscription = new FreeSubscription();
-                        $free_subscription->type = AUTH_CARGO;
-                        $free_subscription->value = $request->freeCalls;
+                        $free_subscription->type = AUTH_VALIDITY_DAILY;
+                        $free_subscription->value = $request->daily;
                         $free_subscription->driver_id = $driver->id;
                         $free_subscription->operator_id = Auth::id();
                         $free_subscription->save();
                     }
+                    // if ($request->freeAcceptLoads > 0) {
+                    //     $free_subscription = new FreeSubscription();
+                    //     $free_subscription->type = AUTH_CARGO;
+                    //     $free_subscription->value = $request->freeCalls;
+                    //     $free_subscription->driver_id = $driver->id;
+                    //     $free_subscription->operator_id = Auth::id();
+                    //     $free_subscription->save();
+                    // }
                     return redirect('admin/drivers')->with('success', 'تمدید اعتبار راننده انجام شد.');
                 }
             } elseif ($driver->freeCallTotal > 5 || $driver->freeCallTotal + $request->freeCalls > 5) {
                 return back()->with('danger', 'خطا! تماس رایگان داده شده بیشتر از 5 تا است');
             } else {
-                if ($this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, $request->month, $request->freeCalls, $driver->freeAcceptLoads)) {
+                if ($this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, $request->month, $request->freeCalls, $driver->freeAcceptLoads, $request->validityType)) {
                     $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
                     $oneMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+30 day', time())), '/');
                     $threeMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+90 day', time())), '/');
@@ -1495,15 +1502,15 @@ class DriverController extends Controller
                             } else {
                                 $sms->freeSubscription($driver->mobileNumber, $persian_date, $sixMonth);
                             }
-                        try {
-                            $notificationUser = new NotificationUser();
-                            $notificationUser->type = 'driver';
-                            $notificationUser->visibility = 'private';
-                            $notificationUser->description = 'اعتبار برای شما فعال شد';
-                            $notificationUser->save();
-                        } catch (\Throwable $th) {
-                            //throw $th;
-                        }
+                        // try {
+                        //     $notificationUser = new NotificationUser();
+                        //     $notificationUser->type = 'driver';
+                        //     $notificationUser->visibility = 'private';
+                        //     $notificationUser->description = 'اعتبار برای شما فعال شد';
+                        //     $notificationUser->save();
+                        // } catch (\Throwable $th) {
+                        //     //throw $th;
+                        // }
                     }
                     if ($request->freeCalls > 0) {
                         $free_subscription = new FreeSubscription();
@@ -1520,27 +1527,26 @@ class DriverController extends Controller
                             $this->sendNotificationWeb($driver->FCM_token, $title, $body);
                         }
                     }
-                    if ($request->freeAcceptLoads > 0) {
-                        $free_subscription = new FreeSubscription();
-                        $free_subscription->type = AUTH_CARGO;
-                        $free_subscription->value = $request->freeCalls;
-                        $free_subscription->driver_id = $driver->id;
-                        $free_subscription->operator_id = Auth::id();
-                        $free_subscription->save();
-                    }
+                    // if ($request->freeAcceptLoads > 0) {
+                    //     $free_subscription = new FreeSubscription();
+                    //     $free_subscription->type = AUTH_CARGO;
+                    //     $free_subscription->value = $request->freeCalls;
+                    //     $free_subscription->driver_id = $driver->id;
+                    //     $free_subscription->operator_id = Auth::id();
+                    //     $free_subscription->save();
+                    // }
                     return redirect('admin/drivers')->with('success', 'تمدید اعتبار راننده انجام شد.');
                 }
             }
         } else {
-            if ($this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, $request->month, $request->freeCalls, $driver->freeAcceptLoads)) {
+            if ($this->updateActivationDateAndFreeCallsAndFreeAcceptLoads($driver, $request->month, $request->freeCalls, $driver->freeAcceptLoads, $request->validityType)) {
                 $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
                 $oneMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+30 day', time())), '/');
                 $threeMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+90 day', time())), '/');
                 $sixMonth = gregorianDateToPersian(date('Y/m/d', strtotime('+180 day', time())), '/');
 
                 if ($request->month > 0) {
-                    $driver->freeCalls = 3;
-                    $driver->save();
+
                     $free_subscription = new FreeSubscription();
                     $free_subscription->type = AUTH_VALIDITY;
                     $free_subscription->value = $request->month;
@@ -1580,6 +1586,7 @@ class DriverController extends Controller
                         //throw $th;
                     }
                 }
+
                 if ($request->freeCalls > 0) {
                     $free_subscription = new FreeSubscription();
                     $free_subscription->type = AUTH_CALLS;
@@ -1607,14 +1614,14 @@ class DriverController extends Controller
                         $this->sendNotificationWeb($driver->FCM_token, $title, $body);
                     }
                 }
-                if ($request->freeAcceptLoads > 0) {
-                    $free_subscription = new FreeSubscription();
-                    $free_subscription->type = AUTH_CARGO;
-                    $free_subscription->value = $request->freeCalls;
-                    $free_subscription->driver_id = $driver->id;
-                    $free_subscription->operator_id = Auth::id();
-                    $free_subscription->save();
-                }
+                // if ($request->freeAcceptLoads > 0) {
+                //     $free_subscription = new FreeSubscription();
+                //     $free_subscription->type = AUTH_CARGO;
+                //     $free_subscription->value = $request->freeCalls;
+                //     $free_subscription->driver_id = $driver->id;
+                //     $free_subscription->operator_id = Auth::id();
+                //     $free_subscription->save();
+                // }
                 return redirect('admin/drivers')->with('success', 'تمدید اعتبار راننده انجام شد.');
             }
         }
@@ -1697,16 +1704,29 @@ class DriverController extends Controller
      * @return void
      * @throws Exception
      */
-    public function updateActivationDateAndFreeCallsAndFreeAcceptLoads(Driver $driver, $month, $freeCalls, $freeAcceptLoads): bool
+    public function updateActivationDateAndFreeCallsAndFreeAcceptLoads(Driver $driver, $month = 0, $freeCalls, $freeAcceptLoads, $daily = 0): bool
     {
         try {
-
             $date = new \DateTime($driver->activeDate);
             $time = $date->getTimestamp();
-            if ($time < time())
-                $driver->activeDate = date('Y-m-d', time() + $month * 30 * 24 * 60 * 60);
-            else
-                $driver->activeDate = date('Y-m-d', $time + $month * 30 * 24 * 60 * 60);
+            $month = (int) $month;
+            $daily = (int) $daily;
+            // محاسبه ثانیه‌های اعتبار
+            $secondsToAdd = 0;
+
+            if ($month > 0) {
+                $secondsToAdd += $month * 30 * 24 * 60 * 60; // ماهانه
+            }
+
+            if ($daily > 0) {
+                $secondsToAdd += $daily * 24 * 60 * 60; // روزانه
+            }
+
+            if ($time < time()) {
+                $driver->activeDate = date('Y-m-d', time() + $secondsToAdd);
+            } else {
+                $driver->activeDate = date('Y-m-d', $time + $secondsToAdd);
+            }
 
             $checkDriverFleet = DriverFleet::where('fleet_id', $driver->fleet_id)->where('driver_id', $driver->id)->first();
             if ($checkDriverFleet === null) {
@@ -1723,16 +1743,28 @@ class DriverController extends Controller
             $driver->save();
 
             try {
+                $driverPackagesInfo = getDriverPackagesInfo();
+                $amount = 0;
                 if ($month > 0) {
 
-                    $driverPackagesInfo = getDriverPackagesInfo();
-                    $amount = 0;
                     if ($month == 1)
                         $amount = $driverPackagesInfo['data']['monthly']['price'];
                     else if ($month == 3)
                         $amount = $driverPackagesInfo['data']['trimester']['price'];
                     else if ($month == 6)
                         $amount = $driverPackagesInfo['data']['sixMonths']['price'];
+
+                    $transaction = new Transaction();
+                    $transaction->user_id = $driver->id;
+                    $transaction->userType = ROLE_DRIVER;
+                    $transaction->authority = $driver->id . time();
+                    $transaction->amount = $amount;
+                    $transaction->status = 100;
+                    $transaction->payment_type = 'cardToCard';
+                    $transaction->monthsOfThePackage = $month;
+                    $transaction->save();
+                } else if ($daily > 0) {
+                    $amount = $driverPackagesInfo['data']['monthly']['price'] / 30 * $daily;
 
                     $transaction = new Transaction();
                     $transaction->user_id = $driver->id;
