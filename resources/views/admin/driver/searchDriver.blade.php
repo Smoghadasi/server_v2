@@ -68,9 +68,6 @@
                                 <td>{{ ($driverCalls->currentPage() - 1) * $driverCalls->perPage() + ++$i }}</td>
                                 <td>
                                     {{ $driverCall->driver->name }} {{ $driverCall->driver->lastName }}
-                                    @if ($driverCall->isAccepted == 1)
-                                        (راننده انتخاب شده)
-                                    @endif
                                 </td>
                                 <td>
                                     @if ($driverCall->driver->authLevel == DRIVER_AUTH_UN_AUTH)
