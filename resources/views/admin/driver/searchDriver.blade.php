@@ -68,11 +68,8 @@
                                 <td>{{ ($driverCalls->currentPage() - 1) * $driverCalls->perPage() + ++$i }}</td>
                                 <td>
                                     {{ $driverCall->driver->name }} {{ $driverCall->driver->lastName }}
-
-                                    @if ($driverCall->driver->status == 0)
-                                        <span class="alert alert-danger p-1">غیرفعال</span>
-                                    @else
-                                        <span class="alert alert-success p-1">فعال</span>
+                                    @if ($driverCall->isAccepted == 1)
+                                        (راننده انتخاب شده)
                                     @endif
                                 </td>
                                 <td>
