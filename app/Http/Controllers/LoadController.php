@@ -102,7 +102,7 @@ class LoadController extends Controller
 
         // $loads = Load::withCount('driverCalls')
         //     ->whereIn('mobileNumberForCoordination', $mobileNumbers)
-        //     // ->groupBy('mobileNumberForCoordination')
+        //     ->groupBy('mobileNumberForCoordination')
         //     ->having('driver_calls_count', '>', 2)
         //     ->withTrashed()
         //     ->paginate(20);
@@ -2157,6 +2157,7 @@ class LoadController extends Controller
             ->select('drivers.*')
             ->where('driver_loads.load_id', $id)
             ->get();
+        return $drivers;
 
 
         // $tenders = Tender::join('bearings', 'bearings.id', 'tenders.bearing_id')
