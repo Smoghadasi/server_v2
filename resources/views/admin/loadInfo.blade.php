@@ -9,7 +9,7 @@
                 <a class="btn btn-success" href="{{ route('owner.show', $load->user_id) }}"> اطلاعات صاحب بار</a>
             @endif
             <a class="btn btn-danger" href="{{ url('admin/removeLoadInfo') }}/{{ $load->id }}"> حذف اطلاعات بار</a>
-            @if (auth()->user()->role == 'admin' || Auth::id() == 29)
+            @if (auth()->user()->role == 'admin' )
                 <a class="btn btn-dark" href="{{ route('sendNotifManuall', $load) }}"> ارسال پیامک برای رانندگان</a>
             @endif
         </div>
@@ -166,28 +166,65 @@
                     </div>
                 </div>
             </div>
-
-            <div class="card mb-2">
-                <h5 class="card-header">لیست ناوگان</h5>
-                <div class="card-body">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>نوع ناوگان</th>
-                                <th>تعداد</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($fleetLoads as $item)
-                                <tr>
-                                    <td>{{ \App\Http\Controllers\FleetController::getFleetName($item->fleet_id) }}</td>
-                                    <td>{{ $item->numOfFleets }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-2">
+                        <h5 class="card-header">لیست ناوگان</h5>
+                        <div class="card-body">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>نوع ناوگان</th>
+                                        <th>تعداد</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($fleetLoads as $item)
+                                        <tr>
+                                            <td>{{ \App\Http\Controllers\FleetController::getFleetName($item->fleet_id) }}</td>
+                                            <td>{{ $item->numOfFleets }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-2">
+                        <h5 class="card-header">راننده انتخاب شده</h5>
+                        <div class="card-body">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>نام و نام خانوادگی</th>
+                                        <th>شماره موبایل</th>
+                                        <th>ناوگان</th>
+                                        <th>عملیات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($drivers as $driver)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $driver->name }} {{ $driver->lastName }}</td>
+                                            <td>{{ $driver->mobileNumber }}</td>
+                                            <td>{{ $driver->fleetTitle }}</td>
+                                            <td>
+                                                <a class="btn btn-outline-primary btn-sm" href="{{ route('driver.detail', $driver->id) }}">
+                                                    جزئیات
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
+
         </div>
     </div>
 

@@ -2157,7 +2157,6 @@ class LoadController extends Controller
             ->select('drivers.*')
             ->where('driver_loads.load_id', $id)
             ->get();
-        return $drivers;
 
 
         // $tenders = Tender::join('bearings', 'bearings.id', 'tenders.bearing_id')
