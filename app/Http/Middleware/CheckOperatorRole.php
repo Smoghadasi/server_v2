@@ -26,7 +26,7 @@ class CheckOperatorRole
 
             try {
 
-                $expiresAt = now()->addSeconds(20);
+                $expiresAt = now()->addSeconds(30);
 
                 Cache::put('user-is-online-' . \auth()->user()->id, true, $expiresAt);
 
