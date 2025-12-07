@@ -1611,7 +1611,7 @@ class ReportingController extends Controller
             ['userType', 'driver'],
             ['created_at', '>=', $today]
         ])
-            ->whereIn('status', [100, 101, 52])
+            ->whereIn('status', [100, 101])
             ->pluck('user_id');
 
         $transactions = Transaction::where([
