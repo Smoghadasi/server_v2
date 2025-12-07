@@ -60,6 +60,19 @@ class Transaction extends Model
         return 'بدون شماره';
     }
 
+    public function payerActiveDate()
+    {
+        try {
+            switch ($this->userType) {
+                case ROLE_DRIVER:
+                    $user = Driver::find($this->user_id);
+                    return $user->activeDate;
+            }
+        } catch (\Exception $e) {
+        }
+        return null;
+    }
+
     public function getBankNameAttribute($bankName)
     {
         switch ($bankName) {

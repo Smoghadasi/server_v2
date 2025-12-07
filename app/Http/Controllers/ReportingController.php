@@ -1606,11 +1606,13 @@ class ReportingController extends Controller
     public function unSuccessPeyment()
     {
         $today = date('Y-m-d', time()) . ' 00:00:00';
+
         $successTransactions = Transaction::where([
-            ['status', '>', 2],
             ['userType', 'driver'],
             ['created_at', '>=', $today]
-        ])->pluck('user_id');
+        ])
+            ->whereIn('status', [100, 101, 52])
+            ->pluck('user_id');
 
         $transactions = Transaction::where([
             ['userType', 'driver'],

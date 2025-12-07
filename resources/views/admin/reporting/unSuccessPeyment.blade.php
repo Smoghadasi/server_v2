@@ -11,64 +11,68 @@
             <div class="container text-right">
                 <table class="table">
                     <thead>
-                    <tr>
-                        <th>ردیف</th>
-                        <th>نام پرداخت کننده</th>
-                        <th>ناوگان</th>
-                        <th>تعداد پرداخت موفق</th>
-                        <th>تعداد کل تلاش ها</th>
-                        <th>تعداد امروز</th>
-                        <th>شماره تلفن</th>
-                        <th>نوع کاربر</th>
-                        <th>مبلغ پرداخت شده</th>
-                        <th>بانک</th>
-                        <th>تاریخ پرداخت</th>
-                        <th>وضعیت</th>
-                        <th>عملیات</th>
-                    </tr>
+                        <tr>
+                            <th>ردیف</th>
+                            <th>نام پرداخت کننده</th>
+                            <th>ناوگان</th>
+                            <th>تعداد پرداخت موفق</th>
+                            <th>تعداد کل تلاش ها</th>
+                            <th>تعداد امروز</th>
+                            <th>شماره تلفن</th>
+                            <th>نوع کاربر</th>
+                            <th>مبلغ پرداخت شده</th>
+                            <th>بانک</th>
+                            <th>تاریخ پرداخت</th>
+                            <th>وضعیت</th>
+                            <th>تاریخ اشتراک فعال</th>
+                            <th>عملیات</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    @php
-                        $amount=0;
-                    @endphp
-
-                    @foreach($transactions as $key=> $transaction)
-
                         @php
-                            $amount += $transaction->amount;
+                            $amount = 0;
                         @endphp
 
-                        <tr>
-                            <td>{{ $key + 1 }}</td>
-                            <td>{{ $transaction->payerName }}</td>
-                            <td>{{ $transaction->driverFleetName }}</td>
-                            <td>{{ $transaction->countOfSuccess }}</td>
-                            <td>{{ $transaction->countOfAllTries }}</td>
-                            <td>{{ $transaction->total }}</td>
-                            <td>{{ $transaction->payerMobileNumber }}</td>
-                            <td>{{ $transaction->userTypeTitle }}</td>
-                            <td>{{ number_format($transaction->amount) }}</td>
+                        @foreach ($transactions as $key => $transaction)
                             @php
-                                $pieces = explode(' ', $transaction->updated_at);
+                                $amount += $transaction->amount;
                             @endphp
-                            <td>{{ $transaction->bank_name }}</td>
-                            <td dir="ltr">
-                                {{ gregorianDateToPersian($transaction->updated_at, '-', true) . ' ' . $pieces[1] }}
-                            </td>
-                            <td>
-                                @if($transaction->status == 0)
-                                    <span class="badge bg-label-danger text-nowrap">پرداخت ناموفق</span>
-                                @elseif($transaction->status == 2)
-                                    <span class="badge bg-label-warning text-nowrap">در انتظار پرداخت</span>
-                                @endif
-                            </td>
-                            <td>
-                                <a class="btn btn-primary btn-sm" href="{{ route('driver.detail', $transaction->user_id) }}">
-                                    تمدید اعتبار
-                                </a>
-                            </td>
-                        </tr>
-                    @endforeach
+
+                            <tr>
+                                <td>{{ $key + 1 }}</td>
+                                <td>{{ $transaction->payerName }}</td>
+                                <td>{{ $transaction->driverFleetName }}</td>
+                                <td>{{ $transaction->countOfSuccess }}</td>
+                                <td>{{ $transaction->countOfAllTries }}</td>
+                                <td>{{ $transaction->total }}</td>
+                                <td>{{ $transaction->payerMobileNumber }}</td>
+                                <td>{{ $transaction->userTypeTitle }}</td>
+                                <td>{{ number_format($transaction->amount) }}</td>
+                                @php
+                                    $pieces = explode(' ', $transaction->updated_at);
+                                @endphp
+                                <td>{{ $transaction->bank_name }}</td>
+                                <td dir="ltr">
+                                    {{ gregorianDateToPersian($transaction->updated_at, '-', true) . ' ' . $pieces[1] }}
+                                </td>
+                                <td>
+                                    @if ($transaction->status == 0)
+                                        <span class="badge bg-label-danger text-nowrap">پرداخت ناموفق</span>
+                                    @elseif($transaction->status == 2)
+                                        <span class="badge bg-label-warning text-nowrap">در انتظار پرداخت</span>
+                                    @endif
+                                </td>
+                                <td dir="ltr">
+                                    {{ $transaction->payerActiveDate() ? gregorianDateToPersian($transaction->payerActiveDate(), '-', true) : '' }}
+                                </td>
+                                <td>
+                                    <a class="btn btn-primary btn-sm"
+                                        href="{{ route('driver.detail', $transaction->user_id) }}">
+                                        تمدید اعتبار
+                                    </a>
+                                </td>
+                            </tr>
+                        @endforeach
                     </tbody>
                 </table>
 
