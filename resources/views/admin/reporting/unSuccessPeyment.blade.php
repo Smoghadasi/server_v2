@@ -63,7 +63,7 @@
                                     @endif
                                 </td>
                                 <td dir="ltr">
-                                    {{ $transaction->payerActiveDate() ? gregorianDateToPersian($transaction->payerActiveDate(), '-', true) : '' }}
+                                    {{ $transaction->payerActiveDate() ? gregorianDateToPersian($transaction->payerActiveDate(), '-', true) : '-' }}
                                 </td>
                                 <td>
                                     <a class="btn btn-primary btn-sm"
