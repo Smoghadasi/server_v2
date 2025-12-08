@@ -26,13 +26,12 @@ class CheckOperatorRole
 
             try {
 
-                $expiresAt = now()->addSeconds(30);
+                // $expiresAt = now()->addSeconds(30);
+                $expiresAt = now()->addMinutes(1);
 
                 Cache::put('user-is-online-' . \auth()->user()->id, true, $expiresAt);
 
                 User::whereId(Auth::id())->update(['last_seen' => now()]);
-
-
             } catch (Exception $e) {
                 Log::emergency("-------------------------- UserActivityReport ----------------------------------------");
                 Log::emergency($e->getMessage());
