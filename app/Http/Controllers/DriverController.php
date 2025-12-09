@@ -1445,7 +1445,11 @@ class DriverController extends Controller
                         if (!empty($driver->FCM_token) && $driver->version > 68) {
                             $title = 'راننده عزیز، 🎉';
                             $body  = "{$request->freeCalls} تماس رایگان برای شما فعال شد.\nهمین حالا می‌تونی با صاحب بار مورد نظرت تماس بگیری 📞";
-                            // $this->sendNotificationWeb($driver->FCM_token, $title, $body);
+                            try {
+                                $this->sendNotificationWeb($driver->FCM_token, $title, $body);
+                            } catch (\Exception $th) {
+                                //throw $th;
+                            }
                         }
                     }
                     if ($request->daily > 0) {
@@ -1524,7 +1528,12 @@ class DriverController extends Controller
                         if (!empty($driver->FCM_token) && $driver->version > 68) {
                             $title = 'راننده عزیز، 🎉';
                             $body  = "{$request->freeCalls} تماس رایگان برای شما فعال شد.\nهمین حالا می‌تونی با صاحب بار مورد نظرت تماس بگیری 📞";
-                            // $this->sendNotificationWeb($driver->FCM_token, $title, $body);
+                            try {
+                                $this->sendNotificationWeb($driver->FCM_token, $title, $body);
+                            } catch (\Exception $th) {
+                                //throw $th;
+                            }
+
                         }
                     }
                     // if ($request->freeAcceptLoads > 0) {
