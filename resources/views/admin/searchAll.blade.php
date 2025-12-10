@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
 @section('content')
-    @if (Auth::user()->role == 'admin' )
+    @if (Auth::user()->role == 'admin')
         <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">کد فعال سازی: </span> {{ $activationCode }}</h4>
     @endif
     <div class="card mb-4">
@@ -34,7 +34,8 @@
                                 <td>{{ $loop->iteration }}</td>
                                 <td>
                                     @if ($driver->bookmark)
-                                        <form style="display: contents" action="{{ route('bookmark.store') }}" method="post">
+                                        <form style="display: contents" action="{{ route('bookmark.store') }}"
+                                            method="post">
                                             @csrf
                                             <input type="hidden" value="{{ $driver->id }}" name="user_id">
                                             <input type="hidden" value="driver" name="type">
@@ -570,12 +571,13 @@
                                             <tr>
                                                 <td>
                                                     @if (isset($track->childrenRecursive))
-                                                        <a href="{{ route('trackableItems.index', ['parentId' => $track->id]) }}">{{ $loop->iteration }}</a>
+                                                        <a
+                                                            href="{{ route('trackableItems.index', ['parentId' => $track->id]) }}">{{ $loop->iteration }}</a>
                                                     @else
                                                         {{ $loop->iteration }}
                                                     @endif
                                                 </td>
-                                                <td>{{ $track->mobileNumber  }}({{$track->childrenRecursive->count()}})</td>
+                                                <td>{{ $track->mobileNumber }}({{ $track->childrenRecursive->count() }})</td>
                                                 <td>{{ $track->tracking_code }}</td>
                                                 <td onclick="this.innerText='{{ $track->description }}'">
                                                     {{ Str::limit($track->description, 30) }}
@@ -670,7 +672,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        @else
+                                                    @else
                                                         <button data-bs-toggle="modal" data-bs-target="#watchResult"
                                                             class="btn btn-sm btn-outline-success">مشاهده نتیجه</button>
                                                         <div class="modal fade" id="watchResult" tabindex="-1" aria-hidden="true">
@@ -779,6 +781,122 @@
 
                             </div>
                         </div>
+                        {{-- شماره های محدود شده --}}
+                        <div class="card my-4">
+                            <h5 class="card-header">
+                                شماره های محدود شده
+                            </h5>
+                            <div class="card-body">
+
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">شماره موبایل</th>
+                                                <th scope="col">اپراتور</th>
+                                                <th scope="col">نوع</th>
+                                                <th scope="col">عملیات</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                            @forelse ($limitCalls as $key => $limitCall)
+                                                <tr>
+                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td>{{ $limitCall->mobileNumber }}</td>
+                                                    <td>{{ $limitCall->operator?->name }} {{ $limitCall->operator?->lastName }}</td>
+                                                    <td>
+                                                        @if ($limitCall->type == 'limitCall')
+                                                            محدودیت تماس
+                                                        @else
+                                                            محدود به زمان ({{ $limitCall->value }} دقیقه)
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                                            data-bs-target="#modal_{{ $limitCall->id }}">
+                                                            ویرایش
+                                                        </button>
+                                                        <form action="{{ route('limitCall.destroy', $limitCall) }}" method="post">
+                                                            @csrf
+                                                            @method('delete')
+                                                            <button type="submit" class="btn btn-danger">
+                                                                حذف
+                                                            </button>
+                                                        </form>
+
+                                                        <!-- Modal -->
+                                                        <div class="modal fade" id="modal_{{ $limitCall->id }}" tabindex="-1"
+                                                            aria-hidden="true">
+                                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title" id="modalCenterTitle">شماره های محدود شده
+                                                                        </h5>
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                            aria-label="Close"></button>
+                                                                    </div>
+                                                                    <form method="POST"
+                                                                        action="{{ route('limitCall.update', $limitCall) }}">
+                                                                        @csrf
+                                                                        @method('put')
+
+                                                                        <div class="modal-body">
+                                                                            <div class="row">
+                                                                                <div class="col-12 mb-3">
+                                                                                    <input type="text" id="mobileNumber"
+                                                                                        value="{{ $limitCall->mobileNumber }}"
+                                                                                        name="mobileNumber" class="form-control"
+                                                                                        placeholder="شماره موبایل..." />
+                                                                                </div>
+                                                                                <div class="col-6 mb-3">
+                                                                                    <select class="form-control form-select type-select"
+                                                                                        data-index="{{ $key }}" name="type">
+                                                                                        <option value="limitCall"
+                                                                                            @if ($limitCall->type == 'limitCall') selected @endif>
+                                                                                            محدودیت با 2 تماس</option>
+                                                                                        <option value="time"
+                                                                                            @if ($limitCall->type == 'time') selected @endif>
+                                                                                            زمان</option>
+                                                                                    </select>
+                                                                                </div>
+
+                                                                                <div class="col-6 mb-3 toggle-time"
+                                                                                    data-index="{{ $key }}"
+                                                                                    style="display: none;">
+                                                                                    <input value="{{ $limitCall->value }}"
+                                                                                        class="form-control" type="number"
+                                                                                        placeholder="تایم به دقیقه را وارد کنید"
+                                                                                        name="value">
+                                                                                </div>
+                                                                            </div>
+
+
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-outline-secondary"
+                                                                                data-bs-dismiss="modal">
+                                                                                بستن
+                                                                            </button>
+                                                                            <button type="submit" class="btn btn-primary">ذخیره</button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                            @endforelse
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+
                         {{-- پیام ها --}}
                         <div class="card my-4">
                             <h5 class="card-header">

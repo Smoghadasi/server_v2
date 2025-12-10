@@ -11,6 +11,7 @@ use App\Models\ContactUs;
 use App\Models\Customer;
 use App\Models\Driver;
 use App\Models\DriverActivity;
+use App\Models\LimitCall;
 use App\Models\Load;
 use App\Models\LoadBackup;
 use App\Models\Owner;
@@ -234,6 +235,11 @@ class HomeController extends Controller
             ->orWhere('nameAndLastName', $request->title)
             ->get();
 
+        $limitCalls = LimitCall::with('operator')
+            ->where('mobileNumber', $request->title)
+            ->orderByDesc('created_at')
+            ->get();
+
         $activationCode = ActivationCode::where('mobileNumber', $request->title)->value('code');
 
         return view('admin.searchAll', compact([
@@ -245,7 +251,8 @@ class HomeController extends Controller
             'messages',
             'contactReportWithCargoOwners',
             'tracks',
-            'activationCode'
+            'activationCode',
+            'limitCalls'
         ]));
     }
 }
