@@ -7,7 +7,9 @@ use App\Models\Equivalent;
 use App\Models\OperatorCargoListAccess;
 use App\Models\PrompAi;
 use App\Models\Setting;
+use App\Models\StoreCargoOperator;
 use App\Services\CargoJsonSaver;
+use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -493,12 +495,22 @@ class ProcessingUnitController extends Controller
             foreach ($contents as $clean) {
                 $this->analyzeCode($clean);
                 $storedCount++;
+
+                // گزارش بار ها بر اساس اپراتور
+                $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+                $storeCargoOperator = StoreCargoOperator::firstOrNew([
+                    'user_id' => Auth::id(),
+                    'persian_date' => $persian_date,
+                ]);
+
+                $storeCargoOperator->count = ($storeCargoOperator->count ?? 0) + 1;
+                $storeCargoOperator->save();
                 // $dataConvertPlus->dataConvert($clean, 1, $cargo->id);
             }
             $cargo = CargoConvertList::find($cargo->id);
             $cargo->status = true;
             $cargo->save();
-            return back()->with('success', $storedCount . ' تا ثبت شد');
+            return back()->with('success', $storedCount . ' بار ثبت شد');
         }
         $storedCount = 0;
         foreach ($contents as $clean) {
