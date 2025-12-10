@@ -35,11 +35,12 @@ class UserActivityReport extends Model
     public function numOfLoads()
     {
         try {
+            // $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
 
-            $numOfLoad = UserActivityReport::where('user_id', $this->user_id)
-                ->whereDate('created_at', Carbon::today())
+            $numOfLoads = UserActivityReport::where('user_id', $this->user_id)
+                ->where('persian_date', '1404/09/19')
                 ->first();
-            return $numOfLoad->count;
+            return $numOfLoads->count;
         } catch (\Exception $th) {
             Log::alert($th);
             return 0;
