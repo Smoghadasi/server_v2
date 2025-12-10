@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Log;
 
 class UserActivityReport extends Model
 {
@@ -39,8 +40,8 @@ class UserActivityReport extends Model
                 ->where('persian_date', $persian_date)
                 ->first();
             return $numOfLoads->count;
-        } catch (\Throwable $th) {
-            return 5;
+        } catch (\Exception $th) {
+            return Log::alert($th);
         }
     }
     public function numOfDeletedLoads()
