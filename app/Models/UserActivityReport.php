@@ -41,7 +41,8 @@ class UserActivityReport extends Model
                 ->first();
             return $numOfLoads->count;
         } catch (\Exception $th) {
-            return Log::alert($th);
+            Log::alert($th);
+            return 0;
         }
     }
     public function numOfDeletedLoads()
