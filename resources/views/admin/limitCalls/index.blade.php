@@ -57,6 +57,18 @@
             </div>
         </div>
         <div class="card-body">
+            {{-- Search --}}
+            <form method="get" action="{{ route('limitCall.index') }}">
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <input type="text" placeholder="شماره موبایل..." class="form-control" name="mobileNumber"
+                            id="mobileNumber" value="{{ request('mobileNumber') }}" />
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary">جستجو</button>
+                    </div>
+                </div>
+            </form>
             <div class="table-responsive">
                 <table class="table">
                     <thead>

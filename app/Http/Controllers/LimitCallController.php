@@ -13,9 +13,14 @@ class LimitCallController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $limitCalls = LimitCall::with('operator')->orderByDesc('created_at')->paginate(20);
+        $limitCalls = LimitCall::with('operator')
+            ->when($request->mobileNumber !== null, function ($query) use ($request) {
+                $query->where('mobileNumber', 'LIKE', '%' . $request->mobileNumber . '%');
+            })
+            ->orderByDesc('created_at')
+            ->paginate(20);
         return view('admin.limitCalls.index', compact('limitCalls'));
     }
 
@@ -84,7 +89,7 @@ class LimitCallController extends Controller
     public function update(Request $request, LimitCall $limitCall)
     {
         $mobileNumber = ParameterController::convertNumbers($request->mobileNumber);
-        if (LimitCall::where('mobileNumber', $mobileNumber)->where('id', '!=' , $limitCall->id)->count() > 0) {
+        if (LimitCall::where('mobileNumber', $mobileNumber)->where('id', '!=', $limitCall->id)->count() > 0) {
             return back()->with('danger', 'این شماره موبایل قبلا ثبت شده است.');
         }
 
@@ -94,7 +99,6 @@ class LimitCallController extends Controller
             'value' => $request->value,
         ]);
         return back()->with('success', 'با موفقیت ثبت شد.');
-
     }
 
     /**
@@ -107,6 +111,5 @@ class LimitCallController extends Controller
     {
         $limitCall->delete();
         return back()->with('danger', 'با موفقیت حذف شد.');
-
     }
 }
