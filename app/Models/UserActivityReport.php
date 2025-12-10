@@ -35,12 +35,12 @@ class UserActivityReport extends Model
     {
         $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
         try {
-            // $numOfLoads = UserActivityReport::where('user_id', $this->user_id)
-            //     ->where('persian_date', $persian_date)
-            //     ->first();
-            return $this->user_id;
+            $numOfLoads = UserActivityReport::where('user_id', $this->user_id)
+                ->where('persian_date', $persian_date)
+                ->first();
+            return $numOfLoads->count;
         } catch (\Throwable $th) {
-            return 0;
+            return 5;
         }
     }
     public function numOfDeletedLoads()
