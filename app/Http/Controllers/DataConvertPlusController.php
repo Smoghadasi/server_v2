@@ -14,6 +14,7 @@ use App\Models\OperatorCargoListAccess;
 use App\Models\Owner;
 use App\Models\ProvinceCity;
 use App\Models\RejectCargoOperator;
+use App\Models\StoreCargoOperator;
 use App\Models\User;
 use App\Models\UserActivityReport;
 use Carbon\Carbon;
@@ -837,6 +838,20 @@ class DataConvertPlusController extends Controller
             // $priceType = "priceType_" . $key;
             // $pattern = "pattern_" . $key;
             try {
+                try {
+                    // گزارش بار ها بر اساس اپراتور
+                    $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+                    $storeCargoOperator = StoreCargoOperator::firstOrNew([
+                        'user_id' => Auth::id(),
+                        'persian_date' => $persian_date,
+                    ]);
+
+                    $storeCargoOperator->count = ($storeCargoOperator->count ?? 0) + 1;
+                    $storeCargoOperator->save();
+                } catch (\Throwable $th) {
+                    //throw $th;
+                }
+
                 $this->storeCargoSmart(
                     $request->$origin,
                     $request->$originState,
