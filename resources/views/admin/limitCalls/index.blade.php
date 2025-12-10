@@ -176,7 +176,7 @@
             </div>
 
             <div class="mt-3">
-                {{ $limitCalls }}
+                {{ $limitCalls->appends($_GET)->links() }}
             </div>
 
         </div>
