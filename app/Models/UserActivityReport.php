@@ -39,7 +39,7 @@ class UserActivityReport extends Model
             $numOfLoad = UserActivityReport::where('user_id', $this->user_id)
                 ->whereDate('created_at', Carbon::today())
                 ->first();
-            return $numOfLoad;
+            return $numOfLoad->count;
         } catch (\Exception $th) {
             Log::alert($th);
             return 0;
