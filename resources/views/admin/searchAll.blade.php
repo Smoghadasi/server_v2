@@ -814,14 +814,14 @@
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                                        <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
                                                             data-bs-target="#modal_{{ $limitCall->id }}">
                                                             ویرایش
                                                         </button>
                                                         <form action="{{ route('limitCall.destroy', $limitCall) }}" method="post">
                                                             @csrf
                                                             @method('delete')
-                                                            <button type="submit" class="btn btn-danger">
+                                                            <button type="submit" class="btn btn-outline-danger btn-sm">
                                                                 حذف
                                                             </button>
                                                         </form>
