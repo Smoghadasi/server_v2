@@ -33,12 +33,15 @@ class UserActivityReport extends Model
 
     public function numOfLoads()
     {
-        return CargoConvertList::where('operator_id', $this->user_id)
-            // ->where('created_at', '>', date('Y-m-d') . ' 00:00:00')
-            ->where('rejected', 0)
-            ->where('status', 1)
-            // ->withTrashed()
-            ->count();
+        $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+        try {
+            $numOfLoads = UserActivityReport::where('user_id', $this->user_id)
+                ->where('persian_date', $persian_date)
+                ->first();
+            return $numOfLoads->count;
+        } catch (\Throwable $th) {
+            return 0;
+        }
     }
     public function numOfDeletedLoads()
     {
