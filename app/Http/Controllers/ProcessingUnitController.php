@@ -9,9 +9,9 @@ use App\Models\PrompAi;
 use App\Models\Setting;
 use App\Models\StoreCargoOperator;
 use App\Services\CargoJsonSaver;
-use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProcessingUnitController extends Controller
 {

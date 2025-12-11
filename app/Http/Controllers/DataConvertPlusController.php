@@ -857,27 +857,29 @@ class DataConvertPlusController extends Controller
                     $cargo->id
                 );
             } catch (\Exception $exception) {
-                return $exception;
+                // return $exception;
                 Log::emergency("storeMultiCargo : " . $exception->getMessage());
+            }
+
+            try {
+                // گزارش بار ها بر اساس اپراتور
+                $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
+                $storeCargoOperator = StoreCargoOperator::firstOrNew([
+                    'user_id' => Auth::id(),
+                    'persian_date' => $persian_date,
+                ]);
+
+                $storeCargoOperator->count = ($storeCargoOperator->count ?? 0) + 1;
+                $storeCargoOperator->save();
+            } catch (\Throwable $th) {
+                //throw $th;
             }
         }
         $cargo->status = true;
         $cargo->final_submission_at = now();
         $cargo->save();
 
-        try {
-            // گزارش بار ها بر اساس اپراتور
-            $persian_date = gregorianDateToPersian(date('Y/m/d', time()), '/');
-            $storeCargoOperator = StoreCargoOperator::firstOrNew([
-                'user_id' => Auth::id(),
-                'persian_date' => $persian_date,
-            ]);
 
-            $storeCargoOperator->count = ($storeCargoOperator->count ?? 0) + $counter;
-            $storeCargoOperator->save();
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
 
         return back()->with('success', $counter . 'بار ثبت شد');
     }
