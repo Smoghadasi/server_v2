@@ -100,6 +100,7 @@ class CargoJsonSaver
 
         // 2) fleets.title
         $f = Fleet::where('title', $token)
+            ->where('parent_id', '!=', 0)
             ->pluck('id')
             ->toArray();
 
@@ -114,6 +115,7 @@ class CargoJsonSaver
             $ids = array_merge(
                 $ids,
                 Fleet::where('title', 'like', "%{$part}%")
+                    ->where('parent_id', '!=', 0)
                     ->pluck('id')
                     ->toArray()
             );
@@ -375,7 +377,6 @@ class CargoJsonSaver
                 }
 
                 $onlyIds = Arr::flatten($fleetIds);
-
                 // 3) نگاشت شهرها به ID
                 $originIds = [];
                 foreach ($origins as $o) {
