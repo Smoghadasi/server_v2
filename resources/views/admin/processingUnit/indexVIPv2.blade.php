@@ -5,7 +5,7 @@
 
     <div class="card">
         <h5 class="card-header">
-            پردازش ویژه
+                   ثبت بار نیمه اتوماتیک
         </h5>
 
         <div class="card-body row">
@@ -109,7 +109,7 @@
                         </div>
                         <div class="col-md-6 text-end">
                             {{-- <button class="btn btn-primary mb-2 float-right" type="submit">ارسال به ثبت بار</button> --}}
-                            <button class="btn btn-primary mb-2 float-right submitBtn btn-lg" type="submit">ذخیره نهایی</button>
+                            <button class="btn btn-primary mb-2 float-right submitBtn btn-lg" type="submit">ارسال به ثبت بار</button>
                         </div>
                     </div>
 
@@ -133,7 +133,7 @@
                         </div> --}}
                         <div class="col-md-6" style="justify-items: left">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" checked value="1" name="automatic"
+                                <input class="form-check-input" type="checkbox" value="1" name="automatic"
                                     id="automatic">
                                 <label class="form-check-label" for="automatic">
                                     ذخیره اتوماتیک
@@ -146,15 +146,8 @@
                     rows="20"></textarea>
                 <div class="col-md-12 text-end">
                     {{-- <button class="btn btn-primary mb-2 float-right" type="submit">ارسال به ثبت بار</button> --}}
-                    <button class="btn btn-primary mb-2 float-right submitBtn btn-lg" type="submit">ذخیره نهایی</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-@endsection
-@section('script')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mobile-detect/1.4.5/mobile-detect.min.js"></script>
+                    <button class="btn btn-primary mb-2 float-right submitBtn btn-lg" type="submit">ارسال به ثبت بار</button>
+ax/libs/mobile-detect/1.4.5/mobile-detect.min.js"></script>
 
     <script>
         $(document).ready(function() {
